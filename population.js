@@ -195,9 +195,9 @@ class PopulationManager {
     getEntitiesInWorld(worldId, foodOnly = false, agentsOnly = false) {
         let members = this.worlds.get(worldId);
 
-        if (!foodOnly && !agentsOnly) {
-            entities.push(members.home);
-        }
+//         if (!foodOnly && !agentsOnly) {
+//             entities.push(members.home);
+//         }
         if (foodOnly) {
             return members.food.concat(members.poison);
         } else if (agentsOnly) {
