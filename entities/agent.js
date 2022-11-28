@@ -186,7 +186,7 @@ class Agent {
 
         // this code defines Agent metabolism as a function of the Agent's diameter and displacement (how far we have moved since the last tick)
         let displacement = distance(oldPos, { x: this.x, y: this.y });
-        this.energy -= (this.diameter / 20) * (displacement / 10) / 2;
+        this.energy -= Math.abs(this.leftWheel) * Math.abs(this.rightWheel) / 2;
         this.energy -= 0.1; // this is a baseline metabolism that is independent of Agent physical activity
 
         /** Update our diameter and BC to reflect our current position */
