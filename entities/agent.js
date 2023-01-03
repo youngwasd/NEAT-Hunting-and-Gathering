@@ -156,9 +156,11 @@ class Agent {
             input.push(AgentInputUtil.normalizeAngle(this.getRelativePositionAngle({ x: neighbor.x - this.x, y: neighbor.y - this.y }))); // normalized relative position angle
             input.push(AgentInputUtil.normalizeDistance(distance(neighbor.BC.center, this.BC.center))); // normalized distance from the entity
         }
-        for (let i = input.length; i < Genome.DEFAULT_INPUTS; i++) { // fill all unused input nodes with 0's
+        for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
             input.push(0);
         }
+        
+        input.push(this.energy);
 
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
@@ -268,5 +270,49 @@ class Agent {
         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
+
+        //this.drawVision(ctx);
+        //this.drawVTEST(ctx);
     };
+
+    drawVision(ctx) {
+
+        const rays = params.AGENT_VISION_RAYS;
+        const angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+        const angleBetw = angle/rays;
+
+        let currAngle = this.heading - angle/2;
+        let lastAngle = this.heading + angle/2;
+        
+        ctx.strokeStyle = "Red";
+        while(currAngle <= lastAngle){
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x + Math.cos(currAngle) * 100, this.y + Math.sin(currAngle) * 100);
+            ctx.stroke();
+            ctx.closePath();
+            currAngle += angleBetw;
+        }
+
+    }
+
+    drawVTEST(ctx) {
+        const theAngle = Math.PI;
+        const theLines = 18;
+        let currAngle = theAngle/2;
+        let lastAngle = 0;
+        let angleBetw = theAngle/theLines;
+
+        ctx.strokeStyle = "Red";
+        
+        for(let i = 0; i < theLines; i++){
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            //ctx.lineTo(10, 10);
+            ctx.lineTo(this.x + (Math.cos(currAngle)) * 10, this.y + (Math.sin(currAngle)) * 10);
+            ctx.stroke();
+            ctx.closePath();
+            currAngle -= angleBetw;
+        }
+    }
 };

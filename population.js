@@ -114,6 +114,12 @@ class PopulationManager {
         if (document.activeElement.id !== "agent_vision_radius") {
             params.AGENT_VISION_RADIUS = parseFloat(document.getElementById("agent_vision_radius").value);
         }
+        if (document.activeElement.id !== "agent_vision_rays") {
+            params.AGENT_VISION_RAYS = parseFloat(document.getElementById("agent_vision_rays").value);
+        }
+        if (document.activeElement.id !== "agent_vision_angle") {
+            params.AGENT_VISION_ANGLE = parseFloat(document.getElementById("agent_vision_angle").value);
+        }
         if (document.activeElement.id !== "compat_threshold") {
             params.COMPAT_THRESH = parseFloat(document.getElementById("compat_threshold").value);
         }
