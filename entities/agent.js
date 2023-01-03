@@ -271,9 +271,28 @@ class Agent {
         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
 
-        //this.drawVision(ctx);
+        this.drawVision(ctx);
         //this.drawVTEST(ctx);
     };
+
+    lineCircleCollide(line, circle) {
+        var slope = line.slope;
+        var yInt = line.yInt;
+        var a = 1 + slope * slope;
+        var b = 2 * (slope * (yInt - circle.y) - circle.x);
+        var c = circle.x * circle.x + (yInt - circle.y) * (yInt - circle.y) - circle.radius * circle.radius;
+
+        var d = b * b - 4 * a * c;
+
+        if (d === 0) {
+            return [(-b + Math.sqrt(d)) / (2 * a)];
+        } else if (d > 0) {
+            return [(-b + Math.sqrt(d)) / (2 * a), (-b - Math.sqrt(d)) / (2 * a)];
+        } 
+
+        return [];
+    }
+
 
     drawVision(ctx) {
 
@@ -285,15 +304,42 @@ class Agent {
         let lastAngle = this.heading + angle/2;
         
         ctx.strokeStyle = "Red";
+        let i = 0;
         while(currAngle <= lastAngle){
+            let dist = this.spotted[i];
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
             ctx.lineTo(this.x + Math.cos(currAngle) * 100, this.y + Math.sin(currAngle) * 100);
             ctx.stroke();
             ctx.closePath();
             currAngle += angleBetw;
+            i++;
         }
 
+    }
+
+    vision()
+    {
+        const rays = params.AGENT_VISION_RAYS;
+        const angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+        const angleBetw = angle/rays;
+
+        let currAngle = this.heading - angle/2;
+        let lastAngle = this.heading + angle/2;
+
+        this.spotted = [];
+        while(currAngle <= lastAngle){
+            const line = {
+                slope: Math.sin(currAngle) / Math.cos(currAngle),
+                yInt: this.y
+            }
+            entities.forEach(entity =>{
+                let newSpot = this.lineCircleCollide(line, entity);
+                console.log("Spotted: " + newSpot);
+                spotted.push(newSpot);
+            })
+            currAngle += angleBetw;
+        }
     }
 
     drawVTEST(ctx) {
