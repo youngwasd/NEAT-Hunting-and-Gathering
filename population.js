@@ -358,11 +358,15 @@ class PopulationManager {
                 home: new HomeBase(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2), 
                 ctx: world.getContext("2d"),
                 canvas: world,
-                display: new DataDisplay(this.game)
+                display: new DataDisplay(this.game),
+                walls: [],
             }
         );
         this.worlds.get(worldId).home.worldId = worldId;
         this.worlds.get(worldId).display.worldId = worldId;
+
+        let leftWall = new Wall(this.game, 10, 10, params.CANVAS_SIZE - 50, params.CANVAS_SIZE - 50);
+        this.worlds.get(worldId).walls.push(leftWall);    
 
         if (params.FREE_RANGE) {
             this.resetCanvases();
