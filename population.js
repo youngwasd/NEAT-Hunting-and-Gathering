@@ -70,6 +70,7 @@ class PopulationManager {
     };
 
     resetSim() {
+        params.AGENT_VISION_IS_CONE = document.getElementById("agent_vision_is_cone").checked;
         PopulationManager.SPECIES_ID = 0;
         PopulationManager.GEN_NUM = 0;
         PopulationManager.SPECIES_CREATED = 0;
@@ -97,6 +98,7 @@ class PopulationManager {
         params.RAND_DEFAULT_WEIGHTS = document.getElementById("rand_default_weights").checked;
         params.GEN_STOP = document.getElementById("gen_stop").checked;
         params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
+        params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
@@ -367,7 +369,8 @@ class PopulationManager {
                 home: new HomeBase(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2), 
                 ctx: world.getContext("2d"),
                 canvas: world,
-                display: new DataDisplay(this.game)
+                display: new DataDisplay(this.game),
+                walls: []
             }
         );
         this.worlds.get(worldId).home.worldId = worldId;

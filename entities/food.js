@@ -41,28 +41,28 @@
         this.phase_properties = [ // configures the ticks, visual properties, calories, and set state for this food's individual lifecycle phases
             {
                 ticks: phase_ticks[0],
-                radius: 3,
+                radius: 7,
                 color: this.isPoison? 120 : 270,
                 calories: 50,
                 isSet: false,
             },
             {
                 ticks: phase_ticks[1],
-                radius: 5,
+                radius: 9,
                 color: this.isPoison? 90 : 300,
                 calories: 100,
                 isSet: false,
             },
             {
                 ticks: phase_ticks[2],
-                radius: 7,
+                radius: 12,
                 color: this.isPoison? 60 : 330,
                 calories: 150,
                 isSet: false,
             },
             {
                 ticks: phase_ticks[3],
-                radius: 7,
+                radius: 12,
                 color: 30,
                 calories: -200,
                 isSet: false,
@@ -115,6 +115,7 @@
      * @returns this Food's data hue
      */
     getDataHue() {
+        if(this.phase_properties[this.phase] == undefined) console.error("Undefined phase properties. Phase is: " + this.phase);
         return this.phase_properties[this.phase].color;
     };
 

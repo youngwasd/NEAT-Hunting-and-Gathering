@@ -1,6 +1,6 @@
 class Genome {
 
-    static DEFAULT_INPUTS = 3 * params.AGENT_NEIGHBOR_COUNT + 1;
+    static DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 2;//+2 is for bias and hunger
 
     static DEFAULT_HIDDENS = 0;
 
@@ -28,7 +28,7 @@ class Genome {
         Genome.INNOV_MAP = new ConnectionMap();
         Genome.NODE_ID_MAP = new Map();
         Genome.INNOV_NUM = 0;
-        Genome.DEFAULT_INPUTS = 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        Genome.DEFAULT_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * params.AGENT_VISION_RAYS + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
         Genome.NODE_ID = Genome.DEFAULT_INPUTS + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
     };
 
@@ -57,6 +57,7 @@ class Genome {
     static getDefault = (randomWeights = params.RAND_DEFAULT_WEIGHTS) => {
 
         let numInputs = Genome.DEFAULT_INPUTS;
+        console.log("Inputs: " + numInputs);
         let numHiddens = Genome.DEFAULT_HIDDENS;
         let numOutputs = Genome.DEFAULT_OUTPUTS;
         let numNeurons = numInputs + numHiddens + numOutputs;

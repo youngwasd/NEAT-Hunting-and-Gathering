@@ -97,6 +97,9 @@
         <input type="checkbox" id="gen_stop"> End Generation When Food is Gone or Energy is Depleted
     </div>
     <div>
+        <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity vision otherwise)
+    </div>
+    <div>
         <button type="button" id="restart_sim">Restart Simulation</button>
     </div>
     <div>
@@ -130,6 +133,11 @@
         <input type="text" id="agent_vision_angle" value="180"> Vision Cone Angle (degrees)
     </div>
     <br> <br>
+    <strong>Debug Options</strong>
+    <br>
+    <div>
+        <input type="checkbox" id="draw_agent_vision_cone" checked="false"> Draw Vision Rays (only for cone vision)
+    </div>
     <div>
         <br> </br><strong>Agent Fitness Function:</strong><br> </br> <input type="text" id="fitness_energy" value="1"> (Raw Energy) + <input type="text" id="fitness_calories" value="1"> (Calories Eaten) + <input type="text" id="fitness_bad_calories" value="-1"> (Poison Calories Eaten)
     </div>
