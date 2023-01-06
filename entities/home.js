@@ -22,4 +22,5 @@ class HomeBase {
         ctx.fill();
         ctx.stroke();
     };
+    
 };

@@ -106,6 +106,10 @@ class Agent {
         return this.x >= 0 && this.x < params.CANVAS_SIZE && this.y >= 0 && this.y < params.CANVAS_SIZE;
     };
 
+    getEyePos() {
+        return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading), y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+    }
+
     /**
      * Function used for getting the relative angle between an Agent and a neighboring entity.
      * The relative position angle is always between 0 and pi inclusive, so the mininum of
@@ -131,11 +135,17 @@ class Agent {
 
         let spottedNeighbors = [];
 
+        let input = []; // the input to the neural network
+
+        input.push(1); // bias node always = 1
+
         /**
          * if we have split species on, then we only get entities in the world corresponding to our species id, otherwise all entities
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
         let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, !params.AGENT_NEIGHBORS);
+
+        
         entities.forEach(entity => {
             /** add all entities to our spotted neighbors that aren't ourselves, not dead, and are within our vision radius */
             if (entity !== this && !entity.removeFromWorld && distance(entity.BC.center, this.BC.center) <= params.AGENT_VISION_RADIUS) {
@@ -145,20 +155,24 @@ class Agent {
 
         /** sorts the spotted neighbors in increasing order of proxomity */
         spottedNeighbors.sort((entity1, entity2) => distance(entity1.BC.center, this.BC.center) - distance(entity2.BC.center, this.BC.center));
-        let input = []; // the input to the neural network
-
-        input.push(1); // bias node always = 1
-
-        // add input for the neighbors we have spotted, up to AGENT_NEIGHBOR_COUNT
-        for (let i = 0; i < Math.min(spottedNeighbors.length, params.AGENT_NEIGHBOR_COUNT); i++) { 
-            let neighbor = spottedNeighbors[i];
-            input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue())); // the data hue
-            input.push(AgentInputUtil.normalizeAngle(this.getRelativePositionAngle({ x: neighbor.x - this.x, y: neighbor.y - this.y }))); // normalized relative position angle
-            input.push(AgentInputUtil.normalizeDistance(distance(neighbor.BC.center, this.BC.center))); // normalized distance from the entity
+        
+        if(params.AGENT_VISION_IS_CONE){
+            this.coneVision(input);
+        } else{
+            
+            // add input for the neighbors we have spotted, up to AGENT_NEIGHBOR_COUNT
+            for (let i = 0; i < Math.min(spottedNeighbors.length, params.AGENT_NEIGHBOR_COUNT); i++) { 
+                let neighbor = spottedNeighbors[i];
+                input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue())); // the data hue
+                input.push(AgentInputUtil.normalizeAngle(this.getRelativePositionAngle({ x: neighbor.x - this.x, y: neighbor.y - this.y }))); // normalized relative position angle
+                input.push(AgentInputUtil.normalizeDistance(distance(neighbor.BC.center, this.BC.center))); // normalized distance from the entity
+            }
+            for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
+                input.push(0);
+            }
         }
-        for (let i = input.length; i < Genome.DEFAULT_INPUTS; i++) { // fill all unused input nodes with 0's
-            input.push(0);
-        }
+        
+        input.push(this.energy);
 
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
@@ -186,7 +200,7 @@ class Agent {
 
         // this code defines Agent metabolism as a function of the Agent's diameter and displacement (how far we have moved since the last tick)
         let displacement = distance(oldPos, { x: this.x, y: this.y });
-        this.energy -= (this.diameter / 20) * (displacement / 10) / 2;
+        this.energy -= Math.abs(this.leftWheel) * Math.abs(this.rightWheel) / 2;
         this.energy -= 0.1; // this is a baseline metabolism that is independent of Agent physical activity
 
         /** Update our diameter and BC to reflect our current position */
@@ -252,6 +266,76 @@ class Agent {
     };
 
     /**
+     * @param {*} line the line representing the ray
+     * @param {*} circle the BC of the entity being checked for collision
+     * @returns 
+     */
+    visionRayCollision(line, entity) {
+        var circle = entity.BC;
+        var slope = line.slope;
+        var yInt = line.yInt;
+        var a = 1 + slope * slope;
+        var b = 2 * (slope * (yInt - circle.center.y) - circle.center.x);
+        var c = circle.center.x * circle.center.x + (yInt - circle.center.y) * (yInt - circle.center.y) - circle.radius * circle.radius;
+
+        var d = b * b - 4 * a * c;
+        let x = null;
+        if (d === 0) {
+            x = (-b + Math.sqrt(d)) / (2 * a);
+        } else if (d > 0) {
+            x = Math.min((-b + Math.sqrt(d)) / (2 * a), (-b - Math.sqrt(d)) / (2 * a));
+        }
+        if(x != null) {
+            let y = x * slope + yInt;
+            return {y: y, x: x, hue: entity.getDataHue()};
+        } else{
+            return {y: 9999, x: 9999, hue: 0};
+        }
+    }
+
+    coneVision(input)
+    {
+        const rays = params.AGENT_VISION_RAYS - 1;
+        const angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+        const angleBetw = angle/rays;
+
+        let currAngle = this.heading - angle/2;
+
+        let eyes = this.getEyePos();
+
+        this.spotted = [];
+        this.visCol = [];
+        
+        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, !params.AGENT_NEIGHBORS);
+        for(let i = 0; i <= rays; i++){
+            const line = {
+                slope: Math.tan(currAngle),
+                yInt: eyes.y - eyes.x * Math.tan(currAngle)
+            }
+            let minDist = 99999;
+            let hueOfMinDist = 0;
+            
+            let inTopHalf = currAngle >= 0 && currAngle < Math.PI;
+            let inRightHalf = currAngle <= Math.PI / 2 || currAngle > Math.PI * 3/2;
+            entities.forEach(entity =>{
+                if((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity != this){
+                    let newSpot = this.visionRayCollision(line, entity);
+                    let newDist = distance(eyes, {x: newSpot.x, y: newSpot.y});
+                    this.visCol.push(newSpot);
+                    if(newDist < minDist && newDist > 0) {
+                        minDist = newDist;
+                        hueOfMinDist = newSpot.hue;
+                    }
+                }
+            })
+            let spotVals = {dist: minDist, angle: currAngle};
+            this.spotted.push(spotVals);
+            input.push(1/minDist);
+            input.push(hueOfMinDist);
+            currAngle += angleBetw;
+        }
+    }
+    /**
      * Draws this agent on its world canvas
      * 
      * @param {*} ctx the canvas context
@@ -268,5 +352,33 @@ class Agent {
         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
+        if(params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE&& Array.isArray(this.spotted)) {
+            this.drawVFinal(ctx);
+            this.drawVCol(ctx);
+        }else{
+            console.error("this.spotted is not an array...");
+        }
     };
+
+    drawVCol(ctx){
+        ctx.strokeStyle = "Red";
+        for(let i = 0; i < this.visCol.length; i++){
+            ctx.beginPath();
+            ctx.arc(this.visCol[i].x, this.visCol[i].y, 3, 0, 2 *Math.PI);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+    drawVFinal(ctx){
+        let eyes = this.getEyePos();
+        ctx.strokeStyle = "Red";
+        for(let i = 0; i < this.spotted.length; i++){
+            let angle = this.spotted[i].angle;
+            let dist = this.spotted[i].dist;
+            ctx.moveTo(eyes.x, eyes.y);
+            ctx.lineTo(eyes.x + (Math.cos(angle)) * dist, eyes.y + (Math.sin(angle)) * dist);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
 };

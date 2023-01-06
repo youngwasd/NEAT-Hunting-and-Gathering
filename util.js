@@ -23,8 +23,12 @@ const params = {
     FITNESS_CALORIES: 1,
     FITNESS_BAD_CALORIES: -1,
     GEN_STOP: false,
-    NUM_AGENTS: 50,
-    DYNAMIC_AGENT_SIZING: false
+    NUM_AGENTS: 1,
+    DYNAMIC_AGENT_SIZING: false,
+    AGENT_VISION_RAYS: 13,
+    AGENT_VISION_ANGLE: 180,
+    AGENT_VISION_IS_CONE: true,
+    AGENT_VISION_DRAW_CONE: false
 };
 
 const getMedian = (arr) => {

@@ -70,6 +70,7 @@ class PopulationManager {
     };
 
     resetSim() {
+        params.AGENT_VISION_IS_CONE = document.getElementById("agent_vision_is_cone").checked;
         PopulationManager.SPECIES_ID = 0;
         PopulationManager.GEN_NUM = 0;
         PopulationManager.SPECIES_CREATED = 0;
@@ -97,6 +98,7 @@ class PopulationManager {
         params.RAND_DEFAULT_WEIGHTS = document.getElementById("rand_default_weights").checked;
         params.GEN_STOP = document.getElementById("gen_stop").checked;
         params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
+        params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
@@ -113,6 +115,12 @@ class PopulationManager {
         }
         if (document.activeElement.id !== "agent_vision_radius") {
             params.AGENT_VISION_RADIUS = parseFloat(document.getElementById("agent_vision_radius").value);
+        }
+        if (document.activeElement.id !== "agent_vision_rays") {
+            params.AGENT_VISION_RAYS = parseFloat(document.getElementById("agent_vision_rays").value);
+        }
+        if (document.activeElement.id !== "agent_vision_angle") {
+            params.AGENT_VISION_ANGLE = parseFloat(document.getElementById("agent_vision_angle").value);
         }
         if (document.activeElement.id !== "compat_threshold") {
             params.COMPAT_THRESH = parseFloat(document.getElementById("compat_threshold").value);
@@ -195,6 +203,9 @@ class PopulationManager {
     getEntitiesInWorld(worldId, foodOnly = false, agentsOnly = false) {
         let members = this.worlds.get(worldId);
 
+//         if (!foodOnly && !agentsOnly) {
+//             entities.push(members.home);
+//         }
         if (foodOnly) {
             return members.food.concat(members.poison);
         } else if (agentsOnly) {
