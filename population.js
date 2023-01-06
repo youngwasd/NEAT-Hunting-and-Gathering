@@ -375,9 +375,14 @@ class PopulationManager {
         );
         this.worlds.get(worldId).home.worldId = worldId;
         this.worlds.get(worldId).display.worldId = worldId;
+        
+        //Test adding walls
+        let northWall = new Wall(this.game, worldId, 10, 100, 500, 100);
+        let westWall = new Wall(this.game, worldId, 100, 100, 100, 690);
 
-        let leftWall = new Wall(this.game, 10, 10, params.CANVAS_SIZE - 50, params.CANVAS_SIZE - 50);
-        this.worlds.get(worldId).walls.push(leftWall);    
+        this.worlds.get(worldId).walls.push(westWall);  
+        this.worlds.get(worldId).walls.push(northWall); 
+        
 
         if (params.FREE_RANGE) {
             this.resetCanvases();
