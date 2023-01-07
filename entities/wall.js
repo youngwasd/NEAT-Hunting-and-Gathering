@@ -116,10 +116,16 @@ class Wall {
         return [];
     };
 
-    update() {
+    /**
+     * Check for collision of the wall with the agents and trigger collision handling
+     * @return the number of agents colliding with wall
+     */
+    wallAgentCollisionHandling = () =>{
         let agentsList = [];
         //Collect all agents entity
         let entities = this.game.population.getEntitiesInWorld(this.worldId, false, true);
+
+        let numberOfAgentsCollide = 0;
 
         //Going each agents and check collision for it
         entities.forEach(entity => {
@@ -129,11 +135,18 @@ class Wall {
 
                 //Temporary kill agents if cross the wall & can be replaced with collision handling from agent
                 entity.removeFromWorld = true;
+                console.log(entity + " is dead, goodbye cruel world!");
                 //console.log(entity.BC);
 
-                console.log(entity + " is dead, goodbye cruel world!");
+                ++numberOfAgentsCollide;
             }
         });
+
+        return numberOfAgentsCollide;
+    }
+
+    update() {
+        this.wallAgentCollisionHandling();
 
 
 
