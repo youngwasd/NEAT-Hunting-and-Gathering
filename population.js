@@ -376,12 +376,26 @@ class PopulationManager {
         this.worlds.get(worldId).home.worldId = worldId;
         this.worlds.get(worldId).display.worldId = worldId;
         
-        //Test adding walls
-        let northWall = new Wall(this.game, worldId, 10, 100, 500, 100);
-        let westWall = new Wall(this.game, worldId, 100, 100, 100, 690);
+        //Test walls
+        // let northTestWall = new Wall(this.game, worldId, 10, 100, 300, 100);
+        // let westTestWall = new Wall(this.game, worldId, 100, 100, 100, 400);
+        // let slantTestWall = new Wall(this.game, worldId, 500, 100, 600, 300);
 
-        this.worlds.get(worldId).walls.push(westWall);  
+        // this.worlds.get(worldId).walls.push(westTestWall);  
+        // this.worlds.get(worldId).walls.push(northTestWall); 
+        // this.worlds.get(worldId).walls.push(slantTestWall); 
+
+        //Adding actual border
+        let northWall = new Wall(this.game, worldId, 0, 0, 0, params.CANVAS_SIZE);
+        let eastWall = new Wall(this.game, worldId, 0, params.CANVAS_SIZE, params.CANVAS_SIZE, params.CANVAS_SIZE);
+        let southWall = new Wall(this.game, worldId, params.CANVAS_SIZE, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
+        let westWall = new Wall(this.game, worldId, 0, 0, params.CANVAS_SIZE, 0);
+
         this.worlds.get(worldId).walls.push(northWall); 
+        this.worlds.get(worldId).walls.push(eastWall); 
+        this.worlds.get(worldId).walls.push(southWall); 
+        this.worlds.get(worldId).walls.push(westWall); 
+
         
 
         if (params.FREE_RANGE) {
