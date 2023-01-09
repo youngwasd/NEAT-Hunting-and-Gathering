@@ -602,6 +602,9 @@ class PopulationManager {
                 agent.resetOrigin();
                 agent.resetEnergy();
                 agent.resetCalorieCounts();
+
+                //Reset
+                agent.resetCounters();
             });
         }
 
