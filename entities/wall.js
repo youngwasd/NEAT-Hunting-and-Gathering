@@ -1,5 +1,5 @@
 /**
- * The main class for Wall and Wall behaviors/lifecycles
+ * The main class for Wall and Wall behaviors
  * 
  * @author Toan Nguyen 
  */
@@ -118,10 +118,10 @@ class Wall {
 
     /**
      * Check for collision of the wall with the agents and trigger collision handling
+     * @param {*} collisionHandlingFunction the function to be called when collision happened
      * @return the number of agents colliding with wall
      */
-    wallAgentCollisionHandling = () =>{
-        let agentsList = [];
+    wallAgentCollisionHandling = (collisionHandlingFunction) =>{
         //Collect all agents entity
         let entities = this.game.population.getEntitiesInWorld(this.worldId, false, true);
 
@@ -131,13 +131,7 @@ class Wall {
         entities.forEach(entity => {
             /** add all entities to the agentList that aren't ourselves, not dead*/
             if (entity !== this && !entity.removeFromWorld && this.lineSegmentCircleCollide(entity.BC).length > 0) {
-                agentsList.push(entity);
-
-                //Temporary kill agents if cross the wall & can be replaced with collision handling from agent
-                entity.removeFromWorld = true;
-                console.log(entity + " is dead, goodbye cruel world!");
-                //console.log(entity.BC);
-
+                collisionHandlingFunction(entity);
                 ++numberOfAgentsCollide;
             }
         });
@@ -146,7 +140,14 @@ class Wall {
     }
 
     update() {
-        this.wallAgentCollisionHandling();
+        this.wallAgentCollisionHandling((X) =>{
+            //Temporary kill agents if cross the wall & can be replaced with collision handling from agent
+            //X.removeFromWorld = true;
+            //console.log(X + " is dead, goodbye cruel world!");
+            X.numberOfTickBumpingIntoWalls++;
+            console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
+            
+        });
 
 
 

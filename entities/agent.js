@@ -34,6 +34,10 @@ class Agent {
         this.age = 0; // all Agents start at age 0
         this.resetOrigin(); // assigns this Agent's origin point to its current position
         this.updateBoundingCircle(); // initialize the bounding circle
+
+        this.isOutOfBound = false;//Whether the agent is Out of Bound
+        this.numberOfTickOutOfBounds = 0;//Total ticks the agent spent out of bounds
+        this.numberOfTickBumpingIntoWalls = 0;//Total ticks "bumping" into walls
     };
 
     /** Assigns this Agent's fitness */
@@ -45,7 +49,13 @@ class Agent {
          * @returns this Agent's fitness
          */
         const fitnessFunct = () => {
-            return this.energy * params.FITNESS_ENERGY + this.caloriesEaten * params.FITNESS_CALORIES + this.badCaloriesEaten * params.FITNESS_BAD_CALORIES;
+            let totalRawFitness = this.energy * params.FITNESS_ENERGY + this.caloriesEaten * params.FITNESS_CALORIES + this.badCaloriesEaten * params.FITNESS_BAD_CALORIES;
+            /**
+             * decrease fitness depend on number of ticks agent spend out of bound
+             */
+            totalRawFitness += (-25) * this.numberOfTickOutOfBounds;
+            totalRawFitness += (-15) * this.numberOfTickBumpingIntoWalls;
+            return totalRawFitness;
         };
 
         this.genome.rawFitness = fitnessFunct();
@@ -224,6 +234,15 @@ class Agent {
             /** Our energy may have changed, so update our diameter and BC once again */
             this.updateDiameter();
             this.updateBoundingCircle();
+        }
+
+        //Check out of bound here
+        if (this.x < 0 || this.x > params.CANVAS_SIZE || this.y < 0 || this.y > params.CANVAS_SIZE){
+            this.isOutOfBound = true;
+            ++this.numberOfTickOutOfBounds;
+        }
+        else{
+            this.isOutOfBound = false;
         }
 
 

@@ -57,7 +57,7 @@ class Genome {
     static getDefault = (randomWeights = params.RAND_DEFAULT_WEIGHTS) => {
 
         let numInputs = Genome.DEFAULT_INPUTS;
-        console.log("Inputs: " + numInputs);
+        //console.log("Inputs: " + numInputs);
         let numHiddens = Genome.DEFAULT_HIDDENS;
         let numOutputs = Genome.DEFAULT_OUTPUTS;
         let numNeurons = numInputs + numHiddens + numOutputs;

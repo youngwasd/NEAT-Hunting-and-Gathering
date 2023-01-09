@@ -8,7 +8,7 @@ class NeuralNet {
     };
 
     processInput(input) {
-        console.log(input);
+        //console.log(input);
 
         let wheels = [];
         let inputIndex = 0;
