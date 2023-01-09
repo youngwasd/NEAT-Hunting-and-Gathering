@@ -362,11 +362,17 @@ class Agent {
             //Check for wall collisions
             walls.forEach(wall => {
                 let colVals = this.visionRayWallCollision(line, wall);
-                let wallDist = distance(eyes, colVals);
-                if(wallDist >= 0 && wallDist < minDist && (inRightHalf == colVals.x >= eyes.x)) {
-                    minDist = wallDist;
-                    hueOfMinDist = 100;//tempory value to change
-                    closestPoint = colVals;
+                let lowY = Math.min(wall.yStart, wall.yEnd);
+                let highY = Math.max(wall.yStart, wall.yEnd);
+                let lowX = Math.min(wall.xStart, wall.xEnd);
+                let highX = Math.max(wall.xStart, wall.xEnd);
+                if(colVals.y >= lowY && colVals.y <= highY && colVals.x >= lowX && colVals.x <= highX){
+                    let wallDist = distance(eyes, colVals);
+                    if(wallDist >= 0 && wallDist < minDist && (inRightHalf == colVals.x >= eyes.x)) {
+                        minDist = wallDist;
+                        hueOfMinDist = 100;//tempory value to change
+                        closestPoint = colVals;
+                    }
                 }
             });
             entities.forEach(entity =>{
