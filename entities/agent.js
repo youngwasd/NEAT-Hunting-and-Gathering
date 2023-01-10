@@ -109,6 +109,12 @@ class Agent {
         this.badCaloriesEaten = 0;
     };
 
+    /** Resets counters for the numbers of tick out of bound and bumping into walls */
+    resetCounters(){
+        this.numberOfTickBumpingIntoWalls = 0;
+        this.numberOfTickOutOfBounds = 0;
+    }
+
     /**
      * Indicates whether this Agent is within the boundaries of its world (is visible on the canvas)
      * 
