@@ -137,6 +137,15 @@ class PopulationManager {
         if (document.activeElement.id !== "fitness_bad_calories") {
             params.FITNESS_BAD_CALORIES = parseFloat(document.getElementById("fitness_bad_calories").value);
         }
+
+        if (document.activeElement.id !== "FITNESS_BUMPING_INTO_WALL") {
+            params.FITNESS_BUMPING_INTO_WALL = parseFloat(document.getElementById("FITNESS_BUMPING_INTO_WALL").value);
+        }
+
+        if (document.activeElement.id !== "FITNESS_OUT_OF_BOUND") {
+            params.FITNESS_OUT_OF_BOUND = parseFloat(document.getElementById("FITNESS_OUT_OF_BOUND").value);
+        }
+
         if (document.activeElement.id !== "num_agents") {
             params.NUM_AGENTS = parseInt(document.getElementById("num_agents").value);
         }

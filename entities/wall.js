@@ -145,7 +145,7 @@ class Wall {
             //X.removeFromWorld = true;
             //console.log(X + " is dead, goodbye cruel world!");
             X.numberOfTickBumpingIntoWalls++;
-            console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
+            //console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
             
         });
 
