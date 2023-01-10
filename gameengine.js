@@ -55,6 +55,10 @@ class GameEngine {
                 }
             });
             members.display.draw(members.ctx);
+
+            members.walls.forEach(wall => {
+                wall.draw(members.ctx)   
+            });
         });
     };
 
@@ -85,6 +89,10 @@ class GameEngine {
                     members.agents[i].update();
                 }
             }
+
+            members.walls.forEach(wall => {
+                wall.update(members.ctx)   
+            });
         });
 
         let isNewGeneration = this.population.update();

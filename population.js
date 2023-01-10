@@ -70,6 +70,7 @@ class PopulationManager {
     };
 
     resetSim() {
+        params.AGENT_VISION_IS_CONE = document.getElementById("agent_vision_is_cone").checked;
         PopulationManager.SPECIES_ID = 0;
         PopulationManager.GEN_NUM = 0;
         PopulationManager.SPECIES_CREATED = 0;
@@ -97,6 +98,7 @@ class PopulationManager {
         params.RAND_DEFAULT_WEIGHTS = document.getElementById("rand_default_weights").checked;
         params.GEN_STOP = document.getElementById("gen_stop").checked;
         params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
+        params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
@@ -113,6 +115,12 @@ class PopulationManager {
         }
         if (document.activeElement.id !== "agent_vision_radius") {
             params.AGENT_VISION_RADIUS = parseFloat(document.getElementById("agent_vision_radius").value);
+        }
+        if (document.activeElement.id !== "agent_vision_rays") {
+            params.AGENT_VISION_RAYS = parseFloat(document.getElementById("agent_vision_rays").value);
+        }
+        if (document.activeElement.id !== "agent_vision_angle") {
+            params.AGENT_VISION_ANGLE = parseFloat(document.getElementById("agent_vision_angle").value);
         }
         if (document.activeElement.id !== "compat_threshold") {
             params.COMPAT_THRESH = parseFloat(document.getElementById("compat_threshold").value);
@@ -350,6 +358,23 @@ class PopulationManager {
         }
     };
 
+    /**
+     * Add border to a particular world
+     * @param {*} worldId The world id we want to implement border in
+     */
+    addBorderToWorld = (worldId) => {
+        //Adding actual border
+        let northWall = new Wall(this.game, worldId, 0, 0, 0, params.CANVAS_SIZE);
+        let eastWall = new Wall(this.game, worldId, 0, params.CANVAS_SIZE, params.CANVAS_SIZE, params.CANVAS_SIZE);
+        let southWall = new Wall(this.game, worldId, params.CANVAS_SIZE, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
+        let westWall = new Wall(this.game, worldId, 0, 0, params.CANVAS_SIZE, 0);
+
+        this.worlds.get(worldId).walls.push(northWall); 
+        this.worlds.get(worldId).walls.push(eastWall); 
+        this.worlds.get(worldId).walls.push(southWall); 
+        this.worlds.get(worldId).walls.push(westWall); 
+    }
+
     initNewWorld(worldId) {
         const world = this.createWorldCanvas(worldId);
         this.worlds.set(
@@ -361,20 +386,21 @@ class PopulationManager {
                 home: new HomeBase(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2), 
                 ctx: world.getContext("2d"),
                 canvas: world,
-                display: new DataDisplay(this.game)
+                display: new DataDisplay(this.game),
+                walls: [],
             }
         );
         this.worlds.get(worldId).home.worldId = worldId;
         this.worlds.get(worldId).display.worldId = worldId;
         
         //Declaring Test walls
-        //let northTestWall = new Wall(this.game, worldId, 10, 100, 300, 100);
-        //let westTestWall = new Wall(this.game, worldId, 100, 100, 100, 400);
-        //let slantTestWall = new Wall(this.game, worldId, 500, 100, 600, 300);
+        let northTestWall = new Wall(this.game, worldId, 10, 100, 300, 100);
+        let westTestWall = new Wall(this.game, worldId, 100, 100, 100, 400);
+        let slantTestWall = new Wall(this.game, worldId, 500, 100, 600, 300);
         //Adding test walls
-        // this.worlds.get(worldId).walls.push(westTestWall);  
-        // this.worlds.get(worldId).walls.push(northTestWall); 
-        // this.worlds.get(worldId).walls.push(slantTestWall); 
+        this.worlds.get(worldId).walls.push(westTestWall);  
+        this.worlds.get(worldId).walls.push(northTestWall); 
+        this.worlds.get(worldId).walls.push(slantTestWall); 
 
         this.addBorderToWorld(worldId);
         
