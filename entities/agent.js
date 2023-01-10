@@ -55,8 +55,8 @@ class Agent {
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
-            totalRawFitness += (-25) * this.numberOfTickOutOfBounds;
-            totalRawFitness += (-15) * this.numberOfTickBumpingIntoWalls;
+            totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
+            totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             return totalRawFitness;
         };
 
@@ -358,7 +358,7 @@ class Agent {
                 slope: Math.tan(currAngle),
                 yInt: eyes.y - eyes.x * Math.tan(currAngle)
             }
-            console.log("line slope: " + line.slope);
+            
             let minDist = 99999;
             let hueOfMinDist = 0;
             let closestPoint = null;
