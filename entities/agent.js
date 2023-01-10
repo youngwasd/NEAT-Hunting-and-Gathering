@@ -252,6 +252,116 @@ class Agent {
     };
 
     /**
+     * @param {*} line the line representing the ray
+     * @param {*} circle the BC of the entity being checked for collision
+     * @returns 
+     */
+    visionRayCollision(line, entity, eyes) {
+        var circle = entity.BC;
+        var slope = line.slope;
+       
+        var yInt = line.yInt;
+        var a = 1 + slope ** 2;
+        var b = 2 * (slope * (yInt - circle.center.y) - circle.center.x);
+        var c = circle.center.x ** 2 + (yInt - circle.center.y) ** 2 - circle.radius ** 2;
+
+        var d = b * b - 4 * a * c;
+        let x = null;
+        if (d === 0) {
+            x = -b / (2 * a);
+        } else if (d > 0) {
+            let xVals = {x1: (-b + Math.sqrt(d)) / (2 * a), x2: (-b - Math.sqrt(d)) / (2 * a)};
+            let x1Dist = Math.abs(eyes.x - xVals.x1); let x2Dist = Math.abs(eyes.x - xVals.x2);
+            if(x1Dist <= x2Dist){
+                x = xVals.x1;
+            }else{
+                x = xVals.x2;
+            }
+        }
+        if(x != null) {
+            let y = x * slope + yInt;
+            return {y: y, x: x};
+        } else{
+            return {y: 9999, x: 9999};
+        }
+    }
+
+    visionRayWallCollision(line, wall){
+        if (line.slope === wall.slope) return false;
+        if(wall.slope === Infinity) return {x: wall.xEnd, y: line.slope * wall.xEnd + line.yInt};
+
+        var intersect = {};
+        intersect.x = (wall.yInt - line.yInt) / (line.slope - wall.slope);
+        intersect.y = line.slope * intersect.x + line.yInt;
+
+        return intersect;
+    }
+
+    coneVision(input)
+    {
+        //Determine all values used for determining ray angles
+        const rays = params.AGENT_VISION_RAYS - 1;
+        const angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+        const angleBetw = angle/rays;
+
+        let currAngle = this.heading - angle/2;
+
+        let eyes = this.getEyePos();
+
+        this.spotted = [];
+        this.visCol = [];
+        
+        //Collect objects that have collisions relavent to cone vision
+        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, !params.AGENT_NEIGHBORS);
+        let walls = this.game.population.worlds.get(this.speciesId).walls;
+        //Loop that creates all rays
+        for(let i = 0; i <= rays; i++){
+            const line = {
+                slope: Math.tan(currAngle),
+                yInt: eyes.y - eyes.x * Math.tan(currAngle)
+            }
+            console.log("line slope: " + line.slope);
+            let minDist = 99999;//High default value since inputs for the ANN are dependent on 1/dist and not just dist
+            let hueOfMinDist = 0;
+            let closestPoint = null;
+            
+            //Checks to see if the entity is in the same half of the unit circle as the ray is pointing to
+            let inRightHalf = currAngle < Math.PI / 2 || currAngle > Math.PI * 3/2;
+            //Check for wall collisions
+            walls.forEach(wall => {
+                let colVals = this.visionRayWallCollision(line, wall);
+                let lowY = Math.min(wall.yStart, wall.yEnd), highY = Math.max(wall.yStart, wall.yEnd);
+                let lowX = Math.min(wall.xStart, wall.xEnd), highX = Math.max(wall.xStart, wall.xEnd);
+                if(colVals.y >= lowY && colVals.y <= highY && colVals.x >= lowX && colVals.x <= highX){
+                    let wallDist = distance(eyes, colVals);
+                    if(wallDist >= 0 && wallDist < minDist && (inRightHalf == colVals.x >= eyes.x)) {
+                        minDist = wallDist;
+                        hueOfMinDist = 100;//tempory value to change
+                        closestPoint = colVals;
+                    }
+                }
+            });
+            //check for entity collisions
+            entities.forEach(entity =>{
+                if((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity != this){
+                    let newSpot = this.visionRayCollision(line, entity, eyes);
+                    let newDist = distance(eyes, newSpot);
+                    if(newDist < minDist && newDist > 0) {
+                        minDist = newDist;
+                        hueOfMinDist = entity.getDataHue();
+                        closestPoint = newSpot;
+                    }
+                }
+            });
+            if(closestPoint != null) this.visCol.push(closestPoint);
+            let spotVals = {dist: minDist, angle: currAngle};
+            this.spotted.push(spotVals);
+            input.push(1/minDist);//Higher distance means neuron is less likely to fire
+            input.push(hueOfMinDist);
+            currAngle += angleBetw;
+        }
+    }
+    /**
      * Draws this agent on its world canvas
      * 
      * @param {*} ctx the canvas context
@@ -268,5 +378,35 @@ class Agent {
         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
+        ctx.closePath();
+        if(params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && this.energy > Agent.DEATH_ENERGY_THRESH && Array.isArray(this.spotted)) {
+            this.drawConeVision(ctx);
+            this.drawVCol(ctx);
+        }else{
+            console.error("this.spotted is not an array...");
+        }
     };
+
+    drawVCol(ctx){
+        ctx.strokeStyle = "Red";
+        for(let i = 0; i < this.visCol.length; i++){
+            ctx.beginPath();
+            ctx.arc(this.visCol[i].x, this.visCol[i].y, 3, 0, 2 *Math.PI);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+    drawConeVision(ctx){
+        let eyes = this.getEyePos();
+        ctx.strokeStyle = "Red";
+        for(let i = 0; i < this.spotted.length; i++){
+            let angle = this.spotted[i].angle;
+            let dist = this.spotted[i].dist;
+            ctx.beginPath();
+            ctx.moveTo(eyes.x, eyes.y);
+            ctx.lineTo(eyes.x + (Math.cos(angle)) * dist, eyes.y + (Math.sin(angle)) * dist);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
 };
