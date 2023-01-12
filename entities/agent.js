@@ -39,6 +39,7 @@ class Agent {
         this.numberOfTickOutOfBounds = 0;//Total ticks the agent spent out of bounds
         this.numberOfTickBumpingIntoWalls = 0;//Total ticks "bumping" into walls
         this.visCol = []; //initialize the array of all vision collisions
+        this.spotted = [];
         
     };
 
@@ -189,8 +190,8 @@ class Agent {
                 input.push(0);
             }
         }
-        
-        input.push(this.energy);
+        let normEnergy = this.energy/Agent.START_ENERGY;
+        input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
@@ -358,7 +359,6 @@ class Agent {
                 slope: Math.tan(currAngle),
                 yInt: eyes.y - eyes.x * Math.tan(currAngle)
             }
-            
             let minDist = 99999;
             let hueOfMinDist = 0;
             let closestPoint = null;
@@ -376,7 +376,7 @@ class Agent {
                     let wallDist = distance(eyes, colVals);
                     if(wallDist >= 0 && wallDist < minDist && (inRightHalf == colVals.x >= eyes.x)) {
                         minDist = wallDist;
-                        hueOfMinDist = 100;//tempory value to change
+                        hueOfMinDist = wall.getDataHue();//tempory value to change
                         closestPoint = colVals;
                     }
                 }
@@ -395,8 +395,10 @@ class Agent {
             if(closestPoint != null) this.visCol.push(closestPoint);
             let spotVals = {dist: minDist, angle: currAngle};
             this.spotted.push(spotVals);
-            input.push(1/minDist);
-            input.push(hueOfMinDist);
+            //Hard coded 200 value was hand tweaked, and not analytically determined
+            let distInput = 2 / (1 + Math.E ** (minDist/100));//minDist >= params.CANVAS_SIZE ? 0 : 360 - 360 * minDist / params.CANVAS_SIZE;
+            input.push(distInput);
+            input.push(AgentInputUtil.normalizeHue(hueOfMinDist));
             currAngle += angleBetw;
         }
     }
@@ -419,7 +421,7 @@ class Agent {
         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
         ctx.closePath();
-        if(params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE&& Array.isArray(this.spotted)) {
+        if(params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && Array.isArray(this.spotted)) {
             this.drawVFinal(ctx);
             this.drawVCol(ctx);
         }else{
