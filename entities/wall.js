@@ -27,7 +27,16 @@ class Wall {
         this.lineThickness = 1;
         this.strokeColor = "black";
         this.fillColor = "hsl(0, 0%, 0%)";
+        this.dataHue = 60;
+    };
 
+    /**
+     * Supplies this Agent's data hue that is visible by other Agent's in the sim
+     * 
+     * @returns this Agent's data hue
+     */
+    getDataHue() {
+        return this.dataHue;
     };
 
     /**
@@ -146,7 +155,6 @@ class Wall {
             //console.log(X + " is dead, goodbye cruel world!");
             X.numberOfTickBumpingIntoWalls++;
             console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
-            
         });
 
 
