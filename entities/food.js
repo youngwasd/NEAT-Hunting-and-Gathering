@@ -3,7 +3,7 @@
  * 
  * @author Parker Rosengreen and Artem Potafiy
  */
- class Food {
+class Food {
 
     /**
      * Creates a new Food
@@ -15,7 +15,7 @@
      * @param {*} foodTracker the food tracker to monitor this food
      */
     constructor(game, x, y, isPoison, foodTracker) {
-        Object.assign(this, {x, y, isPoison, game, foodTracker});
+        Object.assign(this, { x, y, isPoison, game, foodTracker });
         if (!this.isPoison) this.foodTracker.addFood(); // counts how many foods per generation
         this.tickCounter = 0; // a simple tick counter to manage lifecycle phases for this food
 
@@ -23,9 +23,9 @@
          * the number of ticks in this food's entire lifetime
          * if RAND_FOOD_LIFETIME is enabled, this value is random and at least half of a generation
          * otherwise, this value is a full generation (GEN_TICKS)
-         */ 
+         */
         this.lifecycleTicks = params.RAND_FOOD_LIFETIME ? randomInt(params.GEN_TICKS / 2 + 1) + params.GEN_TICKS / 2 : params.GEN_TICKS;
-        
+
         /** An enumeration object for this food's lifecycle stages */
         this.lifecycle_phases = {
             seed: 0,
@@ -38,25 +38,26 @@
         this.phase = this.lifecycle_phases.seed; // start out as a seed
         let phase_ticks = this.createLifecyclePhaseTicks(); // an array of tick counts to determine how long this food lasts during each lifecycle phase
 
+        //Original properties
         this.phase_properties = [ // configures the ticks, visual properties, calories, and set state for this food's individual lifecycle phases
             {
                 ticks: phase_ticks[0],
                 radius: 7,
-                color: this.isPoison? 120 : 270,
+                color: this.isPoison ? 120 : 270,
                 calories: 50,
                 isSet: false,
             },
             {
                 ticks: phase_ticks[1],
                 radius: 9,
-                color: this.isPoison? 90 : 300,
+                color: this.isPoison ? 90 : 300,
                 calories: 100,
                 isSet: false,
             },
             {
                 ticks: phase_ticks[2],
                 radius: 12,
-                color: this.isPoison? 60 : 330,
+                color: this.isPoison ? 60 : 330,
                 calories: 150,
                 isSet: false,
             },
@@ -68,7 +69,41 @@
                 isSet: false,
             },
         ];
-        
+
+        //Equalized all the phase, no decaying food
+        if (params.NO_DECAYING_FOOD) {
+            this.phase_properties = [ // configures the ticks, visual properties, calories, and set state for this food's individual lifecycle phases
+                {
+                    ticks: phase_ticks[0],
+                    radius: 12,
+                    color: this.isPoison ? 60 : 330,
+                    calories: 150,
+                    isSet: false,
+                },
+                {
+                    ticks: phase_ticks[1],
+                    radius: 12,
+                    color: this.isPoison ? 60 : 330,
+                    calories: 150,
+                    isSet: false,
+                },
+                {
+                    ticks: phase_ticks[2],
+                    radius: 12,
+                    color: this.isPoison ? 60 : 330,
+                    calories: 150,
+                    isSet: false,
+                },
+                {
+                    ticks: phase_ticks[3],
+                    radius: 12,
+                    color: 330,
+                    calories: 150,
+                    isSet: false,
+                },
+            ];
+        }
+
         /** Sets the number of ticks left until this food transitions to its next lifecycle phase */
         this.ticksToNext = this.phase_properties[this.lifecycle_phases.seed].ticks;
         this.updateBoundingCircle(); // update our BC to reflect our position
@@ -115,7 +150,7 @@
      * @returns this Food's data hue
      */
     getDataHue() {
-        if(this.phase_properties[this.phase] == undefined) console.error("Undefined phase properties. Phase is: " + this.phase);
+        if (this.phase_properties[this.phase] == undefined) console.error("Undefined phase properties. Phase is: " + this.phase);
         return this.phase_properties[this.phase].color;
     };
 
@@ -149,11 +184,11 @@
         let numAgents = this.game.population.worlds.get(this.worldId).agents.length; // the number of agents in the world
 
         let numFood = this.isPoison ? // we need the number of food pellets in our world that match our poisonous state
-            this.game.population.worlds.get(this.worldId).poison.length : 
+            this.game.population.worlds.get(this.worldId).poison.length :
             this.game.population.worlds.get(this.worldId).food.length;
 
         const maxAdditionalChildren = 3; // the maximum number of additional seedlings this food can produce
-        let numChildren = numFood > numAgents * (this.isPoison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) ? 
+        let numChildren = numFood > numAgents * (this.isPoison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) ?
             randomInt(2) : // produce either 0 or 1 children if we are already at our food cap in this food's world
             randomInt(maxAdditionalChildren) + 2; // produce between 2 and 4 children inclusive otherwise
 
@@ -182,7 +217,7 @@
 
     /** Indicates whether this food lies outside of the main food circle in the sim */
     isOutsideOuterCircle() {
-        return distance(this.BC.center, {x: params.CANVAS_SIZE / 2, y: params.CANVAS_SIZE / 2}) > params.CANVAS_SIZE / 2;
+        return distance(this.BC.center, { x: params.CANVAS_SIZE / 2, y: params.CANVAS_SIZE / 2 }) > params.CANVAS_SIZE / 2;
     };
 
     /** Indicates whether this food lies inside of the innermost center food circle in the sim */
@@ -261,7 +296,7 @@ class FoodPod {
      * @param {*} isPoison indicates whether this pod is designated for poisonous food
      */
     constructor(game, centerX, centerY, radius, isPoison) {
-        Object.assign(this, {game, centerX, centerY, radius, isPoison});
+        Object.assign(this, { game, centerX, centerY, radius, isPoison });
     };
 
     /**

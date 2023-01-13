@@ -99,6 +99,7 @@ class PopulationManager {
         params.GEN_STOP = document.getElementById("gen_stop").checked;
         params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
+        params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();

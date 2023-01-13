@@ -190,6 +190,11 @@ class Agent {
                 input.push(0);
             }
         }
+
+        //Previous code
+        //input.push(this.energy);
+
+        //Added normalization
         let normEnergy = this.energy/Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 
