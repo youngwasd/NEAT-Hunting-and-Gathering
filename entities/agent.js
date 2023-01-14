@@ -58,6 +58,7 @@ class Agent {
              */
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
+            if(this.closestFood.entity != null) totalRawFitness += 200 / (1 + Math.E ** this.closestFood.dist/100);
             return totalRawFitness;
         };
 
@@ -87,6 +88,18 @@ class Agent {
     getDisplayHue() {
         return PopulationManager.SPECIES_COLORS.get(this.speciesId);
     };
+    /**
+     * Finds the shortest distance from this agent to a source of food (only food.js atm)
+     * @param {*} sortedEntities this method assumes the entities are sorted by distance
+     */
+    getShortestDistToFood(sortedEntities) {
+        for(let i = 0; i < sortedEntities.length; i++) {
+            if(sortedEntities[i] instanceof Food) {
+                return {entity: sortedEntities[i], dist: distance(this.BC.center, sortedEntities[i].BC.center)};
+            }
+        }
+        return {entity: null, dist: Infinity};
+    }
 
     /** Updates this Agent's origin (initial position) to its current position in the sim */
     resetOrigin() {
@@ -174,7 +187,10 @@ class Agent {
 
         /** sorts the spotted neighbors in increasing order of proxomity */
         spottedNeighbors.sort((entity1, entity2) => distance(entity1.BC.center, this.BC.center) - distance(entity2.BC.center, this.BC.center));
-        
+
+        //Determine closest food for fitness function
+        this.closestFood = this.getShortestDistToFood(spottedNeighbors);
+
         if(params.AGENT_VISION_IS_CONE){
             this.coneVision(input);
         } else{
@@ -222,8 +238,7 @@ class Agent {
             this.heading -= 2 * Math.PI;
         }
 
-        // this code defines Agent metabolism as a function of the Agent's diameter and displacement (how far we have moved since the last tick)
-        let displacement = distance(oldPos, { x: this.x, y: this.y });
+        //METABOLISM: Defined by the power of the wheels
         this.energy -= Math.abs(this.leftWheel) * Math.abs(this.rightWheel) / 2;
         this.energy -= 0.1; // this is a baseline metabolism that is independent of Agent physical activity
 
