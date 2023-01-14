@@ -56,9 +56,9 @@ class Agent {
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
-            totalRawFitness += (-25) * this.numberOfTickOutOfBounds;
-            totalRawFitness += (-15) * this.numberOfTickBumpingIntoWalls;
             if(this.closestFood.entity != null) totalRawFitness += 200 / (1 + Math.E ** this.closestFood.dist/100);
+            totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
+            totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             return totalRawFitness;
         };
 
@@ -122,6 +122,12 @@ class Agent {
         this.caloriesEaten = 0;
         this.badCaloriesEaten = 0;
     };
+
+    /** Resets counters for the numbers of tick out of bound and bumping into walls */
+    resetCounters(){
+        this.numberOfTickBumpingIntoWalls = 0;
+        this.numberOfTickOutOfBounds = 0;
+    }
 
     /**
      * Indicates whether this Agent is within the boundaries of its world (is visible on the canvas)
@@ -200,6 +206,11 @@ class Agent {
                 input.push(0);
             }
         }
+
+        //Previous code
+        //input.push(this.energy);
+
+        //Added normalization
         let normEnergy = this.energy/Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 

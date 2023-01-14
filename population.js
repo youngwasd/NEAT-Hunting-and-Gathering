@@ -100,6 +100,7 @@ class PopulationManager {
         params.GEN_STOP = document.getElementById("gen_stop").checked;
         params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
+        params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
@@ -138,6 +139,15 @@ class PopulationManager {
         if (document.activeElement.id !== "fitness_bad_calories") {
             params.FITNESS_BAD_CALORIES = parseFloat(document.getElementById("fitness_bad_calories").value);
         }
+
+        if (document.activeElement.id !== "FITNESS_BUMPING_INTO_WALL") {
+            params.FITNESS_BUMPING_INTO_WALL = parseFloat(document.getElementById("FITNESS_BUMPING_INTO_WALL").value);
+        }
+
+        if (document.activeElement.id !== "FITNESS_OUT_OF_BOUND") {
+            params.FITNESS_OUT_OF_BOUND = parseFloat(document.getElementById("FITNESS_OUT_OF_BOUND").value);
+        }
+
         if (document.activeElement.id !== "num_agents") {
             params.NUM_AGENTS = parseInt(document.getElementById("num_agents").value);
         }
@@ -433,8 +443,13 @@ class PopulationManager {
         let allPoison = this.foodAsList(true);
         allPoison.forEach(poison => poison.worldId = 0); // reset the world id of all poison
         this.worlds = new Map();
-        let world = this.createWorldCanvas(0);
-        this.worlds.set(
+        //let world = this.createWorldCanvas(0);
+        this.initNewWorld(0);
+        this.worlds.get(0).agents = allAgents;
+        this.worlds.get(0).food = allFood;
+        this.worlds.get(0).poison = allPoison;
+        
+        /*this.worlds.set(
             0,
             {
                 agents: allAgents,
@@ -444,10 +459,11 @@ class PopulationManager {
                 ctx: world.getContext("2d"),
                 canvas: world,
                 display: new DataDisplay(this.game)
+
             }
         );
         this.worlds.get(0).home.worldId = 0;
-        this.worlds.get(0).display.worldId = 0;
+        this.worlds.get(0).display.worldId = 0;*/
         this.resetCanvases();
     };
 
@@ -603,6 +619,9 @@ class PopulationManager {
                 agent.resetOrigin();
                 agent.resetEnergy();
                 agent.resetCalorieCounts();
+
+                //Reset
+                agent.resetCounters();
             });
         }
 
