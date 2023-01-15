@@ -56,9 +56,9 @@ class Agent {
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
+            if(this.closestFood.entity != null) totalRawFitness += 200 / (1 + Math.E ** this.closestFood.dist/100);
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
-            if(this.closestFood.entity != null) totalRawFitness += 200 / (1 + Math.E ** this.closestFood.dist/100);
             return totalRawFitness;
         };
 
@@ -344,7 +344,7 @@ class Agent {
             let y = x * slope + yInt;
             return {y: y, x: x};
         } else{
-            return {y: 9999, x: 9999};
+            return {y: Infinity, x: Infinity};
         }
     }
 
@@ -379,7 +379,7 @@ class Agent {
                 slope: Math.tan(currAngle),
                 yInt: eyes.y - eyes.x * Math.tan(currAngle)
             }
-            let minDist = 99999;
+            let minDist = Infinity;
             let hueOfMinDist = 0;
             let closestPoint = null;
             
@@ -415,10 +415,14 @@ class Agent {
             if(closestPoint != null) this.visCol.push(closestPoint);
             let spotVals = {dist: minDist, angle: currAngle};
             this.spotted.push(spotVals);
+
+            //console.log("minDist: " + minDist);
             //Hard coded 200 value was hand tweaked, and not analytically determined
             let distInput = 2 / (1 + Math.E ** (minDist/100));//minDist >= params.CANVAS_SIZE ? 0 : 360 - 360 * minDist / params.CANVAS_SIZE;
+            //console.log("distInput: " + distInput);
             input.push(distInput);
-            input.push(AgentInputUtil.normalizeHue(hueOfMinDist));
+            //console.log("hueOfMinDist: " + hueOfMinDist);
+            input.push(hueOfMinDist/360);
             currAngle += angleBetw;
         }
     }
@@ -463,7 +467,7 @@ class Agent {
         ctx.strokeStyle = "Red";
         for(let i = 0; i < this.spotted.length; i++){
             let angle = this.spotted[i].angle;
-            let dist = this.spotted[i].dist;
+            let dist = this.spotted[i].dist = Infinity ? 9999 : this.spotted[i].dist;
             ctx.beginPath();
             ctx.moveTo(eyes.x, eyes.y);
             ctx.lineTo(eyes.x + (Math.cos(angle)) * dist, eyes.y + (Math.sin(angle)) * dist);
