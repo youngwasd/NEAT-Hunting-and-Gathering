@@ -61,7 +61,6 @@ class Agent {
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             return totalRawFitness;
         };
-
         this.genome.rawFitness = fitnessFunct();
     };
 

@@ -151,6 +151,10 @@ class PopulationManager {
         if (document.activeElement.id !== "num_agents") {
             params.NUM_AGENTS = parseInt(document.getElementById("num_agents").value);
         }
+
+        if (document.activeElement.id !== "max_agents_per_world") {
+            params.MAX_AGENTS_PER_WORLD = parseInt(document.getElementById("max_agents_per_world").value);
+        }
         
         //Cleans up all of the food/poison for the world
         this.worlds.forEach((members, worldId) => {
@@ -404,13 +408,13 @@ class PopulationManager {
         this.worlds.get(worldId).display.worldId = worldId;
         
         //Declaring Test walls
-        // let northTestWall = new Wall(this.game, worldId, 10, 100, 300, 100);
+        //let northTestWall = new Wall(this.game, worldId, 30, 100, 770, 100);
         // let westTestWall = new Wall(this.game, worldId, 100, 100, 100, 400);
-        // let slantTestWall = new Wall(this.game, worldId, 500, 100, 600, 300);
+        //let slantTestWall = new Wall(this.game, worldId, 500, 0, 700, 800);
         // //Adding test walls
         // this.worlds.get(worldId).walls.push(westTestWall);  
-        // this.worlds.get(worldId).walls.push(northTestWall); 
-        // this.worlds.get(worldId).walls.push(slantTestWall); 
+        //this.worlds.get(worldId).walls.push(northTestWall); 
+        //this.worlds.get(worldId).walls.push(slantTestWall); 
 
         this.addBorderToWorld(worldId);
         
@@ -448,22 +452,7 @@ class PopulationManager {
         this.worlds.get(0).agents = allAgents;
         this.worlds.get(0).food = allFood;
         this.worlds.get(0).poison = allPoison;
-        
-        /*this.worlds.set(
-            0,
-            {
-                agents: allAgents,
-                food: allFood,
-                poison: allPoison,
-                home: new HomeBase(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2),
-                ctx: world.getContext("2d"),
-                canvas: world,
-                display: new DataDisplay(this.game)
 
-            }
-        );
-        this.worlds.get(0).home.worldId = 0;
-        this.worlds.get(0).display.worldId = 0;*/
         this.resetCanvases();
     };
 
@@ -503,6 +492,7 @@ class PopulationManager {
     };
 
     processGeneration() {
+        //evaluate the agents
         this.agentsAsList().forEach(agent => {
             this.agentTracker.processAgent(agent);
             this.genomeTracker.processGenome(agent.genome);
@@ -512,9 +502,10 @@ class PopulationManager {
 
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
 
-        let reprodFitMap = new Map();
-        let minShared = 0;
+        let reprodFitMap = new Map();//key: species, value: avg fitness
+        let minShared = 0;//finds the min total fitness????????????????????
         PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
+            //sum raw fitness for all members of this species
             let sumRaws = 0;
             speciesList.forEach(member => {
                 sumRaws += member.genome.rawFitness;
@@ -523,6 +514,7 @@ class PopulationManager {
             reprodFitMap.set(speciesId, sumRaws / speciesList.length);
         });
         let sumShared = 0;
+        //Build the fitness chart for the species
         reprodFitMap.forEach((fitness, speciesId) => {
             const newFit = fitness + minShared * -1 + 10;
             reprodFitMap.set(speciesId, newFit);
@@ -619,8 +611,6 @@ class PopulationManager {
                 agent.resetOrigin();
                 agent.resetEnergy();
                 agent.resetCalorieCounts();
-
-                //Reset
                 agent.resetCounters();
             });
         }
