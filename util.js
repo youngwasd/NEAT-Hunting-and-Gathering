@@ -3,10 +3,10 @@ const params = {
     CANVAS_SIZE: 800,
     FOOD_OUTSIDE: false,
     FOOD_INSIDE: false,
-    GEN_TICKS: 1000,
+    GEN_TICKS: 700,
     AGENT_NEIGHBORS: false,
     FOOD_AGENT_RATIO: 3,
-    POISON_AGENT_RATIO: 1,
+    POISON_AGENT_RATIO: 0,
     COMPAT_THRESH: 0.07,
     ENFORCE_MIN_FOOD: false,
     ENFORCE_MIN_POISON: false,
@@ -20,11 +20,13 @@ const params = {
     RAND_DEFAULT_WEIGHTS: false,
     AGENT_NEIGHBOR_COUNT: 5,
     FITNESS_ENERGY: 1,
-    FITNESS_CALORIES: 1,
+    FITNESS_CALORIES: 12,
     FITNESS_BAD_CALORIES: -1,
-    FITNESS_BUMPING_INTO_WALL: -2,
-    FITNESS_OUT_OF_BOUND: -2,
+    FITNESS_BUMPING_INTO_WALL: -8,
+    FITNESS_OUT_OF_BOUND: -25,
+    FITNESS_DIST_FROM_CALORIES: 1,
     GEN_STOP: false,
+    NO_DECAYING_FOOD: true,
     NUM_AGENTS: 50,
     DYNAMIC_AGENT_SIZING: false,
     AGENT_VISION_RAYS: 13,
@@ -35,16 +37,16 @@ const params = {
 
 const getMedian = (arr) => {
     arr.sort((a, b) => a - b);
-    if(arr.length % 2 != 0) {
+    if (arr.length % 2 != 0) {
         return arr[Math.floor(arr.length / 2)];
     } else {
-        return getMean(arr.slice(Math.floor(arr.length/2), Math.floor(arr.length/2) + 2));
+        return getMean(arr.slice(Math.floor(arr.length / 2), Math.floor(arr.length / 2) + 2));
     }
 };
 
 const getMean = (arr) => {
-    if(arr.length == 0) return 0;
-    const total = arr.reduce((curr, acc)=> acc + curr, 0);
+    if (arr.length == 0) return 0;
+    const total = arr.reduce((curr, acc) => acc + curr, 0);
     return total / arr.length;
 };
 
