@@ -148,6 +148,10 @@ class PopulationManager {
             params.FITNESS_OUT_OF_BOUND = parseFloat(document.getElementById("FITNESS_OUT_OF_BOUND").value);
         }
 
+        if (document.activeElement.id !== "FITNESS_DIST_FROM_CAL") {
+            params.FITNESS_DIST_FROM_CALORIES = parseFloat(document.getElementById("fitness_dist_from_cal").value);
+        }
+
         if (document.activeElement.id !== "num_agents") {
             params.NUM_AGENTS = parseInt(document.getElementById("num_agents").value);
         }
@@ -514,23 +518,30 @@ class PopulationManager {
 
         let reprodFitMap = new Map();
         let minShared = 0;
+        //Determine average raw fitness for each species - gabe
         PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
             let sumRaws = 0;
             speciesList.forEach(member => {
                 sumRaws += member.genome.rawFitness;
             });
-            minShared = Math.min(minShared, sumRaws);
+            minShared = Math.min(minShared, sumRaws/speciesList.length);//changed sumRaws here to average - gabe
+
+            console.log("Species: " + speciesId + " fitness: " + sumRaws/speciesList.length)
             reprodFitMap.set(speciesId, sumRaws / speciesList.length);
         });
+        console.log("Min shared: " + minShared);
+        //Determines the avg fitness for each species after adding the abs val minimum negative fitness? - gabe
         let sumShared = 0;
         reprodFitMap.forEach((fitness, speciesId) => {
             const newFit = fitness + minShared * -1 + 10;
             reprodFitMap.set(speciesId, newFit);
             sumShared += reprodFitMap.get(speciesId);
             this.agentTracker.addSpeciesFitness({speciesId, fitness: newFit});
+            
+            console.log("Species: " + speciesId + " modified fitness: " + newFit)
         });
-        generateFitnessChart(this.agentTracker.getFitnessData());
 
+        //Selection process???
         if (!params.FREE_RANGE) {
             let rouletteOrder = [...reprodFitMap.keys()].sort();
             let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
@@ -571,7 +582,8 @@ class PopulationManager {
 
             let children = [];
             let alives = this.countAlives(); // if free range mode kills off everybody, we produce at least 1 new agent
-            for (let i = 0; i < PopulationManager.NUM_AGENTS - alives; i++) { // randomly produce offspring between n pairs of remaining agents, reproduction roulette
+            // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
+            for (let i = 0; i < PopulationManager.NUM_AGENTS - alives; i++) { 
                 let rouletteResult = randomFloat(sumShared);
                 let rouletteIndex = 0;
                 let accumulator = 0;
@@ -626,6 +638,9 @@ class PopulationManager {
         }
 
         PopulationManager.GEN_NUM++;
+
+        //Generates the data charts
+        generateFitnessChart(this.agentTracker.getFitnessData());
         generateAgeChart(this.agentTracker.getAgeData());
         generateFoodConsumptionChart(this.foodTracker.getConsumptionData());
         generateFoodStageChart(this.foodTracker.getLifeStageData());
