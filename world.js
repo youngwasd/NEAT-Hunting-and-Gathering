@@ -19,7 +19,8 @@ class World {
         this.display.worldId = worldId;
 
         //Add random box wall
-        this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);    
+        //this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);    
+        this.addBorderToWorld();
     };
 
     update() {

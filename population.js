@@ -587,9 +587,9 @@ class PopulationManager {
         }
 
         //Clear current walls and add random walls to the map. Will be different for each world
-        this.worlds.forEach(world => {
+        /*this.worlds.forEach(world => {
             world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);
-        });
+        });*/
 
         PopulationManager.GEN_NUM++;
 
