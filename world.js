@@ -3,9 +3,9 @@
  */
 
 class World {
-    constructor(game, worldId, speciesId) {
+    constructor(game, worldId) {
         let world = this.createWorldCanvas(worldId);
-        Object.assign(this, {game, worldId, speciesId});
+        Object.assign(this, {game, worldId});
         this.agents = [];
         this.food = [];
         this.poison = [];
@@ -17,6 +17,9 @@ class World {
 
         this.home.worldId = worldId;
         this.display.worldId = worldId;
+
+        //Add random box wall
+        this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);    
     };
 
     update() {
@@ -79,29 +82,6 @@ class World {
         }
     };
 
-    spawnFood(poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.agents.length) {
-        let seedlings = [];
-        let index = 0;
-        for (let i = 0; i < count; i++) { // add food sources
-            let pod = poison ? this.poisonPodLayout[index] : this.foodPodLayout[index];
-            let loc = pod.genFoodPos();
-            seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker));
-            index = (index + 1) % (poison ? this.poisonPodLayout.length : this.foodPodLayout.length);
-        }
-        this.registerSeedlings(worldId, seedlings);
-    };
-
-    registerSeedlings(worldId, seedlings) {
-        seedlings.forEach(seedling => {
-            seedling.worldId = worldId;
-            if (seedling.isPoison) {
-                this.worlds.get(worldId).poison.push(seedling);
-            } else {
-                this.worlds.get(worldId).food.push(seedling);
-            }
-        });
-    };
-
     countDeads() {
         let count = 0;
         this.agents.forEach(agent => {
@@ -123,25 +103,14 @@ class World {
     };
 
     foodAsList(poison = false) {
-        return poison ? this.poison : this.food;;
+        return poison ? this.poison : this.food;
     };
 
     cleanupAgents() {
-        let extincts = [];
-        this.worlds.forEach((members, worldId) => {
-            for (let i = members.agents.length - 1; i >= 0; --i) {
-                if (members.agents[i].removeFromWorld) {
-                    members.agents.splice(i, 1);
-                }
+        for (let i = this.agents.length - 1; i >= 0; --i) {
+            if (this.agents[i].removeFromWorld) {
+                this.agents.splice(i, 1);
             }
-            if (members.agents.length === 0) {
-                extincts.push(worldId);
-            }
-        });
-        if (params.SPLIT_SPECIES) {
-            extincts.forEach(speciesId => {
-                this.removeWorld(speciesId);
-            });
         }
     };
 
@@ -181,12 +150,11 @@ class World {
     /**
      * Randomizing A edge of a box Walls in a particular world and clear the wall in this world
      * Randomizing zone is limit by two squares.
-     * @param {*} world the world to spawn wall in
      * @param {*} n number of walls (Maximum is 4)
      * @param {*} spawningZoneStart the starting coordinate of the randomizing zone to spawn the walls 
      * @param {*} spawningZoneWidth the width of the randomizing zone to spawn the walls  
      */ 
-    produceRandomBoxWalls(world, n, spawningZoneStart, spawningZoneWidth){
+    produceRandomBoxWalls(n, spawningZoneStart, spawningZoneWidth){
         let spawningCoordinateBegin = [
             {x: spawningZoneStart, y: spawningZoneStart},
             {x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart},
@@ -202,7 +170,7 @@ class World {
         ];
 
         //Clear the walls first
-        world.walls = [];
+        this.walls = [];
         //Re added border walls
         this.addBorderToWorld();
 
@@ -210,8 +178,8 @@ class World {
         let arr = shuffleArray([0, 1, 2, 3]);
 
         for (let i = 0; i < Math.max(0, (n % 4)); i++){
-            let tmp = new Wall(this.game, world.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x , spawningCoordinateEnd[arr[i]].y); 
-            world.walls.push(tmp);  
+            let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x , spawningCoordinateEnd[arr[i]].y); 
+            this.walls.push(tmp);  
         }
         
     }
