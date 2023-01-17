@@ -541,7 +541,7 @@ class PopulationManager {
             console.log("Species: " + speciesId + " modified fitness: " + newFit)
         });
 
-        //Selection process???
+        //Selection process for killing off agents
         if (!params.FREE_RANGE) {
             let rouletteOrder = [...reprodFitMap.keys()].sort();
             let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
