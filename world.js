@@ -92,7 +92,7 @@ class World {
         return count;
     };
 
-    countAlives(worldId = undefined) {
+    countAlives() {
         let count = 0;
         this.agents.forEach(agent => {
             if (!agent.removeFromWorld) {
