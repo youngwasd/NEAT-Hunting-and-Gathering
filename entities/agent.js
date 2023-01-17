@@ -53,10 +53,13 @@ class Agent {
          */
         const fitnessFunct = () => {
             let totalRawFitness = this.energy * params.FITNESS_ENERGY + this.caloriesEaten * params.FITNESS_CALORIES + this.badCaloriesEaten * params.FITNESS_BAD_CALORIES;
+            
+            /** Rewards the agent based on how close they were to more food */
+            if(this.closestFood.entity != null) totalRawFitness += 2 * params.FITNESS_DIST_FROM_CALORIES * this.closestFood.entity.getCalories() / (1 + Math.E ** (this.closestFood.dist/50));
+            console.log("dist param coeff: " + params.FITNESS_DIST_FROM_CALORIES);
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
-            if(this.closestFood.entity != null) totalRawFitness += 200 / (1 + Math.E ** this.closestFood.dist/100);
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             return totalRawFitness;
@@ -93,7 +96,7 @@ class Agent {
      */
     getShortestDistToFood(sortedEntities) {
         for(let i = 0; i < sortedEntities.length; i++) {
-            if(sortedEntities[i] instanceof Food) {
+            if(sortedEntities[i] instanceof Food && sortedEntities[i].phase < sortedEntities[i].lifecycle_phases.dead) {
                 return {entity: sortedEntities[i], dist: distance(this.BC.center, sortedEntities[i].BC.center)};
             }
         }

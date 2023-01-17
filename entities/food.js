@@ -26,7 +26,9 @@ class Food {
          */
         this.lifecycleTicks = params.RAND_FOOD_LIFETIME ? randomInt(params.GEN_TICKS / 2 + 1) + params.GEN_TICKS / 2 : params.GEN_TICKS;
 
-        /** An enumeration object for this food's lifecycle stages */
+        /** An enumeration object for this food's lifecycle stages 
+         * NOTE: other code such as the fitness function for the agent assumes dead is the final stage
+        */
         this.lifecycle_phases = {
             seed: 0,
             adolescent: 1,
@@ -166,9 +168,7 @@ class Food {
     /** Processes a consumption operation on this food and returns the number of calories provided by the consumption */
     consume() {
         // if this food is poisonous, then our calories are NEGATED
-        let cals = this.isPoison
-            ? Math.abs(this.phase_properties[this.phase].calories) * -1
-            : this.phase_properties[this.phase].calories;
+        let cals = this.getCalories();
         this.foodTracker.addCalories(cals);
         if (!this.isPoison) {
             this.foodTracker.addTick();
@@ -178,6 +178,13 @@ class Food {
         this.removeFromWorld = true; // if we are consumed then we are now dead and get wiped from the sim
         return cals;
     };
+
+    getCalories() {
+        if(this.phase >= this.lifecycle_phases.dead) return 0;
+        return this.isPoison ?
+        Math.abs(this.phase_properties[this.phase].calories) * -1
+        : this.phase_properties[this.phase].calories;
+    }
 
     /** Processes a reproduction operation on this food */
     reproduce() {

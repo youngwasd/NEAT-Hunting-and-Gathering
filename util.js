@@ -22,8 +22,9 @@ const params = {
     FITNESS_ENERGY: 1,
     FITNESS_CALORIES: 12,
     FITNESS_BAD_CALORIES: -1,
-    FITNESS_BUMPING_INTO_WALL: -25,
+    FITNESS_BUMPING_INTO_WALL: -8,
     FITNESS_OUT_OF_BOUND: -25,
+    FITNESS_DIST_FROM_CALORIES: 1,
     GEN_STOP: false,
     NO_DECAYING_FOOD: true,
     NUM_AGENTS: 50,
@@ -37,16 +38,16 @@ const params = {
 
 const getMedian = (arr) => {
     arr.sort((a, b) => a - b);
-    if(arr.length % 2 != 0) {
+    if (arr.length % 2 != 0) {
         return arr[Math.floor(arr.length / 2)];
     } else {
-        return getMean(arr.slice(Math.floor(arr.length/2), Math.floor(arr.length/2) + 2));
+        return getMean(arr.slice(Math.floor(arr.length / 2), Math.floor(arr.length / 2) + 2));
     }
 };
 
 const getMean = (arr) => {
-    if(arr.length == 0) return 0;
-    const total = arr.reduce((curr, acc)=> acc + curr, 0);
+    if (arr.length == 0) return 0;
+    const total = arr.reduce((curr, acc) => acc + curr, 0);
     return total / arr.length;
 };
 
