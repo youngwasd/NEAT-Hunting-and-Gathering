@@ -6,7 +6,7 @@
 class Agent {
 
     /** The amount of energy at which an Agent will die */
-    static DEATH_ENERGY_THRESH = 0;
+    static DEATH_ENERGY_THRESH = 0;//-1000000;
 
     /** The amount of energy an Agent is given upon spawn */
     static START_ENERGY = 100;
@@ -41,6 +41,7 @@ class Agent {
         this.visCol = []; //initialize the array of all vision collisions
         this.spotted = [];
         
+        this.worldId = null;
     };
 
     /** Assigns this Agent's fitness */
@@ -164,6 +165,11 @@ class Agent {
         return Math.abs(relLeft) < Math.abs(relRight) ? relLeft : relRight;
     };
 
+    //Make the energy = energy threshold
+    deactivateAgent_Toan(){
+        this.energy = Agent.DEATH_ENERGY_THRESH;
+    }
+
     /** Updates this Agent for the current tick */
     update() {
         let oldPos = { x: this.x, y: this.y }; // note where we are before moving
@@ -269,9 +275,14 @@ class Agent {
         }
 
         //Check out of bound here
-        if (this.x < 0 || this.x > params.CANVAS_SIZE || this.y < 0 || this.y > params.CANVAS_SIZE){
+        //if (this.x + this.diameter < 0 || this.x - this.diameter > params.CANVAS_SIZE || this.y + this.diameter < 0 || this.y - this.diameter > params.CANVAS_SIZE){//Accounting for the agent's size and 2 layers punishments (walls + out of bound)
+        if (this.x < 0 || this.x > params.CANVAS_SIZE || this.y < 0 || this.y > params.CANVAS_SIZE){//Old out of bound condition
             this.isOutOfBound = true;
             ++this.numberOfTickOutOfBounds;
+
+            //Toan Deactivate the agent when they go out of bound
+            this.deactivateAgent_Toan();
+
         }
         else{
             this.isOutOfBound = false;

@@ -162,11 +162,9 @@ class Wall {
 
     update() {
         this.wallAgentCollisionHandling((X) => {
-            //Temporary kill agents if cross the wall & can be replaced with collision handling from agent
-            
-            //console.log(X + " is dead, goodbye cruel world!");
             X.numberOfTickBumpingIntoWalls++;
             //console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
+            X.deactivateAgent_Toan();
         });
 
 

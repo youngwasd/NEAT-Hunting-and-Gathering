@@ -19,7 +19,7 @@
     <script type="text/javascript" src="./neuralnetwork/neuralnetutil.js"></script>
     <script type="text/javascript" src="./neuralnetwork/neuralnet.js"></script>
     <script type="text/javascript" src="./population.js"></script>
-    <script type="text/javascript" src="./world.js"></script>
+    <script type="text/javascript" src="./entities/world.js"></script>
     <script type="text/javascript" src="./boundingcircle.js"></script>
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./datadisplay.js"></script>
@@ -99,9 +99,6 @@
         <input type="checkbox" id="gen_stop"> End Generation When Food is Gone or Energy is Depleted
     </div>
     <div>
-        <input type="checkbox" id="no_decaying" checked="true"> No decaying food
-    </div>
-    <div>
         <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity vision otherwise)
     </div>
     <div>
@@ -109,6 +106,12 @@
     </div>
     <div>
         <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input field.
+    </div>
+    <div>
+        <input type="checkbox" id="no_decaying" checked="true"> No decaying food
+    </div>
+    <div>
+        <input type="checkbox" id="inner_wall"> Inner Walls
     </div>
     <div>
         <input type="text" id="num_agents" value="50"> Number of Agents in Simulation (restart to take effect)
@@ -137,6 +140,9 @@
     <div>
         <input type="text" id="agent_vision_angle" value="180"> Vision Cone Angle (degrees)
     </div>
+    <div>
+        <input type="text" id="agent_per_world" value="0"> Agent Per World (Put 0 to not limit agent per world)
+    </div>
     <br> <br>
     <strong>Debug Options</strong>
     <br>
@@ -145,7 +151,7 @@
     </div>
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>  
-        <input type="text" id="fitness_energy" value="1"> (Raw Energy) + <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="-8"> (Bumping Into Wall) + <input type="text" id="FITNESS_OUT_OF_BOUND" value="-25"> (Out of bound) 
+        <input type="text" id="fitness_energy" value="0"> (Raw Energy) + <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="-8"> (Bumping Into Wall) + <input type="text" id="FITNESS_OUT_OF_BOUND" value="-25"> (Out of bound) 
         + <input type="text" id="fitness_calories" value="12"> (Calories Eaten) + <input type="text" id="fitness_dist_from_cal" value="1"> (Distance from Calories Reward) + <input type="text" id="fitness_bad_calories" value="-1"> (Poison Calories Eaten)
     </div>
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
