@@ -18,7 +18,8 @@ class DataDisplay {
 
         ctx.textAlign = "center";
         if (params.SPLIT_SPECIES) {
-            ctx.strokeText(`Species: ${this.worldId}`, params.CANVAS_SIZE / 2, 30);
+            ctx.strokeText(`Species: ${this.game.population.worlds.get(this.worldId).specieId}`, params.CANVAS_SIZE / 2 - 50, 30);
+            ctx.strokeText(`World: ${this.worldId}`, params.CANVAS_SIZE / 2 + 50, 30);
             ctx.strokeText(`Agent Count: ${this.game.population.countAlives(this.worldId)}`, params.CANVAS_SIZE / 2, 60);
         } else {
             ctx.strokeText(`Agent Count: ${this.game.population.countAlives(0)}`, params.CANVAS_SIZE / 2, 30);

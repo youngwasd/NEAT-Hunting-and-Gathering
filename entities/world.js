@@ -3,9 +3,9 @@
  */
 
 class World {
-    constructor(game, worldId) {
+    constructor(game, worldId, specieId = worldId) {
         let world = this.createWorldCanvas(worldId);
-        Object.assign(this, {game, worldId});
+        Object.assign(this, {game, worldId, specieId});
         this.agents = [];
         this.food = [];
         this.poison = [];
@@ -14,18 +14,25 @@ class World {
         this.canvas = world;
         this.display = new DataDisplay(this.game);
         this.walls = [];
-
         this.home.worldId = worldId;
         this.display.worldId = worldId;
 
         //Add random box wall
-        //this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);    
-        this.addBorderToWorld();
+        if (params.INNER_WALL){
+        this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);    
+        }
+        else{
+            this.addBorderToWorld();
+        }
     };
 
     update() {
         
     };
+
+    agentsAsList(){
+        return this.agents;
+    }
 
     isFoodGone() {
         for (let i = 0; i < this.food.length; i++) {
@@ -54,11 +61,6 @@ class World {
         }
     };
 
-    checkFoodLevels(poison = false) { // periodic food/poison repopulation function
-        this.cleanupFood(poison);
-        this.spawnFood(poison, (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.agents.length - (poison ? this.poison.length : this.food.length));
-    };
-
     getEntitiesInWorld(worldId, foodOnly = false, agentsOnly = false) {
         let members = this.worlds.get(worldId);
 
@@ -68,18 +70,6 @@ class World {
             return members.agents;
         } else {
             return members.food.concat(members.poison, members.agents);
-        }
-    };
-
-    //Spawn agents
-    spawnAgents() {
-        PopulationManager.SPECIES_MEMBERS.set(PopulationManager.SPECIES_ID, []);
-        PopulationManager.SPECIES_CREATED++;
-        for (let i = 0; i < PopulationManager.NUM_AGENTS; i++) { // add agents
-            let agent = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2);
-            agent.speciesId = PopulationManager.SPECIES_ID;
-            PopulationManager.SPECIES_MEMBERS.get(PopulationManager.SPECIES_ID).push(agent);
-            this.agents.push(agent);
         }
     };
 
@@ -93,7 +83,7 @@ class World {
         return count;
     };
 
-    countAlives(worldId = undefined) {
+    countAlives() {
         let count = 0;
         this.agents.forEach(agent => {
             if (!agent.removeFromWorld) {
@@ -145,7 +135,6 @@ class World {
         this.home.removeFromWorld = true;
         this.food.forEach(food => food.removeFromWorld = true);
         this.poison.forEach(poison => poison.removeFromWorld = true);
-        this.games.population.worlds.delete(this.worldId);
     };
 
     /**
@@ -177,7 +166,7 @@ class World {
 
         //Added the walls in
         let arr = shuffleArray([0, 1, 2, 3]);
-
+        console.log(arr);
         for (let i = 0; i < Math.max(0, (n % 4)); i++){
             let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x , spawningCoordinateEnd[arr[i]].y); 
             this.walls.push(tmp);  
