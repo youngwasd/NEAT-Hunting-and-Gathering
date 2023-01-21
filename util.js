@@ -34,7 +34,8 @@ const params = {
     AGENT_VISION_RAYS: 13,
     AGENT_VISION_ANGLE: 180,
     AGENT_VISION_IS_CONE: true,
-    AGENT_VISION_DRAW_CONE: false
+    AGENT_VISION_DRAW_CONE: false,
+    MAX_AGENTS_PER_WORLD: 2
 };
 
 const getMedian = (arr) => {

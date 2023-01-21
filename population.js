@@ -490,6 +490,7 @@ class PopulationManager {
     };
 
     processGeneration() {
+        //evaluate the agents
         this.agentsAsList().forEach(agent => {
             this.agentTracker.processAgent(agent);
             this.genomeTracker.processGenome(agent.genome);
@@ -503,6 +504,7 @@ class PopulationManager {
         let minShared = 0;
         //Determine average raw fitness for each species - gabe
         PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
+            //sum raw fitness for all members of this species
             let sumRaws = 0;
             speciesList.forEach(member => {
                 sumRaws += member.genome.rawFitness;
@@ -515,6 +517,7 @@ class PopulationManager {
         console.log("Min shared: " + minShared);
         //Determines the avg fitness for each species after adding the abs val minimum negative fitness? - gabe
         let sumShared = 0;
+        //Build the fitness chart for the species
         reprodFitMap.forEach((fitness, speciesId) => {
             const newFit = fitness + minShared * -1 + 10;
             reprodFitMap.set(speciesId, newFit);
@@ -614,8 +617,6 @@ class PopulationManager {
                 agent.resetOrigin();
                 agent.resetEnergy();
                 agent.resetCalorieCounts();
-
-                //Reset
                 agent.resetCounters();
             });
         }
