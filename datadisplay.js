@@ -12,6 +12,7 @@ class DataDisplay {
         ctx.strokeStyle = "black";
         ctx.font = "20px sans-serif";
         ctx.textAlign = "left";
+        ctx.lineWidth = 2;
         ctx.strokeText(`Generation: ${PopulationManager.GEN_NUM}`, 10, 30);
         ctx.strokeText(`Next In: ${params.GEN_TICKS - this.game.population.tickCounter} ticks`, 10, 60);
 

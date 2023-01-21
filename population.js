@@ -132,14 +132,8 @@ class PopulationManager {
         if (document.activeElement.id !== "agent_neighbor_count") {
             params.AGENT_NEIGHBOR_COUNT = parseInt(document.getElementById("agent_neighbor_count").value);
         }
-        if (document.activeElement.id !== "fitness_energy") {
-            params.FITNESS_ENERGY = parseFloat(document.getElementById("fitness_energy").value);
-        }
         if (document.activeElement.id !== "fitness_calories") {
             params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
-        }
-        if (document.activeElement.id !== "fitness_bad_calories") {
-            params.FITNESS_BAD_CALORIES = parseFloat(document.getElementById("fitness_bad_calories").value);
         }
 
         if (document.activeElement.id !== "FITNESS_BUMPING_INTO_WALL") {

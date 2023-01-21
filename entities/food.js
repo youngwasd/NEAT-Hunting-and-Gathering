@@ -4,7 +4,7 @@
  * @author Parker Rosengreen and Artem Potafiy
  */
 class Food {
-
+    static MAX_TICKS_TO_CONSUME = 15;
     /**
      * Creates a new Food
      * 
@@ -108,6 +108,8 @@ class Food {
 
         /** Sets the number of ticks left until this food transitions to its next lifecycle phase */
         this.ticksToNext = this.phase_properties[this.lifecycle_phases.seed].ticks;
+        this.ticksToConsume = Food.MAX_TICKS_TO_CONSUME;
+        this.lastTickBeingEaten = -1;
         this.updateBoundingCircle(); // update our BC to reflect our position
     };
 
@@ -165,18 +167,24 @@ class Food {
         );
     };
 
-    /** Processes a consumption operation on this food and returns the number of calories provided by the consumption */
+    /** Processes a consumption operation on this food and returns the number of calories provided by the consumption 
+     * @returns "{calories, consumption completion fraction}"
+    */
     consume() {
+        this.ticksToConsume--;
         // if this food is poisonous, then our calories are NEGATED
-        let cals = this.getCalories();
-        this.foodTracker.addCalories(cals);
-        if (!this.isPoison) {
-            this.foodTracker.addTick();
-            this.foodTracker.addLifeStage(this.phase);
+        if(this.ticksToConsume <= 0){
+            let cals = this.getCalories();
+            this.foodTracker.addCalories(cals);
+            if (!this.isPoison) {
+                this.foodTracker.addTick();
+                this.foodTracker.addLifeStage(this.phase);
+            }
+            this.phase = this.lifecycle_phases.dead;
+            this.removeFromWorld = true; // if we are consumed then we are now dead and get wiped from the sim
+            return {calories: cals, completion: 1};
         }
-        this.phase = this.lifecycle_phases.dead;
-        this.removeFromWorld = true; // if we are consumed then we are now dead and get wiped from the sim
-        return cals;
+        return {calories: 0, completion: (Food.MAX_TICKS_TO_CONSUME - this.ticksToConsume)/Food.MAX_TICKS_TO_CONSUME};
     };
 
     getCalories() {
@@ -257,6 +265,8 @@ class Food {
                 this.ticksToNext = this.phase_properties[this.phase].ticks;
             }
         }
+
+        if(this.tickCounter > this.lastTickBeingEaten + 1 && this.ticksToConsume < Food.MAX_TICKS_TO_CONSUME) this.ticksToConsume++;
 
         if (!this.removeFromWorld) {
             this.updateBoundingCircle(); // update our bounding circle to reflect our state

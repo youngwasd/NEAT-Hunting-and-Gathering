@@ -4,7 +4,7 @@ class Genome {
 
     static DEFAULT_HIDDENS = 0;
 
-    static DEFAULT_OUTPUTS = 2;
+    static DEFAULT_OUTPUTS = 3;
 
     static INNOV_NUM = 0;
 
@@ -57,7 +57,6 @@ class Genome {
     static getDefault = (randomWeights = params.RAND_DEFAULT_WEIGHTS) => {
 
         let numInputs = Genome.DEFAULT_INPUTS;
-        //console.log("Inputs: " + numInputs);
         let numHiddens = Genome.DEFAULT_HIDDENS;
         let numOutputs = Genome.DEFAULT_OUTPUTS;
         let numNeurons = numInputs + numHiddens + numOutputs;
@@ -80,7 +79,7 @@ class Genome {
                     let connection = {
                         in: inputNeuron,
                         out: hiddenNeuron,
-                        weight: randomWeights ? Math.random() * 2 - 1 : 0.1,
+                        weight: randomWeights ? Math.random() * 3 - 1.5 : 0.5,
                         isEnabled: true,
                         innovation: Genome.assignInnovNum(inputNeuron, hiddenNeuron),
                     };
@@ -91,7 +90,7 @@ class Genome {
                     let connection = {
                         in: inputNeuron,
                         out: outputNeuron,
-                        weight: randomWeights ? Math.random() * 2 - 1 : 0.1,
+                        weight: randomWeights ? Math.random() * 3 - 1.5 : 0.5,
                         isEnabled: true,
                         innovation: Genome.assignInnovNum(inputNeuron, outputNeuron),
                     };
@@ -105,7 +104,7 @@ class Genome {
                 let connection = {
                     in: hiddenNeuron,
                     out: outputNeuron,
-                    weight: randomWeights ? Math.random() * 2 - 1 : 0.1,
+                    weight: randomWeights ? Math.random() * 3 - 1.5 : 0.5,
                     isEnabled: true,
                     innovation: Genome.assignInnovNum(hiddenNeuron, outputNeuron),
                 };
@@ -262,7 +261,8 @@ class Genome {
         this.connectionGenes.forEach(connections => { // weight mutations
             connections.forEach(connection => {
                 if (randomInt(100) < 5) { // 5% chance of a weight mutation for every connection
-                    connection.weight = randomInt(2) === 1 ? connection.weight + Math.random() * 0.1 : connection.weight - Math.random() * 0.1;
+                    connection.weight += randomInt(2) === 1 ? connection.weight * Math.random() : -connection.weight * Math.random() * 0.5;//0.909090909090909009090909091;//connection.weight + Math.random() * 0.1 : connection.weight - Math.random() * 0.1;
+                    //console.log("new weight: " + connection.weight);
                 }
             });
         });

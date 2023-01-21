@@ -10,7 +10,7 @@ class NeuralNet {
     processInput(input) {
         //console.log(input);
 
-        let wheels = [];
+        let output = [];
         let inputIndex = 0;
 
         this.sortedNodes.forEach(nodeId => {
@@ -29,15 +29,16 @@ class NeuralNet {
                 });
                 currNode.value = this.sigmoid(value);
                 if (currNode.type === Genome.NODE_TYPES.output) {
-                    wheels.push(currNode.value);
+                    output.push(currNode.value);
                 }
             }
         });
 
-        return wheels;
+        return output;
     };
 
     sigmoid(x) {
-        return 2 / (1 + Math.E ** -x) - 1;
+        let k = 1/3;
+        return 2 / (1 + Math.E ** (-x * k)) - 1;
     };
 };
