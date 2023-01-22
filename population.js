@@ -367,7 +367,7 @@ class PopulationManager {
                 this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0).agents.push(child);
                 child.worldId = child.speciesId;
             }
-            else {
+            else if (params.SPLIT_SPECIES){
                 //Limit agent per world
                 //Put the agent into a world
                 //Search for existing WorldID Corresponding to SpecieId
@@ -526,8 +526,8 @@ class PopulationManager {
         let allPoison = this.foodAsList(true);
         this.worlds = new Map();
         allAgents.forEach(agent => {
-            if (this.worlds.get(agent.speciesId) === undefined) {
-                this.initNewWorld(agent.speciesId);
+            if (this.worlds.get(agent.worldId) === undefined) {
+                this.initNewWorld(agent.worldId);
             }
             this.worlds.get(agent.worldId).agents.push(agent);
         });
