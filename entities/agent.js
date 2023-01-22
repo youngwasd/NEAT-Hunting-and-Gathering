@@ -183,7 +183,7 @@ class Agent {
          * if we have split species on, then we only get entities in the world corresponding to our species id, otherwise all entities
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
-        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, !params.AGENT_NEIGHBORS);
+        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
 
         
         entities.forEach(entity => {
@@ -290,7 +290,7 @@ class Agent {
 
 
         if (params.FREE_RANGE) { // check for reproduction if in free range mode
-            let agents = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, false, true);
+            let agents = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, false, true);
             agents.forEach(entity => {
                 /** 
                  * By convention, two Agent parents can only reproduce if they are colliding with one another and are each able to
@@ -385,8 +385,8 @@ class Agent {
         this.spotted = [];
         this.visCol = [];
         
-        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, !params.AGENT_NEIGHBORS);
-        let walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.speciesId : 0).walls;
+        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
+        let walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
         for(let i = 0; i <= rays; i++){
 
             while(currAngle < 0){
@@ -477,7 +477,7 @@ class Agent {
             this.drawVFinal(ctx);
             this.drawVCol(ctx);
         }else{
-            console.error("this.spotted is not an array...");
+            //console.error("this.spotted is not an array...");
         }
     };
 
