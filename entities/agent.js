@@ -165,7 +165,7 @@ class Agent {
     };
 
     //Make the energy = energy threshold
-    deactivateAgent_Toan(){
+    deactivateAgent(){
         this.energy = Agent.DEATH_ENERGY_THRESH;
     }
 
@@ -280,7 +280,7 @@ class Agent {
             ++this.numberOfTickOutOfBounds;
 
             //Toan Deactivate the agent when they go out of bound
-            this.deactivateAgent_Toan();
+            this.deactivateAgent();
 
         }
         else{
