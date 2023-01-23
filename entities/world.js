@@ -3,7 +3,10 @@
  */
 
 class World {
-    constructor(game, worldId, specieId = worldId) {
+    constructor(game, worldId, specieId ) {
+        if (specieId == undefined){
+            specieId = worldId;
+        }
         let world = this.createWorldCanvas(worldId);
         Object.assign(this, {game, worldId, specieId});
         this.agents = [];

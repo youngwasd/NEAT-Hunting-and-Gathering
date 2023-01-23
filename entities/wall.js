@@ -164,7 +164,7 @@ class Wall {
         this.wallAgentCollisionHandling((X) => {
             X.numberOfTickBumpingIntoWalls++;
             //console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
-            X.deactivateAgent_Toan();
+            X.deactivateAgent();
         });
 
 

@@ -221,7 +221,7 @@ class Agent {
     };
 
     //Make the energy = energy threshold
-    deactivateAgent_Toan(){
+    deactivateAgent(){
         this.energy = Agent.DEATH_ENERGY_THRESH;
     }
 
@@ -239,7 +239,7 @@ class Agent {
          * if we have split species on, then we only get entities in the world corresponding to our species id, otherwise all entities
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
-        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, !params.AGENT_NEIGHBORS);
+        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
 
         
         entities.forEach(entity => {
@@ -347,7 +347,7 @@ class Agent {
             ++this.numberOfTickOutOfBounds;
 
             //Toan Deactivate the agent when they go out of bound
-            this.deactivateAgent_Toan();
+            this.deactivateAgent();
 
         }
         else{
@@ -432,8 +432,8 @@ class Agent {
         this.spotted = [];
         this.visCol = [];
         
-        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.speciesId : 0, !params.AGENT_NEIGHBORS);
-        let walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.speciesId : 0).walls;
+        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
+        let walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
         for(let i = 0; i <= rays; i++){
 
             while(currAngle < 0){
