@@ -10,7 +10,6 @@ class PopulationManager {
     static COLORS_USED = new Set();
     static SENSOR_COLORS_USED = new Set();
     static NUM_AGENTS = params.NUM_AGENTS;
-    static AGENTS_PER_WORLD = params.AGENT_PER_WORLD;
 
     constructor(game) {
         this.game = game;
@@ -116,7 +115,6 @@ class PopulationManager {
         PopulationManager.COLORS_USED = new Set();
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
-        PopulationManager.AGENTS_PER_WORLD = params.AGENT_PER_WORLD;
 
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
@@ -347,59 +345,23 @@ class PopulationManager {
                 compatOrder = [...repMap.keys()].sort(); // resort the compatibility ordering
 
                 if (params.SPLIT_SPECIES) {
-                    let worldIdToBeCreated = PopulationManager.WORLD_CREATED;
                     if (params.AGENT_PER_WORLD == 0) {
-                        worldIdToBeCreated = child.speciesId;//SpecieId = WorldID
+                        //Create a new world for the new specie 
+                        PopulationManager.WORLD_CREATED++;
+                        this.initNewWorld(child.speciesId, child.specieId);
+                        this.specieWorldList.set(child.speciesId, [child.speciesId]);
+                        this.spawnFood(child.speciesId, false, params.FOOD_AGENT_RATIO);
+                        this.spawnFood(child.speciesId, true, params.POISON_AGENT_RATIO);
+                        //console.log("Create a new Specie", child.speciesId);
+                    } else {
+                        this.specieWorldList.set(child.speciesId, [++PopulationManager.WORLD_CREATED]);
                     }
-
-                    //Limit agent per world
-                    //Create a new world 
-                    PopulationManager.WORLD_CREATED++;
-                    this.initNewWorld(worldIdToBeCreated, child.specieId);
-                    this.specieWorldList.set(child.speciesId, [worldIdToBeCreated]);
-                    this.spawnFood(worldIdToBeCreated, false, params.FOOD_AGENT_RATIO);
-                    this.spawnFood(worldIdToBeCreated, true, params.POISON_AGENT_RATIO);
-                    //console.log("Create a new Specie", child.speciesId);
                 }
             }
             //Push the agents into a world
             if (params.AGENT_PER_WORLD == 0) {
                 this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0).agents.push(child);
                 child.worldId = child.speciesId;
-            }
-            else if (params.SPLIT_SPECIES){
-                //Limit agent per world
-                //Put the agent into a world
-                //Search for existing WorldID Corresponding to SpecieId
-                let foundASuitableWorld = false;
-
-                this.specieWorldList.get(child.speciesId).forEach(worldId => {
-                    let world = this.worlds.get(worldId);
-                    //console.log("Testing world ", worldId, world.countAlives(), child.speciesId, world.countAlives() + 1 <= params.AGENT_PER_WORLD );
-                    if (world.countAlives() + 1 <= params.AGENT_PER_WORLD && !foundASuitableWorld) {
-                        child.worldId = worldId;
-                        world.agents.push(child);
-                        //console.log("Found a world for the child " + child.worldId + " " + child.speciesId);                      
-                        foundASuitableWorld = true;
-                    }
-                });
-
-                //Create a new world for agent to be in if cannot find a suitable world
-                if (!foundASuitableWorld) {
-                    //Increment number of worlds
-                    let worldIdToBeCreated = ++PopulationManager.WORLD_CREATED;
-                    this.initNewWorld(worldIdToBeCreated, child.speciesId);
-
-                    this.specieWorldList.set(child.speciesId, [worldIdToBeCreated]);
-                    this.spawnFood(worldIdToBeCreated, false, params.FOOD_AGENT_RATIO);
-                    this.spawnFood(worldIdToBeCreated, true, params.POISON_AGENT_RATIO);
-                    this.specieWorldList.get(child.speciesId).push(worldIdToBeCreated);
-
-                    child.worldId = worldIdToBeCreated;
-                    this.worlds.get(worldIdToBeCreated).agents.push(child);
-                    //console.log("Create a world for the child " + child.worldId + " " + child.speciesId); 
-
-                }
             }
         });
     };
@@ -448,10 +410,54 @@ class PopulationManager {
         return food;
     };
 
-    balenceWorlds(){
-        // this.worlds.forEach(world => {
+    /**
+     * Distribute agents to their world
+     * ONLY WORLD WITH LIMITNG AGENT PER WORLD OPTION
+     */
+    distributeAgents() {
+        //EXIT IF NOT IN AGENT PER WORLD MODE
+        if (params.AGENT_PER_WORLD == 0) {
+            return;
+        }
 
-        // });
+        //Clear the pre-existing worlds
+        this.worlds = new Map();
+        let worldId = -1;
+
+        let agentDistributed = 0;
+        //Resetting the specie by world list
+        this.specieWorldList = new Map();
+
+        PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {
+            //Resetting the specie by world list
+            this.specieWorldList.set(speciesId, []);
+
+            for (let i = specie.length - 1; i >= 0; --i) {
+                let agent = specie[i];
+                //No world like it has been created or it's full
+                if (!this.worlds.get(worldId) || this.worlds.get(worldId).agents.length >= params.AGENT_PER_WORLD) {
+                    ++worldId;
+                    this.initNewWorld(worldId, speciesId);
+                    this.specieWorldList.get(speciesId).push(worldId);
+                    this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO);
+                    this.spawnFood(worldId, true, params.POISON_AGENT_RATIO);
+                    agent.worldId = worldId;
+                    this.worlds.get(worldId).agents.push(agent);
+                    
+                    ++agentDistributed;
+                    //console.log("Create new world", this.worlds.get(worldId).agents.length, specie[i], worldId);
+                } else {
+                    //console.log("Pushing agents to their old world", this.worlds.get(worldId).agents.length, specie[i], worldId);
+                    agent.worldId = worldId;
+                    this.worlds.get(worldId).agents.push(agent);
+                    ++agentDistributed;
+                }   
+
+            }
+            ++worldId;
+        });
+        console.log("Total agent distributed in gen ", PopulationManager.GEN_NUM, agentDistributed);
+        PopulationManager.WORLD_CREATED = worldId;
     }
 
     cleanUpWorlds() {
@@ -471,13 +477,29 @@ class PopulationManager {
                     for (let i = x.length - 1; i >= 0; i--) {
                         if (worldId == x[i]) {
                             x.splice(i, 1);
-                            console.log(worldId, " is deleted", x);
+
                         }
                     }
                 });
             });
         }
-        //
+
+        //Tidy up specie members
+        //Only active when limiting agents per world is on for reason of backward compability 
+        if (params.AGENT_PER_WORLD !== 0) {
+            PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {
+                for (let i = specie.length - 1; i >= 0; --i) {
+                    let agent = specie[i];
+                    if (agent.removeFromWorld) {
+                        specie.splice(i, 1);
+                    }
+                }
+                if (specie.length == 0) {
+                    PopulationManager.SPECIES_MEMBERS.delete(speciesId);
+                }
+            });
+        }
+        
     }
 
     initNewWorld(worldId, specieId) {
@@ -660,11 +682,7 @@ class PopulationManager {
 
             this.registerChildAgents(children);
         }
-        //Clean up some of the dead worlds and balence agents count
-        this.cleanUpWorlds();
-        if (params.AGENT_PER_WORLD == 0) {
-            this.balenceWorlds();
-        }
+
 
         // let idList = "";
         // let length = 0;
@@ -674,6 +692,11 @@ class PopulationManager {
         // });
 
         // console.log("World: ", idList, length);
+        //Clean up some of the dead worlds and balence agents count
+        this.cleanUpWorlds();
+        if (params.AGENT_PER_WORLD !== 0) {
+            this.distributeAgents();
+        }
 
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
@@ -688,6 +711,8 @@ class PopulationManager {
         });
         PopulationManager.COLORS_USED = new Set([...PopulationManager.COLORS_USED].filter(color => remainingColors.has(color)));
         PopulationManager.SENSOR_COLORS_USED = new Set([...PopulationManager.SENSOR_COLORS_USED].filter(color => remainingSensorColors.has(color)));
+
+
 
         //Resets all agents
         if (!params.FREE_RANGE) {
@@ -706,7 +731,8 @@ class PopulationManager {
                 world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);
             });
         }
-
+        // console.log("Total agents", this.agentsAsList().length);
+        
         PopulationManager.GEN_NUM++;
 
         //Generates the data charts
