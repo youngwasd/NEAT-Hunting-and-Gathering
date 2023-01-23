@@ -4,7 +4,7 @@
  * @author Parker Rosengreen and Artem Potafiy
  */
 class Food {
-    static MAX_TICKS_TO_CONSUME = 15;
+    static MAX_TICKS_TO_CONSUME = 20;
     /**
      * Creates a new Food
      * 

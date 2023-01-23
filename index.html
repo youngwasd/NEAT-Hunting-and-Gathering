@@ -60,7 +60,7 @@
         <input type="checkbox" id="split_species" checked="true"> Split Species
     </div>
     <div>
-        <input type="checkbox" id="rand_default_weights"> Randomize Default Genome Weights (restart to take effect)
+        <input type="checkbox" id="rand_default_weights" checked = "true"> Randomize Default Genome Weights (restart to take effect)
     </div>
     <div>
         <input type="checkbox" id="agent_neighbors"> Agent Neighbors
@@ -81,16 +81,16 @@
         <input type="checkbox" id="enforce_min_poison"> Enforce Minimum Poison
     </div>
     <div>
-        <input type="checkbox" id="rand_food_phases" checked="true"> Randomize Food and Poison Phase Times
+        <input type="checkbox" id="rand_food_phases"> Randomize Food and Poison Phase Times
     </div>
     <div>
         <input type="checkbox" id="rand_food_lifetime"> Randomize Food and Poison Lifetimes
     </div>
     <div>
-        <input type="checkbox" id="periodic_food_repop" checked="true"> Periodically Repopulate Food
+        <input type="checkbox" id="periodic_food_repop"> Periodically Repopulate Food
     </div>
     <div>
-        <input type="checkbox" id="periodic_poison_repop" checked="true"> Periodically Repopulate Poison
+        <input type="checkbox" id="periodic_poison_repop"> Periodically Repopulate Poison
     </div>
     <div>
         <input type="checkbox" id="free_range"> FREE RANGE MODE
@@ -117,7 +117,7 @@
         <input type="text" id="num_agents" value="50"> Number of Agents in Simulation (restart to take effect)
     </div>
     <div>
-        <input type="text" id="agent_neighbor_count" value="5"> Neighbors Detected by Agents (restart to take effect)
+        <input type="text" id="agent_neighbor_count" value="1"> Neighbors Detected by Agents (restart to take effect)
     </div>
     <div>
         <input type="text" id="agent_vision_radius" value="400"> Agent Visual Radius (pixels)
@@ -129,7 +129,7 @@
         <input type="text" id="compat_threshold" value="0.07"> Species Compatibility Threshold
     </div>
     <div>
-        <input type="text" id="food_agent_ratio" value="5"> Food to Agent Ratio
+        <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
     </div>
     <div>
         <input type="text" id="poison_agent_ratio" value="0"> Poison to Agent Ratio
@@ -141,18 +141,18 @@
         <input type="text" id="agent_vision_angle" value="180"> Vision Cone Angle (degrees)
     </div>
     <div>
-        <input type="text" id="agent_per_world" value="0"> Agent Per World (Put 0 to not limit agent per world)
+        <input type="text" id="agent_per_world" value="1"> Agent Per World (Put 0 to not limit agent per world)
     </div>
     <br> <br>
     <strong>Debug Options</strong>
     <br>
     <div>
-        <input type="checkbox" id="draw_agent_vision_cone" checked="false"> Draw Vision Rays (only for cone vision)
+        <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
     </div>
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>  
-        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="-8"> (Bumping Into Wall) + <input type="text" id="FITNESS_OUT_OF_BOUND" value="-25"> (Out of bound) 
-        + <input type="text" id="fitness_calories" value="12"> (Calories Eaten) + <input type="text" id="fitness_dist_from_cal" value="1"> (Distance from Calories Reward)
+        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) + <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) 
+        + <input type="text" id="fitness_calories" value="24"> (Calories Eaten) + <input type="text" id="fitness_dist_from_cal" value="6"> (Potential Calories Reward)
     </div>
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
         <div id="currentFitnessChartContainer">

@@ -5,30 +5,29 @@ const params = {
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
     AGENT_NEIGHBORS: false,
-    FOOD_AGENT_RATIO: 3,
+    FOOD_AGENT_RATIO: 1,
     POISON_AGENT_RATIO: 0,
     COMPAT_THRESH: 0.07,
     ENFORCE_MIN_FOOD: false,
     ENFORCE_MIN_POISON: false,
     AGENT_VISION_RADIUS: 500,
-    RAND_FOOD_PHASES: true,
+    RAND_FOOD_PHASES: false,
     RAND_FOOD_LIFETIME: false,
-    FOOD_PERIODIC_REPOP: true,
-    POISON_PERIODIC_REPOP: true,
+    FOOD_PERIODIC_REPOP: false,
+    POISON_PERIODIC_REPOP: false,
     FREE_RANGE: false,
     SPLIT_SPECIES: true,
-    RAND_DEFAULT_WEIGHTS: false,
+    RAND_DEFAULT_WEIGHTS: true,
     AGENT_NEIGHBOR_COUNT: 5,
-    FITNESS_ENERGY: 0,
-    FITNESS_CALORIES: 12,
-    FITNESS_BUMPING_INTO_WALL: -8,
-    FITNESS_OUT_OF_BOUND: -25,
-    FITNESS_DIST_FROM_CALORIES: 1,
+    FITNESS_CALORIES: 24,
+    FITNESS_BUMPING_INTO_WALL: 0,
+    FITNESS_OUT_OF_BOUND: -1,
+    FITNESS_DIST_FROM_CALORIES: 6,
     GEN_STOP: false,
     NO_DECAYING_FOOD: true,
     INNER_WALL: false,
     NUM_AGENTS: 50,
-    AGENT_PER_WORLD : 0,
+    AGENT_PER_WORLD : 1,
     DYNAMIC_AGENT_SIZING: false,
     AGENT_VISION_RAYS: 13,
     AGENT_VISION_ANGLE: 180,
@@ -50,6 +49,8 @@ const getMean = (arr) => {
     const total = arr.reduce((curr, acc) => acc + curr, 0);
     return total / arr.length;
 };
+
+const eqThrsh = (a, b, threshold = 0.00001) => Math.abs(a - b) < threshold;
 
 /**
  * @param {Number} n

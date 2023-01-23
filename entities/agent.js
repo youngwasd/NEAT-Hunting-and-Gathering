@@ -15,10 +15,10 @@ class Agent {
 
     static distForBiteReward = [
         {
-            maxGen: 10,
-            dist: 300
+            maxGen: 20,
+            dist: 600,
         },
-        {
+        /*{
             maxGen: 60,
             dist: 200
         },
@@ -27,7 +27,11 @@ class Agent {
             dist: 100
         },
         {
-            maxGen: 30,
+            maxGen: 200,
+            dist: 50
+        },*/
+        {
+            maxGen: Infinity,
             dist: Agent.BASE_DIAMETER/2
         },
     ]
@@ -81,12 +85,15 @@ class Agent {
         const fitnessFunct = () => {
             let totalRawFitness = this.caloriesEaten * params.FITNESS_CALORIES;
             
-            /** Rewards the agent based on how close they were to more food */
+            /** Rewards the agent based on how close they were to getting calories */
             if(this.closestFood.cals > 0){
-                let fitnessFromCalDist = 2 * params.FITNESS_DIST_FROM_CALORIES * this.closestFood.cals / (1 + Math.E ** (this.closestFood.dist/75));
-                fitnessFromCalDist /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.velocity + 1 : 10; //this is here to reward them for how slow they were near the food
-                totalRawFitness += 0.1 * fitnessFromCalDist + 0.9 * this.maxEatingCompletion * fitnessFromCalDist;
-                console.log("fitness from dist/biting: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
+                let fitnessFromCalDist = 2 * params.FITNESS_DIST_FROM_CALORIES * this.closestFood.cals / (1 + Math.E ** (this.closestFood.dist/50));
+                let fitnessFromPotCal = 0.2 * fitnessFromCalDist + 0.3 * this.touchingFood + 0.5 * this.maxEatingCompletion;
+                fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;//this is here to reward them for how slow they were near the food
+                
+                totalRawFitness += fitnessFromPotCal;
+                //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
+                console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
@@ -104,7 +111,7 @@ class Agent {
             let distFromRight = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.x);
             let distFromBottom = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.y);
             let dist = Math.min(distFromBottom, distFromLeft, distFromRight, distFromTop);
-            let rawFitness = 100/(dist + this.velocity + 0.5);
+            let rawFitness = 100/(dist + this.speed + 0.5);
             console.log("fitness from moving to wall: " + rawFitness);
             rawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             return rawFitness;
@@ -151,13 +158,21 @@ class Agent {
 
     updateFitnessBiteReward(){
         let distForBiteReward = Agent.distForBiteReward;
+        let index = -1;
         for(let i = 0; i < distForBiteReward.length; i++) {
-            if (PopulationManager.GEN_NUM < distForBiteReward[i].maxGen && this.closestFood.dist < distForBiteReward[i].dist){
-                this.biteTicks++;
-                return;
+            if (PopulationManager.GEN_NUM < distForBiteReward[i].maxGen){
+                index = i;
+                break;
             }
         }
-        this.biteTicks--;
+        if(index >= 0){
+            if(this.closestFood.dist <= distForBiteReward[index].dist){
+                this.biteTicks++;
+            }else if(index >= 2 && this.closestFood.dist > distForBiteReward[index - 2].dist){
+                //this.biteTicks--;
+            }
+        }
+        
     }
 
     /** Updates this Agent's origin (initial position) to its current position in the sim */
@@ -294,7 +309,7 @@ class Agent {
         this.y += dy;
         this.heading += dh;
 
-        this.velocity = Math.sqrt(dx **2 + dy **2);
+        this.speed = Math.sqrt(dx **2 + dy **2);
 
         /** Make sure our new heading is between 0 and 2pi exclusive */
         if (this.heading < 0) {
@@ -313,28 +328,28 @@ class Agent {
         this.updateBoundingCircle();
 
         /** If we are still alive, and we just bit loop through spotted food and eat those we are colliding with */
-        if (this.energy > Agent.DEATH_ENERGY_THRESH && this.biting) {
+        if (this.energy > Agent.DEATH_ENERGY_THRESH) {
             let foundFood = false;
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    let consOut = entity.consume();
-                    let cals = consOut.calories;
-                    let completion = consOut.completion;
-                    if (cals < 0) {
-                        this.badCaloriesEaten += Math.abs(cals);
-                    } else {
-                        this.caloriesEaten += cals;
+                    if(this.biting){
+                        let consOut = entity.consume();
+                        let cals = consOut.calories;
+                        let completion = consOut.completion;
+                        if (cals < 0) {
+                            this.badCaloriesEaten += Math.abs(cals);
+                        } else {
+                            this.caloriesEaten += cals;
+                        }
+                        this.energy += cals;
+                        
+                        this.eatingCompletion = completion;
+                        this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
                     }
-                    this.energy += cals;
-                    
-                    this.eatingCompletion = completion;
-                    this.currEntityBeingEaten = entity;
-                    this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
-
                     foundFood = true;
                 } 
             });
-
+            this.touchingFood = foundFood;
             /** Our energy may have changed, so update our diameter and BC once again */
             this.updateDiameter();
             this.updateBoundingCircle();
@@ -453,7 +468,6 @@ class Agent {
             
             let inRightHalf = currAngle <= Math.PI / 2 || currAngle > Math.PI * 3/2;
 
-            const eqThrsh = (a, b) => Math.abs(a - b) < 0.00001;
             //let inTopHalf = currAngle >= 0 && currAngle < Math.PI;
             //Check for wall collisions
             walls.forEach(wall => {
@@ -497,7 +511,7 @@ class Agent {
             //console.log("distInput: " + distInput);
             input.push(distInput);
             //console.log("hueOfMinDist: " + hueOfMinDist);
-            input.push(hueOfMinDist/360);
+            input.push((hueOfMinDist)/360);
             currAngle += angleBetw;
         }
     }
