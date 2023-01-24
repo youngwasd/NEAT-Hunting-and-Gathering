@@ -189,6 +189,12 @@ class PopulationManager {
 
         if (document.activeElement.id !== "agent_per_world") {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
+            //Force turning the split specie on
+            if (params.AGENT_PER_WORLD !== 0){
+               if (!document.getElementById("split_species").checked){
+                    document.getElementById("split_species").checked = true;
+               }
+            }
         }
 
         //Cleans up all of the food/poison for the world
@@ -536,7 +542,6 @@ class PopulationManager {
     };
 
     splitWorlds() {
-        console.log("T: splitting world");
         let allAgents = this.agentsAsList();
         let allFood = this.foodAsList();
         let allPoison = this.foodAsList(true);
