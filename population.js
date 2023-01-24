@@ -179,8 +179,8 @@ class PopulationManager {
             params.FITNESS_OUT_OF_BOUND = parseFloat(document.getElementById("FITNESS_OUT_OF_BOUND").value);
         }
 
-        if (document.activeElement.id !== "FITNESS_DIST_FROM_CAL") {
-            params.FITNESS_DIST_FROM_CALORIES = parseFloat(document.getElementById("fitness_dist_from_cal").value);
+        if (document.activeElement.id !== "fitness_potential_cal") {
+            params.FITNESS_POTENTIAL_CALORIES = parseFloat(document.getElementById("fitness_potential_cal").value);
         }
 
         if (document.activeElement.id !== "num_agents") {
@@ -189,6 +189,10 @@ class PopulationManager {
 
         if (document.activeElement.id !== "agent_per_world") {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
+        }
+
+        if (document.activeElement.id !== "max_ticks_to_consume") {
+            params.MAX_TICKS_TO_CONSUME = parseInt(document.getElementById("max_ticks_to_consume").value);
         }
 
         //Cleans up all of the food/poison for the world

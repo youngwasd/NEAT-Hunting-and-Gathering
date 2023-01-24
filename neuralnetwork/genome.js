@@ -263,12 +263,12 @@ class Genome {
                 if (randomInt(100) < 5) { // 5% chance of a weight mutation for every connection
                     let randNum = randomInt(100);
                     if(randNum < 5){//re-rolls the weight
-                        connection.weight = (2 * Math.random() - 1) * 5 * connection.weight;
+                        connection.weight = (2 * Math.random() - 1) * 2 * connection.weight;
                     }else if(randNum < 35){//shifts the weight
                         connection.weight += 0.1 * (Math.random() * 2 - 1);
                     }
                     else{//scales the weight
-                        connection.weight += randomInt(2) === 0.5 ? connection.weight * Math.random() : -connection.weight * Math.random() * 1/3;
+                        connection.weight += randomInt(2) === 1 ? 0.5 * connection.weight * Math.random() : -connection.weight * Math.random() * 1/3;
                     }
                     console.log("New Weight: " + connection.weight);
                 }
