@@ -22,7 +22,7 @@ const params = {
     FITNESS_CALORIES: 24,
     FITNESS_BUMPING_INTO_WALL: 0,
     FITNESS_OUT_OF_BOUND: -1,
-    FITNESS_DIST_FROM_CALORIES: 6,
+    FITNESS_POTENTIAL_CALORIES: 6,
     GEN_STOP: false,
     NO_DECAYING_FOOD: true,
     INNER_WALL: false,
@@ -33,6 +33,7 @@ const params = {
     AGENT_VISION_ANGLE: 180,
     AGENT_VISION_IS_CONE: true,
     AGENT_VISION_DRAW_CONE: false,
+    MAX_TICKS_TO_CONSUME: 1
 };
 
 const getMedian = (arr) => {

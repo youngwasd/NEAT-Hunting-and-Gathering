@@ -85,13 +85,20 @@ class Agent {
         const fitnessFunct = () => {
             let totalRawFitness = this.caloriesEaten * params.FITNESS_CALORIES;
             
-            /** Rewards the agent based on how close they were to getting calories */
+            /** Rewards the agent based on how close they were to getting calories 
+             * It rewards a fraction of what they would've gotten from eating the food depending on how close they were to consumption
+            */
             if(this.closestFood.cals > 0){
-                let fitnessFromCalDist = 2 * params.FITNESS_DIST_FROM_CALORIES * this.closestFood.cals / (1 + Math.E ** (this.closestFood.dist/50));
-                let fitnessFromPotCal = 0.2 * fitnessFromCalDist + 0.3 * this.touchingFood + 0.5 * this.maxEatingCompletion;
-                fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;//this is here to reward them for how slow they were near the food
+                //Part 1: how close were they to the food?
+                let fitnessFromCalDist = 2 * this.closestFood.cals / (1 + Math.E ** (this.closestFood.dist/50));
+                //Part 2: were they touching the food, and if so were they also biting?
+                let fitnessFromPotCal = 0.2 * fitnessFromCalDist + 0.2 * this.touchingFood + 0.2 * (this.touchingFood && this.biting);
+                //Part 3: how close were they to finishing off the foods tick counter?
+                fitnessFromPotCal += 0.4 * this.maxEatingCompletion;
+                //Part 4: punish them based on how fast they were going, or if they were dead
+                fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;
                 
-                totalRawFitness += fitnessFromPotCal;
+                totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
                 console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }
