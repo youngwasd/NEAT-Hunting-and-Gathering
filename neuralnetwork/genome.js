@@ -79,7 +79,7 @@ class Genome {
                     let connection = {
                         in: inputNeuron,
                         out: hiddenNeuron,
-                        weight: randomWeights ? Math.random() * 3 - 1.5 : 0.5,
+                        weight: randomWeights ? Math.random() * 2 - 1 : 0.1,
                         isEnabled: true,
                         innovation: Genome.assignInnovNum(inputNeuron, hiddenNeuron),
                     };
@@ -90,7 +90,7 @@ class Genome {
                     let connection = {
                         in: inputNeuron,
                         out: outputNeuron,
-                        weight: randomWeights ? Math.random() * 3 - 1.5 : 0.5,
+                        weight: randomWeights ? Math.random() * 2 - 1 : 0.1,
                         isEnabled: true,
                         innovation: Genome.assignInnovNum(inputNeuron, outputNeuron),
                     };

@@ -30,10 +30,10 @@ class Agent {
             maxGen: 200,
             dist: 50
         },*/
-        {
+        /*{
             maxGen: Infinity,
             dist: Agent.BASE_DIAMETER/2
-        },
+        },*/
     ]
 
     /**
@@ -90,7 +90,7 @@ class Agent {
             */
             if(this.closestFood.cals > 0){
                 //Part 1: how close were they to the food?
-                let fitnessFromCalDist = 2 * this.closestFood.cals / (1 + Math.E ** (this.closestFood.dist/50));
+                let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist/50));
                 //Part 2: were they touching the food, and if so were they also biting?
                 let fitnessFromPotCal = 0.2 * fitnessFromCalDist + 0.2 * this.touchingFood + 0.2 * (this.touchingFood && this.biting);
                 //Part 3: how close were they to finishing off the foods tick counter?
@@ -98,7 +98,7 @@ class Agent {
                 //Part 4: punish them based on how fast they were going, or if they were dead
                 fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;
                 
-                totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
+                totalRawFitness += this.closestFood.cals * params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
                 console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }
