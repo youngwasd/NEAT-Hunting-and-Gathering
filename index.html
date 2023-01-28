@@ -20,6 +20,7 @@
     <script type="text/javascript" src="./neuralnetwork/neuralnet.js"></script>
     <script type="text/javascript" src="./neuralnetwork/genome.js"></script>
     <script type="text/javascript" src="./population.js"></script>
+    <script type="text/javascript" src="./histogram.js"></script>
     <script type="text/javascript" src="./entities/world.js"></script>
     <script type="text/javascript" src="./boundingcircle.js"></script>
     <script type="text/javascript" src="./assetmanager.js"></script>
@@ -158,6 +159,9 @@
         + <input type="text" id="fitness_calories" value="24"> (Calories Eaten) + <input type="text" id="fitness_potential_cal" value="6"> (Potential Calories Reward)
     </div>
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
+        <div id="agentOutPutContainers">
+            <canvas id="agentLeftWheelChart"></canvas>
+        </div>
         <div id="currentFitnessChartContainer">
             <div id="currentFitnessChart"></div>
         </div>

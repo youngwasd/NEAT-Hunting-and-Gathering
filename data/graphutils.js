@@ -1,5 +1,5 @@
 /*
- * Sorry for spaghetti IDK how to do front end lol (Parker doesn't either)
+ * Sorry for spaghetti IDK how to do front end lol (Parker doesn't either, Toan does not know too)
  */
 
 /**
@@ -662,4 +662,31 @@ const generateFoodStageChart = (data) => {
     //         },
     //     },
     // });
+};
+
+/**
+ *
+ * @param {array} outputData all fitness data from agent tracker
+ */
+const generateNeuralNetWorkData_LeftWheel = (outputData) => {
+    if (document.getElementById('fitnessChart') != undefined) {
+        document.getElementById('fitnessChart').remove();
+    }
+    const currSpecies = new Set();
+    PopulationManager.SPECIES_MEMBERS.forEach((val, key) =>
+        currSpecies.add(key)
+    );
+    const generations = [];
+    fitnessData.forEach((gen) =>
+        generations.push(gen.filter((obj) => currSpecies.has(obj.speciesId)))
+    );
+    const speciesFit = [];
+    currSpecies.forEach((id) => {
+        const { fitnesses, firstGen } = getFitnessDataSet(id, fitnessData);
+        speciesFit.push({ speciesId: id, firstGen, fitnesses });
+    });
+    speciesFit.sort((a, b) => a.speciesId - b.speciesId);
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('id', 'fitnessChart');
+    document.getElementById('fitnessChartContainer').appendChild(canvas);
 };
