@@ -752,6 +752,7 @@ class PopulationManager {
         this.foodTracker.addNewGeneration();
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
+
         this.resetCanvases();
     };
 

@@ -304,6 +304,8 @@ class Agent {
             this.leftWheel = output[0];
             this.rightWheel = output[1];
             this.biting = output[2] > 0.5;
+
+            //Toan Could gather data here
         }
         /**update reward for biting near the food */
         if(this.biting) this.updateFitnessBiteReward();
