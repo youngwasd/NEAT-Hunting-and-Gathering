@@ -270,7 +270,7 @@ class Genome {
                     else{//scales the weight
                         connection.weight += randomInt(2) === 1 ? 0.5 * connection.weight * Math.random() : -connection.weight * Math.random() * 1/3;
                     }
-                    console.log("New Weight: " + connection.weight);
+                    //console.log("New Weight: " + connection.weight);
                 }
             });
         });

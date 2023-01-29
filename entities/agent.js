@@ -304,7 +304,7 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
-            this.biting = output[2] > 0;
+            this.biting = Math.abs(output[2]) > 0.5;
             this.totalOutputs[0] += Math.abs(this.leftWheel);
             this.totalOutputs[1] += Math.abs(this.rightWheel);
             this.totalOutputs[2] += this.biting;
