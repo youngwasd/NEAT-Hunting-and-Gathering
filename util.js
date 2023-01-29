@@ -27,7 +27,7 @@ const params = {
     NO_DECAYING_FOOD: true,
     INNER_WALL: false,
     NUM_AGENTS: 50,
-    AGENT_PER_WORLD : 1,
+    AGENT_PER_WORLD: 1,
     DYNAMIC_AGENT_SIZING: false,
     AGENT_VISION_RAYS: 13,
     AGENT_VISION_ANGLE: 180,
@@ -187,3 +187,4 @@ const createSlideShow = (array, id) => {
         count++;
     });
 };
+

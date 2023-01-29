@@ -23,6 +23,8 @@ class PopulationManager {
         let defaultSensorColor = AgentInputUtil.randomBlueHue();
         PopulationManager.SENSOR_COLORS_USED.add(defaultSensorColor);
         PopulationManager.SPECIES_SENSOR_COLORS.set(0, defaultSensorColor);
+        
+        
 
         this.worlds = new Map();
         this.createFoodPodLayout();
@@ -61,7 +63,12 @@ class PopulationManager {
             }
             PopulationManager.WORLD_CREATED = worldSpawned;
             this.resetCanvases();
+
+            
         }
+
+        this.agentOutputChart_leftWheel = new Histogram(20, 0, "Left Wheel Output Chart", 280);
+        
 
     };
 
@@ -212,6 +219,25 @@ class PopulationManager {
                 this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
             }
         });
+
+       
+        // //Produce random value on the chart for quick testing
+        // let data = [];
+        // for (let i = 0; i < 1; i++){
+        //     let j = randomInt(2000);
+        //     if (!data[j])
+        //         data[j] = 0;
+        //     else
+        //         data[j]++;
+        // }
+        // if (!this.agentOutputChart_leftWheel.data[this.tickCounter / 7]){
+        //     this.agentOutputChart_leftWheel.data [this.tickCounter / 7] = [];
+        // }
+        // this.agentOutputChart_leftWheel.data[this.tickCounter / 7].push(data);
+        // //End Quick Testing
+
+        //Output the Chart
+        generateNeuralNetWorkData(this.agentOutputChart_leftWheel, 'agentLeftWheelChart');
 
         this.tickCounter++;
         //Check to see if the generation is over

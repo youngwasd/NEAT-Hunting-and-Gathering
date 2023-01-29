@@ -666,27 +666,21 @@ const generateFoodStageChart = (data) => {
 
 /**
  *
- * @param {array} outputData all fitness data from agent tracker
+ * @param {array} outputHistogram The histogram data from retracking the output
  */
-const generateNeuralNetWorkData_LeftWheel = (outputData) => {
-    if (document.getElementById('fitnessChart') != undefined) {
-        document.getElementById('fitnessChart').remove();
+const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftWheelChart') => {
+    
+    let canvas = document.createElement('canvas');
+    canvas.setAttribute('id', chartElementID);
+    canvas.setAttribute('style', 'width: 400px; height: 200px');
+
+
+    ctx = canvas.getContext("2d");
+    //Refresh the Canvas
+    if (document.getElementById(chartElementID) != undefined) {
+        document.getElementById(chartElementID).remove();
     }
-    const currSpecies = new Set();
-    PopulationManager.SPECIES_MEMBERS.forEach((val, key) =>
-        currSpecies.add(key)
-    );
-    const generations = [];
-    fitnessData.forEach((gen) =>
-        generations.push(gen.filter((obj) => currSpecies.has(obj.speciesId)))
-    );
-    const speciesFit = [];
-    currSpecies.forEach((id) => {
-        const { fitnesses, firstGen } = getFitnessDataSet(id, fitnessData);
-        speciesFit.push({ speciesId: id, firstGen, fitnesses });
-    });
-    speciesFit.sort((a, b) => a.speciesId - b.speciesId);
-    const canvas = document.createElement('canvas');
-    canvas.setAttribute('id', 'fitnessChart');
-    document.getElementById('fitnessChartContainer').appendChild(canvas);
+
+    outputHistogram.draw(ctx);
+    document.getElementById('agentOutputContainers').appendChild(canvas);
 };

@@ -1,11 +1,10 @@
-function Histogram(ctx, x, y, label) {
-    this.xSize = 360;
-    this.ySize = 80;
+function Histogram(x, y, label, xSize = 360, ySize = 80) {
+    this.xSize = xSize;
+    this.ySize = ySize;
     this.x = x;
     this.y = y;
     this.label = label;
     this.data = [];
-    this.ctx = ctx;
     this.maxVal = 0;
 };
 
@@ -24,19 +23,19 @@ Histogram.prototype.draw = function (ctx) {
         }, 0);
         for (var j = 0; j < this.data[i + start].length; j++) {
 
-            this.fill(this.data[i + start][j]/maxVal, i, 19 - j);
+            this.fill(ctx, this.data[i + start][j]/maxVal, i, 19 - j);
         }
     }
-    this.ctx.fillStyle = "#000000";
-    this.ctx.textAlign = "center";
-    this.ctx.fillText(this.label, this.x + this.xSize / 2, this.y + this.ySize + 10);
+    ctx.fillStyle = "#000000";
+    ctx.textAlign = "center";
+    ctx.strokeText(this.label, this.x + this.xSize / 2, this.y + this.ySize + 10);
 
-    this.ctx.strokeStyle = "#000000";
-    this.ctx.lineWidth = 1;
-    this.ctx.strokeRect(this.x, this.y, this.xSize, this.ySize);
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(this.x, this.y, this.xSize, this.ySize);
 };
 
-Histogram.prototype.fill = function (color, x, y) {
+Histogram.prototype.fill = function (ctx, color, x, y) {
     //var c = 255 - Math.floor(color * 256);
     //this.ctx.fillStyle = rgb(c, c, c);
 
@@ -44,17 +43,28 @@ Histogram.prototype.fill = function (color, x, y) {
     c = 511 - Math.floor(Math.log(c) / Math.log(100) * 512);
     if (c > 255) {
         c = c - 256;
-        this.ctx.fillStyle = rgb(c, c, 255);
+        ctx.fillStyle = rgb(c, c, 255);
     }
     else {
         //c = 255 - c;
-        this.ctx.fillStyle = rgb(0, 0, c);
+        ctx.fillStyle = rgb(0, 0, c);
     }
 
     var width = 1;
     var height = Math.floor(this.ySize / 20);
-    this.ctx.fillRect(this.x + (x * width),
+    ctx.fillRect(this.x + (x * width),
 		              this.y + (y * height),
 				      width,
 					  height);
+}
+
+/**
+ * 
+ * @param {*} value The value want to transform
+ * @param {*} top The higher value at the top
+ * @param {*} bot The lower value at the bottom
+ * return the value should be counted corresponding to the 20 buckets use in Histogram
+ */
+const getValueInRange = (value, top, bot = 0) => {
+    return value / (top - bot) ;
 }
