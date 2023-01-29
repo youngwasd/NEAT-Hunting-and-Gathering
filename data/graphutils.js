@@ -690,3 +690,19 @@ const generateNeuralNetWorkData_LeftWheel = (outputData) => {
     canvas.setAttribute('id', 'fitnessChart');
     document.getElementById('fitnessChartContainer').appendChild(canvas);
 };
+
+const determineBucket = (val, min, max) =>{
+    if(val > max) {console.error("You are trying to find a bucket for a value that exceeds your max. Val: " + val); return 20;}
+    if(val < min) {console.error("You are trying to find a bucket for a value that is below your min. Val: " + val); return 20;}
+
+    let range = max - min;
+    let incr = range/20;//assuming 20 buckets
+    let maxBVal = min + incr;
+
+    let bucket = 0;
+    while(val > maxBVal){
+        bucket++;
+        maxBVal += incr;
+    }
+    return bucket;
+};
