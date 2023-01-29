@@ -70,6 +70,18 @@ class PopulationManager {
         this.agentOutputChart_leftWheel = new Histogram(20, 0, "Left Wheel Output Chart", 280);
         
 
+        //Create generational histograms
+        const lW_canvas = document.getElementById('agentGenAvgLeftWheelChart');
+        const lW_ctx = lW_canvas.getContext("2d");
+        this.leftWheelHist = new Histogram(lW_ctx, 20, 5, "Average Left Wheel Output Per Generation");
+        
+        const rW_canvas = document.getElementById('agentGenAvgRightWheelChart');
+        const rW_ctx = rW_canvas.getContext("2d");
+        this.rightWheelHist = new Histogram(rW_ctx, 20, 5, "Average Right Wheel Output Per Generation");
+
+        const b_canvas = document.getElementById('agentGenAvgBiteChart');
+        const b_ctx = b_canvas.getContext("2d");
+        this.biteHist = new Histogram(b_ctx, 20, 5, "Average Bite Output Per Generation");
     };
 
     createFoodPodLayout() { // all worlds will share the same food / poison pod layout. this will ensure clean merging and splitting
@@ -607,31 +619,37 @@ class PopulationManager {
     };
 
     processGeneration() {
+        //Data collections for histograms
+        let avgLeftWheelOut = new Array(20).fill(0);
+        let avgRightWheelOut = new Array(20).fill(0);
+        let avgBiteOut = new Array(20).fill(0);
         //evaluate the agents
         this.agentsAsList().forEach(agent => {
             this.agentTracker.processAgent(agent);
             this.genomeTracker.processGenome(agent.genome);
             agent.age++;
             agent.assignFitness();
+            //Sort average output data for the histograms into their buckets
+            avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, 0, 1)]++;
+            avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, 0, 1)]++;
+            avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, 0, 1)]++;
         });
+        console.log(avgBiteOut);
 
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
 
         let reprodFitMap = new Map();
         let minShared = 0;
-        //Determine average raw fitness for each species - gabe
+        //Determine average raw fitness for each species
         PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
             //sum raw fitness for all members of this species
             let sumRaws = 0;
             speciesList.forEach(member => {
                 sumRaws += member.genome.rawFitness;
             });
-            minShared = Math.min(minShared, sumRaws / speciesList.length);//changed sumRaws here to average - gabe
-
-            console.log("Species: " + speciesId + " fitness: " + sumRaws / speciesList.length)
+            minShared = Math.min(minShared, sumRaws / speciesList.length);
             reprodFitMap.set(speciesId, sumRaws / speciesList.length);
         });
-        console.log("Min shared: " + minShared);
         //Determines the avg fitness for each species after adding the abs val minimum negative fitness? - gabe
         let sumShared = 0;
         //Build the fitness chart for the species
@@ -640,8 +658,6 @@ class PopulationManager {
             reprodFitMap.set(speciesId, newFit);
             sumShared += reprodFitMap.get(speciesId);
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: newFit });
-
-            console.log("Species: " + speciesId + " modified fitness: " + newFit)
         });
 
         //Selection process for killing off agents
@@ -764,6 +780,15 @@ class PopulationManager {
         
         PopulationManager.GEN_NUM++;
 
+        //Generates the histograms
+        this.leftWheelHist.data.push(avgLeftWheelOut);
+        this.leftWheelHist.draw(this.leftWheelHist.ctx);
+        this.rightWheelHist.data.push(avgRightWheelOut);
+        this.rightWheelHist.draw(this.rightWheelHist.ctx);
+        this.biteHist.data.push(avgBiteOut);
+        this.biteHist.draw(this.biteHist.ctx);
+
+        
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());
         generateAgeChart(this.agentTracker.getAgeData());

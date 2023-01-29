@@ -38,7 +38,7 @@ class NeuralNet {
     };
 
     sigmoid(x) {
-        let k = 1/3;
+        let k = 1/2;
         return 2 / (1 + Math.E ** (-x * k)) - 1;
     };
 };

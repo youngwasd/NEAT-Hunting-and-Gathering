@@ -30,10 +30,10 @@ class Agent {
             maxGen: 200,
             dist: 50
         },*/
-        {
+        /*{
             maxGen: Infinity,
             dist: Agent.BASE_DIAMETER/2
-        },
+        },*/
     ]
 
     /**
@@ -70,6 +70,7 @@ class Agent {
         this.biting = false;
         this.biteTicks = 0;
         this.maxEatingCompletion = 0;
+        this.totalOutputs = [0, 0, 0];
         
         this.worldId = null;
     };
@@ -90,7 +91,7 @@ class Agent {
             */
             if(this.closestFood.cals > 0){
                 //Part 1: how close were they to the food?
-                let fitnessFromCalDist = 2 * this.closestFood.cals / (1 + Math.E ** (this.closestFood.dist/50));
+                let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist/50));
                 //Part 2: were they touching the food, and if so were they also biting?
                 let fitnessFromPotCal = 0.2 * fitnessFromCalDist + 0.2 * this.touchingFood + 0.2 * (this.touchingFood && this.biting);
                 //Part 3: how close were they to finishing off the foods tick counter?
@@ -98,9 +99,9 @@ class Agent {
                 //Part 4: punish them based on how fast they were going, or if they were dead
                 fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;
                 
-                totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
+                totalRawFitness += this.closestFood.cals * params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
-                console.log("Closest I got to eating was: " + this.maxEatingCompletion);
+                //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
@@ -108,7 +109,6 @@ class Agent {
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             totalRawFitness += this.biteTicks;
-            console.log("bite ticks: "  + this.biteTicks);
             return totalRawFitness;
         };
 
@@ -208,6 +208,7 @@ class Agent {
     resetCounters(){
         this.numberOfTickBumpingIntoWalls = 0;
         this.numberOfTickOutOfBounds = 0;
+        this.totalOutputs = [0, 0, 0];
     }
 
     /**
@@ -303,7 +304,10 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
-            this.biting = output[2] > 0.5;
+            this.biting = output[2] > 0;
+            this.totalOutputs[0] += Math.abs(this.leftWheel);
+            this.totalOutputs[1] += Math.abs(this.rightWheel);
+            this.totalOutputs[2] += this.biting;
 
             //Toan Could gather data here
         }
