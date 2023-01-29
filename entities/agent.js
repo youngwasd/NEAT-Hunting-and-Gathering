@@ -70,6 +70,7 @@ class Agent {
         this.biting = false;
         this.biteTicks = 0;
         this.maxEatingCompletion = 0;
+        this.totalOutputs = [0, 0, 0];
         
         this.worldId = null;
     };
@@ -100,7 +101,7 @@ class Agent {
                 
                 totalRawFitness += this.closestFood.cals * params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
-                console.log("Closest I got to eating was: " + this.maxEatingCompletion);
+                //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
@@ -108,7 +109,6 @@ class Agent {
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             totalRawFitness += this.biteTicks;
-            console.log("bite ticks: "  + this.biteTicks);
             return totalRawFitness;
         };
 
@@ -208,6 +208,7 @@ class Agent {
     resetCounters(){
         this.numberOfTickBumpingIntoWalls = 0;
         this.numberOfTickOutOfBounds = 0;
+        this.totalOutputs = [0, 0, 0];
     }
 
     /**
@@ -303,7 +304,10 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
-            this.biting = output[2] > 0.5;
+            this.biting = output[2] > 0;
+            this.totalOutputs[0] += Math.abs(this.leftWheel);
+            this.totalOutputs[1] += Math.abs(this.rightWheel);
+            this.totalOutputs[2] += this.biting;
 
             //Toan Could gather data here
         }
