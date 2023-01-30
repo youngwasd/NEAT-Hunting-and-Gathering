@@ -309,7 +309,10 @@ class Agent {
             this.totalOutputs[1] += Math.abs(this.rightWheel);
             this.totalOutputs[2] += this.biting;
 
-            //Toan Could gather data here
+            //Gathering the current generation data
+            this.game.population.currentLeftWheelHist.data[this.game.population.tickCounter][determineBucket(output[0], -1, 1)]++;
+            this.game.population.currentRightWheelHist.data[this.game.population.tickCounter][determineBucket(output[1], -1, 1)]++;
+            this.game.population.currentBiteHist.data[this.game.population.tickCounter][determineBucket(output[2], -1, 1)]++;
         }
         /**update reward for biting near the food */
         if(this.biting) this.updateFitnessBiteReward();

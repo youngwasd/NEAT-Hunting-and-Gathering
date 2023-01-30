@@ -665,36 +665,32 @@ const generateFoodStageChart = (data) => {
 };
 
 /**
- *
- * @param {array} outputHistogram The histogram data from retracking the output
+ * 
+ * @param {*} outputHistogram The histogram wants to output
+ * @param {*} chartElementID The HTML Element ID
+ * @param {*} container The HTML Element container the histogram
+ * @param {*} style The style the Element would have
+ * @param {*} width The width of the element
+ * @param {*} height The height of the element
  */
-const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftWheelChart') => {
+const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftWheelChart', container = 'agentCurrentOutputContainers', style = '', width = 400, height = 100) => {
     
     let canvas = document.createElement('canvas');
+    if (document.getElementById(chartElementID) == undefined) {
+        document.getElementById(container).appendChild(canvas);
+    }else{
+        canvas = document.getElementById(chartElementID);
+    }
     canvas.setAttribute('id', chartElementID);
-    canvas.setAttribute('style', 'width: 400px; height: 200px');
-
+    canvas.setAttribute('style', style);
+    canvas.setAttribute('width', width);
+    canvas.setAttribute('height', height);
 
     ctx = canvas.getContext("2d");
-    //Refresh the Canvas
-    if (document.getElementById(chartElementID) != undefined) {
-        document.getElementById(chartElementID).remove();
-    }
-    return bucket;
+    //Clear the retangle
+    ctx.clearRect(0, 0, width, height);
+    outputHistogram.draw(ctx);
+    outputHistogram.ctx = ctx;
+    
 };
 
-const determineBucket = (val, min, max) =>{
-    if(val > max) {console.error("You are trying to find a bucket for a value that exceeds your max. Val: " + val); return 20;}
-    if(val < min) {console.error("You are trying to find a bucket for a value that is below your min. Val: " + val); return 20;}
-
-    let range = max - min;
-    let incr = range/20;//assuming 20 buckets
-    let maxBVal = min + incr;
-
-    let bucket = 0;
-    while(val > maxBVal){
-        bucket++;
-        maxBVal += incr;
-    }
-    return bucket;
-};

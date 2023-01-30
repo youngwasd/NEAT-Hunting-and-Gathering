@@ -67,21 +67,22 @@ class PopulationManager {
             
         }
 
-        this.agentOutputChart_leftWheel = new Histogram(20, 0, "Left Wheel Output Chart", 280);
         
+        this.currentLeftWheelHist = new Histogram(20, 5, "Current Generation Left Wheel Output Chart");
+        this.currentLeftWheelHist.data.push(new Array(20).fill(0));
 
+        this.currentRightWheelHist = new Histogram(20, 5, "Current Generation Right Wheel Output Chart");
+        this.currentRightWheelHist.data.push(new Array(20).fill(0));
+
+        this.currentBiteHist = new Histogram(20, 5, "Current Generation Biting Output Chart");
+        this.currentBiteHist.data.push(new Array(20).fill(0));
+        
         //Create generational histograms
-        const lW_canvas = document.getElementById('agentGenAvgLeftWheelChart');
-        const lW_ctx = lW_canvas.getContext("2d");
-        this.leftWheelHist = new Histogram(lW_ctx, 20, 5, "Average Left Wheel Output Per Generation");
+        this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
         
-        const rW_canvas = document.getElementById('agentGenAvgRightWheelChart');
-        const rW_ctx = rW_canvas.getContext("2d");
-        this.rightWheelHist = new Histogram(rW_ctx, 20, 5, "Average Right Wheel Output Per Generation");
+        this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
 
-        const b_canvas = document.getElementById('agentGenAvgBiteChart');
-        const b_ctx = b_canvas.getContext("2d");
-        this.biteHist = new Histogram(b_ctx, 20, 5, "Average Bite Output Per Generation");
+        this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
     };
 
     createFoodPodLayout() { // all worlds will share the same food / poison pod layout. this will ensure clean merging and splitting
@@ -232,24 +233,15 @@ class PopulationManager {
             }
         });
 
-       
-        // //Produce random value on the chart for quick testing
-        // let data = [];
-        // for (let i = 0; i < 1; i++){
-        //     let j = randomInt(2000);
-        //     if (!data[j])
-        //         data[j] = 0;
-        //     else
-        //         data[j]++;
-        // }
-        // if (!this.agentOutputChart_leftWheel.data[this.tickCounter / 7]){
-        //     this.agentOutputChart_leftWheel.data [this.tickCounter / 7] = [];
-        // }
-        // this.agentOutputChart_leftWheel.data[this.tickCounter / 7].push(data);
-        // //End Quick Testing
+        //Output the Charts for current generation data
+        generateNeuralNetWorkData(this.currentLeftWheelHist, 'agentCurrentLeftWheelChart');
+        this.currentLeftWheelHist.data.push(new Array(20).fill(0));
 
-        //Output the Chart
-        generateNeuralNetWorkData(this.agentOutputChart_leftWheel, 'agentLeftWheelChart');
+        generateNeuralNetWorkData(this.currentRightWheelHist, 'agentCurrentRightWheelChart');
+        this.currentRightWheelHist.data.push(new Array(20).fill(0));
+
+        generateNeuralNetWorkData(this.currentBiteHist, 'agentCurrentBitingChart');
+        this.currentBiteHist.data.push(new Array(20).fill(0));
 
         this.tickCounter++;
         //Check to see if the generation is over
@@ -498,7 +490,6 @@ class PopulationManager {
             }
             ++worldId;
         });
-        console.log("Total agent distributed in gen ", PopulationManager.GEN_NUM, agentDistributed);
         PopulationManager.WORLD_CREATED = worldId;
     }
 
@@ -519,7 +510,6 @@ class PopulationManager {
                     for (let i = x.length - 1; i >= 0; i--) {
                         if (worldId == x[i]) {
                             x.splice(i, 1);
-
                         }
                     }
                 });
@@ -780,14 +770,20 @@ class PopulationManager {
         
         PopulationManager.GEN_NUM++;
 
-        //Generates the histograms
+        //Generates the generational histograms
         this.leftWheelHist.data.push(avgLeftWheelOut);
-        this.leftWheelHist.draw(this.leftWheelHist.ctx);
-        this.rightWheelHist.data.push(avgRightWheelOut);
-        this.rightWheelHist.draw(this.rightWheelHist.ctx);
-        this.biteHist.data.push(avgBiteOut);
-        this.biteHist.draw(this.biteHist.ctx);
+        generateNeuralNetWorkData( this.leftWheelHist, 'agentGenAvgLeftWheelChart', 'agentAvgOutputContainers');
 
+        this.rightWheelHist.data.push(avgRightWheelOut);
+        generateNeuralNetWorkData(this.rightWheelHist, 'agentGenAvgRightWheelChart', 'agentAvgOutputContainers');
+        
+        this.biteHist.data.push(avgBiteOut);
+        generateNeuralNetWorkData(this.biteHist, 'agentGenAvgBiteChart', 'agentAvgOutputContainers');
+
+        //Reset current generation Histogram
+        this.currentLeftWheelHist.reset();
+        this.currentRightWheelHist.reset();
+        this.currentBiteHist.reset();
         
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());
