@@ -146,8 +146,6 @@ class PopulationManager {
         params.ENFORCE_MIN_POISON = document.getElementById("enforce_min_poison").checked;
         params.RAND_FOOD_PHASES = document.getElementById("rand_food_phases").checked;
         params.RAND_FOOD_LIFETIME = document.getElementById("rand_food_lifetime").checked;
-        params.FOOD_PERIODIC_REPOP = document.getElementById("periodic_food_repop").checked;
-        params.POISON_PERIODIC_REPOP = document.getElementById("periodic_poison_repop").checked;
         params.RAND_DEFAULT_WEIGHTS = document.getElementById("rand_default_weights").checked;
         params.GEN_STOP = document.getElementById("gen_stop").checked;
         params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;

@@ -13,8 +13,6 @@ const params = {
     AGENT_VISION_RADIUS: 500,
     RAND_FOOD_PHASES: false,
     RAND_FOOD_LIFETIME: false,
-    FOOD_PERIODIC_REPOP: false,
-    POISON_PERIODIC_REPOP: false,
     FREE_RANGE: false,
     SPLIT_SPECIES: true,
     RAND_DEFAULT_WEIGHTS: true,
