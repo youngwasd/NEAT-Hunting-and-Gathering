@@ -665,44 +665,32 @@ const generateFoodStageChart = (data) => {
 };
 
 /**
- *
- * @param {array} outputData all fitness data from agent tracker
+ * 
+ * @param {*} outputHistogram The histogram wants to output
+ * @param {*} chartElementID The HTML Element ID
+ * @param {*} container The HTML Element container the histogram
+ * @param {*} style The style the Element would have
+ * @param {*} width The width of the element
+ * @param {*} height The height of the element
  */
-const generateNeuralNetWorkData_LeftWheel = (outputData) => {
-    if (document.getElementById('fitnessChart') != undefined) {
-        document.getElementById('fitnessChart').remove();
+const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftWheelChart', container = 'agentCurrentOutputContainers', style = '', width = 400, height = 100) => {
+    
+    let canvas = document.createElement('canvas');
+    if (document.getElementById(chartElementID) == undefined) {
+        document.getElementById(container).appendChild(canvas);
+    }else{
+        canvas = document.getElementById(chartElementID);
     }
-    const currSpecies = new Set();
-    PopulationManager.SPECIES_MEMBERS.forEach((val, key) =>
-        currSpecies.add(key)
-    );
-    const generations = [];
-    fitnessData.forEach((gen) =>
-        generations.push(gen.filter((obj) => currSpecies.has(obj.speciesId)))
-    );
-    const speciesFit = [];
-    currSpecies.forEach((id) => {
-        const { fitnesses, firstGen } = getFitnessDataSet(id, fitnessData);
-        speciesFit.push({ speciesId: id, firstGen, fitnesses });
-    });
-    speciesFit.sort((a, b) => a.speciesId - b.speciesId);
-    const canvas = document.createElement('canvas');
-    canvas.setAttribute('id', 'fitnessChart');
-    document.getElementById('fitnessChartContainer').appendChild(canvas);
+    canvas.setAttribute('id', chartElementID);
+    canvas.setAttribute('style', style);
+    canvas.setAttribute('width', width);
+    canvas.setAttribute('height', height);
+
+    ctx = canvas.getContext("2d");
+    //Clear the retangle
+    ctx.clearRect(0, 0, width, height);
+    outputHistogram.draw(ctx);
+    outputHistogram.ctx = ctx;
+    
 };
 
-const determineBucket = (val, min, max) =>{
-    if(val > max) {console.error("You are trying to find a bucket for a value that exceeds your max. Val: " + val); return 20;}
-    if(val < min) {console.error("You are trying to find a bucket for a value that is below your min. Val: " + val); return 20;}
-
-    let range = max - min;
-    let incr = range/20;//assuming 20 buckets
-    let maxBVal = min + incr;
-
-    let bucket = 0;
-    while(val > maxBVal){
-        bucket++;
-        maxBVal += incr;
-    }
-    return bucket;
-};
