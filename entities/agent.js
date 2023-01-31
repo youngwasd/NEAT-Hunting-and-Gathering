@@ -305,9 +305,9 @@ class Agent {
             this.leftWheel = output[0];
             this.rightWheel = output[1];
             this.biting = Math.abs(output[2]) > 0.5;
-            this.totalOutputs[0] += Math.abs(this.leftWheel);
-            this.totalOutputs[1] += Math.abs(this.rightWheel);
-            this.totalOutputs[2] += this.biting;
+            this.totalOutputs[0] += this.leftWheel;
+            this.totalOutputs[1] += this.rightWheel;
+            this.totalOutputs[2] += output[2];
 
             //Toan Could gather data here
         }

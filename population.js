@@ -604,9 +604,9 @@ class PopulationManager {
             agent.age++;
             agent.assignFitness();
             //Sort average output data for the histograms into their buckets
-            avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, 0, 1)]++;
-            avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, 0, 1)]++;
-            avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, 0, 1)]++;
+            avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
+            avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
+            avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
         console.log(avgBiteOut);
 
