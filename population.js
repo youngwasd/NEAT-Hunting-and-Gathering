@@ -152,6 +152,7 @@ class PopulationManager {
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
         params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
         params.INNER_WALL = document.getElementById("inner_wall").checked;
+        params.EVOLVE_K_AND_M = document.getElementById("evolveKandM").checked;
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
@@ -380,7 +381,6 @@ class PopulationManager {
                         this.specieWorldList.set(child.speciesId, [child.speciesId]);
                         this.spawnFood(child.speciesId, false, params.FOOD_AGENT_RATIO);
                         this.spawnFood(child.speciesId, true, params.POISON_AGENT_RATIO);
-                        //console.log("Create a new Specie", child.speciesId);
                     } else {
                         this.specieWorldList.set(child.speciesId, [++PopulationManager.WORLD_CREATED]);
                     }
@@ -473,9 +473,7 @@ class PopulationManager {
                     this.worlds.get(worldId).agents.push(agent);
                     
                     ++agentDistributed;
-                    //console.log("Create new world", this.worlds.get(worldId).agents.length, specie[i], worldId);
                 } else {
-                    //console.log("Pushing agents to their old world", this.worlds.get(worldId).agents.length, specie[i], worldId);
                     agent.worldId = worldId;
                     this.worlds.get(worldId).agents.push(agent);
                     ++agentDistributed;
@@ -712,15 +710,6 @@ class PopulationManager {
             this.registerChildAgents(children);
         }
 
-
-        // let idList = "";
-        // let length = 0;
-        // this.worlds.forEach(world => {
-        //     idList += world.worldId + " ";
-        //     length++;
-        // });
-
-        // console.log("World: ", idList, length);
         //Clean up some of the dead worlds and balence agents count
         this.cleanUpWorlds();
         if (params.AGENT_PER_WORLD !== 0) {

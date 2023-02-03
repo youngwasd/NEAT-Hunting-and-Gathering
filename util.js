@@ -31,7 +31,8 @@ const params = {
     AGENT_VISION_ANGLE: 180,
     AGENT_VISION_IS_CONE: true,
     AGENT_VISION_DRAW_CONE: false,
-    MAX_TICKS_TO_CONSUME: 1
+    MAX_TICKS_TO_CONSUME: 1,
+    EVOLVE_K_AND_M: false,
 };
 
 const getMedian = (arr) => {

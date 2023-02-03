@@ -62,14 +62,16 @@ class Genome {
         let numNeurons = numInputs + numHiddens + numOutputs;
         let nodeGenes = new Map();
         let connectionGenes = new ConnectionMap();
+        let defaultKValue = 4/3;
+        let defaultMValue = 0;
 
         for (let i = 0; i < numNeurons; i++) {
             if (i < numInputs) {
-                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.input, inIds: new Set(), outIds: new Set() });
+                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.input, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue});
             } else if (i < numInputs + numHiddens) {
-                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.hidden, inIds: new Set(), outIds: new Set() });
+                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.hidden, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue});
             } else {
-                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.output, inIds: new Set(), outIds: new Set() });
+                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.output, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue});
             } 
         }
 
