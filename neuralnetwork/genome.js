@@ -62,17 +62,25 @@ class Genome {
         let numNeurons = numInputs + numHiddens + numOutputs;
         let nodeGenes = new Map();
         let connectionGenes = new ConnectionMap();
+
+        //Default values for k and m
         let defaultKValue = 4/3;
         let defaultMValue = 0;
 
         for (let i = 0; i < numNeurons; i++) {
+            //Randomize the starting point for k and M value
+            // if (randomWeights){
+            //     defaultKValue = Math.random() * 4 - 2;//Random between -2 to 2
+            //     defaultMValue = Math.random() * 2 - 1; //Random between -1 to 1
+            // }
+            
             if (i < numInputs) {
-                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.input, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue});
+                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.input, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue });
             } else if (i < numInputs + numHiddens) {
-                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.hidden, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue});
+                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.hidden, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue });
             } else {
-                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.output, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue});
-            } 
+                nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.output, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue });
+            }
         }
 
         for (let inputNeuron = 0; inputNeuron < numInputs; inputNeuron++) {
@@ -113,7 +121,7 @@ class Genome {
                 Genome.addParentConnection(connectionGenes, nodeGenes, connection);
             }
         }
-    
+
         return {
             nodeGenes: nodeGenes,
             connectionGenes: connectionGenes,
@@ -139,7 +147,7 @@ class Genome {
                     innovationMap.set(connection.innovation, new Map());
                 }
                 innovationMap.get(connection.innovation).set(0, { ...connection }); // genome A connections stored at index 0
-            }); 
+            });
         });
 
         genomeB.connectionGenes.forEach(connections => {
@@ -166,7 +174,7 @@ class Genome {
                 if (connectionMap.get(0) !== undefined && genomeA.rawFitness >= genomeB.rawFitness) {
                     selectedGenome = genomeA;
                     newConnection = connectionMap.get(0);
-                } 
+                }
                 if (connectionMap.get(1) !== undefined && genomeB.rawFitness >= genomeA.rawFitness) {
                     selectedGenome = genomeB;
                     newConnection = connectionMap.get(1);
@@ -194,7 +202,7 @@ class Genome {
         return new Genome({ nodeGenes: copiedNodes, connectionGenes: copiedConnections });
     };
 
-    static numExcess = (genomeA, genomeB) =>  {
+    static numExcess = (genomeA, genomeB) => {
         let innovSetA = genomeA.innovationSet();
         let innovSetB = genomeB.innovationSet();
         let innovCutoff = Math.min(innovSetA.maxInnovation, innovSetB.maxInnovation);
@@ -245,7 +253,7 @@ class Genome {
 
     static similarity = (genomeA, genomeB) => {
         let N = Math.max(genomeA.numConnections(), genomeB.numConnections());
-        return 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 1 * Genome.avgWeightDiff(genomeA, genomeB); 
+        return 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 1 * Genome.avgWeightDiff(genomeA, genomeB);
     };
 
     constructor(genome = undefined) {
@@ -256,7 +264,7 @@ class Genome {
         } else {
             this.nodeGenes = genome.nodeGenes;
             this.connectionGenes = genome.connectionGenes;
-        }  
+        }
     };
 
     mutate() {
@@ -264,18 +272,52 @@ class Genome {
             connections.forEach(connection => {
                 if (randomInt(100) < 5) { // 5% chance of a weight mutation for every connection
                     let randNum = randomInt(100);
-                    if(randNum < 5){//re-rolls the weight
+                    if (randNum < 5) {//re-rolls the weight
                         connection.weight = (2 * Math.random() - 1) * 2 * connection.weight;
-                    }else if(randNum < 35){//shifts the weight
+                    } else if (randNum < 35) {//shifts the weight
                         connection.weight += 0.1 * (Math.random() * 2 - 1);
                     }
-                    else{//scales the weight
-                        connection.weight += randomInt(2) === 1 ? 0.5 * connection.weight * Math.random() : -connection.weight * Math.random() * 1/3;
+                    else {//scales the weight
+                        connection.weight += (randomInt(2) === 1) ? (0.5 * connection.weight * Math.random()) : (-connection.weight * Math.random() * 1 / 3);
                     }
                     //console.log("New Weight: " + connection.weight);
                 }
             });
         });
+
+        if (params.EVOLVE_K_AND_M) {// Sigmoid k and m mutations
+            this.nodeGenes.forEach(node => {
+                //K mutation
+                if (randomInt(100) < 5) { // 5% chance of a k value mutation for every node
+                    let randNum = randomInt(100);
+                    if (randNum < 5) {//re-rolls the k value
+                        node.kValue = (2 * Math.random() - 1) * 2 * node.kValue;
+                    } else if (randNum < 35) {//shifts the k value
+                        node.kValue += 0.1 * (Math.random() * 2 - 1);
+                    }
+                    else {//scales the k value
+                        node.kValue += (randomInt(2) === 1) ? (0.5 * node.kValue * Math.random()) : (-node.kValue * Math.random() * 1 / 3);
+                    }
+                    //console.log("Mutated k ", node.kValue);
+
+                }
+
+                //M mutation
+                if (randomInt(100) < 5) { // 5% chance of a m value mutation for every node
+                    let randNum = randomInt(100);
+                    if (randNum < 5) {//re-rolls the m value
+                        node.mValue = (2 * Math.random() - 1) * 2 * node.mValue;
+                    } else if (randNum < 35) {//shifts the m value
+                        node.mValue += 0.1 * (Math.random() * 2 - 1);
+                    }
+                    else {//scales the m value
+                        node.mValue += (randomInt(2) === 1) ? 0.5 * node.mValue * Math.random() : (-node.mValue * Math.random() * 1 / 3);
+                    }
+
+                    //console.log("Mutated m ", node.mValue);
+                }
+            });
+        }
 
         if (randomInt(100) < 5) { // new node mutation (5% chance)
             let enabledConnections = this.connectionsAsList(false);
@@ -287,8 +329,17 @@ class Genome {
                 let nodeId = Genome.assignNodeId(connection.innovation);
                 if (this.nodeGenes.get(nodeId) === undefined) { // check if we already have this node in our genome
                     connection.isEnabled = false; // disable the old connection
-                    this.nodeGenes.set(nodeId, { id: nodeId, type: Genome.NODE_TYPES.hidden, value: 0, inIds: new Set(), outIds: new Set() }); // add the new node, then split the connection
-                    
+                    this.nodeGenes.set(nodeId, { // add the new node, then split the connection
+                        id: nodeId,
+                        type: Genome.NODE_TYPES.hidden,
+                        value: 0,
+                        inIds: new Set(),
+                        outIds: new Set(),
+                        //Having the same k and m as the out node
+                        kValue: this.nodeGenes.get(connection.out).kValue,
+                        mValue: this.nodeGenes.get(connection.out).mValue,
+                    });
+
                     let inConnection = {
                         in: connection.in,
                         out: nodeId,

@@ -31,7 +31,7 @@ class NeuralNet {
                     currNode.value = this.sigmoid(value);
                 }
                 else{
-                    currNode.value = this.sigmoid(value, nodeId.kValue, nodeId.mValue);
+                    currNode.value = this.sigmoid(value, currNode.kValue, currNode.mValue);
                 }
                 if (currNode.type === Genome.NODE_TYPES.output) {
                     output.push(currNode.value);
@@ -44,6 +44,7 @@ class NeuralNet {
 
     //Sigmoid function
     sigmoid(x, k = 4/3, m = 0) {
+        //console.log(k, m);
         //Name the parameters to easily adjust them
         let l = 2;
         let n = 1;

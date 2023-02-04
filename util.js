@@ -33,6 +33,7 @@ const params = {
     AGENT_VISION_DRAW_CONE: false,
     MAX_TICKS_TO_CONSUME: 1,
     EVOLVE_K_AND_M: false,
+    TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
 };
 
 const getMedian = (arr) => {

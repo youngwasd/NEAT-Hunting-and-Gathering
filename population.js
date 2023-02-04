@@ -10,6 +10,7 @@ class PopulationManager {
     static COLORS_USED = new Set();
     static SENSOR_COLORS_USED = new Set();
     static NUM_AGENTS = params.NUM_AGENTS;
+    static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
 
     constructor(game) {
         this.game = game;
@@ -63,7 +64,7 @@ class PopulationManager {
             this.resetCanvases();
         }
 
-        
+
         this.currentLeftWheelHist = new Histogram(20, 5, "Current Generation Left Wheel Output Chart");
         this.currentLeftWheelHist.data.push(new Array(20).fill(0));
 
@@ -72,10 +73,10 @@ class PopulationManager {
 
         this.currentBiteHist = new Histogram(20, 5, "Current Generation Biting Output Chart");
         this.currentBiteHist.data.push(new Array(20).fill(0));
-        
+
         //Create generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
-        
+
         this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
 
         this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
@@ -152,7 +153,7 @@ class PopulationManager {
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
         params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
         params.INNER_WALL = document.getElementById("inner_wall").checked;
-        params.EVOLVE_K_AND_M = document.getElementById("evolveKandM").checked;
+
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
@@ -205,15 +206,19 @@ class PopulationManager {
         if (document.activeElement.id !== "agent_per_world") {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
             //Force turning the split specie on
-            if (params.AGENT_PER_WORLD !== 0){
-               if (!document.getElementById("split_species").checked){
+            if (params.AGENT_PER_WORLD !== 0) {
+                if (!document.getElementById("split_species").checked) {
                     document.getElementById("split_species").checked = true;
-               }
+                }
             }
         }
 
         if (document.activeElement.id !== "max_ticks_to_consume") {
             params.MAX_TICKS_TO_CONSUME = parseInt(document.getElementById("max_ticks_to_consume").value);
+        }
+
+        if (document.activeElement.id !== "tickToUpdateCurrentGenOutputData") {
+            params.TICK_TO_UPDATE_CURRENT_GEN_DATA = parseInt(document.getElementById("tickToUpdateCurrentGenOutputData").value);
         }
 
         //Cleans up all of the food/poison for the world
@@ -227,22 +232,25 @@ class PopulationManager {
                 this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
             }
         });
+        if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0 && this.tickCounter % params.TICK_TO_UPDATE_CURRENT_GEN_DATA == 0) {
+            //Output the Charts for current generation data
+            generateNeuralNetWorkData(this.currentLeftWheelHist, 'agentCurrentLeftWheelChart');
+            this.currentLeftWheelHist.data.push(new Array(20).fill(0));
 
-        //Output the Charts for current generation data
-        generateNeuralNetWorkData(this.currentLeftWheelHist, 'agentCurrentLeftWheelChart');
-        this.currentLeftWheelHist.data.push(new Array(20).fill(0));
+            generateNeuralNetWorkData(this.currentRightWheelHist, 'agentCurrentRightWheelChart');
+            this.currentRightWheelHist.data.push(new Array(20).fill(0));
 
-        generateNeuralNetWorkData(this.currentRightWheelHist, 'agentCurrentRightWheelChart');
-        this.currentRightWheelHist.data.push(new Array(20).fill(0));
-
-        generateNeuralNetWorkData(this.currentBiteHist, 'agentCurrentBitingChart');
-        this.currentBiteHist.data.push(new Array(20).fill(0));
+            generateNeuralNetWorkData(this.currentBiteHist, 'agentCurrentBitingChart');
+            this.currentBiteHist.data.push(new Array(20).fill(0));
+            PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT++;
+        }
 
         this.tickCounter++;
         //Check to see if the generation is over
-
         if ((this.tickCounter >= params.GEN_TICKS && !params.GEN_STOP) || (params.GEN_STOP && (this.isAgentEnergyGone() || this.isFoodGone()))) {
             //When a new generation starts 
+            params.EVOLVE_K_AND_M = document.getElementById("evolveKandM").checked; // Update the evolving k and m value
+            //Reset counters
             this.tickCounter = 0;
             this.processGeneration();
             if (document.activeElement.id !== "generation_time") {
@@ -275,10 +283,13 @@ class PopulationManager {
 
     };
 
-    checkFoodLevels(poison = false) { // periodic food/poison repopulation function
+    checkFoodLevels() { // periodic food/poison repopulation function
         this.worlds.forEach((members, worldId) => {
-            members.cleanupFood(poison);
-            this.spawnFood(worldId, poison, (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * members.agents.length - (poison ? members.poison.length : members.food.length));
+            members.cleanupFood(true);
+            this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
+
+            members.cleanupFood(false);
+            this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
         });
     };
 
@@ -452,7 +463,7 @@ class PopulationManager {
         this.worlds = new Map();
         let worldId = -1;
 
-        let agentDistributed = 0;
+        let agentDistributed = 0;//For debugging purpose
         //Resetting the specie by world list
         this.specieWorldList = new Map();
 
@@ -471,13 +482,13 @@ class PopulationManager {
                     this.spawnFood(worldId, true, params.POISON_AGENT_RATIO);
                     agent.worldId = worldId;
                     this.worlds.get(worldId).agents.push(agent);
-                    
+
                     ++agentDistributed;
                 } else {
                     agent.worldId = worldId;
                     this.worlds.get(worldId).agents.push(agent);
                     ++agentDistributed;
-                }   
+                }
 
             }
             ++worldId;
@@ -523,7 +534,7 @@ class PopulationManager {
                 }
             });
         }
-        
+
     }
 
     initNewWorld(worldId, specieId) {
@@ -616,7 +627,6 @@ class PopulationManager {
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
             avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
-        console.log(avgBiteOut);
 
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
 
@@ -711,6 +721,8 @@ class PopulationManager {
         }
 
         //Clean up some of the dead worlds and balence agents count
+        //Replenish food or poison
+        this.checkFoodLevels();
         this.cleanUpWorlds();
         if (params.AGENT_PER_WORLD !== 0) {
             this.distributeAgents();
@@ -750,16 +762,16 @@ class PopulationManager {
             });
         }
         // console.log("Total agents", this.agentsAsList().length);
-        
+
         PopulationManager.GEN_NUM++;
 
         //Generates the generational histograms
         this.leftWheelHist.data.push(avgLeftWheelOut);
-        generateNeuralNetWorkData( this.leftWheelHist, 'agentGenAvgLeftWheelChart', 'agentAvgOutputContainers');
+        generateNeuralNetWorkData(this.leftWheelHist, 'agentGenAvgLeftWheelChart', 'agentAvgOutputContainers');
 
         this.rightWheelHist.data.push(avgRightWheelOut);
         generateNeuralNetWorkData(this.rightWheelHist, 'agentGenAvgRightWheelChart', 'agentAvgOutputContainers');
-        
+
         this.biteHist.data.push(avgBiteOut);
         generateNeuralNetWorkData(this.biteHist, 'agentGenAvgBiteChart', 'agentAvgOutputContainers');
 
@@ -767,6 +779,7 @@ class PopulationManager {
         this.currentLeftWheelHist.reset();
         this.currentRightWheelHist.reset();
         this.currentBiteHist.reset();
+        PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
         
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());
