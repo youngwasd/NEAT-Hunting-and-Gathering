@@ -34,6 +34,8 @@ const params = {
     MAX_TICKS_TO_CONSUME: 1,
     EVOLVE_K_AND_M: false,
     TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
+    AGENT_BITING: true,
+    GENOME_DEFAULT_K_VAL: 3/4,
 };
 
 const getMedian = (arr) => {

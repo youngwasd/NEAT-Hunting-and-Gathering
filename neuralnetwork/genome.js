@@ -4,7 +4,7 @@ class Genome {
 
     static DEFAULT_HIDDENS = 0;
 
-    static DEFAULT_OUTPUTS = 3;
+    static DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
 
     static INNOV_NUM = 0;
 
@@ -28,6 +28,7 @@ class Genome {
         Genome.INNOV_MAP = new ConnectionMap();
         Genome.NODE_ID_MAP = new Map();
         Genome.INNOV_NUM = 0;
+        Genome.DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
         Genome.DEFAULT_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * params.AGENT_VISION_RAYS + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
         Genome.NODE_ID = Genome.DEFAULT_INPUTS + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
     };
@@ -64,7 +65,7 @@ class Genome {
         let connectionGenes = new ConnectionMap();
 
         //Default values for k and m
-        let defaultKValue = 4/3;
+        let defaultKValue = params.GENOME_DEFAULT_K_VAL;
         let defaultMValue = 0;
 
         for (let i = 0; i < numNeurons; i++) {

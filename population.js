@@ -64,22 +64,23 @@ class PopulationManager {
             this.resetCanvases();
         }
 
-
         this.currentLeftWheelHist = new Histogram(20, 5, "Current Generation Left Wheel Output Chart");
         this.currentLeftWheelHist.data.push(new Array(20).fill(0));
 
         this.currentRightWheelHist = new Histogram(20, 5, "Current Generation Right Wheel Output Chart");
         this.currentRightWheelHist.data.push(new Array(20).fill(0));
-
-        this.currentBiteHist = new Histogram(20, 5, "Current Generation Biting Output Chart");
-        this.currentBiteHist.data.push(new Array(20).fill(0));
-
+        
         //Create generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
         this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
 
-        this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
+        if(params.AGENT_BITING){
+            this.currentBiteHist = new Histogram(20, 5, "Current Generation Biting Output Chart");
+            this.currentBiteHist.data.push(new Array(20).fill(0));
+            //Generational
+            this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
+        }
     };
 
     createFoodPodLayout() { // all worlds will share the same food / poison pod layout. this will ensure clean merging and splitting
@@ -219,6 +220,14 @@ class PopulationManager {
 
         if (document.activeElement.id !== "tickToUpdateCurrentGenOutputData") {
             params.TICK_TO_UPDATE_CURRENT_GEN_DATA = parseInt(document.getElementById("tickToUpdateCurrentGenOutputData").value);
+        }
+
+        if (document.activeElement.id !== "agent_biting") {
+            params.AGENT_BITING = document.getElementById("agent_biting").checked;
+        }
+
+        if (document.activeElement.id !== "genome_default_k_val") {
+            params.GENOME_DEFAULT_K_VAL = parseInt(document.getElementById("genome_default_k_val").value);
         }
 
         //Cleans up all of the food/poison for the world
@@ -625,7 +634,7 @@ class PopulationManager {
             //Sort average output data for the histograms into their buckets
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
-            avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
+            if(params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
 
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
@@ -772,13 +781,15 @@ class PopulationManager {
         this.rightWheelHist.data.push(avgRightWheelOut);
         generateNeuralNetWorkData(this.rightWheelHist, 'agentGenAvgRightWheelChart', 'agentAvgOutputContainers');
 
-        this.biteHist.data.push(avgBiteOut);
-        generateNeuralNetWorkData(this.biteHist, 'agentGenAvgBiteChart', 'agentAvgOutputContainers');
+        if(params.AGENT_BITING){
+            this.biteHist.data.push(avgBiteOut);
+            generateNeuralNetWorkData(this.biteHist, 'agentGenAvgBiteChart', 'agentAvgOutputContainers');
+        }
 
         //Reset current generation Histogram
         this.currentLeftWheelHist.reset();
         this.currentRightWheelHist.reset();
-        this.currentBiteHist.reset();
+        if(params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
         
         //Generates the data charts

@@ -89,7 +89,7 @@ class Agent {
             /** Rewards the agent based on how close they were to getting calories 
              * It rewards a fraction of what they would've gotten from eating the food depending on how close they were to consumption
             */
-            if (this.closestFood.cals > 0) {
+            /*if (this.closestFood.cals > 0) {
                 //Part 1: how close were they to the food?
                 let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist / 50));
                 //Part 2: were they touching the food, and if so were they also biting?
@@ -102,13 +102,13 @@ class Agent {
                 totalRawFitness += this.closestFood.cals * params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
                 //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
-            }
+            }*/
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
-            totalRawFitness += this.biteTicks;
+            if(params.AGENT_BITING) totalRawFitness += this.biteTicks;
             return totalRawFitness;
         };
 
@@ -304,17 +304,21 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
-            this.biting = Math.abs(output[2]) > 0.5;
             this.totalOutputs[0] += this.leftWheel;
             this.totalOutputs[1] += this.rightWheel;
-            this.totalOutputs[2] += output[2];
 
+            let slot = PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT;
             //Gathering the current generation data
             if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0){
-                let slot = PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT;
                 this.game.population.currentLeftWheelHist.data[slot][determineBucket(output[0], -1, 1)]++;
                 this.game.population.currentRightWheelHist.data[slot][determineBucket(output[1], -1, 1)]++;
-                this.game.population.currentBiteHist.data[slot][determineBucket(output[2], -1, 1)]++;
+            }
+
+            if(params.AGENT_BITING){
+                this.biting = Math.abs(output[2]) > 0.5;
+                this.totalOutputs[2] += output[2];
+                if(params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0 && this.game.population.currentBiteHist != null) 
+                    this.game.population.currentBiteHist.data[slot][determineBucket(output[2], -1, 1)]++;
             }
         }
         /**update reward for biting near the food */
@@ -351,7 +355,7 @@ class Agent {
             let foundFood = false;
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    if (this.biting) {
+                    if (this.biting || !params.AGENT_BITING) {
                         let consOut = entity.consume();
                         let cals = consOut.calories;
                         let completion = consOut.completion;
