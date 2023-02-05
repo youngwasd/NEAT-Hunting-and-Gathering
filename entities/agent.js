@@ -522,9 +522,9 @@ class Agent {
             this.spotted.push(spotVals);
 
             //console.log("minDist: " + minDist);
-            //Hard coded 200 value was hand tweaked, and not analytically determined
-            let distInput = 2 / (1 + Math.E ** (minDist/150));//minDist >= params.CANVAS_SIZE ? 0 : 360 - 360 * minDist / params.CANVAS_SIZE;
-            //console.log("distInput: " + distInput);
+            //Hard coded k value was hand tweaked, and not analytically determined
+            //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
+            let distInput = Math.max(1 - minDist/800, 0);
             input.push(distInput);
             //console.log("hueOfMinDist: " + hueOfMinDist);
             input.push((hueOfMinDist)/360);
