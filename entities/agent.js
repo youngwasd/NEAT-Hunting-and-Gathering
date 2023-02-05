@@ -10,7 +10,7 @@ class Agent {
 
     /** The amount of energy an Agent is given upon spawn */
     static START_ENERGY = 100;
-    
+
     static BASE_DIAMETER = 15;
 
     static distForBiteReward = [
@@ -44,7 +44,7 @@ class Agent {
      * @param {*} genome the Agent's genome (defaults to undefined if Agent is not an offspring of parent Agents)
      */
     constructor(game, x, y, genome = undefined) {
-        Object.assign(this, {game, x, y});
+        Object.assign(this, { game, x, y });
         this.strokeColor = "black"; // the color of the Agent's circular outlining
         this.leftWheel = 0; // the "power" supplied to the Agent's left wheel (falls in the range -1 to 1 inclusive)
         this.rightWheel = 0; // the "power" supplied to the Agent's right wheel (falls in the range -1 to 1 inclusive)
@@ -71,7 +71,7 @@ class Agent {
         this.biteTicks = 0;
         this.maxEatingCompletion = 0;
         this.totalOutputs = [0, 0, 0];
-        
+
         this.worldId = null;
     };
 
@@ -85,20 +85,20 @@ class Agent {
          */
         const fitnessFunct = () => {
             let totalRawFitness = this.caloriesEaten * params.FITNESS_CALORIES;
-            
+
             /** Rewards the agent based on how close they were to getting calories 
              * It rewards a fraction of what they would've gotten from eating the food depending on how close they were to consumption
             */
-            if(this.closestFood.cals > 0){
+            if (this.closestFood.cals > 0) {
                 //Part 1: how close were they to the food?
-                let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist/50));
+                let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist / 50));
                 //Part 2: were they touching the food, and if so were they also biting?
                 let fitnessFromPotCal = 0.2 * fitnessFromCalDist + 0.2 * this.touchingFood + 0.2 * (this.touchingFood && this.biting);
                 //Part 3: how close were they to finishing off the foods tick counter?
                 fitnessFromPotCal += 0.4 * this.maxEatingCompletion;
                 //Part 4: punish them based on how fast they were going, or if they were dead
                 fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;
-                
+
                 totalRawFitness += this.closestFood.cals * params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
                 //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
@@ -118,7 +118,7 @@ class Agent {
             let distFromRight = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.x);
             let distFromBottom = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.y);
             let dist = Math.min(distFromBottom, distFromLeft, distFromRight, distFromTop);
-            let rawFitness = 100/(dist + this.speed + 0.5);
+            let rawFitness = 100 / (dist + this.speed + 0.5);
             console.log("fitness from moving to wall: " + rawFitness);
             rawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             return rawFitness;
@@ -155,31 +155,31 @@ class Agent {
      * @param {*} sortedEntities this method assumes the entities are sorted by distance
      */
     getShortestDistToFood(sortedEntities) {
-        for(let i = 0; i < sortedEntities.length; i++) {
-            if(sortedEntities[i] instanceof Food && sortedEntities[i].phase < sortedEntities[i].lifecycle_phases.dead) {
-                return {cals: sortedEntities[i].getCalories(), dist: distance(this.BC.center, sortedEntities[i].BC.center)};
+        for (let i = 0; i < sortedEntities.length; i++) {
+            if (sortedEntities[i] instanceof Food && sortedEntities[i].phase < sortedEntities[i].lifecycle_phases.dead) {
+                return { cals: sortedEntities[i].getCalories(), dist: distance(this.BC.center, sortedEntities[i].BC.center) };
             }
         }
-        return {cals: 0, dist: Infinity};
+        return { cals: 0, dist: Infinity };
     }
 
-    updateFitnessBiteReward(){
+    updateFitnessBiteReward() {
         let distForBiteReward = Agent.distForBiteReward;
         let index = -1;
-        for(let i = 0; i < distForBiteReward.length; i++) {
-            if (PopulationManager.GEN_NUM < distForBiteReward[i].maxGen){
+        for (let i = 0; i < distForBiteReward.length; i++) {
+            if (PopulationManager.GEN_NUM < distForBiteReward[i].maxGen) {
                 index = i;
                 break;
             }
         }
-        if(index >= 0){
-            if(this.closestFood.dist <= distForBiteReward[index].dist){
+        if (index >= 0) {
+            if (this.closestFood.dist <= distForBiteReward[index].dist) {
                 this.biteTicks++;
-            }else if(index >= 2 && this.closestFood.dist > distForBiteReward[index - 2].dist){
+            } else if (index >= 2 && this.closestFood.dist > distForBiteReward[index - 2].dist) {
                 //this.biteTicks--;
             }
         }
-        
+
     }
 
     /** Updates this Agent's origin (initial position) to its current position in the sim */
@@ -205,7 +205,7 @@ class Agent {
     };
 
     /** Resets counters for the numbers of tick out of bound and bumping into walls */
-    resetCounters(){
+    resetCounters() {
         this.numberOfTickBumpingIntoWalls = 0;
         this.numberOfTickOutOfBounds = 0;
         this.totalOutputs = [0, 0, 0];
@@ -221,7 +221,7 @@ class Agent {
     };
 
     getEyePos() {
-        return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading), y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+        return { x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading), y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading) };
     }
 
     /**
@@ -244,7 +244,7 @@ class Agent {
     };
 
     //Make the energy = energy threshold
-    deactivateAgent(){
+    deactivateAgent() {
         this.energy = Agent.DEATH_ENERGY_THRESH;
     }
 
@@ -264,7 +264,7 @@ class Agent {
          */
         let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
 
-        
+
         entities.forEach(entity => {
             /** add all entities to our spotted neighbors that aren't ourselves, not dead, and are within our vision radius */
             if (entity !== this && !entity.removeFromWorld && distance(entity.BC.center, this.BC.center) <= params.AGENT_VISION_RADIUS) {
@@ -278,12 +278,12 @@ class Agent {
         //Determine closest food for fitness function
         this.closestFood = this.getShortestDistToFood(spottedNeighbors);
 
-        if(params.AGENT_VISION_IS_CONE){
+        if (params.AGENT_VISION_IS_CONE) {
             this.coneVision(input);
-        } else{
-            
+        } else {
+
             // add input for the neighbors we have spotted, up to AGENT_NEIGHBOR_COUNT
-            for (let i = 0; i < Math.min(spottedNeighbors.length, params.AGENT_NEIGHBOR_COUNT); i++) { 
+            for (let i = 0; i < Math.min(spottedNeighbors.length, params.AGENT_NEIGHBOR_COUNT); i++) {
                 let neighbor = spottedNeighbors[i];
                 input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue())); // the data hue
                 input.push(AgentInputUtil.normalizeAngle(this.getRelativePositionAngle({ x: neighbor.x - this.x, y: neighbor.y - this.y }))); // normalized relative position angle
@@ -294,7 +294,7 @@ class Agent {
             }
         }
 
-        let normEnergy = this.energy/Agent.START_ENERGY;
+        let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
@@ -310,22 +310,25 @@ class Agent {
             this.totalOutputs[2] += output[2];
 
             //Gathering the current generation data
-            this.game.population.currentLeftWheelHist.data[this.game.population.tickCounter][determineBucket(output[0], -1, 1)]++;
-            this.game.population.currentRightWheelHist.data[this.game.population.tickCounter][determineBucket(output[1], -1, 1)]++;
-            this.game.population.currentBiteHist.data[this.game.population.tickCounter][determineBucket(output[2], -1, 1)]++;
+            if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0){
+                let slot = PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT;
+                this.game.population.currentLeftWheelHist.data[slot][determineBucket(output[0], -1, 1)]++;
+                this.game.population.currentRightWheelHist.data[slot][determineBucket(output[1], -1, 1)]++;
+                this.game.population.currentBiteHist.data[slot][determineBucket(output[2], -1, 1)]++;
+            }
         }
         /**update reward for biting near the food */
-        if(this.biting) this.updateFitnessBiteReward();
+        if (this.biting) this.updateFitnessBiteReward();
 
         /** This is the physics behind how our wheel's power values affect our position and heading */
-        let dh = this.wheelRadius / this.diameter * this.maxVelocity * (this.rightWheel - this.leftWheel);   
+        let dh = this.wheelRadius / this.diameter * this.maxVelocity * (this.rightWheel - this.leftWheel);
         let dx = (this.wheelRadius / 2) * this.maxVelocity * (this.rightWheel + this.leftWheel) * Math.cos(this.heading);
         let dy = (this.wheelRadius / 2) * this.maxVelocity * (this.rightWheel + this.leftWheel) * Math.sin(this.heading);
         this.x += dx;
         this.y += dy;
         this.heading += dh;
 
-        this.speed = Math.sqrt(dx **2 + dy **2);
+        this.speed = Math.sqrt(dx ** 2 + dy ** 2);
 
         /** Make sure our new heading is between 0 and 2pi exclusive */
         if (this.heading < 0) {
@@ -348,7 +351,7 @@ class Agent {
             let foundFood = false;
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    if(this.biting){
+                    if (this.biting) {
                         let consOut = entity.consume();
                         let cals = consOut.calories;
                         let completion = consOut.completion;
@@ -358,12 +361,12 @@ class Agent {
                             this.caloriesEaten += cals;
                         }
                         this.energy += cals;
-                        
+
                         this.eatingCompletion = completion;
                         this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
                     }
                     foundFood = true;
-                } 
+                }
             });
             this.touchingFood = foundFood;
             /** Our energy may have changed, so update our diameter and BC once again */
@@ -373,7 +376,7 @@ class Agent {
 
         //Check out of bound here
         //if (this.x + this.diameter < 0 || this.x - this.diameter > params.CANVAS_SIZE || this.y + this.diameter < 0 || this.y - this.diameter > params.CANVAS_SIZE){//Accounting for the agent's size and 2 layers punishments (walls + out of bound)
-        if (this.x < 0 || this.x > params.CANVAS_SIZE || this.y < 0 || this.y > params.CANVAS_SIZE){//Old out of bound condition
+        if (this.x < 0 || this.x > params.CANVAS_SIZE || this.y < 0 || this.y > params.CANVAS_SIZE) {//Old out of bound condition
             this.isOutOfBound = true;
             ++this.numberOfTickOutOfBounds;
 
@@ -381,7 +384,7 @@ class Agent {
             this.deactivateAgent();
 
         }
-        else{
+        else {
             this.isOutOfBound = false;
         }
         this.tickCounter++;
@@ -412,7 +415,7 @@ class Agent {
     visionRayCollision(line, entity, eyes) {
         var circle = entity.BC;
         var slope = line.slope;
-       
+
         var yInt = line.yInt;
         var a = 1 + slope ** 2;
         var b = 2 * (slope * (yInt - circle.center.y) - circle.center.x);
@@ -423,25 +426,25 @@ class Agent {
         if (d === 0) {
             x = -b / (2 * a);
         } else if (d > 0) {
-            let xVals = {x1: (-b + Math.sqrt(d)) / (2 * a), x2: (-b - Math.sqrt(d)) / (2 * a)};
+            let xVals = { x1: (-b + Math.sqrt(d)) / (2 * a), x2: (-b - Math.sqrt(d)) / (2 * a) };
             let x1Dist = Math.abs(eyes.x - xVals.x1); let x2Dist = Math.abs(eyes.x - xVals.x2);
-            if(x1Dist <= x2Dist){
+            if (x1Dist <= x2Dist) {
                 x = xVals.x1;
-            }else{
+            } else {
                 x = xVals.x2;
             }
         }
-        if(x != null) {
+        if (x != null) {
             let y = x * slope + yInt;
-            return {y: y, x: x};
-        } else{
-            return {y: Infinity, x: Infinity};
+            return { y: y, x: x };
+        } else {
+            return { y: Infinity, x: Infinity };
         }
     }
 
-    visionRayWallCollision(line, wall){
+    visionRayWallCollision(line, wall) {
         if (line.slope === wall.slope) return false;
-        if(wall.slope === Infinity) return {x: wall.xEnd, y: line.slope * wall.xEnd + line.yInt};
+        if (wall.slope === Infinity) return { x: wall.xEnd, y: line.slope * wall.xEnd + line.yInt };
 
         var intersect = {};
         intersect.x = (wall.yInt - line.yInt) / (line.slope - wall.slope);
@@ -450,27 +453,26 @@ class Agent {
         return intersect;
     }
 
-    coneVision(input)
-    {
+    coneVision(input) {
         const rays = params.AGENT_VISION_RAYS - 1;
         const angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
-        const angleBetw = angle/rays;
+        const angleBetw = angle / rays;
 
-        let currAngle = this.heading - angle/2;
+        let currAngle = this.heading - angle / 2;
 
         let eyes = this.getEyePos();
 
         this.spotted = [];
         this.visCol = [];
-        
+
         let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
         let walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
-        for(let i = 0; i <= rays; i++){
+        for (let i = 0; i <= rays; i++) {
 
-            while(currAngle < 0){
+            while (currAngle < 0) {
                 currAngle += Math.PI * 2;
             }
-            while (currAngle > 2 * Math.PI){
+            while (currAngle > 2 * Math.PI) {
                 currAngle -= Math.PI * 2;
             }
 
@@ -481,8 +483,8 @@ class Agent {
             let minDist = Infinity;
             let hueOfMinDist = 0;
             let closestPoint = null;
-            
-            let inRightHalf = currAngle <= Math.PI / 2 || currAngle > Math.PI * 3/2;
+
+            let inRightHalf = currAngle <= Math.PI / 2 || currAngle > Math.PI * 3 / 2;
 
             //let inTopHalf = currAngle >= 0 && currAngle < Math.PI;
             //Check for wall collisions
@@ -493,12 +495,12 @@ class Agent {
                 let lowX = Math.min(wall.xStart, wall.xEnd);
                 let highX = Math.max(wall.xStart, wall.xEnd);
                 const onSeg = (colVals.y > lowY || eqThrsh(colVals.y, lowY))
-                && (colVals.y < highY || eqThrsh(colVals.y, highY))
-                && (colVals.x > lowX || eqThrsh(colVals.x, lowX))
-                && (colVals.x <= highX || eqThrsh(colVals.x, highX));
-                if(onSeg){
+                    && (colVals.y < highY || eqThrsh(colVals.y, highY))
+                    && (colVals.x > lowX || eqThrsh(colVals.x, lowX))
+                    && (colVals.x <= highX || eqThrsh(colVals.x, highX));
+                if (onSeg) {
                     let wallDist = distance(eyes, colVals);
-                    if(wallDist < minDist && (inRightHalf === colVals.x >= eyes.x)) {
+                    if (wallDist < minDist && (inRightHalf === colVals.x >= eyes.x)) {
                         minDist = wallDist;
                         hueOfMinDist = wall.getDataHue();//tempory value to change
                         closestPoint = colVals;
@@ -506,19 +508,19 @@ class Agent {
                 }
             });
 
-            entities.forEach(entity =>{
-                if((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity != this){
+            entities.forEach(entity => {
+                if ((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity != this) {
                     let newSpot = this.visionRayCollision(line, entity, eyes);
                     let newDist = distance(eyes, newSpot);
-                    if(newDist < minDist) {
+                    if (newDist < minDist) {
                         minDist = newDist;
                         hueOfMinDist = entity.getDataHue();
                         closestPoint = newSpot;
                     }
                 }
             });
-            if(closestPoint != null) this.visCol.push(closestPoint);
-            let spotVals = {dist: minDist, angle: currAngle};
+            if (closestPoint != null) this.visCol.push(closestPoint);
+            let spotVals = { dist: minDist, angle: currAngle };
             this.spotted.push(spotVals);
 
             //console.log("minDist: " + minDist);
@@ -527,7 +529,7 @@ class Agent {
             let distInput = Math.max(1 - minDist/800, 0);
             input.push(distInput);
             //console.log("hueOfMinDist: " + hueOfMinDist);
-            input.push((hueOfMinDist)/360);
+            input.push((hueOfMinDist) / 360);
             currAngle += angleBetw;
         }
     }
@@ -549,35 +551,35 @@ class Agent {
         ctx.beginPath();
         ctx.lineWidth = this.biting ? 10 : 2;//width for pointer line is thicker if biting
         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
-        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading)); 
+        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
         ctx.closePath();
 
         ctx.lineWidth = 2;
         //Draw cone vision
-        if(params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && Array.isArray(this.spotted)) {
+        if (params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && Array.isArray(this.spotted)) {
             this.drawVFinal(ctx);
             this.drawVCol(ctx);
-        }else if(!Array.isArray(this.spotted)){
+        } else if (!Array.isArray(this.spotted)) {
             console.error("this.spotted is not an array...");
         }
     };
 
-    drawVCol(ctx){
+    drawVCol(ctx) {
         ctx.strokeStyle = "Red";
         ctx.linewidth = 2;
-        for(let i = 0; i < this.visCol.length; i++){
+        for (let i = 0; i < this.visCol.length; i++) {
             ctx.beginPath();
-            ctx.arc(this.visCol[i].x, this.visCol[i].y, 3, 0, 2 *Math.PI);
+            ctx.arc(this.visCol[i].x, this.visCol[i].y, 3, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.closePath();
         }
     }
-    drawVFinal(ctx){
+    drawVFinal(ctx) {
         let eyes = this.getEyePos();
         ctx.strokeStyle = "Red";
         ctx.linewidth = 2;
-        for(let i = 0; i < this.spotted.length; i++){
+        for (let i = 0; i < this.spotted.length; i++) {
             let angle = this.spotted[i].angle;
             let dist = this.spotted[i].dist == Infinity ? 9999 : this.spotted[i].dist;
             ctx.beginPath();

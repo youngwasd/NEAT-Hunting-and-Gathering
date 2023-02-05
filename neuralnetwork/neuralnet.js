@@ -27,7 +27,12 @@ class NeuralNet {
                         }
                     });
                 });
-                currNode.value = this.sigmoid(value);
+                if (!params.EVOLVE_K_AND_M){
+                    currNode.value = this.sigmoid(value);
+                }
+                else{
+                    currNode.value = this.sigmoid(value, currNode.kValue, currNode.mValue);
+                }
                 if (currNode.type === Genome.NODE_TYPES.output) {
                     output.push(currNode.value);
                 }
@@ -37,8 +42,12 @@ class NeuralNet {
         return output;
     };
 
-    sigmoid(x) {
-        let k = 4/3;
-        return 2 / (1 + Math.E ** (-x * k)) - 1;
+    //Sigmoid function
+    sigmoid(x, k = 4/3, m = 0) {
+        //console.log(k, m);
+        //Name the parameters to easily adjust them
+        let l = 2;
+        let n = 1;
+        return l / (1 + Math.E ** (k * -(x - m))) - n;
     };
 };

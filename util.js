@@ -13,8 +13,6 @@ const params = {
     AGENT_VISION_RADIUS: 500,
     RAND_FOOD_PHASES: false,
     RAND_FOOD_LIFETIME: false,
-    FOOD_PERIODIC_REPOP: false,
-    POISON_PERIODIC_REPOP: false,
     FREE_RANGE: false,
     SPLIT_SPECIES: true,
     RAND_DEFAULT_WEIGHTS: true,
@@ -33,7 +31,9 @@ const params = {
     AGENT_VISION_ANGLE: 180,
     AGENT_VISION_IS_CONE: true,
     AGENT_VISION_DRAW_CONE: false,
-    MAX_TICKS_TO_CONSUME: 1
+    MAX_TICKS_TO_CONSUME: 1,
+    EVOLVE_K_AND_M: false,
+    TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
 };
 
 const getMedian = (arr) => {
