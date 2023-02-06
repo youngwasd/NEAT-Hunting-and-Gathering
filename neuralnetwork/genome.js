@@ -64,7 +64,7 @@ class Genome {
         let connectionGenes = new ConnectionMap();
 
         //Default values for k and m
-        let defaultKValue = 4/3;
+        let defaultKValue = 4 / 3;
         let defaultMValue = 0;
 
         for (let i = 0; i < numNeurons; i++) {
@@ -73,7 +73,7 @@ class Genome {
             //     defaultKValue = Math.random() * 4 - 2;//Random between -2 to 2
             //     defaultMValue = Math.random() * 2 - 1; //Random between -1 to 1
             // }
-            
+
             if (i < numInputs) {
                 nodeGenes.set(i, { id: i, type: Genome.NODE_TYPES.input, inIds: new Set(), outIds: new Set(), kValue: defaultKValue, mValue: defaultMValue });
             } else if (i < numInputs + numHiddens) {
@@ -251,9 +251,58 @@ class Genome {
         return average / matchCount;
     };
 
+    //Use for speciation. Determine the difference of k and M value in a and b
+    // Return {avg diff for k, avg diff for m}
+    static avgKAndMValueDiff = (genomeA, genomeB) => {
+        if (!params.EVOLVE_K_AND_M)
+            return { averageK: 0, averageM: 0 };
+
+        let nodeMap = new Map();
+        let nodeListA = genomeA.nodesAsList();
+        let nodeListB = genomeB.nodesAsList();
+
+        nodeListA.forEach(node => {
+            if (nodeMap.get(node.nodeId) === undefined) {
+                nodeMap.set(node.nodeId, new Map());
+            }
+            nodeMap.get(node.nodeId).set(0, {k: node.kValue, m: node.mValue});
+        });
+
+        nodeListB.forEach(node => {
+            if (nodeMap.get(node.nodeId) !== undefined) {
+                nodeMap.get(node.nodeId).set(1, {k: node.kValue, m: node.mValue});
+            }
+            
+        });
+
+        let avgDiff_k = 0;
+        let avgDiff_m = 0;
+        let matchCount = 0;
+        nodeMap.forEach(valuePair => {
+            if (valuePair.size === 2) {
+                avgDiff_k += Math.abs(valuePair.get(0).k - valuePair.get(1).k);
+                avgDiff_m += Math.abs(valuePair.get(0).m - valuePair.get(1).m);
+                matchCount++;
+            }
+        });
+        avgDiff_k /= matchCount;
+        avgDiff_m /= matchCount;
+
+        return { averageK: avgDiff_k, averageM: avgDiff_m };
+    };
+
     static similarity = (genomeA, genomeB) => {
         let N = Math.max(genomeA.numConnections(), genomeB.numConnections());
-        return 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 1 * Genome.avgWeightDiff(genomeA, genomeB);
+        let res = 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 1 * Genome.avgWeightDiff(genomeA, genomeB);
+        
+        //Adding the difference of k and m to the similarity when speciation
+        if (params.EVOLVE_K_AND_M){
+            let tmp = Genome.avgKAndMValueDiff(genomeA, genomeB);
+            res += 0.5 * tmp.averageK;
+            res += 0.5 * tmp.averageM;
+        }
+        
+        return res;
     };
 
     constructor(genome = undefined) {
