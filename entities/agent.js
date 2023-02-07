@@ -106,6 +106,11 @@ class Agent {
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
+            let fitnessFromPotCal = 0;
+            if(this.closestFood.cals > 0)
+                fitnessFromPotCal = this.closestFood.cals * this.maxEatingCompletion;
+
+            totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             if(params.AGENT_BITING) totalRawFitness += this.biteTicks;

@@ -254,7 +254,7 @@ class Genome {
 
     static similarity = (genomeA, genomeB) => {
         let N = Math.max(genomeA.numConnections(), genomeB.numConnections());
-        return 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 1 * Genome.avgWeightDiff(genomeA, genomeB);
+        return 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 0.4 * Genome.avgWeightDiff(genomeA, genomeB);
     };
 
     constructor(genome = undefined) {
@@ -271,15 +271,20 @@ class Genome {
     mutate() {
         this.connectionGenes.forEach(connections => { // weight mutations
             connections.forEach(connection => {
-                if (randomInt(100) < 5) { // 5% chance of a weight mutation for every connection
-                    let randNum = randomInt(100);
-                    if (randNum < 5) {//re-rolls the weight
-                        connection.weight = (2 * Math.random() - 1) * 2 * connection.weight;
-                    } else if (randNum < 35) {//shifts the weight
-                        connection.weight += 0.1 * (Math.random() * 2 - 1);
+                if (randomInt(100) < 80) { // 80% chance of a weight mutation for every connection
+                    let randNum = randomInt(1000);
+                    if (randNum < 1) {//re-rolls the weight
+                        let sign = randomInt(2) == 1 ? -1 : 1;
+                        connection.weight = sign * (randomFloatUniform(0, 2)) * connection.weight;
+                    } else if (randNum < 500) {//shifts the weight
+                        connection.weight += (randomFloatUniform(-0.5, 0.5));
                     }
                     else {//scales the weight
-                        connection.weight += (randomInt(2) === 1) ? (0.5 * connection.weight * Math.random()) : (-connection.weight * Math.random() * 1 / 3);
+                        let s_up = 0.25;
+                        let s_down = 1 - 1/(1+s_up);
+                        connection.weight += (randomInt(2) === 1) ? 
+                                                (s_up * connection.weight * Math.abs(randomFloatUniform(-1, 1))) : 
+                                                (-s_down * connection.weight * Math.abs(randomFloatUniform(-1, 1)));
                     }
                     //console.log("New Weight: " + connection.weight);
                 }

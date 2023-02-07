@@ -68,6 +68,24 @@ const randomInt = (n) => Math.floor(Math.random() * n);
 const randomFloat = (n) => Math.random() * n;
 
 /**
+ * Uses Box-Muller transform to generate random numbers that produce a normal distribution
+ * @param {Number} min 
+ * @param {Number} max 
+ * @returns random float between min and max that follows a normal distribution
+ */
+const randomFloatUniform = (min, max) => {
+    let u1 = Math.random();
+    if(u1 == 0) u1 = 0.000000001;
+    let u2 = Math.random();
+    let z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2) * 0.1 + 0.5;
+
+    let res = z * (max-min) + min;
+    if(res > max) res = max;
+    if(res < min) res = min;
+    return res;
+}
+
+/**
  * @param {Number} r Red Value
  * @param {Number} g Green Value
  * @param {Number} b Blue Value

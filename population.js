@@ -227,7 +227,7 @@ class PopulationManager {
         }
 
         if (document.activeElement.id !== "genome_default_k_val") {
-            params.GENOME_DEFAULT_K_VAL = parseInt(document.getElementById("genome_default_k_val").value);
+            params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
         }
 
         //Cleans up all of the food/poison for the world
