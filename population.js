@@ -133,6 +133,7 @@ class PopulationManager {
         PopulationManager.COLORS_USED = new Set();
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
+        PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
 
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
