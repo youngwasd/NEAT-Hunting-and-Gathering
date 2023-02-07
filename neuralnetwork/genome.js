@@ -299,8 +299,8 @@ class Genome {
         //Adding the difference of k and m to the similarity when speciation
         if (params.EVOLVE_K_AND_M){
             let tmp = Genome.avgKAndMValueDiff(genomeA, genomeB);
-            res += 0.5 * tmp.averageK;
-            res += 0.5 * tmp.averageM;
+            res += tmp.averageK;
+            res += tmp.averageM;
         }
         
         return res;
@@ -329,7 +329,7 @@ class Genome {
                         connection.weight += (randomFloatUniform(-0.5, 0.5));
                     }
                     else {//scales the weight
-                        let s_up = 0.25;
+                        let s_up = 0.5;
                         let s_down = 1 - 1/(1+s_up);
                         connection.weight += (randomInt(2) === 1) ? 
                                                 (s_up * connection.weight * Math.abs(randomFloatUniform(-1, 1))) : 
@@ -342,33 +342,42 @@ class Genome {
 
         if (params.EVOLVE_K_AND_M) {// Sigmoid k and m mutations
             this.nodeGenes.forEach(node => {
+                
                 //K mutation
-                if (randomInt(100) < 5) { // 5% chance of a k value mutation for every node
-                    let randNum = randomInt(100);
-                    if (randNum < 5) {//re-rolls the k value
-                        node.kValue = (2 * Math.random() - 1) * 2 * node.kValue;
-                    } else if (randNum < 35) {//shifts the k value
-                        node.kValue += 0.1 * (Math.random() * 2 - 1);
+                if (randomInt(100) < 80) { // 80% chance of a weight mutation for every connection
+                    let randNum = randomInt(1000);
+                    if (randNum < 1) {//re-rolls the weight
+                        let sign = randomInt(2) == 1 ? -1 : 1;
+                        node.kValue = sign * (randomFloatUniform(0, 2)) * node.kValue;
+                    } else if (randNum < 500) {//shifts the weight
+                        node.kValue += (randomFloatUniform(-0.3, 0.3));
                     }
-                    else {//scales the k value
-                        node.kValue += (randomInt(2) === 1) ? (0.5 * node.kValue * Math.random()) : (-node.kValue * Math.random() * 1 / 3);
+                    else {//scales the weight
+                        let s_up = 0.25;
+                        let s_down = 1 - 1/(1+s_up);
+                        node.kValue += (randomInt(2) === 1) ? 
+                                                (s_up * node.kValue * Math.abs(randomFloatUniform(-1, 1))) : 
+                                                (-s_down * node.kValue * Math.abs(randomFloatUniform(-1, 1)));
                     }
                     //console.log("Mutated k ", node.kValue);
-
                 }
 
                 //M mutation
-                if (randomInt(100) < 5) { // 5% chance of a m value mutation for every node
-                    let randNum = randomInt(100);
-                    if (randNum < 5) {//re-rolls the m value
-                        node.mValue = (2 * Math.random() - 1) * 2 * node.mValue;
-                    } else if (randNum < 35) {//shifts the m value
-                        node.mValue += 0.1 * (Math.random() * 2 - 1);
+                if (randomInt(100) < 80) { // 80% chance of a weight mutation for every connection
+                    let randNum = randomInt(1000);
+                    if (randNum < 1) {//re-rolls the weight
+                        let sign = randomInt(2) == 1 ? -1 : 1;
+                        node.mValue = sign * (randomFloatUniform(0, 2)) * node.mValue;
+                    } else if (randNum < 500) {//shifts the weight
+                        node.mValue += (randomFloatUniform(-0.3, 0.3));
                     }
-                    else {//scales the m value
-                        node.mValue += (randomInt(2) === 1) ? 0.5 * node.mValue * Math.random() : (-node.mValue * Math.random() * 1 / 3);
+                    else {//scales the weight
+                        let s_up = 0.25;
+                        let s_down = 1 - 1/(1+s_up);
+                        node.mValue += (randomInt(2) === 1) ? 
+                                                (s_up * node.mValue * Math.abs(randomFloatUniform(-1, 1))) : 
+                                                (-s_down * node.mValue * Math.abs(randomFloatUniform(-1, 1)));
                     }
-
                     //console.log("Mutated m ", node.mValue);
                 }
             });

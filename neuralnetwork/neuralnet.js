@@ -44,7 +44,7 @@ class NeuralNet {
 
     //Sigmoid function
     sigmoid(x, k = params.GENOME_DEFAULT_K_VAL, m = 0) {
-        console.log(k, m, params.GENOME_DEFAULT_K_VAL);
+        //console.log(k, m, params.GENOME_DEFAULT_K_VAL);
         //Name the parameters to easily adjust them
         let l = 2;
         let n = 1;

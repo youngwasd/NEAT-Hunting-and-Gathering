@@ -265,7 +265,7 @@ class Food {
             }
         }
 
-        if(this.tickCounter > this.lastTickBeingEaten + 1 && this.ticksToConsume < params.MAX_TICKS_TO_CONSUME) this.ticksToConsume++;
+        if(this.tickCounter > this.lastTickBeingEaten + 2 && this.ticksToConsume < params.MAX_TICKS_TO_CONSUME) this.ticksToConsume++;
 
         if (!this.removeFromWorld) {
             this.updateBoundingCircle(); // update our bounding circle to reflect our state

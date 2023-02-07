@@ -93,9 +93,9 @@ class Agent {
                 //Part 1: how close were they to the food?
                 let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist / 50));
                 //Part 2: were they touching the food, and if so were they also biting?
-                let fitnessFromPotCal = 0.2 * fitnessFromCalDist + 0.2 * this.touchingFood + 0.2 * (this.touchingFood && this.biting);
+                let fitnessFromPotCal = 0.5 * fitnessFromCalDist + 0 * this.touchingFood + 0.2 * (this.touchingFood && this.biting);
                 //Part 3: how close were they to finishing off the foods tick counter?
-                fitnessFromPotCal += 0.4 * this.maxEatingCompletion;
+                fitnessFromPotCal += 0.3 * this.maxEatingCompletion;
                 //Part 4: punish them based on how fast they were going, or if they were dead
                 fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;
 
@@ -103,14 +103,15 @@ class Agent {
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
                 //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }*/
+            let fitnessFromPotCal = 0;
+            if(this.closestFood.cals > 0){
+                fitnessFromPotCal = this.closestFood.cals * this.maxEatingCompletion;
+                totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
+            }
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
-            let fitnessFromPotCal = 0;
-            if(this.closestFood.cals > 0)
-                fitnessFromPotCal = this.closestFood.cals * this.maxEatingCompletion;
 
-            totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
             if(params.AGENT_BITING) totalRawFitness += this.biteTicks;
