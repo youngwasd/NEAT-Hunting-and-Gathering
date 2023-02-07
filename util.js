@@ -7,7 +7,7 @@ const params = {
     AGENT_NEIGHBORS: false,
     FOOD_AGENT_RATIO: 1,
     POISON_AGENT_RATIO: 0,
-    COMPAT_THRESH: 0.07,
+    COMPAT_THRESH: 0.04,
     ENFORCE_MIN_FOOD: false,
     ENFORCE_MIN_POISON: false,
     AGENT_VISION_RADIUS: 500,
