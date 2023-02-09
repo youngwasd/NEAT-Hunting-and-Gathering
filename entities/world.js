@@ -148,18 +148,32 @@ class World {
      * @param {*} spawningZoneWidth the width of the randomizing zone to spawn the walls  
      */ 
     produceRandomBoxWalls(n, spawningZoneStart, spawningZoneWidth){
+        // let spawningCoordinateBegin = [
+        //     {x: spawningZoneStart, y: spawningZoneStart},
+        //     {x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart},
+        //     {x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
+        //     {x: spawningZoneStart, y: spawningZoneStart},
+        // ];
+
+        // let spawningCoordinateEnd = [
+        //     {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
+        //     {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
+        //     {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
+        //     {x: spawningZoneStart + spawningZoneWidth, y:  params.CANVAS_SIZE - spawningZoneStart},
+        // ];
+
         let spawningCoordinateBegin = [
             {x: spawningZoneStart, y: spawningZoneStart},
-            {x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart},
-            {x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
+            {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart},
+            {x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
             {x: spawningZoneStart, y: spawningZoneStart},
         ];
 
         let spawningCoordinateEnd = [
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
+            {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
             {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
             {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
-            {x: spawningZoneStart + spawningZoneStart, y:  params.CANVAS_SIZE - spawningZoneStart},
+            {x: spawningZoneStart, y:  params.CANVAS_SIZE - spawningZoneStart},
         ];
 
         //Clear the walls first
@@ -169,7 +183,7 @@ class World {
 
         //Added the walls in
         let arr = shuffleArray([0, 1, 2, 3]);
-        console.log(arr);
+     
         for (let i = 0; i < Math.max(0, (n % 4)); i++){
             let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x , spawningCoordinateEnd[arr[i]].y); 
             this.walls.push(tmp);  

@@ -488,8 +488,6 @@ class PopulationManager {
                     ++worldId;
                     this.initNewWorld(worldId, speciesId);
                     this.specieWorldList.get(speciesId).push(worldId);
-                    this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO);
-                    this.spawnFood(worldId, true, params.POISON_AGENT_RATIO);
                     agent.worldId = worldId;
                     this.worlds.get(worldId).agents.push(agent);
 
@@ -732,11 +730,11 @@ class PopulationManager {
 
         //Clean up some of the dead worlds and balence agents count
         //Replenish food or poison
-        this.checkFoodLevels();
         this.cleanUpWorlds();
         if (params.AGENT_PER_WORLD !== 0) {
             this.distributeAgents();
         }
+        this.checkFoodLevels();
 
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
