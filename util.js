@@ -32,9 +32,9 @@ const params = {
     AGENT_VISION_IS_CONE: true,
     AGENT_VISION_DRAW_CONE: false,
     MAX_TICKS_TO_CONSUME: 1,
-    EVOLVE_K_AND_M: false,
+    EVOLVE_K_AND_M: true,
     TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
-    AGENT_BITING: true,
+    AGENT_BITING: false,
     GENOME_DEFAULT_K_VAL: 3/4,
 };
 

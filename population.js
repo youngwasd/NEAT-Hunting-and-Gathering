@@ -69,13 +69,13 @@ class PopulationManager {
 
         this.currentRightWheelHist = new Histogram(20, 5, "Current Generation Right Wheel Output Chart");
         this.currentRightWheelHist.data.push(new Array(20).fill(0));
-        
+
         //Create generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
         this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
 
-        if(params.AGENT_BITING){
+        if (params.AGENT_BITING) {
             this.currentBiteHist = new Histogram(20, 5, "Current Generation Biting Output Chart");
             this.currentBiteHist.data.push(new Array(20).fill(0));
             //Generational
@@ -395,7 +395,7 @@ class PopulationManager {
                 compatOrder = [...repMap.keys()].sort(); // resort the compatibility ordering
 
                 if (params.SPLIT_SPECIES) {
-                    if (params.AGENT_PER_WORLD == 0) {
+                    if (params.AGENT_PER_WORLD === 0) {
                         //Create a new world for the new specie 
                         PopulationManager.WORLD_CREATED++;
                         this.initNewWorld(child.speciesId, child.specieId);
@@ -408,8 +408,18 @@ class PopulationManager {
                 }
             }
             //Push the agents into a world
-            if (params.AGENT_PER_WORLD == 0) {
-                this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0).agents.push(child);
+            if (params.AGENT_PER_WORLD === 0) {
+                // console.log(child.speciesId);
+                // console.log(this.worlds);
+                
+                let world = this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0);
+                //Create a new world when the world has not been created
+                if (!world) {
+                    world = this.initNewWorld(child.speciesId, child.specieId);
+                    this.spawnFood(child.speciesId, false, params.FOOD_AGENT_RATIO);
+                    this.spawnFood(child.speciesId, true, params.POISON_AGENT_RATIO);
+                }
+                world.agents.push(child);
                 child.worldId = child.speciesId;
             }
         });
@@ -552,6 +562,7 @@ class PopulationManager {
         if (params.FREE_RANGE) {
             this.resetCanvases();
         }
+        return world;
     };
 
     createWorldCanvas(worldId) {
@@ -633,7 +644,7 @@ class PopulationManager {
             //Sort average output data for the histograms into their buckets
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
-            if(params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
+            if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
 
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
@@ -766,7 +777,7 @@ class PopulationManager {
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
             this.worlds.forEach(world => {
-                world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);
+                world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8 + params.CANVAS_SIZE / 10, params.CANVAS_SIZE / 10);
             });
         }
         // console.log("Total agents", this.agentsAsList().length);
@@ -780,7 +791,7 @@ class PopulationManager {
         this.rightWheelHist.data.push(avgRightWheelOut);
         generateNeuralNetWorkData(this.rightWheelHist, 'agentGenAvgRightWheelChart', 'agentAvgOutputContainers');
 
-        if(params.AGENT_BITING){
+        if (params.AGENT_BITING) {
             this.biteHist.data.push(avgBiteOut);
             generateNeuralNetWorkData(this.biteHist, 'agentGenAvgBiteChart', 'agentAvgOutputContainers');
         }
@@ -788,9 +799,9 @@ class PopulationManager {
         //Reset current generation Histogram
         this.currentLeftWheelHist.reset();
         this.currentRightWheelHist.reset();
-        if(params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
+        if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
-        
+
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());
         generateAgeChart(this.agentTracker.getAgeData());
