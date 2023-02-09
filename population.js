@@ -537,9 +537,9 @@ class PopulationManager {
             });
         }
 
-        //Tidy up specie members
-        //Only active when limiting agents per world is on for reason of backward compability 
-        if (params.AGENT_PER_WORLD !== 0) {
+        //Tidy up specie members and  the color list
+        //Only active when limiting agents per world is on for reason of backward compability (Disable for now)
+        //if (params.AGENT_PER_WORLD !== 0) {
             PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {
                 for (let i = specie.length - 1; i >= 0; --i) {
                     let agent = specie[i];
@@ -549,9 +549,10 @@ class PopulationManager {
                 }
                 if (specie.length == 0) {
                     PopulationManager.SPECIES_MEMBERS.delete(speciesId);
+                    PopulationManager.SPECIES_COLORS.delete(speciesId);
                 }
             });
-        }
+        //}
 
     }
 
@@ -760,8 +761,6 @@ class PopulationManager {
         });
         PopulationManager.COLORS_USED = new Set([...PopulationManager.COLORS_USED].filter(color => remainingColors.has(color)));
         PopulationManager.SENSOR_COLORS_USED = new Set([...PopulationManager.SENSOR_COLORS_USED].filter(color => remainingSensorColors.has(color)));
-
-
 
         //Resets all agents
         if (!params.FREE_RANGE) {
