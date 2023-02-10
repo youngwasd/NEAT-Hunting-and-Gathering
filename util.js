@@ -207,3 +207,9 @@ const createSlideShow = (array, id) => {
         count++;
     });
 };
+
+const execAsync = (fun) => {
+    setTimeout(() => {
+        fun;
+      }, 0)
+};
