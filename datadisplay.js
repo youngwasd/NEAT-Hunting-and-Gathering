@@ -9,7 +9,6 @@ class DataDisplay {
     };
 
     draw(ctx) {
-        ctx.beginPath();
         ctx.strokeStyle = "black";
         ctx.font = "20px sans-serif";
         ctx.textAlign = "left";
@@ -24,11 +23,19 @@ class DataDisplay {
         } else {
             ctx.strokeText(`Agent Count: ${this.game.population.countAlives(0)}`, params.CANVAS_SIZE / 2, 30);
         }
+
+        //Alart user that all agents are drawned in the first world
+        if (params.DISPLAY_SAME_WORLD){
+            let firstWorldId = this.game.population.worlds.entries().next().value[1].worldId;
+            if (this.worldId !== firstWorldId){
+                ctx.strokeText(`All agents and food are drawn in the first world with the ID: ${firstWorldId}`, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 3);
+            }
+        }
         
         ctx.textAlign = "right";
         ctx.strokeText(`Living Species: ${PopulationManager.SPECIES_MEMBERS.size}`, params.CANVAS_SIZE - 10, 30);
         ctx.strokeText(`Total Species: ${PopulationManager.SPECIES_CREATED}`, params.CANVAS_SIZE - 10, 60);      
         ctx.strokeText(`Total Active World: ${this.game.population.worlds.size}`, params.CANVAS_SIZE - 10, 90);    
-        ctx.closePath();
+     
     };
 };

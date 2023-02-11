@@ -274,6 +274,9 @@ class Food {
 
     /** Draws this food to its world canvas */
     draw(ctx) {
+        if (params.DISPLAY_SAME_WORLD){
+            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        }
         if (this.phase == this.lifecycle_phases.dead) { // don't draw if we are dead
             return;
         }
@@ -290,7 +293,7 @@ class Food {
         ctx.fillStyle = `hsl(${this.phase_properties[this.phase].color}, 100%, 50%)`;
         ctx.fill();
         ctx.lineWidth = 2;
-        ctx.strokeStyle = 'Black';
+        ctx.strokeStyle = `hsl(${this.game.population.worlds.get(this.worldId).worldColor}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.stroke();
         ctx.closePath();
     };

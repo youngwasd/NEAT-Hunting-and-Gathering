@@ -554,9 +554,13 @@ class Agent {
      * @param {*} ctx the canvas context
      */
     draw(ctx) {
+        //let ctx = this.ctx;
+        if (params.DISPLAY_SAME_WORLD){
+            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.diameter / 2, 0, 2 * Math.PI);
-        ctx.strokeStyle = this.strokeColor;
+        ctx.strokeStyle = `hsl(${this.game.population.worlds.get(this.worldId).worldColor}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
         ctx.lineWidth = 2;
         ctx.fill();

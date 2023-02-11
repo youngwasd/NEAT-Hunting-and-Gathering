@@ -3,12 +3,12 @@
  */
 
 class World {
-    constructor(game, worldId, specieId) {
+    constructor(game, worldId, specieId, worldColor = 360) {
         if (specieId == undefined) {
             specieId = worldId;
         }
         let world = this.createWorldCanvas(worldId);
-        Object.assign(this, { game, worldId, specieId });
+        Object.assign(this, { game, worldId, specieId, worldColor });
         this.agents = [];
         this.food = [];
         this.poison = [];
@@ -19,6 +19,9 @@ class World {
         this.walls = [];
         this.home.worldId = worldId;
         this.display.worldId = worldId;
+
+        //Just for testing
+        this.worldColor = (randomInt(worldId * 100) + 100) % 361;
 
         //Add random box wall
         if (params.INNER_WALL) {
@@ -217,28 +220,32 @@ class World {
 
     //Async drawing
     draw() {
+        let ctx = this.ctx;
+        // if (params.DISPLAY_SAME_WORLD) {
+        //     ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        // }
         this.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
-        this.home.draw(this.ctx);
+        this.home.draw(ctx);
         this.food.forEach(food => {
             if (!food.removeFromWorld) {
-                execAsync(food.draw(this.ctx));
+                execAsync(food.draw(ctx));
             }
         });
         this.poison.forEach(poison => {
             if (!poison.removeFromWorld) {
-                execAsync(poison.draw(this.ctx));
+                execAsync(poison.draw(ctx));
             }
         });
         this.agents.forEach(agent => {
             if (!agent.removeFromWorld) {
-                execAsync(agent.draw(this.ctx));
+                execAsync(agent.draw(ctx));
             }
         });
-        execAsync(this.display.draw(this.ctx));
+        execAsync(this.display.draw(ctx));
 
         if (params.INNER_WALL) {
             this.walls.forEach(wall => {
-                execAsync(wall.draw(this.ctx));
+                execAsync(wall.draw(ctx));
             });
         }
     }

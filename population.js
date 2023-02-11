@@ -11,6 +11,10 @@ class PopulationManager {
     static SENSOR_COLORS_USED = new Set();
     static NUM_AGENTS = params.NUM_AGENTS;
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
+    static WORLD_COLOR_POOL = {
+        colorMap : new Map(),
+        remaning_color : new Map(),
+    };
 
     constructor(game) {
         this.game = game;
@@ -134,6 +138,10 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
+        PopulationManager.WORLD_COLOR_POOL = {
+            colorMap : new Map(),
+            remaning_color : new Map(),
+        };
 
         //Reset generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
@@ -172,6 +180,11 @@ class PopulationManager {
         params.WORLD_UPDATE_ASYNC = document.getElementById("worldUpdateAsync").checked;
         params.AGENT_BITING = document.getElementById("agent_biting").checked;
         params.NO_BORDER = document.getElementById("no_border").checked;
+
+        if (params.AGENT_PER_WORLD === 0){
+            document.getElementById("displayOnTheSameWorld").checked = false;
+        }
+        params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
 
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
@@ -281,14 +294,6 @@ class PopulationManager {
             this.processGeneration();
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
-            }
-
-            if (document.activeElement.id !== "displayOnTheSameWorld") {
-                if (params.AGENT_PER_WORLD === 0){
-                    document.getElementById("displayOnTheSameWorld").checked = false;
-                }
-                params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
-                
             }
 
             return true;
@@ -564,7 +569,7 @@ class PopulationManager {
             });
         }
 
-        //Tidy up specie members and  the color list
+        //Tidy up specie members and the color list
         //Only active when limiting agents per world is on for reason of backward compability (Disable for now)
         //if (params.AGENT_PER_WORLD !== 0) {
         PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {

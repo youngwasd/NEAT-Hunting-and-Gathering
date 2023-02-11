@@ -24,7 +24,7 @@ const params = {
     GEN_STOP: false,
     NO_DECAYING_FOOD: true,
     INNER_WALL: false,
-    NUM_AGENTS: 100,
+    NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
     DYNAMIC_AGENT_SIZING: false,
     AGENT_VISION_RAYS: 13,
