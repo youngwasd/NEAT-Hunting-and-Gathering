@@ -363,7 +363,7 @@ class PopulationManager {
         for (let i = 0; i < count; i++) { // add food sources
             let pod = poison ? this.poisonPodLayout[index] : this.foodPodLayout[index];
             let loc = pod.genFoodPos();
-            seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker));
+            seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker, worldId));
             index = (index + 1) % (poison ? this.poisonPodLayout.length : this.foodPodLayout.length);
         }
         this.registerSeedlings(worldId, seedlings);

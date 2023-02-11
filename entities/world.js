@@ -3,12 +3,12 @@
  */
 
 class World {
-    constructor(game, worldId, specieId ) {
-        if (specieId == undefined){
+    constructor(game, worldId, specieId) {
+        if (specieId == undefined) {
             specieId = worldId;
         }
         let world = this.createWorldCanvas(worldId);
-        Object.assign(this, {game, worldId, specieId});
+        Object.assign(this, { game, worldId, specieId });
         this.agents = [];
         this.food = [];
         this.poison = [];
@@ -21,20 +21,20 @@ class World {
         this.display.worldId = worldId;
 
         //Add random box wall
-        if (params.INNER_WALL){
-        this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);    
+        if (params.INNER_WALL) {
+            this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);
         }
-        else{
+        else {
             this.addBorderToWorld();
         }
     };
 
+    //Async update
     update() {
         for (let i = 0; i < this.food.length; i++) {
             if (!this.food[i].removeFromWorld) {
-                if (params.WORLD_UPDATE_ASYNC){
-                    execAsync( this.food[i].update());
-                }
+                this.food[i].update();
+
             }
         }
         for (let i = 0; i < this.poison.length; i++) {
@@ -44,22 +44,17 @@ class World {
         }
         for (let i = 0; i < this.agents.length; i++) {
             if (!this.agents[i].removeFromWorld) {
-                //Calling agent update async or not
-                if (params.WORLD_UPDATE_ASYNC){
-                    execAsync(this.agents[i].update());
-                }
-                else 
                 this.agents[i].update();
             }
         }
 
-        
+
         this.walls.forEach(wall => {
             wall.update(this.ctx)
         });
     };
 
-    agentsAsList(){
+    agentsAsList() {
         return this.agents;
     }
 
@@ -138,7 +133,7 @@ class World {
      * Add border to a particular world
      */
     addBorderToWorld = () => {
-        if (params.NO_BORDER){
+        if (params.NO_BORDER) {
             this.walls = [];
             return;
         }
@@ -148,10 +143,10 @@ class World {
         let southWall = new Wall(this.game, this.worldId, params.CANVAS_SIZE, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
         let westWall = new Wall(this.game, this.worldId, 0, 0, params.CANVAS_SIZE, 0);
 
-        this.walls.push(northWall); 
-        this.walls.push(eastWall); 
-        this.walls.push(southWall); 
-        this.walls.push(westWall); 
+        this.walls.push(northWall);
+        this.walls.push(eastWall);
+        this.walls.push(southWall);
+        this.walls.push(westWall);
     }
 
     createWorldCanvas(worldId) {
@@ -175,8 +170,8 @@ class World {
      * @param {*} n number of walls (Maximum is 4)
      * @param {*} spawningZoneStart the starting coordinate of the randomizing zone to spawn the walls 
      * @param {*} spawningZoneWidth the width of the randomizing zone to spawn the walls  
-     */ 
-    produceRandomBoxWalls(n, spawningZoneStart, spawningZoneWidth){
+     */
+    produceRandomBoxWalls(n, spawningZoneStart, spawningZoneWidth) {
         // let spawningCoordinateBegin = [
         //     {x: spawningZoneStart, y: spawningZoneStart},
         //     {x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart},
@@ -192,17 +187,17 @@ class World {
         // ];
 
         let spawningCoordinateBegin = [
-            {x: spawningZoneStart, y: spawningZoneStart},
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart},
-            {x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
-            {x: spawningZoneStart, y: spawningZoneStart},
+            { x: spawningZoneStart, y: spawningZoneStart },
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
+            { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+            { x: spawningZoneStart, y: spawningZoneStart },
         ];
 
         let spawningCoordinateEnd = [
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
-            {x: spawningZoneStart, y:  params.CANVAS_SIZE - spawningZoneStart},
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+            { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
         ];
 
         //Clear the walls first
@@ -212,13 +207,42 @@ class World {
 
         //Added the walls in
         let arr = shuffleArray([0, 1, 2, 3]);
-     
-        for (let i = 0; i < Math.max(0, (n % 4)); i++){
-            let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x , spawningCoordinateEnd[arr[i]].y); 
-            this.walls.push(tmp);  
+
+        for (let i = 0; i < Math.max(0, (n % 4)); i++) {
+            let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x, spawningCoordinateEnd[arr[i]].y);
+            this.walls.push(tmp);
         }
-        
+
     }
+
+    //Async drawing
+    draw() {
+        this.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
+        this.home.draw(this.ctx);
+        this.food.forEach(food => {
+            if (!food.removeFromWorld) {
+                execAsync(food.draw(this.ctx));
+            }
+        });
+        this.poison.forEach(poison => {
+            if (!poison.removeFromWorld) {
+                execAsync(poison.draw(this.ctx));
+            }
+        });
+        this.agents.forEach(agent => {
+            if (!agent.removeFromWorld) {
+                execAsync(agent.draw(this.ctx));
+            }
+        });
+        execAsync(this.display.draw(this.ctx));
+
+        if (params.INNER_WALL) {
+            this.walls.forEach(wall => {
+                execAsync(wall.draw(this.ctx));
+            });
+        }
+    }
+
 
     resetCanvases() {
         const tmp = [];
@@ -228,5 +252,5 @@ class World {
         createSlideShow(tmp, 'canvas');
     };
 
-  
+
 };

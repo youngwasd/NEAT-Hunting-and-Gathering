@@ -37,29 +37,34 @@ class GameEngine {
 
     draw() {
         this.population.worlds.forEach(members => {
-            members.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
-            members.home.draw(members.ctx);
-            members.food.forEach(food => {
-                if (!food.removeFromWorld) {
-                    food.draw(members.ctx)
-                }
-            });
-            members.poison.forEach(poison => {
-                if (!poison.removeFromWorld) {
-                    poison.draw(members.ctx)
-                }
-            });
-            members.agents.forEach(agent => {
-                if (!agent.removeFromWorld) {
-                    agent.draw(members.ctx)
-                }
-            });
-            members.display.draw(members.ctx);
-
-            if (params.INNER_WALL) {
-                members.walls.forEach(wall => {
-                    wall.draw(members.ctx)
+            if (params.WORLD_UPDATE_ASYNC) {
+                execAsync(members.draw());
+            }
+            else {
+                members.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
+                members.home.draw(members.ctx);
+                members.food.forEach(food => {
+                    if (!food.removeFromWorld) {
+                        food.draw(members.ctx)
+                    }
                 });
+                members.poison.forEach(poison => {
+                    if (!poison.removeFromWorld) {
+                        poison.draw(members.ctx)
+                    }
+                });
+                members.agents.forEach(agent => {
+                    if (!agent.removeFromWorld) {
+                        agent.draw(members.ctx)
+                    }
+                });
+                members.display.draw(members.ctx);
+
+                if (params.INNER_WALL) {
+                    members.walls.forEach(wall => {
+                        wall.draw(members.ctx)
+                    });
+                }
             }
         });
     };
@@ -67,7 +72,7 @@ class GameEngine {
     update() {
         if (!params.WORLD_UPDATE_ASYNC) {
             this.population.worlds.forEach((members) => {
-                members.food.forEach((food)=>{
+                members.food.forEach((food) => {
                     food.update();
                 });
                 members.poison.forEach(poison => {

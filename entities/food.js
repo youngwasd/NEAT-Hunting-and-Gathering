@@ -13,8 +13,8 @@ class Food {
      * @param {*} isPoison indicates whether this food is poisonous or not
      * @param {*} foodTracker the food tracker to monitor this food
      */
-    constructor(game, x, y, isPoison, foodTracker) {
-        Object.assign(this, { x, y, isPoison, game, foodTracker });
+    constructor(game, x, y, isPoison, foodTracker, worldId = 0) {
+        Object.assign(this, { x, y, isPoison, game, foodTracker , worldId});
         if (!this.isPoison) this.foodTracker.addFood(); // counts how many foods per generation
         this.tickCounter = 0; // a simple tick counter to manage lifecycle phases for this food
 
@@ -292,6 +292,7 @@ class Food {
         ctx.lineWidth = 2;
         ctx.strokeStyle = 'Black';
         ctx.stroke();
+        ctx.closePath();
     };
 };
 
