@@ -184,12 +184,20 @@ class PopulationManager {
         if (params.AGENT_PER_WORLD === 0){
             document.getElementById("displayOnTheSameWorld").checked = false;
         }
+        if (document.activeElement.id !== "agent_per_world") {
+            params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
+            //Force turning the split specie on
+            if (params.AGENT_PER_WORLD !== 0) {
+                document.getElementById("split_species").checked = true;
+            }
+        }
+        
         params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
 
 
-        if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
+        if (params.AGENT_PER_WORLD === 0 && params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
-        } else if (!params.SPLIT_SPECIES && document.getElementById("split_species").checked) {
+        } else if (params.AGENT_PER_WORLD === 0 && !params.SPLIT_SPECIES && document.getElementById("split_species").checked) {
             this.splitWorlds();
         }
         params.SPLIT_SPECIES = document.getElementById("split_species").checked;
@@ -233,16 +241,6 @@ class PopulationManager {
 
         if (document.activeElement.id !== "num_agents") {
             params.NUM_AGENTS = parseInt(document.getElementById("num_agents").value);
-        }
-
-        if (document.activeElement.id !== "agent_per_world") {
-            params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
-            //Force turning the split specie on
-            if (params.AGENT_PER_WORLD !== 0) {
-                if (!document.getElementById("split_species").checked) {
-                    document.getElementById("split_species").checked = true;
-                }
-            }
         }
 
         if (document.activeElement.id !== "max_ticks_to_consume") {

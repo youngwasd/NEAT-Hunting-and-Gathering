@@ -560,9 +560,19 @@ class Agent {
         }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.diameter / 2, 0, 2 * Math.PI);
-        ctx.strokeStyle = `hsl(${this.game.population.worlds.get(this.worldId).worldColor}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
+        let color = this.getDisplayHue();
+        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD){
+            color = this.game.population.worlds.get(this.worldId).worldColor;
+        }
+
+        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
-        ctx.lineWidth = 2;
+        if (!params.DISPLAY_SAME_WORLD){
+            ctx.lineWidth = 2;
+        }
+        else{
+            ctx.lineWidth = 4;
+        }
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
