@@ -310,6 +310,9 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
+            if (!this.leftWheel || !this.rightWheel){
+                console.log("Error");
+            }
             this.totalOutputs[0] += this.leftWheel;
             this.totalOutputs[1] += this.rightWheel;
 
@@ -390,8 +393,10 @@ class Agent {
             this.isOutOfBound = true;
             ++this.numberOfTickOutOfBounds;
 
-            //Toan Deactivate the agent when they go out of bound
-            this.deactivateAgent();
+            //Deactivate the agent when they go out of bound
+            if (!params.NO_BORDER){
+                this.deactivateAgent();
+            }
 
         }
         else {

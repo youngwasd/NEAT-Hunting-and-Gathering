@@ -30,7 +30,33 @@ class World {
     };
 
     update() {
+        for (let i = 0; i < this.food.length; i++) {
+            if (!this.food[i].removeFromWorld) {
+                if (params.WORLD_UPDATE_ASYNC){
+                    execAsync( this.food[i].update());
+                }
+            }
+        }
+        for (let i = 0; i < this.poison.length; i++) {
+            if (!this.poison[i].removeFromWorld) {
+                this.poison[i].update();
+            }
+        }
+        for (let i = 0; i < this.agents.length; i++) {
+            if (!this.agents[i].removeFromWorld) {
+                //Calling agent update async or not
+                if (params.WORLD_UPDATE_ASYNC){
+                    execAsync(this.agents[i].update());
+                }
+                else 
+                this.agents[i].update();
+            }
+        }
+
         
+        this.walls.forEach(wall => {
+            wall.update(this.ctx)
+        });
     };
 
     agentsAsList(){
@@ -110,9 +136,12 @@ class World {
 
     /**
      * Add border to a particular world
-     * @param {*} worldId The world id we want to implement border in
      */
     addBorderToWorld = () => {
+        if (params.NO_BORDER){
+            this.walls = [];
+            return;
+        }
         //Adding actual border
         let northWall = new Wall(this.game, this.worldId, 0, 0, 0, params.CANVAS_SIZE);
         let eastWall = new Wall(this.game, this.worldId, 0, params.CANVAS_SIZE, params.CANVAS_SIZE, params.CANVAS_SIZE);

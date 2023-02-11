@@ -135,6 +135,20 @@ class PopulationManager {
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
 
+        //Reset generational histograms
+        this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
+
+        this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
+
+        if (params.AGENT_BITING) {
+            //Generational
+            this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
+        }
+
+        if (document.activeElement.id !== "no_border") {
+            params.NO_BORDER = document.getElementById("no_border").checked;
+        }
+
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
     };
@@ -155,6 +169,9 @@ class PopulationManager {
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
         params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
         params.INNER_WALL = document.getElementById("inner_wall").checked;
+        params.WORLD_UPDATE_ASYNC = document.getElementById("worldUpdateAsync").checked;
+        params.AGENT_BITING = document.getElementById("agent_biting").checked;
+        params.NO_BORDER = document.getElementById("no_border").checked;
 
 
         if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
@@ -223,10 +240,6 @@ class PopulationManager {
             params.TICK_TO_UPDATE_CURRENT_GEN_DATA = parseInt(document.getElementById("tickToUpdateCurrentGenOutputData").value);
         }
 
-        if (document.activeElement.id !== "agent_biting") {
-            params.AGENT_BITING = document.getElementById("agent_biting").checked;
-        }
-
         if (document.activeElement.id !== "genome_default_k_val") {
             params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
         }
@@ -269,6 +282,15 @@ class PopulationManager {
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
             }
+
+            if (document.activeElement.id !== "displayOnTheSameWorld") {
+                if (params.AGENT_PER_WORLD === 0){
+                    document.getElementById("displayOnTheSameWorld").checked = false;
+                }
+                params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
+                
+            }
+
             return true;
         }
         return false;
@@ -528,6 +550,8 @@ class PopulationManager {
         if (params.SPLIT_SPECIES) {
             extincts.forEach(worldId => {
                 this.removeWorld(worldId);
+
+                //Cleaning up world color here
 
                 //Clean up in the agent list
                 this.specieWorldList.forEach(x => {

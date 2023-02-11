@@ -5,7 +5,7 @@ const params = {
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
     AGENT_NEIGHBORS: false,
-    FOOD_AGENT_RATIO: 1,
+    FOOD_AGENT_RATIO: 3,
     POISON_AGENT_RATIO: 0,
     COMPAT_THRESH: 0.04,
     ENFORCE_MIN_FOOD: false,
@@ -24,7 +24,7 @@ const params = {
     GEN_STOP: false,
     NO_DECAYING_FOOD: true,
     INNER_WALL: false,
-    NUM_AGENTS: 50,
+    NUM_AGENTS: 100,
     AGENT_PER_WORLD : 1,
     DYNAMIC_AGENT_SIZING: false,
     AGENT_VISION_RAYS: 13,
@@ -36,6 +36,9 @@ const params = {
     TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
     AGENT_BITING: false,
     GENOME_DEFAULT_K_VAL: 3/4,
+    NO_BORDER: false,
+    DISPLAY_SAME_WORLD: false,
+    WORLD_UPDATE_ASYNC: true,
 };
 
 const getMedian = (arr) => {
