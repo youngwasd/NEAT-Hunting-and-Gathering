@@ -105,7 +105,8 @@ class Agent {
             }*/
             let fitnessFromPotCal = 0;
             if(this.closestFood.cals > 0){
-                fitnessFromPotCal = this.closestFood.cals * this.maxEatingCompletion;
+                let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist / 50));
+                fitnessFromPotCal = this.closestFood.cals * (this.maxEatingCompletion * .5 + fitnessFromCalDist *.5);
                 totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
             }
             /**
