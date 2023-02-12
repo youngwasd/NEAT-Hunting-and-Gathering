@@ -2,6 +2,15 @@ const gameEngine = new GameEngine();
 
 const ASSET_MANAGER = new AssetManager();
 
+var socket = null;
+if (window.io !== undefined) {
+	console.log("Database connected!");
+
+	socket = io.connect('http://73.225.31.4:8888');
+
+	socket.addEventListener("log", console.log);
+}
+
 ASSET_MANAGER.downloadAll(() => {
 
     let population = new PopulationManager(gameEngine);
