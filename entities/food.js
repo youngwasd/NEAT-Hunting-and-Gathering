@@ -13,8 +13,8 @@ class Food {
      * @param {*} isPoison indicates whether this food is poisonous or not
      * @param {*} foodTracker the food tracker to monitor this food
      */
-    constructor(game, x, y, isPoison, foodTracker) {
-        Object.assign(this, { x, y, isPoison, game, foodTracker });
+    constructor(game, x, y, isPoison, foodTracker, worldId = 0) {
+        Object.assign(this, { x, y, isPoison, game, foodTracker , worldId});
         if (!this.isPoison) this.foodTracker.addFood(); // counts how many foods per generation
         this.tickCounter = 0; // a simple tick counter to manage lifecycle phases for this food
 
@@ -278,6 +278,10 @@ class Food {
             return;
         }
 
+        if (params.DISPLAY_SAME_WORLD){
+            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        }
+
         ctx.beginPath();
         ctx.arc(
             this.x,
@@ -287,11 +291,21 @@ class Food {
             2 * Math.PI,
             false
         );
+        let color = 100;
+        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD){
+            color = this.game.population.worlds.get(this.worldId).worldColor;
+        }
+        
         ctx.fillStyle = `hsl(${this.phase_properties[this.phase].color}, 100%, 50%)`;
+        if (params.POISON_AGENT_RATIO === 0 && params.DISPLAY_SAME_WORLD){
+            ctx.fillStyle = `hsl(${color}, 100%, 50%)`;
+        }
+        
         ctx.fill();
         ctx.lineWidth = 2;
-        ctx.strokeStyle = 'Black';
+        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.stroke();
+        ctx.closePath();
     };
 };
 

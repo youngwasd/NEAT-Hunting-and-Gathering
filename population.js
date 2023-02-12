@@ -11,6 +11,10 @@ class PopulationManager {
     static SENSOR_COLORS_USED = new Set();
     static NUM_AGENTS = params.NUM_AGENTS;
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
+    static WORLD_COLOR_POOL = {
+        colorMap : new Map(),
+        remaning_color : new Map(),
+    };
 
     constructor(game) {
         this.game = game;
@@ -69,13 +73,13 @@ class PopulationManager {
 
         this.currentRightWheelHist = new Histogram(20, 5, "Current Generation Right Wheel Output Chart");
         this.currentRightWheelHist.data.push(new Array(20).fill(0));
-        
+
         //Create generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
         this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
 
-        if(params.AGENT_BITING){
+        if (params.AGENT_BITING) {
             this.currentBiteHist = new Histogram(20, 5, "Current Generation Biting Output Chart");
             this.currentBiteHist.data.push(new Array(20).fill(0));
             //Generational
@@ -134,6 +138,24 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
+        PopulationManager.WORLD_COLOR_POOL = {
+            colorMap : new Map(),
+            remaning_color : new Map(),
+        };
+
+        //Reset generational histograms
+        this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
+
+        this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
+
+        if (params.AGENT_BITING) {
+            //Generational
+            this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
+        }
+
+        if (document.activeElement.id !== "no_border") {
+            params.NO_BORDER = document.getElementById("no_border").checked;
+        }
 
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
@@ -155,11 +177,27 @@ class PopulationManager {
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
         params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
         params.INNER_WALL = document.getElementById("inner_wall").checked;
+        params.WORLD_UPDATE_ASYNC = document.getElementById("worldUpdateAsync").checked;
+        params.AGENT_BITING = document.getElementById("agent_biting").checked;
+        params.NO_BORDER = document.getElementById("no_border").checked;
+
+        if (params.AGENT_PER_WORLD === 0){
+            document.getElementById("displayOnTheSameWorld").checked = false;
+        }
+        if (document.activeElement.id !== "agent_per_world") {
+            params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
+            //Force turning the split specie on
+            if (params.AGENT_PER_WORLD !== 0) {
+                document.getElementById("split_species").checked = true;
+            }
+        }
+        
+        params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
 
 
-        if (params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
+        if (params.AGENT_PER_WORLD === 0 && params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
             this.mergeWorlds();
-        } else if (!params.SPLIT_SPECIES && document.getElementById("split_species").checked) {
+        } else if (params.AGENT_PER_WORLD === 0 && !params.SPLIT_SPECIES && document.getElementById("split_species").checked) {
             this.splitWorlds();
         }
         params.SPLIT_SPECIES = document.getElementById("split_species").checked;
@@ -205,26 +243,12 @@ class PopulationManager {
             params.NUM_AGENTS = parseInt(document.getElementById("num_agents").value);
         }
 
-        if (document.activeElement.id !== "agent_per_world") {
-            params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
-            //Force turning the split specie on
-            if (params.AGENT_PER_WORLD !== 0) {
-                if (!document.getElementById("split_species").checked) {
-                    document.getElementById("split_species").checked = true;
-                }
-            }
-        }
-
         if (document.activeElement.id !== "max_ticks_to_consume") {
             params.MAX_TICKS_TO_CONSUME = parseInt(document.getElementById("max_ticks_to_consume").value);
         }
 
         if (document.activeElement.id !== "tickToUpdateCurrentGenOutputData") {
             params.TICK_TO_UPDATE_CURRENT_GEN_DATA = parseInt(document.getElementById("tickToUpdateCurrentGenOutputData").value);
-        }
-
-        if (document.activeElement.id !== "agent_biting") {
-            params.AGENT_BITING = document.getElementById("agent_biting").checked;
         }
 
         if (document.activeElement.id !== "genome_default_k_val") {
@@ -242,16 +266,19 @@ class PopulationManager {
                 this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
             }
         });
-        if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0 && this.tickCounter % params.TICK_TO_UPDATE_CURRENT_GEN_DATA == 0) {
+        if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA !== 0 && this.tickCounter % params.TICK_TO_UPDATE_CURRENT_GEN_DATA == 0) {
             //Output the Charts for current generation data
-            generateNeuralNetWorkData(this.currentLeftWheelHist, 'agentCurrentLeftWheelChart');
-            this.currentLeftWheelHist.data.push(new Array(20).fill(0));
+            generateNeuralNetWorkData(this.currentLeftWheelHist, 'agentCurrentLeftWheelChart', 'agentCurrentOutputContainers');
+            execAsync(this.currentLeftWheelHist.data.push(new Array(20).fill(0)));
 
-            generateNeuralNetWorkData(this.currentRightWheelHist, 'agentCurrentRightWheelChart');
-            this.currentRightWheelHist.data.push(new Array(20).fill(0));
+            generateNeuralNetWorkData(this.currentRightWheelHist, 'agentCurrentRightWheelChart', 'agentCurrentOutputContainers');
+            execAsync(this.currentRightWheelHist.data.push(new Array(20).fill(0)));
 
-            generateNeuralNetWorkData(this.currentBiteHist, 'agentCurrentBitingChart');
-            this.currentBiteHist.data.push(new Array(20).fill(0));
+            if (params.AGENT_BITING) {
+                execAsync(generateNeuralNetWorkData(this.currentBiteHist, 'agentCurrentBitingChart', 'agentCurrentOutputContainers'));
+                this.currentBiteHist.data.push(new Array(20).fill(0));
+            }
+
             PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT++;
         }
 
@@ -266,6 +293,7 @@ class PopulationManager {
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
             }
+
             return true;
         }
         return false;
@@ -338,7 +366,7 @@ class PopulationManager {
         for (let i = 0; i < count; i++) { // add food sources
             let pod = poison ? this.poisonPodLayout[index] : this.foodPodLayout[index];
             let loc = pod.genFoodPos();
-            seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker));
+            seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker, worldId));
             index = (index + 1) % (poison ? this.poisonPodLayout.length : this.foodPodLayout.length);
         }
         this.registerSeedlings(worldId, seedlings);
@@ -395,7 +423,7 @@ class PopulationManager {
                 compatOrder = [...repMap.keys()].sort(); // resort the compatibility ordering
 
                 if (params.SPLIT_SPECIES) {
-                    if (params.AGENT_PER_WORLD == 0) {
+                    if (params.AGENT_PER_WORLD === 0) {
                         //Create a new world for the new specie 
                         PopulationManager.WORLD_CREATED++;
                         this.initNewWorld(child.speciesId, child.specieId);
@@ -408,8 +436,18 @@ class PopulationManager {
                 }
             }
             //Push the agents into a world
-            if (params.AGENT_PER_WORLD == 0) {
-                this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0).agents.push(child);
+            if (params.AGENT_PER_WORLD === 0) {
+                // console.log(child.speciesId);
+                // console.log(this.worlds);
+
+                let world = this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0);
+                //Create a new world when the world has not been created
+                if (!world) {
+                    world = this.initNewWorld(child.speciesId, child.specieId);
+                    this.spawnFood(child.speciesId, false, params.FOOD_AGENT_RATIO);
+                    this.spawnFood(child.speciesId, true, params.POISON_AGENT_RATIO);
+                }
+                world.agents.push(child);
                 child.worldId = child.speciesId;
             }
         });
@@ -488,8 +526,6 @@ class PopulationManager {
                     ++worldId;
                     this.initNewWorld(worldId, speciesId);
                     this.specieWorldList.get(speciesId).push(worldId);
-                    this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO);
-                    this.spawnFood(worldId, true, params.POISON_AGENT_RATIO);
                     agent.worldId = worldId;
                     this.worlds.get(worldId).agents.push(agent);
 
@@ -518,6 +554,8 @@ class PopulationManager {
             extincts.forEach(worldId => {
                 this.removeWorld(worldId);
 
+                //Cleaning up world color here
+
                 //Clean up in the agent list
                 this.specieWorldList.forEach(x => {
                     for (let i = x.length - 1; i >= 0; i--) {
@@ -529,21 +567,22 @@ class PopulationManager {
             });
         }
 
-        //Tidy up specie members
-        //Only active when limiting agents per world is on for reason of backward compability 
-        if (params.AGENT_PER_WORLD !== 0) {
-            PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {
-                for (let i = specie.length - 1; i >= 0; --i) {
-                    let agent = specie[i];
-                    if (agent.removeFromWorld) {
-                        specie.splice(i, 1);
-                    }
+        //Tidy up specie members and the color list
+        //Only active when limiting agents per world is on for reason of backward compability (Disable for now)
+        //if (params.AGENT_PER_WORLD !== 0) {
+        PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {
+            for (let i = specie.length - 1; i >= 0; --i) {
+                let agent = specie[i];
+                if (agent.removeFromWorld) {
+                    specie.splice(i, 1);
                 }
-                if (specie.length == 0) {
-                    PopulationManager.SPECIES_MEMBERS.delete(speciesId);
-                }
-            });
-        }
+            }
+            if (specie.length == 0) {
+                PopulationManager.SPECIES_MEMBERS.delete(speciesId);
+                PopulationManager.SPECIES_COLORS.delete(speciesId);
+            }
+        });
+        //}
 
     }
 
@@ -554,6 +593,7 @@ class PopulationManager {
         if (params.FREE_RANGE) {
             this.resetCanvases();
         }
+        return world;
     };
 
     createWorldCanvas(worldId) {
@@ -635,7 +675,7 @@ class PopulationManager {
             //Sort average output data for the histograms into their buckets
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
-            if(params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
+            if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
 
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
@@ -732,11 +772,11 @@ class PopulationManager {
 
         //Clean up some of the dead worlds and balence agents count
         //Replenish food or poison
-        this.checkFoodLevels();
         this.cleanUpWorlds();
         if (params.AGENT_PER_WORLD !== 0) {
             this.distributeAgents();
         }
+        execAsync(this.checkFoodLevels());
 
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
@@ -752,8 +792,6 @@ class PopulationManager {
         PopulationManager.COLORS_USED = new Set([...PopulationManager.COLORS_USED].filter(color => remainingColors.has(color)));
         PopulationManager.SENSOR_COLORS_USED = new Set([...PopulationManager.SENSOR_COLORS_USED].filter(color => remainingSensorColors.has(color)));
 
-
-
         //Resets all agents
         if (!params.FREE_RANGE) {
             this.agentsAsList().forEach(agent => {
@@ -768,7 +806,7 @@ class PopulationManager {
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
             this.worlds.forEach(world => {
-                world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);
+                execAsync(world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8 + params.CANVAS_SIZE / 10, params.CANVAS_SIZE / 10));
             });
         }
         // console.log("Total agents", this.agentsAsList().length);
@@ -777,22 +815,22 @@ class PopulationManager {
 
         //Generates the generational histograms
         this.leftWheelHist.data.push(avgLeftWheelOut);
-        generateNeuralNetWorkData(this.leftWheelHist, 'agentGenAvgLeftWheelChart', 'agentAvgOutputContainers');
+        execAsync(generateNeuralNetWorkData(this.leftWheelHist, 'agentGenAvgLeftWheelChart', 'agentAvgOutputContainers'));
 
         this.rightWheelHist.data.push(avgRightWheelOut);
-        generateNeuralNetWorkData(this.rightWheelHist, 'agentGenAvgRightWheelChart', 'agentAvgOutputContainers');
+        execAsync(generateNeuralNetWorkData(this.rightWheelHist, 'agentGenAvgRightWheelChart', 'agentAvgOutputContainers'));
 
-        if(params.AGENT_BITING){
+        if (params.AGENT_BITING) {
             this.biteHist.data.push(avgBiteOut);
-            generateNeuralNetWorkData(this.biteHist, 'agentGenAvgBiteChart', 'agentAvgOutputContainers');
+            execAsync(generateNeuralNetWorkData(this.biteHist, 'agentGenAvgBiteChart', 'agentAvgOutputContainers'));
         }
 
         //Reset current generation Histogram
         this.currentLeftWheelHist.reset();
         this.currentRightWheelHist.reset();
-        if(params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
+        if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
-        
+
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());
         generateAgeChart(this.agentTracker.getAgeData());

@@ -106,7 +106,7 @@
         otherwise)
     </div>
     <div>
-        <input type="checkbox" id="evolveKandM"> Evolve K and M
+        <input type="checkbox" id="evolveKandM" checked="true"> Evolve K and M
     </div>
     <div>
         <button type="button" id="restart_sim">Restart Simulation</button>
@@ -118,8 +118,9 @@
     <div>
         <input type="checkbox" id="no_decaying" checked="true"> No decaying food
     </div>
-    <div>
-        <input type="checkbox" id="inner_wall"> Inner Walls
+    <div> 
+        <input type="checkbox" id="inner_wall"> Inner Walls &emsp;
+        <input type="checkbox" id="no_border"> No border (Restart to take effect)
     </div>
     <div>
         <input type="text" id="num_agents" value="50"> Number of Agents in Simulation (restart to take effect)
@@ -137,7 +138,7 @@
         <input type="text" id="compat_threshold" value="0.04"> Species Compatibility Threshold
     </div>
     <div>
-        <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
+        <input type="text" id="food_agent_ratio" value="3"> Food to Agent Ratio
     </div>
     <div>
         <input type="text" id="poison_agent_ratio" value="0"> Poison to Agent Ratio
@@ -152,13 +153,14 @@
         <input type="text" id="genome_default_k_val" value="0.75"> Default K Value (Requires restart)
     </div>
     <div>
-        <input type="text" id="agent_per_world" value="1"> Agent Per World (Put 0 to not limit agent per world)
+        <input type="text" id="agent_per_world" value= "1"> Agent per world (Put 0 to deactivate) &emsp;
+        <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world (Limit agent per world must be on)
     </div>
     <div>
         <input type="text" id="max_ticks_to_consume" value="1"> Number of Ticks to Consume
     </div>
     <div>
-        <input type="checkbox" id="agent_biting" checked="true"> Agent biting required (Requires Restart)
+        <input type="checkbox" id="agent_biting" > Agent biting required (Requires Restart)
     </div>
     <br> <br>
     <strong>Debug Options</strong>
@@ -167,7 +169,10 @@
         <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
     </div>
     <div>
-        <input type="text" id="tickToUpdateCurrentGenOutputData" value = "0"> Tick to update current generation output data (Put 0 to disable data gathering)
+        <input type="checkbox" id="worldUpdateAsync" checked = true> World Update Asynchronously 
+    </div>
+    <div>
+        <input type="text" id="tickToUpdateCurrentGenOutputData" value = "0"> Tick to update current generation output data (Put 0 to disable)
     </div>
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>
@@ -176,11 +181,6 @@
         + <input type="text" id="fitness_calories" value="24"> (Calories Eaten) + <input type="text"
             id="fitness_potential_cal" value="6"> (Potential Calories Reward)
     </div>
-
-    <div id="agentOutputContainers">
-
-    </div>
-
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
         <div id="agentCurrentOutputContainers">

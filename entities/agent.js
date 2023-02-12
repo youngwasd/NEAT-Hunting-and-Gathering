@@ -311,6 +311,9 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
+            if (!this.leftWheel || !this.rightWheel){
+                console.log("Error");
+            }
             this.totalOutputs[0] += this.leftWheel;
             this.totalOutputs[1] += this.rightWheel;
 
@@ -391,8 +394,10 @@ class Agent {
             this.isOutOfBound = true;
             ++this.numberOfTickOutOfBounds;
 
-            //Toan Deactivate the agent when they go out of bound
-            this.deactivateAgent();
+            //Deactivate the agent when they go out of bound
+            if (!params.NO_BORDER){
+                this.deactivateAgent();
+            }
 
         }
         else {
@@ -550,11 +555,25 @@ class Agent {
      * @param {*} ctx the canvas context
      */
     draw(ctx) {
+        //let ctx = this.ctx;
+        if (params.DISPLAY_SAME_WORLD){
+            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.diameter / 2, 0, 2 * Math.PI);
-        ctx.strokeStyle = this.strokeColor;
+        let color = this.getDisplayHue();
+        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD){
+            color = this.game.population.worlds.get(this.worldId).worldColor;
+        }
+
+        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
-        ctx.lineWidth = 2;
+        if (!params.DISPLAY_SAME_WORLD){
+            ctx.lineWidth = 2;
+        }
+        else{
+            ctx.lineWidth = 4;
+        }
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
