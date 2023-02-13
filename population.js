@@ -532,6 +532,10 @@ class PopulationManager {
             return;
         }
 
+        this.worlds.forEach((world) =>{
+            PopulationManager.WORLD_COLOR_POOL.push(world.worldColor);
+        });
+
         //Clear the pre-existing worlds
         this.worlds = new Map();
         let worldId = -1;
@@ -578,7 +582,7 @@ class PopulationManager {
         if (params.SPLIT_SPECIES) {
             extincts.forEach(worldId => {
                 //Cleaning up world color here
-                PopulationManager.WORLD_COLOR_POOL.push(this.worlds.get(worldId).worldColor);
+                
                 this.removeWorld(worldId);
                 //Clean up in the agent list
                 this.specieWorldList.forEach(x => {
@@ -631,6 +635,9 @@ class PopulationManager {
     };
 
     removeWorld(worldId) {
+        //Replenish the world color pool
+        PopulationManager.WORLD_COLOR_POOL.push(this.worlds.get(worldId).worldColor);
+        
         this.worlds.get(worldId).removeWorld();
         this.worlds.delete(worldId);
     };
@@ -649,6 +656,7 @@ class PopulationManager {
         this.worlds.get(0).poison = allPoison;
 
         this.resetCanvases();
+        this.resetWorldColorPool();
     };
 
     splitWorlds() {
@@ -676,6 +684,7 @@ class PopulationManager {
             index = (index + 1) % worldIds.length;
         });
         this.resetCanvases();
+        this.resetWorldColorPool();
     };
 
     resetCanvases() {
