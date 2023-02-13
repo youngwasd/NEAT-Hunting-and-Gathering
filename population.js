@@ -175,6 +175,7 @@ class PopulationManager {
 
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
+        
     };
 
     update() {

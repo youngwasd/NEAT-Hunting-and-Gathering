@@ -585,6 +585,12 @@ class Agent {
         ctx.stroke();
         ctx.closePath();
 
+        if (params.DISPLAY_SAME_WORLD){
+            ctx.fillStyle = "black";
+            ctx.font = "10px sans-serif";
+            ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);
+        }
+
         ctx.lineWidth = 2;
         //Draw cone vision
         if (params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && Array.isArray(this.spotted)) {

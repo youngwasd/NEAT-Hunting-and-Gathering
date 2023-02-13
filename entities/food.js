@@ -311,6 +311,12 @@ class Food {
         ctx.strokeStyle = "black";//`hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.stroke();
         ctx.closePath();
+
+        if (params.DISPLAY_SAME_WORLD){
+            ctx.fillStyle = "black";
+            ctx.font = "10px sans-serif";
+            ctx.fillText(this.worldId, this.x + this.phase_properties[this.phase].radius / 4, this.y + this.phase_properties[this.phase].radius / 4);
+        }
     };
 };
 
