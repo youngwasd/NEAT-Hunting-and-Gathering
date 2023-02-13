@@ -39,6 +39,7 @@ const params = {
     NO_BORDER: false,
     DISPLAY_SAME_WORLD: false,
     WORLD_UPDATE_ASYNC: true,
+    LARGE_ENERGY_THRESHOLD: false,
 };
 
 const getMedian = (arr) => {

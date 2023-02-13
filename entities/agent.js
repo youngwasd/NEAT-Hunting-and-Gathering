@@ -6,7 +6,7 @@
 class Agent {
 
     /** The amount of energy at which an Agent will die */
-    static DEATH_ENERGY_THRESH = 0;//-1000000;
+    static DEATH_ENERGY_THRESH = 0;//-10000000;
 
     /** The amount of energy an Agent is given upon spawn */
     static START_ENERGY = 100;
@@ -572,6 +572,7 @@ class Agent {
         }
         else{
             ctx.lineWidth = 4;
+            [ctx.fillStyle, ctx.strokeStyle] = [ctx.strokeStyle, ctx.fillStyle];
         }
         ctx.fill();
         ctx.stroke();

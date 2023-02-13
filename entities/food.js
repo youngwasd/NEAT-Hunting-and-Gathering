@@ -302,8 +302,13 @@ class Food {
         }
         
         ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
+        if (!params.DISPLAY_SAME_WORLD){
+            ctx.lineWidth = 2;
+        }
+        else{
+            ctx.lineWidth = 4;
+        }
+        ctx.strokeStyle = "black";//`hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.stroke();
         ctx.closePath();
     };

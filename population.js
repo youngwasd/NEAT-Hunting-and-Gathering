@@ -11,10 +11,7 @@ class PopulationManager {
     static SENSOR_COLORS_USED = new Set();
     static NUM_AGENTS = params.NUM_AGENTS;
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
-    static WORLD_COLOR_POOL = {
-        colorMap : new Map(),
-        remaning_color : new Map(),
-    };
+    static WORLD_COLOR_POOL = [];
 
     constructor(game) {
         this.game = game;
@@ -33,6 +30,7 @@ class PopulationManager {
         this.createFoodPodLayout();
 
         this.specieWorldList = new Map();//List of worlds for a specie
+        this.resetWorldColorPool();
 
         //Check for splitting agents
         if (params.AGENT_PER_WORLD == 0) {
@@ -87,6 +85,27 @@ class PopulationManager {
         }
     };
 
+    //Return NULL if no color is availble
+    static getNextAvailableWorldColor(){
+        if (PopulationManager.WORLD_COLOR_POOL.length <= 0)
+            return null;
+        let res = PopulationManager.WORLD_COLOR_POOL.shift();
+        //PopulationManager.WORLD_COLOR_POOL.remove(res);
+        return res;
+    }
+
+    resetWorldColorPool() {
+        PopulationManager.WORLD_COLOR_POOL = [];
+        
+
+        for (let i = 0; i <= 360; i++){
+            PopulationManager.WORLD_COLOR_POOL.push(i);
+        }
+
+        PopulationManager.WORLD_COLOR_POOL = shuffleArray(PopulationManager.WORLD_COLOR_POOL);
+    }
+
+
     createFoodPodLayout() { // all worlds will share the same food / poison pod layout. this will ensure clean merging and splitting
         let foodPods = [];
         let poisonPods = [];
@@ -138,11 +157,8 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
-        PopulationManager.WORLD_COLOR_POOL = {
-            colorMap : new Map(),
-            remaning_color : new Map(),
-        };
-
+        
+        this.resetWorldColorPool();
         //Reset generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
@@ -180,10 +196,19 @@ class PopulationManager {
         params.WORLD_UPDATE_ASYNC = document.getElementById("worldUpdateAsync").checked;
         params.AGENT_BITING = document.getElementById("agent_biting").checked;
         params.NO_BORDER = document.getElementById("no_border").checked;
+        params.LARGE_ENERGY_THRESHOLD = document.getElementById("largeEnergyThresh").checked;
 
-        if (params.AGENT_PER_WORLD === 0){
+        if (params.LARGE_ENERGY_THRESHOLD) {
+            Agent.DEATH_ENERGY_THRESH = -100000000;
+        }
+        else {
+            Agent.DEATH_ENERGY_THRESH = 0;
+        }
+
+        if (params.AGENT_PER_WORLD === 0) {
             document.getElementById("displayOnTheSameWorld").checked = false;
         }
+
         if (document.activeElement.id !== "agent_per_world") {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
             //Force turning the split specie on
@@ -191,7 +216,7 @@ class PopulationManager {
                 document.getElementById("split_species").checked = true;
             }
         }
-        
+
         params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
 
 
@@ -552,15 +577,15 @@ class PopulationManager {
         });
         if (params.SPLIT_SPECIES) {
             extincts.forEach(worldId => {
-                this.removeWorld(worldId);
-
                 //Cleaning up world color here
-
+                PopulationManager.WORLD_COLOR_POOL.push(this.worlds.get(worldId).worldColor);
+                this.removeWorld(worldId);
                 //Clean up in the agent list
                 this.specieWorldList.forEach(x => {
                     for (let i = x.length - 1; i >= 0; i--) {
                         if (worldId == x[i]) {
                             x.splice(i, 1);
+                            
                         }
                     }
                 });
