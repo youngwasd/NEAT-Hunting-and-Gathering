@@ -1,6 +1,9 @@
 /** Global Parameters Object */
 const params = {
     CANVAS_SIZE: 800,
+    DB: "test",
+    DB_COLLECTION: "NEATtests",
+    GEN_TO_SAVE: -1,
     FOOD_OUTSIDE: false,
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
@@ -216,3 +219,16 @@ const execAsync = (fun) => {
         fun;
       }, 0)
 };
+
+const logData = (data) => {
+    let payload = {
+        db: params.DB,
+        collection: params.DB_COLLECTION,
+        data: data
+    }
+
+    if(socket) {
+        socket.emit("insert", payload);
+        console.log("inserted data to db");
+    }
+}

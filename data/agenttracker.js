@@ -5,6 +5,7 @@
     constructor() {
         this.currentGeneration = -1;
         this.generations = [];
+        this.avgFitness = [];
         this.addNewGeneration();
     }
 
@@ -20,6 +21,7 @@
             minEnergy: Number.MAX_VALUE,
             energy: [],
             speciesFitness: [],
+            avgFitness: []
         };
     }
 
@@ -57,6 +59,10 @@
      */
     addSpeciesFitness(data) {
         this.generations[this.currentGeneration].speciesFitness.push(data);
+    }
+
+    addAvgFitness(value){
+        this.avgFitness.push(value);
     }
 
     /**
