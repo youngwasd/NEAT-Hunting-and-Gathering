@@ -21,7 +21,7 @@ class World {
         this.display.worldId = worldId;
 
         //Just for testing
-        this.worldColor = (randomInt(worldId * 100) + 100) % 361;
+        this.worldColor = PopulationManager.getNextAvailableWorldColor();
 
         //Add random box wall
         if (params.INNER_WALL) {

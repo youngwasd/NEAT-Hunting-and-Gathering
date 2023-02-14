@@ -294,13 +294,13 @@ class Genome {
 
     static similarity = (genomeA, genomeB) => {
         let N = Math.max(genomeA.numConnections(), genomeB.numConnections());
-        let res = 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 0.4 * Genome.avgWeightDiff(genomeA, genomeB);
+        let res = 1 * (Genome.numExcess(genomeA, genomeB) / N) + 1 * (Genome.numDisjoint(genomeA, genomeB) / N) + 0.2 * Genome.avgWeightDiff(genomeA, genomeB);
         
         //Adding the difference of k and m to the similarity when speciation
         if (params.EVOLVE_K_AND_M){
             let tmp = Genome.avgKAndMValueDiff(genomeA, genomeB);
-            res += tmp.averageK;
-            res += tmp.averageM;
+            res += 0.4 * tmp.averageK;
+            res += 0.4 * tmp.averageM;
         }
         
         return res;
@@ -342,7 +342,6 @@ class Genome {
 
         if (params.EVOLVE_K_AND_M) {// Sigmoid k and m mutations
             this.nodeGenes.forEach(node => {
-                
                 //K mutation
                 if (randomInt(100) < 80) { // 80% chance of a weight mutation for every connection
                     let randNum = randomInt(1000);

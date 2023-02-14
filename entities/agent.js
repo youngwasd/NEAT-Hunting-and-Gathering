@@ -6,7 +6,7 @@
 class Agent {
 
     /** The amount of energy at which an Agent will die */
-    static DEATH_ENERGY_THRESH = 0;//-1000000;
+    static DEATH_ENERGY_THRESH = 0;//-10000000;
 
     /** The amount of energy an Agent is given upon spawn */
     static START_ENERGY = 100;
@@ -573,6 +573,7 @@ class Agent {
         }
         else{
             ctx.lineWidth = 4;
+            [ctx.fillStyle, ctx.strokeStyle] = [ctx.strokeStyle, ctx.fillStyle];
         }
         ctx.fill();
         ctx.stroke();
@@ -584,6 +585,12 @@ class Agent {
         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
         ctx.closePath();
+
+        if (params.DISPLAY_SAME_WORLD){
+            ctx.fillStyle = "black";
+            ctx.font = "10px sans-serif";
+            ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);
+        }
 
         ctx.lineWidth = 2;
         //Draw cone vision
