@@ -6,7 +6,7 @@
 class Agent {
 
     /** The amount of energy at which an Agent will die */
-    static DEATH_ENERGY_THRESH = 0;//-1000000;
+    static DEATH_ENERGY_THRESH = 0;//-10000000;
 
     /** The amount of energy an Agent is given upon spawn */
     static START_ENERGY = 100;
@@ -105,7 +105,8 @@ class Agent {
             }*/
             let fitnessFromPotCal = 0;
             if(this.closestFood.cals > 0){
-                fitnessFromPotCal = this.closestFood.cals * this.maxEatingCompletion;
+                let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist / 50));
+                fitnessFromPotCal = this.closestFood.cals * (this.maxEatingCompletion * .5 + fitnessFromCalDist *.5);
                 totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
             }
             /**
@@ -310,6 +311,9 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
+            if (!this.leftWheel || !this.rightWheel){
+                console.log("Error");
+            }
             this.totalOutputs[0] += this.leftWheel;
             this.totalOutputs[1] += this.rightWheel;
 
@@ -390,8 +394,10 @@ class Agent {
             this.isOutOfBound = true;
             ++this.numberOfTickOutOfBounds;
 
-            //Toan Deactivate the agent when they go out of bound
-            this.deactivateAgent();
+            //Deactivate the agent when they go out of bound
+            if (!params.NO_BORDER){
+                this.deactivateAgent();
+            }
 
         }
         else {
@@ -549,11 +555,26 @@ class Agent {
      * @param {*} ctx the canvas context
      */
     draw(ctx) {
+        //let ctx = this.ctx;
+        if (params.DISPLAY_SAME_WORLD){
+            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.diameter / 2, 0, 2 * Math.PI);
-        ctx.strokeStyle = this.strokeColor;
+        let color = this.getDisplayHue();
+        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD){
+            color = this.game.population.worlds.get(this.worldId).worldColor;
+        }
+
+        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
-        ctx.lineWidth = 2;
+        if (!params.DISPLAY_SAME_WORLD){
+            ctx.lineWidth = 2;
+        }
+        else{
+            ctx.lineWidth = 4;
+            [ctx.fillStyle, ctx.strokeStyle] = [ctx.strokeStyle, ctx.fillStyle];
+        }
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
@@ -564,6 +585,12 @@ class Agent {
         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
         ctx.stroke();
         ctx.closePath();
+
+        if (params.DISPLAY_SAME_WORLD){
+            ctx.fillStyle = "black";
+            ctx.font = "10px sans-serif";
+            ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);
+        }
 
         ctx.lineWidth = 2;
         //Draw cone vision

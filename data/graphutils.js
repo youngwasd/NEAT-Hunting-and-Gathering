@@ -674,22 +674,25 @@ const generateFoodStageChart = (data) => {
  * @param {*} height The height of the element
  */
 const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftWheelChart', container = 'agentCurrentOutputContainers', style = '', width = 400, height = 100) => {
-    
     let canvas = document.createElement('canvas');
-    if (document.getElementById(chartElementID) == undefined) {
+    if (!document.getElementById(chartElementID) ) {
         document.getElementById(container).appendChild(canvas);
     }else{
         canvas = document.getElementById(chartElementID);
     }
+    
     canvas.setAttribute('id', chartElementID);
     canvas.setAttribute('style', style);
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
+    
+    let ctx = canvas.getContext("2d");
 
-    ctx = canvas.getContext("2d");
     //Clear the retangle
     ctx.clearRect(0, 0, width, height);
+    
     outputHistogram.draw(ctx);
+    
     outputHistogram.ctx = ctx;
     
 };

@@ -37,63 +37,61 @@ class GameEngine {
 
     draw() {
         this.population.worlds.forEach(members => {
-            members.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
-            members.home.draw(members.ctx);
-            members.food.forEach(food => {
-                if (!food.removeFromWorld) {
-                    food.draw(members.ctx)
-                }
-            });
-            members.poison.forEach(poison => {
-                if (!poison.removeFromWorld) {
-                    poison.draw(members.ctx)
-                }
-            });
-            members.agents.forEach(agent => {
-                if (!agent.removeFromWorld) {
-                    agent.draw(members.ctx)
-                }
-            });
-            members.display.draw(members.ctx);
+            if (params.WORLD_UPDATE_ASYNC) {
+                execAsync(members.draw());
+            }
+            else {
+                members.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
+                members.home.draw(members.ctx);
+                members.food.forEach(food => {
+                    if (!food.removeFromWorld) {
+                        food.draw(members.ctx)
+                    }
+                });
+                members.poison.forEach(poison => {
+                    if (!poison.removeFromWorld) {
+                        poison.draw(members.ctx)
+                    }
+                });
+                members.agents.forEach(agent => {
+                    if (!agent.removeFromWorld) {
+                        agent.draw(members.ctx)
+                    }
+                });
+                members.display.draw(members.ctx);
 
-            members.walls.forEach(wall => {
-                wall.draw(members.ctx)   
-            });
+                if (params.INNER_WALL) {
+                    members.walls.forEach(wall => {
+                        wall.draw(members.ctx)
+                    });
+                }
+            }
         });
     };
 
     update() {
-        let foodCounts = new Map();
-        let poisonCounts = new Map();
-        let agentCounts = new Map();
-        
-        this.population.worlds.forEach((members, worldId) => {
-            foodCounts.set(worldId, members.food.length);
-            poisonCounts.set(worldId, members.poison.length);
-            agentCounts.set(worldId, members.agents.length);
-        });
-
-        this.population.worlds.forEach((members, worldId) => {
-            for (let i = 0; i < foodCounts.get(worldId); i++) {
-                if (!members.food[i].removeFromWorld) {
-                    members.food[i].update();
-                }
-            }
-            for (let i = 0; i < poisonCounts.get(worldId); i++) {
-                if (!members.poison[i].removeFromWorld) {
-                    members.poison[i].update();
-                }
-            }
-            for (let i = 0; i < agentCounts.get(worldId); i++) {
-                if (!members.agents[i].removeFromWorld) {
-                    members.agents[i].update();
-                }
-            }
-
-            members.walls.forEach(wall => {
-                wall.update(members.ctx)   
+        if (!params.WORLD_UPDATE_ASYNC) {
+            this.population.worlds.forEach((members) => {
+                members.food.forEach((food) => {
+                    food.update();
+                });
+                members.poison.forEach(poison => {
+                    poison.update();
+                });
+                members.agents.forEach(agent => {
+                    agent.update()
+                });
+                members.walls.forEach(wall => {
+                    wall.update(members.ctx)
+                });
             });
-        });
+        }
+        else {
+            //Update world async
+            this.population.worlds.forEach((world) => {
+                execAsync(world.update());
+            });
+        }
 
         let isNewGeneration = this.population.update();
 

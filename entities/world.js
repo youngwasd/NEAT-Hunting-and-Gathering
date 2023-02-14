@@ -3,12 +3,12 @@
  */
 
 class World {
-    constructor(game, worldId, specieId ) {
-        if (specieId == undefined){
+    constructor(game, worldId, specieId, worldColor = 360) {
+        if (specieId == undefined) {
             specieId = worldId;
         }
         let world = this.createWorldCanvas(worldId);
-        Object.assign(this, {game, worldId, specieId});
+        Object.assign(this, { game, worldId, specieId, worldColor });
         this.agents = [];
         this.food = [];
         this.poison = [];
@@ -20,20 +20,44 @@ class World {
         this.home.worldId = worldId;
         this.display.worldId = worldId;
 
+        //Just for testing
+        this.worldColor = PopulationManager.getNextAvailableWorldColor();
+
         //Add random box wall
-        if (params.INNER_WALL){
-        this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);    
+        if (params.INNER_WALL) {
+            this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);
         }
-        else{
+        else {
             this.addBorderToWorld();
         }
     };
 
+    //Async update
     update() {
-        
+        for (let i = 0; i < this.food.length; i++) {
+            if (!this.food[i].removeFromWorld) {
+                this.food[i].update();
+
+            }
+        }
+        for (let i = 0; i < this.poison.length; i++) {
+            if (!this.poison[i].removeFromWorld) {
+                this.poison[i].update();
+            }
+        }
+        for (let i = 0; i < this.agents.length; i++) {
+            if (!this.agents[i].removeFromWorld) {
+                this.agents[i].update();
+            }
+        }
+
+
+        this.walls.forEach(wall => {
+            wall.update(this.ctx)
+        });
     };
 
-    agentsAsList(){
+    agentsAsList() {
         return this.agents;
     }
 
@@ -110,19 +134,22 @@ class World {
 
     /**
      * Add border to a particular world
-     * @param {*} worldId The world id we want to implement border in
      */
     addBorderToWorld = () => {
+        if (params.NO_BORDER) {
+            this.walls = [];
+            return;
+        }
         //Adding actual border
         let northWall = new Wall(this.game, this.worldId, 0, 0, 0, params.CANVAS_SIZE);
         let eastWall = new Wall(this.game, this.worldId, 0, params.CANVAS_SIZE, params.CANVAS_SIZE, params.CANVAS_SIZE);
         let southWall = new Wall(this.game, this.worldId, params.CANVAS_SIZE, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
         let westWall = new Wall(this.game, this.worldId, 0, 0, params.CANVAS_SIZE, 0);
 
-        this.walls.push(northWall); 
-        this.walls.push(eastWall); 
-        this.walls.push(southWall); 
-        this.walls.push(westWall); 
+        this.walls.push(northWall);
+        this.walls.push(eastWall);
+        this.walls.push(southWall);
+        this.walls.push(westWall);
     }
 
     createWorldCanvas(worldId) {
@@ -146,20 +173,34 @@ class World {
      * @param {*} n number of walls (Maximum is 4)
      * @param {*} spawningZoneStart the starting coordinate of the randomizing zone to spawn the walls 
      * @param {*} spawningZoneWidth the width of the randomizing zone to spawn the walls  
-     */ 
-    produceRandomBoxWalls(n, spawningZoneStart, spawningZoneWidth){
+     */
+    produceRandomBoxWalls(n, spawningZoneStart, spawningZoneWidth) {
+        // let spawningCoordinateBegin = [
+        //     {x: spawningZoneStart, y: spawningZoneStart},
+        //     {x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart},
+        //     {x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
+        //     {x: spawningZoneStart, y: spawningZoneStart},
+        // ];
+
+        // let spawningCoordinateEnd = [
+        //     {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
+        //     {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
+        //     {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
+        //     {x: spawningZoneStart + spawningZoneWidth, y:  params.CANVAS_SIZE - spawningZoneStart},
+        // ];
+
         let spawningCoordinateBegin = [
-            {x: spawningZoneStart, y: spawningZoneStart},
-            {x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart},
-            {x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
-            {x: spawningZoneStart, y: spawningZoneStart},
+            { x: spawningZoneStart, y: spawningZoneStart },
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
+            { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+            { x: spawningZoneStart, y: spawningZoneStart },
         ];
 
         let spawningCoordinateEnd = [
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
-            {x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart},
-            {x: spawningZoneStart + spawningZoneStart, y:  params.CANVAS_SIZE - spawningZoneStart},
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+            { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+            { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
         ];
 
         //Clear the walls first
@@ -169,13 +210,46 @@ class World {
 
         //Added the walls in
         let arr = shuffleArray([0, 1, 2, 3]);
-        console.log(arr);
-        for (let i = 0; i < Math.max(0, (n % 4)); i++){
-            let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x , spawningCoordinateEnd[arr[i]].y); 
-            this.walls.push(tmp);  
+
+        for (let i = 0; i < Math.max(0, (n % 4)); i++) {
+            let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x, spawningCoordinateEnd[arr[i]].y);
+            this.walls.push(tmp);
         }
-        
+
     }
+
+    //Async drawing
+    draw() {
+        let ctx = this.ctx;
+        // if (params.DISPLAY_SAME_WORLD) {
+        //     ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        // }
+        this.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
+        this.home.draw(ctx);
+        this.food.forEach(food => {
+            if (!food.removeFromWorld) {
+                execAsync(food.draw(ctx));
+            }
+        });
+        this.poison.forEach(poison => {
+            if (!poison.removeFromWorld) {
+                execAsync(poison.draw(ctx));
+            }
+        });
+        this.agents.forEach(agent => {
+            if (!agent.removeFromWorld) {
+                execAsync(agent.draw(ctx));
+            }
+        });
+        execAsync(this.display.draw(ctx));
+
+        if (params.INNER_WALL) {
+            this.walls.forEach(wall => {
+                execAsync(wall.draw(ctx));
+            });
+        }
+    }
+
 
     resetCanvases() {
         const tmp = [];
@@ -185,5 +259,5 @@ class World {
         createSlideShow(tmp, 'canvas');
     };
 
-  
+
 };

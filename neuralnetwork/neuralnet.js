@@ -7,10 +7,8 @@ class NeuralNet {
         this.sortedNodes = NeuralNetUtil.topoSort(this.nodes, this.edges);
     };
 
-    processInput(input) {
+    processInput(input, output = []) {
         //console.log(input);
-
-        let output = [];
         let inputIndex = 0;
 
         this.sortedNodes.forEach(nodeId => {
