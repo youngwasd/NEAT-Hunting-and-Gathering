@@ -281,6 +281,18 @@ class PopulationManager {
             params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
         }
 
+        if (document.activeElement.id !== "gen_to_save") {
+            params.GEN_TO_SAVE = parseInt(document.getElementById("gen_to_save").value);
+        }
+
+        if (document.activeElement.id !== "db") {
+            params.DB = document.getElementById("db").value;
+        }
+
+        if (document.activeElement.id !== "db_collection") {
+            params.DB_COLLECTION = document.getElementById("db_collection").value;
+        }
+
         //Cleans up all of the food/poison for the world
         this.worlds.forEach((members, worldId) => {
             members.cleanupFood(false); //cleanup food
@@ -688,6 +700,7 @@ class PopulationManager {
         this.resetWorldColorPool();
     };
 
+
     resetCanvases() {
         const tmp = [];
         this.worlds.forEach((val) => {
@@ -696,27 +709,32 @@ class PopulationManager {
         createSlideShow(tmp, 'canvas');
     };
 
+
     processGeneration() {
         //Data collections for histograms
         let avgLeftWheelOut = new Array(20).fill(0);
         let avgRightWheelOut = new Array(20).fill(0);
         let avgBiteOut = new Array(20).fill(0);
         //evaluate the agents
+        let totalRawFitness = 0;
         this.agentsAsList().forEach(agent => {
             this.agentTracker.processAgent(agent);
             this.genomeTracker.processGenome(agent.genome);
             agent.age++;
             agent.assignFitness();
+            totalRawFitness += agent.genome.rawFitness;
             //Sort average output data for the histograms into their buckets
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
             if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
-
+        this.agentTracker.addAvgFitness(totalRawFitness/PopulationManager.NUM_AGENTS);
+        console.log(`Raw fitness: ${totalRawFitness}`);
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
 
         let reprodFitMap = new Map();
         let minShared = 0;
+
         //Determine average raw fitness for each species
         PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
             //sum raw fitness for all members of this species
@@ -846,8 +864,6 @@ class PopulationManager {
         }
         // console.log("Total agents", this.agentsAsList().length);
 
-        PopulationManager.GEN_NUM++;
-
         //Generates the generational histograms
         this.leftWheelHist.data.push(avgLeftWheelOut);
         execAsync(generateNeuralNetWorkData(this.leftWheelHist, 'agentGenAvgLeftWheelChart', 'agentAvgOutputContainers'));
@@ -881,6 +897,10 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
+        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
+
+        
+        PopulationManager.GEN_NUM++;
         this.resetCanvases();
     };
 

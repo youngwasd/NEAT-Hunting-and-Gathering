@@ -2,7 +2,7 @@ const gameEngine = new GameEngine();
 
 const ASSET_MANAGER = new AssetManager();
 
-var socket = null;
+let socket = null;
 if (window.io) {
 	console.log("Database connected!");
 
