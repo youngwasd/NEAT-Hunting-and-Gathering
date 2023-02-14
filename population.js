@@ -905,12 +905,11 @@ class PopulationManager {
         generateCurrentFitnessChart(this.agentTracker.getFitnessData());
         this.foodTracker.computePercentiles();
         generateFoodTimeChart(this.foodTracker.getPercentileData());
-
-
-        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
         this.foodTracker.addNewGeneration();
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
+
+        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
         
         PopulationManager.GEN_NUM++;
         this.resetCanvases();
