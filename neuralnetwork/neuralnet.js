@@ -42,7 +42,9 @@ class NeuralNet {
 
     //Sigmoid function
     sigmoid(x, k = params.GENOME_DEFAULT_K_VAL, m = 0) {
-        //console.log(k, m, params.GENOME_DEFAULT_K_VAL);
+        // if ((PopulationManager.IS_LAST_TICK)){
+        //     console.log("k:", k, "m:", m, PopulationManager.GEN_NUM);
+        // }
         //Name the parameters to easily adjust them
         let l = 2;
         let n = 1;

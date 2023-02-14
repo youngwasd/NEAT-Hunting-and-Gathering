@@ -13,6 +13,8 @@ class PopulationManager {
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
     static WORLD_COLOR_POOL = [];
 
+    static IS_LAST_TICK = false;//Use for debugging purposes; to determine whether the current population is at its last tick
+
     constructor(game) {
         this.game = game;
         this.foodTracker = new FoodTracker();
@@ -173,6 +175,10 @@ class PopulationManager {
             params.NO_BORDER = document.getElementById("no_border").checked;
         }
 
+        if (document.activeElement.id !== "genome_default_k_val") {
+            params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
+        }
+
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
         
@@ -277,10 +283,6 @@ class PopulationManager {
             params.TICK_TO_UPDATE_CURRENT_GEN_DATA = parseInt(document.getElementById("tickToUpdateCurrentGenOutputData").value);
         }
 
-        if (document.activeElement.id !== "genome_default_k_val") {
-            params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
-        }
-
         if (document.activeElement.id !== "gen_to_save") {
             params.GEN_TO_SAVE = parseInt(document.getElementById("gen_to_save").value);
         }
@@ -321,6 +323,13 @@ class PopulationManager {
         }
 
         this.tickCounter++;
+        //Use for debugging purposes; to determine whether the current population is at its last tick
+        if (this.tickCounter + 1 >= params.GEN_TICKS){
+            PopulationManager.IS_LAST_TICK = true;
+        }
+        else{
+            PopulationManager.IS_LAST_TICK = false;
+        }
         //Check to see if the generation is over
         if ((this.tickCounter >= params.GEN_TICKS && !params.GEN_STOP) || (params.GEN_STOP && (this.isAgentEnergyGone() || this.isFoodGone()))) {
             //When a new generation starts 
@@ -331,6 +340,9 @@ class PopulationManager {
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
             }
+
+            //For debugging k and m purposes
+            //console.clear();
 
             return true;
         }

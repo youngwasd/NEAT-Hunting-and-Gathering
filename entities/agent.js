@@ -587,7 +587,7 @@ class Agent {
         ctx.closePath();
 
         if (params.DISPLAY_SAME_WORLD){
-            ctx.fillStyle = "black";
+            ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
             ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);
         }

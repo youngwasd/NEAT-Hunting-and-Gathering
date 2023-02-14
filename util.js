@@ -38,7 +38,7 @@ const params = {
     EVOLVE_K_AND_M: true,
     TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
     AGENT_BITING: false,
-    GENOME_DEFAULT_K_VAL: 3/4,
+    GENOME_DEFAULT_K_VAL: 0.75,
     NO_BORDER: false,
     DISPLAY_SAME_WORLD: false,
     WORLD_UPDATE_ASYNC: true,

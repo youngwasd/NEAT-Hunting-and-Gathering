@@ -228,24 +228,24 @@ class World {
         this.home.draw(ctx);
         this.food.forEach(food => {
             if (!food.removeFromWorld) {
-                execAsync(food.draw(ctx));
+                food.draw(ctx)
             }
         });
         this.poison.forEach(poison => {
             if (!poison.removeFromWorld) {
-                execAsync(poison.draw(ctx));
+                poison.draw(ctx)
             }
         });
         this.agents.forEach(agent => {
             if (!agent.removeFromWorld) {
-                execAsync(agent.draw(ctx));
+                agent.draw(ctx);
             }
         });
-        execAsync(this.display.draw(ctx));
+        this.display.draw(ctx);
 
         if (params.INNER_WALL) {
             this.walls.forEach(wall => {
-                execAsync(wall.draw(ctx));
+                wall.draw(ctx)
             });
         }
     }
