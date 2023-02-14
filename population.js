@@ -841,7 +841,7 @@ class PopulationManager {
         if (params.AGENT_PER_WORLD !== 0) {
             this.distributeAgents();
         }
-        execAsync(this.checkFoodLevels());
+        this.checkFoodLevels();
 
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
@@ -871,7 +871,7 @@ class PopulationManager {
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
             this.worlds.forEach(world => {
-                execAsync(world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8 + params.CANVAS_SIZE / 10, params.CANVAS_SIZE / 10));
+                world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8 + params.CANVAS_SIZE / 10, params.CANVAS_SIZE / 10);
             });
         }
         // console.log("Total agents", this.agentsAsList().length);
@@ -905,12 +905,12 @@ class PopulationManager {
         generateCurrentFitnessChart(this.agentTracker.getFitnessData());
         this.foodTracker.computePercentiles();
         generateFoodTimeChart(this.foodTracker.getPercentileData());
+
+
+        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
         this.foodTracker.addNewGeneration();
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
-
-        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
-
         
         PopulationManager.GEN_NUM++;
         this.resetCanvases();
