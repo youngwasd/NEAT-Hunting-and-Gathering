@@ -85,7 +85,7 @@
         <input type="checkbox" id="food_inside_circle"> Food and Poison Inside Inner Circle
     </div>
     <div>
-        <input type="checkbox" id="enforce_min_food"> Enforce Minimum Food
+        <input type="checkbox" id="enforce_min_food" checked="true"> Enforce Minimum Food
     </div>
     <div>
         <input type="checkbox" id="enforce_min_poison"> Enforce Minimum Poison
@@ -113,18 +113,32 @@
         <button type="button" id="restart_sim">Restart Simulation</button>
     </div>
     <div>
-        <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input
-        field.
-    </div>
-    <div>
         <input type="checkbox" id="no_decaying" checked="true"> No decaying food
+
+        <div>
+            <input type="checkbox" id="moving_food" checked = "true"> Moving food
+
+            &emsp;
+
+            <label for="movingFoodPattern">Food moving pattern: </label>
+            <select name="movingFoodPattern" id="movingFoodPattern">
+                <option value="drunkenSailor">Drunken Sailor</option>
+                <option value="direct">Direct</option>
+              </select>
+        </div>
+        
     </div>
     <div> 
-        <input type="checkbox" id="inner_wall"> Inner Walls &emsp;
+        <input type="checkbox" id="inner_wall"> Inner Walls 
+        &emsp;
         <input type="checkbox" id="no_border"> No border (Restart to take effect)
     </div>
     <div> 
         <input type="checkbox" id="largeEnergyThresh"> Large Energy Threshold
+    </div>
+    <div>
+        <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input
+        field.
     </div>
     <div>
         <input type="text" id="num_agents" value="50"> Number of Agents in Simulation (restart to take effect)
@@ -142,7 +156,7 @@
         <input type="text" id="compat_threshold" value="0.04"> Species Compatibility Threshold
     </div>
     <div>
-        <input type="text" id="food_agent_ratio" value="3"> Food to Agent Ratio
+        <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
     </div>
     <div>
         <input type="text" id="poison_agent_ratio" value="0"> Poison to Agent Ratio

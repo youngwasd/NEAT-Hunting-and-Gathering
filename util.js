@@ -8,10 +8,10 @@ const params = {
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
     AGENT_NEIGHBORS: false,
-    FOOD_AGENT_RATIO: 3,
+    FOOD_AGENT_RATIO: 1,
     POISON_AGENT_RATIO: 0,
     COMPAT_THRESH: 0.04,
-    ENFORCE_MIN_FOOD: false,
+    ENFORCE_MIN_FOOD: true,
     ENFORCE_MIN_POISON: false,
     AGENT_VISION_RADIUS: 500,
     RAND_FOOD_PHASES: false,
@@ -43,6 +43,8 @@ const params = {
     DISPLAY_SAME_WORLD: false,
     WORLD_UPDATE_ASYNC: true,
     LARGE_ENERGY_THRESHOLD: false,
+    MOVING_FOOD: false,
+    MOVING_FOOD_PATTERN: "drunkenSailor",
 };
 
 const getMedian = (arr) => {

@@ -204,6 +204,8 @@ class PopulationManager {
         params.AGENT_BITING = document.getElementById("agent_biting").checked;
         params.NO_BORDER = document.getElementById("no_border").checked;
         params.LARGE_ENERGY_THRESHOLD = document.getElementById("largeEnergyThresh").checked;
+        params.MOVING_FOOD = document.getElementById("moving_food").checked;
+        params.MOVING_FOOD_PATTERN = document.getElementById("movingFoodPattern").value;
 
         if (params.LARGE_ENERGY_THRESHOLD) {
             Agent.DEATH_ENERGY_THRESH = -100000000;
@@ -335,14 +337,15 @@ class PopulationManager {
             //When a new generation starts 
             params.EVOLVE_K_AND_M = document.getElementById("evolveKandM").checked; // Update the evolving k and m value
             //Reset counters
+
+            //For debugging k and m purposes
+            console.clear();
             this.tickCounter = 0;
             this.processGeneration();
+           
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
             }
-
-            //For debugging k and m purposes
-            //console.clear();
 
             return true;
         }
@@ -836,11 +839,11 @@ class PopulationManager {
         }
 
         //Clean up some of the dead worlds and balence agents count
-        //Replenish food or poison
         this.cleanUpWorlds();
         if (params.AGENT_PER_WORLD !== 0) {
             this.distributeAgents();
         }
+        //Replenish food or poison
         this.checkFoodLevels();
 
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
