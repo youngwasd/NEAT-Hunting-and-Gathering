@@ -389,13 +389,12 @@ class Agent {
         }
 
         //Check out of bound here
-        //if (this.x + this.diameter < 0 || this.x - this.diameter > params.CANVAS_SIZE || this.y + this.diameter < 0 || this.y - this.diameter > params.CANVAS_SIZE){//Accounting for the agent's size and 2 layers punishments (walls + out of bound)
-        if (this.x < 0 || this.x > params.CANVAS_SIZE || this.y < 0 || this.y > params.CANVAS_SIZE) {//Old out of bound condition
+         if (this.BC.center.x - this.diameter / 2 < 0 || this.BC.center.x - this.diameter > params.CANVAS_SIZE || this.BC.center.y - this.diameter / 2 < 0 || this.BC.center.y - this.diameter > params.CANVAS_SIZE){//Accounting for the agent's size and 2 layers punishments (walls + out of bound)
+        //if (this.BC.center.x < 0 || this.BC.center.x > params.CANVAS_SIZE || this.BC.center.y < 0 || this.BC.center.y > params.CANVAS_SIZE) {//Old out of bound condition
             this.isOutOfBound = true;
-            ++this.numberOfTickOutOfBounds;
-
             //Deactivate the agent when they go out of bound
             if (!params.NO_BORDER){
+                ++this.numberOfTickOutOfBounds;
                 this.deactivateAgent();
             }
 
