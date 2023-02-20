@@ -45,6 +45,7 @@ const params = {
     LARGE_ENERGY_THRESHOLD: false,
     MOVING_FOOD: false,
     MOVING_FOOD_PATTERN: "drunkenSailor",
+    RANDOMIZE_FOOD_SPAWN_PATTERN: "drunkenSailor",
 };
 
 const getMedian = (arr) => {

@@ -160,7 +160,6 @@ class PopulationManager {
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
         
-        this.resetWorldColorPool();
         //Reset generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
@@ -206,6 +205,7 @@ class PopulationManager {
         params.LARGE_ENERGY_THRESHOLD = document.getElementById("largeEnergyThresh").checked;
         params.MOVING_FOOD = document.getElementById("moving_food").checked;
         params.MOVING_FOOD_PATTERN = document.getElementById("movingFoodPattern").value;
+        params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
 
         if (params.LARGE_ENERGY_THRESHOLD) {
             Agent.DEATH_ENERGY_THRESH = -100000000;
@@ -416,12 +416,25 @@ class PopulationManager {
     spawnFood(worldId, poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length) {
         let seedlings = [];
         let index = 0;
+        let spawnSlot = [];
+        let podLength = poison ? this.poisonPodLayout.length : this.foodPodLayout.length;
+        
+        for (let i = 0 ; i < podLength; i++){
+            spawnSlot[i] = i;
+        }
+
+        if (params.RANDOMIZE_FOOD_SPAWN_PATTERN){
+            spawnSlot = shuffleArray(spawnSlot);
+        }
+
         for (let i = 0; i < count; i++) { // add food sources
-            let pod = poison ? this.poisonPodLayout[index] : this.foodPodLayout[index];
+            let spawnIndex = spawnSlot[index];
+            let pod = poison ? this.poisonPodLayout[spawnIndex] : this.foodPodLayout[spawnIndex];
             let loc = pod.genFoodPos();
             seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker, worldId));
-            index = (index + 1) % (poison ? this.poisonPodLayout.length : this.foodPodLayout.length);
+            index = (index + 1) % podLength;
         }
+        
         this.registerSeedlings(worldId, seedlings);
     };
 

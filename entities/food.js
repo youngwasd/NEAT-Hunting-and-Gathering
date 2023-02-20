@@ -10,8 +10,8 @@ class Food {
         { x: params.CANVAS_SIZE / 2, y: params.CANVAS_SIZE - params.CANVAS_SIZE / 25 }, //South
         { x: params.CANVAS_SIZE / 25, y: params.CANVAS_SIZE / 2 }, //West
     ];
-    static MOVE_SPEED_X = 0.5;
-    static MOVE_SPEED_Y = 0.5;
+    static MOVE_SPEED_X = 2;
+    static MOVE_SPEED_Y = 2;
     /**
      * Creates a new Food
      * 
@@ -325,7 +325,6 @@ class Food {
             if (distance(goal, { x: this.x, y: this.y }) < 1) {
                 this.currentMovingGoal++;
                 this.currentMovingGoal %= Food.MOVING_DESTINATION.length;
-                console.log("From ", "To ", this.currentMovingGoal, "Gen ", PopulationManager.GEN_NUM);
             }
         }
         else {
@@ -383,16 +382,18 @@ class Food {
         }
 
         //Debugging starting position
-        let col = ["grey", "blue", "yellow", "green"];
-        for (let i = 0; i < Food.MOVING_DESTINATION.length; i++) {
-            let x = Food.MOVING_DESTINATION[i].x;
-            let y = Food.MOVING_DESTINATION[i].y;
-            ctx.beginPath();
-            ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
-            ctx.fillStyle = col[i];
-            ctx.stroke();
-            ctx.fill();
-            ctx.closePath();
+        if (params.MOVING_FOOD) {
+            let col = ["grey", "blue", "yellow", "green"];
+            for (let i = 0; i < Food.MOVING_DESTINATION.length; i++) {
+                let x = Food.MOVING_DESTINATION[i].x;
+                let y = Food.MOVING_DESTINATION[i].y;
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+                ctx.fillStyle = col[i];
+                ctx.stroke();
+                ctx.fill();
+                ctx.closePath();
+            }
         }
 
         ctx.beginPath();
