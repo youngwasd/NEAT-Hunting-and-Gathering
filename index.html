@@ -181,13 +181,19 @@
     <br> <br>
     <strong>Database Options</strong>
     <div>
-        <input type="text" id="db" value="test"> Name of the Database Being Saved To
+        <input type="checkbox" id="save_to_db" checked = false> Enable Saving
     </div>
     <div>
-        <input type="text" id="db_collection" value="NEATtests"> Name of the Collection Being Saved To
+        <input type="text" id="db" value="test"> Database Name
     </div>
     <div>
-        <input type="text" id="gen_to_save" value="-1"> Save Data to the DB on this Generation (-1 to disable)
+        <input type="text" id="db_collection" value="NEATtests"> Collection Name
+    </div>
+    <div>
+        <input type="text" id="gen_to_save" value="40"> Generation to Save to DB
+    </div>
+    <div>
+        <input type = "text" id = "sim_trial_num" value = 1> Simulation Trials
     </div>
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>

@@ -61,8 +61,8 @@
         this.generations[this.currentGeneration].speciesFitness.push(data);
     }
 
-    addAvgFitness(value){
-        this.avgFitness.push(value);
+    addAvgFitness(data){
+        this.avgFitness[this.currentGeneration].avgFitness.push(data);
     }
 
     /**
@@ -105,7 +105,7 @@
         };
     }
 
-    getFitnessData() {
-        return this.generations.map((obj) => obj.speciesFitness);
-    }
+    // getFitnessData() {
+    //     return this.generations.map((obj) => obj.speciesFitness);
+    // }
 }

@@ -96,7 +96,6 @@ class PopulationManager {
 
     resetWorldColorPool() {
         PopulationManager.WORLD_COLOR_POOL = [];
-        
 
         for (let i = 0; i <= 360; i++){
             PopulationManager.WORLD_COLOR_POOL.push(i);
@@ -291,6 +290,14 @@ class PopulationManager {
 
         if (document.activeElement.id !== "db_collection") {
             params.DB_COLLECTION = document.getElementById("db_collection").value;
+        }
+
+        if(document.activeElement.id !== "sim_trial_num"){
+            params.SIM_TRIAL_NUM = document.getElementById("sim_trial_num").value;
+        }
+
+        if(document.activeElement.id !== "save_to_db"){
+            params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         }
 
         //Cleans up all of the food/poison for the world
@@ -897,7 +904,10 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
+        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) {
+            if(params.SAVE_TO_DB) logData({avgFitness: this.agentTracker.avgFitness});
+            this.resetSim();
+        }
 
         
         PopulationManager.GEN_NUM++;
