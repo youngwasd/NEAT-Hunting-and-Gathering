@@ -3,7 +3,7 @@ const params = {
     CANVAS_SIZE: 800,
     DB: "test",
     DB_COLLECTION: "NEATtests",
-    GEN_TO_SAVE: -1,
+    GEN_TO_SAVE: 40,
     FOOD_OUTSIDE: false,
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
@@ -43,7 +43,7 @@ const params = {
     DISPLAY_SAME_WORLD: false,
     WORLD_UPDATE_ASYNC: true,
     LARGE_ENERGY_THRESHOLD: false,
-    SIM_TRIAL_NUM: 1,
+    SIM_TRIAL_NUM: 3,
     SIM_CURR_TRIAL: 1,
     SAVE_TO_DB: false
 };
