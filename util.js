@@ -44,6 +44,7 @@ const params = {
     WORLD_UPDATE_ASYNC: true,
     LARGE_ENERGY_THRESHOLD: false,
     SIM_TRIAL_NUM: 1,
+    SIM_CURR_TRIAL: 1,
     SAVE_TO_DB: false
 };
 

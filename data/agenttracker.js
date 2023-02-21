@@ -21,7 +21,7 @@
             minEnergy: Number.MAX_VALUE,
             energy: [],
             speciesFitness: [],
-            avgFitness: []
+            avgFitness: 0
         };
     }
 
@@ -62,7 +62,7 @@
     }
 
     addAvgFitness(data){
-        this.avgFitness[this.currentGeneration].avgFitness.push(data);
+        this.generations[this.currentGeneration].avgFitness = data;
     }
 
     /**
@@ -105,7 +105,11 @@
         };
     }
 
-    // getFitnessData() {
-    //     return this.generations.map((obj) => obj.speciesFitness);
-    // }
+    getFitnessData() {
+        return this.generations.map((obj) => obj.speciesFitness);
+    }
+
+    getAvgFitnessData() {
+        return this.generations.map((obj) => obj.avgFitness);
+    }
 }

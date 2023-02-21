@@ -145,6 +145,7 @@ class PopulationManager {
     };
 
     resetSim() {
+        console.log("restarting sim...");
         params.AGENT_VISION_IS_CONE = document.getElementById("agent_vision_is_cone").checked;
         PopulationManager.SPECIES_ID = 0;
         PopulationManager.GEN_NUM = 0;
@@ -293,7 +294,7 @@ class PopulationManager {
         }
 
         if(document.activeElement.id !== "sim_trial_num"){
-            params.SIM_TRIAL_NUM = document.getElementById("sim_trial_num").value;
+            params.SIM_TRIAL_NUM = parseInt(document.getElementById("sim_trial_num").value);
         }
 
         if(document.activeElement.id !== "save_to_db"){
@@ -904,9 +905,18 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) {
-            if(params.SAVE_TO_DB) logData({avgFitness: this.agentTracker.avgFitness});
-            this.resetSim();
+        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+            params.SIM_CURR_TRIAL++;
+            //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
+            let fitnessData = this.agentTracker.getAvgFitnessData();
+            fitnessData = fitnessData.slice(0, fitnessData.length - 1);
+            let consumptionData = this.foodTracker.getConsumptionData();
+            consumptionData = consumptionData.slice(0, consumptionData.length - 1);
+            if(params.SAVE_TO_DB) logData({avgFitness: fitnessData, consumption: consumptionData});
+            if(params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+                this.resetSim();
+                return;
+            }
         }
 
         
