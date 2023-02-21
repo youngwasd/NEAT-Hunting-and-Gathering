@@ -349,7 +349,7 @@ class Genome {
                         let sign = randomInt(2) == 1 ? -1 : 1;
                         node.kValue = sign * (randomFloatUniform(0, 2)) * node.kValue;
                     } else if (randNum < 500) {//shifts the weight
-                        node.kValue += (randomFloatUniform(-0.3, 0.3));
+                        node.kValue += (randomFloatUniform(-0.05, 0.05));
                     }
                     else {//scales the weight
                         let s_up = 0.25;
