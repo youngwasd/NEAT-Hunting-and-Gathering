@@ -45,10 +45,10 @@ const params = {
     LARGE_ENERGY_THRESHOLD: false,
     SIM_TRIAL_NUM: 3,
     SIM_CURR_TRIAL: 1,
-    SAVE_TO_DB: false
+    SAVE_TO_DB: false,
     MOVING_FOOD: false,
     MOVING_FOOD_PATTERN: "drunkenSailor",
-    RANDOMIZE_FOOD_SPAWN_PATTERN: "drunkenSailor",
+    RANDOMIZE_FOOD_SPAWN_PATTERN: true,
 };
 
 const getMedian = (arr) => {
