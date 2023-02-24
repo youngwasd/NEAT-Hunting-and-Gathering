@@ -104,9 +104,9 @@ class Agent {
                 //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }*/
             let fitnessFromPotCal = 0;
-            if(this.closestFood.cals > 0){
+            if (this.closestFood.cals > 0) {
                 let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist / 50));
-                fitnessFromPotCal = this.closestFood.cals * (this.maxEatingCompletion * .5 + fitnessFromCalDist *.5);
+                fitnessFromPotCal = this.closestFood.cals * (this.maxEatingCompletion * .5 + fitnessFromCalDist * .5);
                 totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
             }
             /**
@@ -115,7 +115,7 @@ class Agent {
 
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
-            if(params.AGENT_BITING) totalRawFitness += this.biteTicks;
+            if (params.AGENT_BITING) totalRawFitness += this.biteTicks;
             return totalRawFitness;
         };
 
@@ -311,7 +311,7 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
-            if (!this.leftWheel || !this.rightWheel){
+            if (!this.leftWheel || !this.rightWheel) {
                 console.log("Error");
             }
             this.totalOutputs[0] += this.leftWheel;
@@ -319,15 +319,15 @@ class Agent {
 
             let slot = PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT;
             //Gathering the current generation data
-            if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0){
+            if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0) {
                 this.game.population.currentLeftWheelHist.data[slot][determineBucket(output[0], -1, 1)]++;
                 this.game.population.currentRightWheelHist.data[slot][determineBucket(output[1], -1, 1)]++;
             }
 
-            if(params.AGENT_BITING){
+            if (params.AGENT_BITING) {
                 this.biting = Math.abs(output[2]) > 0.5;
                 this.totalOutputs[2] += output[2];
-                if(params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0 && this.game.population.currentBiteHist != null) 
+                if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0 && this.game.population.currentBiteHist != null)
                     this.game.population.currentBiteHist.data[slot][determineBucket(output[2], -1, 1)]++;
             }
         }
@@ -389,13 +389,12 @@ class Agent {
         }
 
         //Check out of bound here
-        //if (this.x + this.diameter < 0 || this.x - this.diameter > params.CANVAS_SIZE || this.y + this.diameter < 0 || this.y - this.diameter > params.CANVAS_SIZE){//Accounting for the agent's size and 2 layers punishments (walls + out of bound)
-        if (this.x < 0 || this.x > params.CANVAS_SIZE || this.y < 0 || this.y > params.CANVAS_SIZE) {//Old out of bound condition
+        if (this.BC.center.x - this.diameter / 2 < 0 || this.BC.center.x - this.diameter > params.CANVAS_SIZE || this.BC.center.y - this.diameter / 2 < 0 || this.BC.center.y - this.diameter > params.CANVAS_SIZE) {//Accounting for the agent's size and 2 layers punishments (walls + out of bound)
+            //if (this.BC.center.x < 0 || this.BC.center.x > params.CANVAS_SIZE || this.BC.center.y < 0 || this.BC.center.y > params.CANVAS_SIZE) {//Old out of bound condition
             this.isOutOfBound = true;
-            ++this.numberOfTickOutOfBounds;
-
             //Deactivate the agent when they go out of bound
-            if (!params.NO_BORDER){
+            if (!params.NO_BORDER) {
+                ++this.numberOfTickOutOfBounds;
                 this.deactivateAgent();
             }
 
@@ -482,7 +481,15 @@ class Agent {
         this.visCol = [];
 
         let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
-        let walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
+        let walls = [];
+        if (params.AGENT_PER_WORLD === 0) {
+            walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
+        }
+        else if (this.worldId)
+            walls = this.game.population.worlds.get(this.worldId).walls;
+        else
+            walls = this.game.population.worlds.get(0).walls;
+
         for (let i = 0; i <= rays; i++) {
 
             while (currAngle < 0) {
@@ -542,7 +549,7 @@ class Agent {
             //console.log("minDist: " + minDist);
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
-            let distInput = Math.max(1 - minDist/800, 0);
+            let distInput = Math.max(1 - minDist / 800, 0);
             input.push(distInput);
             //console.log("hueOfMinDist: " + hueOfMinDist);
             input.push((hueOfMinDist) / 360);
@@ -556,22 +563,22 @@ class Agent {
      */
     draw(ctx) {
         //let ctx = this.ctx;
-        if (params.DISPLAY_SAME_WORLD){
+        if (params.DISPLAY_SAME_WORLD) {
             ctx = this.game.population.worlds.entries().next().value[1].ctx;
         }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.diameter / 2, 0, 2 * Math.PI);
         let color = this.getDisplayHue();
-        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD){
+        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD) {
             color = this.game.population.worlds.get(this.worldId).worldColor;
         }
 
-        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
+        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD) ? 0 : 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
-        if (!params.DISPLAY_SAME_WORLD){
+        if (!params.DISPLAY_SAME_WORLD) {
             ctx.lineWidth = 2;
         }
-        else{
+        else {
             ctx.lineWidth = 4;
             [ctx.fillStyle, ctx.strokeStyle] = [ctx.strokeStyle, ctx.fillStyle];
         }
@@ -586,8 +593,8 @@ class Agent {
         ctx.stroke();
         ctx.closePath();
 
-        if (params.DISPLAY_SAME_WORLD){
-            ctx.fillStyle = "black";
+        if (params.DISPLAY_SAME_WORLD) {
+            ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
             ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);
         }

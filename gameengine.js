@@ -41,30 +41,7 @@ class GameEngine {
                 execAsync(members.draw());
             }
             else {
-                members.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
-                members.home.draw(members.ctx);
-                members.food.forEach(food => {
-                    if (!food.removeFromWorld) {
-                        food.draw(members.ctx)
-                    }
-                });
-                members.poison.forEach(poison => {
-                    if (!poison.removeFromWorld) {
-                        poison.draw(members.ctx)
-                    }
-                });
-                members.agents.forEach(agent => {
-                    if (!agent.removeFromWorld) {
-                        agent.draw(members.ctx)
-                    }
-                });
-                members.display.draw(members.ctx);
-
-                if (params.INNER_WALL) {
-                    members.walls.forEach(wall => {
-                        wall.draw(members.ctx)
-                    });
-                }
+                members.draw();
             }
         });
     };

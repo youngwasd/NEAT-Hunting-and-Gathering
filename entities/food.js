@@ -4,17 +4,24 @@
  * @author Parker Rosengreen and Artem Potafiy
  */
 class Food {
+    static MOVING_DESTINATION = [
+        { x: params.CANVAS_SIZE / 2, y: params.CANVAS_SIZE / 25 }, //North
+        { x: params.CANVAS_SIZE - params.CANVAS_SIZE / 25, y: params.CANVAS_SIZE / 2 }, //East
+        { x: params.CANVAS_SIZE / 2, y: params.CANVAS_SIZE - params.CANVAS_SIZE / 25 }, //South
+        { x: params.CANVAS_SIZE / 25, y: params.CANVAS_SIZE / 2 }, //West
+    ];
+    static MOVE_SPEED_X = 2;
+    static MOVE_SPEED_Y = 2;
     /**
      * Creates a new Food
      * 
-     * @param {*} game the game engine
      * @param {*} x the center x position 
      * @param {*} y the center y position
      * @param {*} isPoison indicates whether this food is poisonous or not
      * @param {*} foodTracker the food tracker to monitor this food
      */
     constructor(game, x, y, isPoison, foodTracker, worldId = 0) {
-        Object.assign(this, { x, y, isPoison, game, foodTracker , worldId});
+        Object.assign(this, { x, y, isPoison, game, foodTracker, worldId });
         if (!this.isPoison) this.foodTracker.addFood(); // counts how many foods per generation
         this.tickCounter = 0; // a simple tick counter to manage lifecycle phases for this food
 
@@ -110,6 +117,8 @@ class Food {
         this.ticksToConsume = params.MAX_TICKS_TO_CONSUME;
         this.lastTickBeingEaten = -1;
         this.updateBoundingCircle(); // update our BC to reflect our position
+
+        this.updateMovingDestination();
     };
 
     /** Indicates whether this food is currently decaying */
@@ -157,6 +166,22 @@ class Food {
         return this.phase_properties[this.phase].color;
     };
 
+    updateMovingDestination() {
+        let currentPos = 0;
+        let minDis = params.CANVAS_SIZE;
+        //See which starting position the food is closer to
+        for (let i = 0; i < Food.MOVING_DESTINATION.length; i++) {
+            let dis = distance(Food.MOVING_DESTINATION[i], { x: this.x, y: this.y });
+            if (dis < minDis) {
+                currentPos = i;
+                minDis = dis;
+            }
+        }
+        //Choosing the next destination 
+        this.currentMovingGoal = (currentPos + 1) % Food.MOVING_DESTINATION.length;//Moving goal for the food
+        //console.log("From ", currentPos, "To ", this.currentMovingGoal, "Gen ", PopulationManager.GEN_NUM);
+    }
+
     /** Updates this Food's bounding circle to reflect its current physical properties */
     updateBoundingCircle() {
         this.BC = new BoundingCircle(
@@ -172,7 +197,7 @@ class Food {
     consume() {
         this.ticksToConsume--;
         // if this food is poisonous, then our calories are NEGATED
-        if(this.ticksToConsume <= 0){
+        if (this.ticksToConsume <= 0) {
             let cals = this.getCalories();
             this.foodTracker.addCalories(cals);
             if (!this.isPoison) {
@@ -181,16 +206,16 @@ class Food {
             }
             this.phase = this.lifecycle_phases.dead;
             this.removeFromWorld = true; // if we are consumed then we are now dead and get wiped from the sim
-            return {calories: cals, completion: 1};
+            return { calories: cals, completion: 1 };
         }
-        return {calories: 0, completion: (params.MAX_TICKS_TO_CONSUME - this.ticksToConsume)/params.MAX_TICKS_TO_CONSUME};
+        return { calories: 0, completion: (params.MAX_TICKS_TO_CONSUME - this.ticksToConsume) / params.MAX_TICKS_TO_CONSUME };
     };
 
     getCalories() {
-        if(this.phase >= this.lifecycle_phases.dead) return 0;
+        if (this.phase >= this.lifecycle_phases.dead) return 0;
         return this.isPoison ?
-        Math.abs(this.phase_properties[this.phase].calories) * -1
-        : this.phase_properties[this.phase].calories;
+            Math.abs(this.phase_properties[this.phase].calories) * -1
+            : this.phase_properties[this.phase].calories;
     }
 
     /** Processes a reproduction operation on this food */
@@ -241,14 +266,88 @@ class Food {
 
     /** Updates this Food for the current tick */
     update() {
+        //Moving the food
+        if (params.MOVING_FOOD) {
+            //Reallign the moving goal on the first tick of the generation
+            if (this.game.population.tickCounter === 0) {
+                this.updateMovingDestination();
+            }
+            let goal = Food.MOVING_DESTINATION[this.currentMovingGoal];
 
-        /** If we are outside of the bounds established by the sim, remove this food and return early */
-        if ((this.x < 0 || this.y < 0 || this.x > params.CANVAS_SIZE || this.y > params.CANVAS_SIZE) || // outside the world?
-            (!(params.FOOD_OUTSIDE) && this.isOutsideOuterCircle()) || // outside the main food circle?
-            (!(params.FOOD_INSIDE) && this.isInsideInnerCircle())) { // inside the innermost center food circle?
+            this.dx = Food.MOVE_SPEED_X;
+            this.dy = Food.MOVE_SPEED_Y;
 
-            this.removeFromWorld = true;
-            return;
+            if (this.x > goal.x) {
+                this.dx *= -1;
+            }
+            if (this.y > goal.y) {
+                this.dy *= -1;
+            }
+
+            switch (params.MOVING_FOOD_PATTERN) {
+                default:
+                //Moving in drunken sailor style
+                case "drunkenSailor":
+                    //50% chance to sway horizontally
+                    if (randomInt(100) <= 50) {
+                        let forceX = randomInt(Food.MOVE_SPEED_X * 20) / 10;
+                        if (this.dx > 0)
+                            forceX *= -1;
+                        this.dx += forceX;
+                    }
+                    //50% chance to sway vertically
+                    if (randomInt(100) <= 50) {
+                        let forceY = randomInt(Food.MOVE_SPEED_Y * 20) / 10;
+                        if (this.dy > 0)
+                            forceY *= -1;
+
+                        this.dy += forceY;
+                    }
+                    break;
+                case "direct":
+                    if (this.x === goal.x) {
+                        this.dx = 0;
+                    }
+                    if (this.y === goal.y) {
+                        this.dy = 0;
+                    }
+                    break;
+            }
+
+            this.x += this.dx;
+            this.y += this.dy;
+
+            //Update destination
+            //When agent getting to the vertical or horizontal of the destination
+            //if (Math.abs(goal.x - this.x) <= 10 || Math.abs(goal.y - this.y) <= 10){
+
+            //When the food is near the destination
+            if (distance(goal, { x: this.x, y: this.y }) < 1) {
+                this.currentMovingGoal++;
+                this.currentMovingGoal %= Food.MOVING_DESTINATION.length;
+            }
+        }
+        else {
+            this.dx = 0;
+            this.dy = 0;
+        }
+
+        if (!params.MOVING_FOOD) {
+            /** If we are outside of the bounds established by the sim, remove this food and return early and food has to be stationary*/
+            if ((this.x < 0 || this.y < 0 || this.x > params.CANVAS_SIZE || this.y > params.CANVAS_SIZE) // outside the world?
+                || ((!(params.FOOD_OUTSIDE) && this.isOutsideOuterCircle()) || // outside the main food circle?
+                    (!(params.FOOD_INSIDE) && this.isInsideInnerCircle())) // inside the innermost center food circle?
+            ) {
+                this.removeFromWorld = true;
+                return;
+            }
+        }
+        else {
+            //Food is moving
+            if (this.x < 0 || this.y < 0 || this.x > params.CANVAS_SIZE || this.y > params.CANVAS_SIZE) {
+                this.removeFromWorld = true;
+                return;
+            }
         }
 
         this.phase_properties[this.phase].isSet = true;
@@ -265,7 +364,7 @@ class Food {
             }
         }
 
-        if(this.tickCounter > this.lastTickBeingEaten + 20 && this.ticksToConsume < params.MAX_TICKS_TO_CONSUME) this.ticksToConsume++;
+        if (this.tickCounter > this.lastTickBeingEaten + 2 && this.ticksToConsume < params.MAX_TICKS_TO_CONSUME) this.ticksToConsume++;
 
         if (!this.removeFromWorld) {
             this.updateBoundingCircle(); // update our bounding circle to reflect our state
@@ -278,8 +377,23 @@ class Food {
             return;
         }
 
-        if (params.DISPLAY_SAME_WORLD){
+        if (params.DISPLAY_SAME_WORLD) {
             ctx = this.game.population.worlds.entries().next().value[1].ctx;
+        }
+
+        //Debugging starting position
+        if (params.MOVING_FOOD) {
+            let col = ["grey", "blue", "yellow", "green"];
+            for (let i = 0; i < Food.MOVING_DESTINATION.length; i++) {
+                let x = Food.MOVING_DESTINATION[i].x;
+                let y = Food.MOVING_DESTINATION[i].y;
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+                ctx.fillStyle = col[i];
+                ctx.stroke();
+                ctx.fill();
+                ctx.closePath();
+            }
         }
 
         ctx.beginPath();
@@ -292,28 +406,28 @@ class Food {
             false
         );
         let color = 100;
-        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD){
+        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD) {
             color = this.game.population.worlds.get(this.worldId).worldColor;
         }
-        
+
         ctx.fillStyle = `hsl(${this.phase_properties[this.phase].color}, 100%, 50%)`;
-        if (params.POISON_AGENT_RATIO === 0 && params.DISPLAY_SAME_WORLD){
+        if (params.POISON_AGENT_RATIO === 0 && params.DISPLAY_SAME_WORLD) {
             ctx.fillStyle = `hsl(${color}, 100%, 50%)`;
         }
-        
+
         ctx.fill();
-        if (!params.DISPLAY_SAME_WORLD){
+        if (!params.DISPLAY_SAME_WORLD) {
             ctx.lineWidth = 2;
         }
-        else{
+        else {
             ctx.lineWidth = 4;
         }
         ctx.strokeStyle = "black";//`hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.stroke();
         ctx.closePath();
 
-        if (params.DISPLAY_SAME_WORLD){
-            ctx.fillStyle = "black";
+        if (params.DISPLAY_SAME_WORLD) {
+            ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
             ctx.fillText(this.worldId, this.x + this.phase_properties[this.phase].radius / 4, this.y + this.phase_properties[this.phase].radius / 4);
         }

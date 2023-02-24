@@ -8,10 +8,10 @@ const params = {
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
     AGENT_NEIGHBORS: false,
-    FOOD_AGENT_RATIO: 3,
+    FOOD_AGENT_RATIO: 1,
     POISON_AGENT_RATIO: 0,
     COMPAT_THRESH: 0.04,
-    ENFORCE_MIN_FOOD: false,
+    ENFORCE_MIN_FOOD: true,
     ENFORCE_MIN_POISON: false,
     AGENT_VISION_RADIUS: 500,
     RAND_FOOD_PHASES: false,
@@ -38,7 +38,7 @@ const params = {
     EVOLVE_K_AND_M: true,
     TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
     AGENT_BITING: false,
-    GENOME_DEFAULT_K_VAL: 3/4,
+    GENOME_DEFAULT_K_VAL: 0.75,
     NO_BORDER: false,
     DISPLAY_SAME_WORLD: false,
     WORLD_UPDATE_ASYNC: true,
@@ -46,6 +46,9 @@ const params = {
     SIM_TRIAL_NUM: 3,
     SIM_CURR_TRIAL: 1,
     SAVE_TO_DB: false
+    MOVING_FOOD: false,
+    MOVING_FOOD_PATTERN: "drunkenSailor",
+    RANDOMIZE_FOOD_SPAWN_PATTERN: "drunkenSailor",
 };
 
 const getMedian = (arr) => {

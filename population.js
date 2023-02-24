@@ -13,6 +13,8 @@ class PopulationManager {
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
     static WORLD_COLOR_POOL = [];
 
+    static IS_LAST_TICK = false;//Use for debugging purposes; to determine whether the current population is at its last tick
+
     constructor(game) {
         this.game = game;
         this.foodTracker = new FoodTracker();
@@ -158,7 +160,6 @@ class PopulationManager {
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
         
-        this.resetWorldColorPool();
         //Reset generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
@@ -171,6 +172,10 @@ class PopulationManager {
 
         if (document.activeElement.id !== "no_border") {
             params.NO_BORDER = document.getElementById("no_border").checked;
+        }
+
+        if (document.activeElement.id !== "genome_default_k_val") {
+            params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
         }
 
         Genome.resetAll();
@@ -198,6 +203,9 @@ class PopulationManager {
         params.AGENT_BITING = document.getElementById("agent_biting").checked;
         params.NO_BORDER = document.getElementById("no_border").checked;
         params.LARGE_ENERGY_THRESHOLD = document.getElementById("largeEnergyThresh").checked;
+        params.MOVING_FOOD = document.getElementById("moving_food").checked;
+        params.MOVING_FOOD_PATTERN = document.getElementById("movingFoodPattern").value;
+        params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
 
         if (params.LARGE_ENERGY_THRESHOLD) {
             Agent.DEATH_ENERGY_THRESH = -100000000;
@@ -277,10 +285,6 @@ class PopulationManager {
             params.TICK_TO_UPDATE_CURRENT_GEN_DATA = parseInt(document.getElementById("tickToUpdateCurrentGenOutputData").value);
         }
 
-        if (document.activeElement.id !== "genome_default_k_val") {
-            params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
-        }
-
         if (document.activeElement.id !== "gen_to_save") {
             params.GEN_TO_SAVE = parseInt(document.getElementById("gen_to_save").value);
         }
@@ -329,13 +333,24 @@ class PopulationManager {
         }
 
         this.tickCounter++;
+        //Use for debugging purposes; to determine whether the current population is at its last tick
+        if (this.tickCounter + 1 >= params.GEN_TICKS){
+            PopulationManager.IS_LAST_TICK = true;
+        }
+        else{
+            PopulationManager.IS_LAST_TICK = false;
+        }
         //Check to see if the generation is over
         if ((this.tickCounter >= params.GEN_TICKS && !params.GEN_STOP) || (params.GEN_STOP && (this.isAgentEnergyGone() || this.isFoodGone()))) {
             //When a new generation starts 
             params.EVOLVE_K_AND_M = document.getElementById("evolveKandM").checked; // Update the evolving k and m value
             //Reset counters
+
+            //For debugging k and m purposes
+            console.clear();
             this.tickCounter = 0;
             this.processGeneration();
+           
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
             }
@@ -409,12 +424,25 @@ class PopulationManager {
     spawnFood(worldId, poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length) {
         let seedlings = [];
         let index = 0;
+        let spawnSlot = [];
+        let podLength = poison ? this.poisonPodLayout.length : this.foodPodLayout.length;
+        
+        for (let i = 0 ; i < podLength; i++){
+            spawnSlot[i] = i;
+        }
+
+        if (params.RANDOMIZE_FOOD_SPAWN_PATTERN){
+            spawnSlot = shuffleArray(spawnSlot);
+        }
+
         for (let i = 0; i < count; i++) { // add food sources
-            let pod = poison ? this.poisonPodLayout[index] : this.foodPodLayout[index];
+            let spawnIndex = spawnSlot[index];
+            let pod = poison ? this.poisonPodLayout[spawnIndex] : this.foodPodLayout[spawnIndex];
             let loc = pod.genFoodPos();
             seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker, worldId));
-            index = (index + 1) % (poison ? this.poisonPodLayout.length : this.foodPodLayout.length);
+            index = (index + 1) % podLength;
         }
+        
         this.registerSeedlings(worldId, seedlings);
     };
 
@@ -832,12 +860,12 @@ class PopulationManager {
         }
 
         //Clean up some of the dead worlds and balence agents count
-        //Replenish food or poison
         this.cleanUpWorlds();
         if (params.AGENT_PER_WORLD !== 0) {
             this.distributeAgents();
         }
-        execAsync(this.checkFoodLevels());
+        //Replenish food or poison
+        this.checkFoodLevels();
 
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
@@ -867,7 +895,7 @@ class PopulationManager {
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
             this.worlds.forEach(world => {
-                execAsync(world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8 + params.CANVAS_SIZE / 10, params.CANVAS_SIZE / 10));
+                world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8 + params.CANVAS_SIZE / 10, params.CANVAS_SIZE / 10);
             });
         }
         // console.log("Total agents", this.agentsAsList().length);
@@ -905,20 +933,7 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
-            params.SIM_CURR_TRIAL++;
-            //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
-            let fitnessData = this.agentTracker.getAvgFitnessData();
-            fitnessData = fitnessData.slice(0, fitnessData.length - 1);
-            let consumptionData = this.foodTracker.getConsumptionData();
-            consumptionData = consumptionData.slice(0, consumptionData.length - 1);
-            if(params.SAVE_TO_DB) logData({avgFitness: fitnessData, consumption: consumptionData});
-            if(params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
-                this.resetSim();
-                return;
-            }
-        }
-
+        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
         
         PopulationManager.GEN_NUM++;
         this.resetCanvases();
