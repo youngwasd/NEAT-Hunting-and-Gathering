@@ -181,10 +181,10 @@ class Food {
             goal: (currentPos + 1) % Food.MOVING_DESTINATION.length,
             
             random_movement_activation: 40,
-            random_cooldown: 40,
+            random_cooldown: randomInt(40),
             
             correct_movement_activation: 50,
-            correcting_cooldown: 50,
+            correcting_cooldown: randomInt(50),
             
         }
 
