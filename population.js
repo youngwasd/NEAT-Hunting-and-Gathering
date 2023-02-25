@@ -770,7 +770,7 @@ class PopulationManager {
             if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
         this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
-        console.log(`Raw fitness: ${totalRawFitness}`);
+        //console.log(`Raw fitness: ${totalRawFitness}`);
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
 
         let reprodFitMap = new Map();
@@ -793,7 +793,7 @@ class PopulationManager {
             const newFit = fitness + minShared * -1 + 10;
             reprodFitMap.set(speciesId, newFit);
             sumShared += reprodFitMap.get(speciesId);
-            this.agentTracker.addSpeciesFitness({ speciesId, fitness: newFit });
+            this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
 
         //Selection process for killing off agents
@@ -938,7 +938,19 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if (params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({ avgFitness: this.agentTracker.avgFitness });
+        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+            params.SIM_CURR_TRIAL++;
+            //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
+            let fitnessData = this.agentTracker.getAvgFitnessData();
+            fitnessData = fitnessData.slice(0, fitnessData.length - 1);
+            let consumptionData = this.foodTracker.getConsumptionData();
+            consumptionData = consumptionData.slice(0, consumptionData.length - 1);
+            if(params.SAVE_TO_DB) logData({avgFitness: fitnessData, consumption: consumptionData});
+            if(params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+                this.resetSim();
+                return;
+            }
+        }
 
         PopulationManager.GEN_NUM++;
         this.resetCanvases();

@@ -23,7 +23,21 @@ class GameEngine {
     };
 
     startInput() {
-        document.getElementById("restart_sim").addEventListener("click", () => {params.SIM_CURR_TRIAL = 1; this.population.resetSim();});
+        document.getElementById("restart_sim").addEventListener("click", () => { params.SIM_CURR_TRIAL = 1; this.population.resetSim(); });
+
+        //Pausing listener
+        document.getElementById("pause_sim").addEventListener("click", () => {
+            params.SIM_PAUSE = params.SIM_PAUSE ? false : true;
+            var elem = document.getElementById("pause_sim");
+            if (params.SIM_PAUSE){
+                elem.innerHTML = "Resume Simulation";
+                elem.setAttribute('style', "background-color: red; color:white;");
+            } 
+            else {
+                elem.innerHTML = "Pause Simulation";
+                elem.setAttribute('style', "background-color: green; color:white;");
+            }
+        });
     };
 
     start() {
@@ -47,6 +61,12 @@ class GameEngine {
     };
 
     update() {
+        //Pausing update
+        if (params.SIM_PAUSE) {
+            return;
+        }
+
+
         if (!params.WORLD_UPDATE_ASYNC) {
             this.population.worlds.forEach((members) => {
                 members.food.forEach((food) => {

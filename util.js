@@ -51,6 +51,7 @@ const params = {
     RANDOMIZE_FOOD_SPAWN_PATTERN: true,
     FOOD_VELOCITY_X: 1,
     FOOD_VELOCITY_Y: 1,
+    SIM_PAUSE: false,
 };
 
 const getMedian = (arr) => {
