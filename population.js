@@ -170,6 +170,11 @@ class PopulationManager {
             this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
         }
 
+        //Update generation time when resetting
+        if (document.activeElement.id !== "generation_time") {
+            params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
+        }
+
         if (document.activeElement.id !== "no_border") {
             params.NO_BORDER = document.getElementById("no_border").checked;
         }
