@@ -221,6 +221,21 @@ const createSlideShow = (array, id) => {
     });
 };
 
+/**
+ * Check whether a coordinate is out of bound of the map
+ * Return true if out of bound
+ * Return false if not
+ */
+const isOutOfBound = (x, y) => {
+    if (x < 0 || x > params.CANVAS_SIZE){
+        return true;
+    }
+    if (y < 0 || y > params.CANVAS_SIZE){
+        return true;
+    }
+    return false;
+}
+
 const execAsync = (fun) => {
     setTimeout(() => {
         fun;

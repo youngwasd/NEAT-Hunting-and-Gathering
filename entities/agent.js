@@ -564,7 +564,8 @@ class Agent {
     draw(ctx) {
         //let ctx = this.ctx;
         if (params.DISPLAY_SAME_WORLD) {
-            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+            //ctx = this.game.population.worlds.entries().next().value[1].ctx;
+            ctx = this.game.population.worlds.get(0).ctx;
         }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.diameter / 2, 0, 2 * Math.PI);

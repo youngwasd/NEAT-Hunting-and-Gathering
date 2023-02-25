@@ -10,8 +10,8 @@ class Food {
         { x: params.CANVAS_SIZE / 2, y: params.CANVAS_SIZE - params.CANVAS_SIZE / 25 }, //South
         { x: params.CANVAS_SIZE / 25, y: params.CANVAS_SIZE / 2 }, //West
     ];
-    static MOVE_SPEED_X = 2;
-    static MOVE_SPEED_Y = 2;
+    static MOVE_SPEED_X = 1;
+    static MOVE_SPEED_Y = 1;
     /**
      * Creates a new Food
      * 
@@ -178,7 +178,19 @@ class Food {
             }
         }
         //Choosing the next destination 
-        this.currentMovingGoal = (currentPos + 1) % Food.MOVING_DESTINATION.length;//Moving goal for the food
+        this.movingFood = {
+            goal: (currentPos + 1) % Food.MOVING_DESTINATION.length,
+            
+            random_movement_activation: 40,
+            random_cooldown: 40,
+            
+            correct_movement_activation: 50,
+            correcting_cooldown: 50,
+            
+        }
+
+        this.dx = 0;
+        this.dy = 0;
         //console.log("From ", currentPos, "To ", this.currentMovingGoal, "Gen ", PopulationManager.GEN_NUM);
     }
 
@@ -272,36 +284,49 @@ class Food {
             if (this.game.population.tickCounter === 0) {
                 this.updateMovingDestination();
             }
-            let goal = Food.MOVING_DESTINATION[this.currentMovingGoal];
+            let goal = Food.MOVING_DESTINATION[this.movingFood.goal];
+            
+            let aboutToBeOutOfBound = isOutOfBound(this.x + this.dx * 5, this.y + this.dy * 5);//Check whether it is about to be out of bound in 5 moves
 
-            this.dx = Food.MOVE_SPEED_X;
-            this.dy = Food.MOVE_SPEED_Y;
+            //Check the cooldown when to correct movement
+            if (this.movingFood.correcting_cooldown >= this.movingFood.correct_movement_activation 
+                || params.MOVING_FOOD_PATTERN === "direct" //Trigger when movement type is direct
+                || aboutToBeOutOfBound //Trigger when about to be out of bound
+                ) {
+                //Update dx and dy according to the position
+                this.dx = Food.MOVE_SPEED_X;
+                this.dy = Food.MOVE_SPEED_Y;
 
-            if (this.x > goal.x) {
-                this.dx *= -1;
+                if (this.x > goal.x) {
+                    this.dx *= -1;
+                }
+                if (this.y > goal.y) {
+                    this.dy *= -1;
+                }
+                this.movingFood.correcting_cooldown = 0;
             }
-            if (this.y > goal.y) {
-                this.dy *= -1;
+            else{
+                this.movingFood.correcting_cooldown++;
             }
 
             switch (params.MOVING_FOOD_PATTERN) {
                 default:
                 //Moving in drunken sailor style
                 case "drunkenSailor":
-                    //50% chance to sway horizontally
-                    if (randomInt(100) <= 50) {
-                        let forceX = randomInt(Food.MOVE_SPEED_X * 20) / 10;
-                        if (this.dx > 0)
-                            forceX *= -1;
-                        this.dx += forceX;
-                    }
-                    //50% chance to sway vertically
-                    if (randomInt(100) <= 50) {
-                        let forceY = randomInt(Food.MOVE_SPEED_Y * 20) / 10;
-                        if (this.dy > 0)
-                            forceY *= -1;
+                    //Check cooldown
+                    
+                    if (this.movingFood.random_cooldown >= this.movingFood.random_movement_activation
+                        && !aboutToBeOutOfBound //Don't randomize when out to be out of bound
+                        ){
+                        let swayDx = randomFloat(2 * Food.MOVE_SPEED_X) - Food.MOVE_SPEED_X;
+                        let swayDy = randomFloat(2 * Food.MOVE_SPEED_Y) - Food.MOVE_SPEED_Y;
 
-                        this.dy += forceY;
+                        this.dx = swayDx;
+                        this.dy = swayDy;
+                        this.movingFood.random_cooldown = 0;
+                    }
+                    else{
+                        this.movingFood.random_cooldown++;
                     }
                     break;
                 case "direct":
@@ -322,9 +347,9 @@ class Food {
             //if (Math.abs(goal.x - this.x) <= 10 || Math.abs(goal.y - this.y) <= 10){
 
             //When the food is near the destination
-            if (distance(goal, { x: this.x, y: this.y }) < 1) {
-                this.currentMovingGoal++;
-                this.currentMovingGoal %= Food.MOVING_DESTINATION.length;
+            if (distance(goal, { x: this.x, y: this.y }) < 10) {
+                this.movingFood.goal++;
+                this.movingFood.goal %= Food.MOVING_DESTINATION.length;
             }
         }
         else {
@@ -378,23 +403,24 @@ class Food {
         }
 
         if (params.DISPLAY_SAME_WORLD) {
-            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+            //ctx = this.game.population.worlds.entries().next().value[1].ctx;
+            ctx = this.game.population.worlds.get(0).ctx;
         }
 
         //Debugging starting position
-        if (params.MOVING_FOOD) {
-            let col = ["grey", "blue", "yellow", "green"];
-            for (let i = 0; i < Food.MOVING_DESTINATION.length; i++) {
-                let x = Food.MOVING_DESTINATION[i].x;
-                let y = Food.MOVING_DESTINATION[i].y;
-                ctx.beginPath();
-                ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
-                ctx.fillStyle = col[i];
-                ctx.stroke();
-                ctx.fill();
-                ctx.closePath();
-            }
-        }
+        // if (params.MOVING_FOOD) {
+        //     let col = ["grey", "blue", "yellow", "green"];
+        //     for (let i = 0; i < Food.MOVING_DESTINATION.length; i++) {
+        //         let x = Food.MOVING_DESTINATION[i].x;
+        //         let y = Food.MOVING_DESTINATION[i].y;
+        //         ctx.beginPath();
+        //         ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+        //         ctx.fillStyle = col[i];
+        //         ctx.stroke();
+        //         ctx.fill();
+        //         ctx.closePath();
+        //     }
+        // }
 
         ctx.beginPath();
         ctx.arc(
