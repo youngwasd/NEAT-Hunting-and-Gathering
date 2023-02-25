@@ -88,7 +88,7 @@ class PopulationManager {
     };
 
     //Return NULL if no color is availble
-    static getNextAvailableWorldColor(){
+    static getNextAvailableWorldColor() {
         if (PopulationManager.WORLD_COLOR_POOL.length <= 0)
             return null;
         let res = PopulationManager.WORLD_COLOR_POOL.shift();
@@ -99,7 +99,7 @@ class PopulationManager {
     resetWorldColorPool() {
         PopulationManager.WORLD_COLOR_POOL = [];
 
-        for (let i = 0; i <= 360; i++){
+        for (let i = 0; i <= 360; i++) {
             PopulationManager.WORLD_COLOR_POOL.push(i);
         }
 
@@ -159,7 +159,7 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
-        
+
         //Reset generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
@@ -180,7 +180,7 @@ class PopulationManager {
 
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
-        
+
     };
 
     update() {
@@ -204,8 +204,13 @@ class PopulationManager {
         params.NO_BORDER = document.getElementById("no_border").checked;
         params.LARGE_ENERGY_THRESHOLD = document.getElementById("largeEnergyThresh").checked;
         params.MOVING_FOOD = document.getElementById("moving_food").checked;
-        params.MOVING_FOOD_PATTERN = document.getElementById("movingFoodPattern").value;
         params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
+
+        if (params.MOVING_FOOD) {
+            params.MOVING_FOOD_PATTERN = document.getElementById("movingFoodPattern").value;
+            params.FOOD_VELOCITY_X = parseFloat(document.getElementById("food_velocityX").value);
+            params.FOOD_VELOCITY_Y = parseFloat(document.getElementById("food_velocityY").value);
+        }
 
         if (params.LARGE_ENERGY_THRESHOLD) {
             Agent.DEATH_ENERGY_THRESH = -100000000;
@@ -297,11 +302,11 @@ class PopulationManager {
             params.DB_COLLECTION = document.getElementById("db_collection").value;
         }
 
-        if(document.activeElement.id !== "sim_trial_num"){
+        if (document.activeElement.id !== "sim_trial_num") {
             params.SIM_TRIAL_NUM = parseInt(document.getElementById("sim_trial_num").value);
         }
 
-        if(document.activeElement.id !== "save_to_db"){
+        if (document.activeElement.id !== "save_to_db") {
             params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         }
 
@@ -334,10 +339,10 @@ class PopulationManager {
 
         this.tickCounter++;
         //Use for debugging purposes; to determine whether the current population is at its last tick
-        if (this.tickCounter + 1 >= params.GEN_TICKS){
+        if (this.tickCounter + 1 >= params.GEN_TICKS) {
             PopulationManager.IS_LAST_TICK = true;
         }
-        else{
+        else {
             PopulationManager.IS_LAST_TICK = false;
         }
         //Check to see if the generation is over
@@ -350,7 +355,7 @@ class PopulationManager {
             console.clear();
             this.tickCounter = 0;
             this.processGeneration();
-           
+
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
             }
@@ -426,12 +431,12 @@ class PopulationManager {
         let index = 0;
         let spawnSlot = [];
         let podLength = poison ? this.poisonPodLayout.length : this.foodPodLayout.length;
-        
-        for (let i = 0 ; i < podLength; i++){
+
+        for (let i = 0; i < podLength; i++) {
             spawnSlot[i] = i;
         }
 
-        if (params.RANDOMIZE_FOOD_SPAWN_PATTERN){
+        if (params.RANDOMIZE_FOOD_SPAWN_PATTERN) {
             spawnSlot = shuffleArray(spawnSlot);
         }
 
@@ -442,7 +447,7 @@ class PopulationManager {
             seedlings.push(new Food(this.game, loc.x, loc.y, poison, this.foodTracker, worldId));
             index = (index + 1) % podLength;
         }
-        
+
         this.registerSeedlings(worldId, seedlings);
     };
 
@@ -581,7 +586,7 @@ class PopulationManager {
             return;
         }
 
-        this.worlds.forEach((world) =>{
+        this.worlds.forEach((world) => {
             PopulationManager.WORLD_COLOR_POOL.push(world.worldColor);
         });
 
@@ -631,14 +636,14 @@ class PopulationManager {
         if (params.SPLIT_SPECIES) {
             extincts.forEach(worldId => {
                 //Cleaning up world color here
-                
+
                 this.removeWorld(worldId);
                 //Clean up in the agent list
                 this.specieWorldList.forEach(x => {
                     for (let i = x.length - 1; i >= 0; i--) {
                         if (worldId == x[i]) {
                             x.splice(i, 1);
-                            
+
                         }
                     }
                 });
@@ -686,7 +691,7 @@ class PopulationManager {
     removeWorld(worldId) {
         //Replenish the world color pool
         PopulationManager.WORLD_COLOR_POOL.push(this.worlds.get(worldId).worldColor);
-        
+
         this.worlds.get(worldId).removeWorld();
         this.worlds.delete(worldId);
     };
@@ -764,7 +769,7 @@ class PopulationManager {
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
             if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
         });
-        this.agentTracker.addAvgFitness(totalRawFitness/PopulationManager.NUM_AGENTS);
+        this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
         console.log(`Raw fitness: ${totalRawFitness}`);
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
 
@@ -933,8 +938,8 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if(params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({avgFitness: this.agentTracker.avgFitness});
-        
+        if (params.GEN_TO_SAVE == PopulationManager.GEN_NUM) logData({ avgFitness: this.agentTracker.avgFitness });
+
         PopulationManager.GEN_NUM++;
         this.resetCanvases();
     };

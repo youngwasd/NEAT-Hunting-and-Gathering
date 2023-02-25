@@ -10,8 +10,7 @@ class Food {
         { x: params.CANVAS_SIZE / 2, y: params.CANVAS_SIZE - params.CANVAS_SIZE / 25 }, //South
         { x: params.CANVAS_SIZE / 25, y: params.CANVAS_SIZE / 2 }, //West
     ];
-    static MOVE_SPEED_X = 1;
-    static MOVE_SPEED_Y = 1;
+
     /**
      * Creates a new Food
      * 
@@ -286,7 +285,9 @@ class Food {
             }
             let goal = Food.MOVING_DESTINATION[this.movingFood.goal];
             
-            let aboutToBeOutOfBound = isOutOfBound(this.x + this.dx * 5, this.y + this.dy * 5);//Check whether it is about to be out of bound in 5 moves
+            //Check whether it is about to be out of bound 
+            let aboutToBeOutOfBound = isOutOfBound(this.x + this.dx * this.phase_properties[this.phase].radius, 
+                this.y + this.dy * this.phase_properties[this.phase].radius);
 
             //Check the cooldown when to correct movement
             if (this.movingFood.correcting_cooldown >= this.movingFood.correct_movement_activation 
@@ -294,8 +295,8 @@ class Food {
                 || aboutToBeOutOfBound //Trigger when about to be out of bound
                 ) {
                 //Update dx and dy according to the position
-                this.dx = Food.MOVE_SPEED_X;
-                this.dy = Food.MOVE_SPEED_Y;
+                this.dx = params.FOOD_VELOCITY_X;
+                this.dy = params.FOOD_VELOCITY_Y;
 
                 if (this.x > goal.x) {
                     this.dx *= -1;
@@ -318,8 +319,8 @@ class Food {
                     if (this.movingFood.random_cooldown >= this.movingFood.random_movement_activation
                         && !aboutToBeOutOfBound //Don't randomize when out to be out of bound
                         ){
-                        let swayDx = randomFloat(2 * Food.MOVE_SPEED_X) - Food.MOVE_SPEED_X;
-                        let swayDy = randomFloat(2 * Food.MOVE_SPEED_Y) - Food.MOVE_SPEED_Y;
+                        let swayDx = randomFloat(2 * params.FOOD_VELOCITY_X) - params.FOOD_VELOCITY_X;
+                        let swayDy = randomFloat(2 * params.FOOD_VELOCITY_Y) - params.FOOD_VELOCITY_Y;
 
                         this.dx = swayDx;
                         this.dy = swayDy;
@@ -330,11 +331,11 @@ class Food {
                     }
                     break;
                 case "direct":
-                    if (this.x === goal.x) {
-                        this.dx = 0;
+                    if (Math.abs(this.x - goal.x) < 10) {
+                        this.dx = goal.x - this.x;
                     }
-                    if (this.y === goal.y) {
-                        this.dy = 0;
+                    if (Math.abs(this.y - goal.y) < 10) {
+                        this.dy = goal.y - this.y;
                     }
                     break;
             }
