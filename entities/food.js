@@ -317,7 +317,7 @@ class Food {
                     //Check cooldown
                     
                     if (this.movingFood.random_cooldown >= this.movingFood.random_movement_activation
-                        && !aboutToBeOutOfBound //Don't randomize when out to be out of bound
+                        && !aboutToBeOutOfBound //Don't randomize when soon to be out of bound
                         ){
                         let swayDx = randomFloat(2 * params.FOOD_VELOCITY_X) - params.FOOD_VELOCITY_X;
                         let swayDy = randomFloat(2 * params.FOOD_VELOCITY_Y) - params.FOOD_VELOCITY_Y;

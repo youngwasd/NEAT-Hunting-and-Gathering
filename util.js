@@ -252,8 +252,8 @@ const logData = (data) => {
         data: data
     }
 
-    if(socket) {
-        socket.emit("insert", payload);
+    if(socket_download) {
+        socket_download.emit("insert", payload);
         console.log("inserted data to db");
     }
 }

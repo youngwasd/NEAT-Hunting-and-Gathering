@@ -311,9 +311,11 @@ class PopulationManager {
             params.SIM_TRIAL_NUM = parseInt(document.getElementById("sim_trial_num").value);
         }
 
-        if (document.activeElement.id !== "save_to_db") {
-            params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
+        params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
+        if (params.SAVE_TO_DB) {
+            document.getElementById("db_download_data").disabled = false;
         }
+        else document.getElementById("db_download_data").disabled = true;
 
         //Cleans up all of the food/poison for the world
         this.worlds.forEach((members, worldId) => {
@@ -357,7 +359,7 @@ class PopulationManager {
             //Reset counters
 
             //For debugging k and m purposes
-            console.clear();
+            //console.clear();
             this.tickCounter = 0;
             this.processGeneration();
 
@@ -943,7 +945,7 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if(params.GEN_TO_SAVE >= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+        if(params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
             params.SIM_CURR_TRIAL++;
             //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
             let fitnessData = this.agentTracker.getAvgFitnessData();

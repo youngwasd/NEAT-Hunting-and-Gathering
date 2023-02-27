@@ -38,6 +38,8 @@ class GameEngine {
                 elem.setAttribute('style', "background-color: green; color:white;");
             }
         });
+
+        document.getElementById("db_download_data").addEventListener("click", downloadData);
     };
 
     start() {
