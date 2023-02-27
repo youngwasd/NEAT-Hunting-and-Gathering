@@ -212,9 +212,17 @@ class PopulationManager {
         params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
 
         if (params.MOVING_FOOD) {
+            document.getElementById("movingFoodPattern").disabled = false;
+            document.getElementById("food_velocityX").disabled = false;
+            document.getElementById("food_velocityY").disabled = false;
             params.MOVING_FOOD_PATTERN = document.getElementById("movingFoodPattern").value;
             params.FOOD_VELOCITY_X = parseFloat(document.getElementById("food_velocityX").value);
             params.FOOD_VELOCITY_Y = parseFloat(document.getElementById("food_velocityY").value);
+        }
+        else{
+            document.getElementById("movingFoodPattern").disabled = true;
+            document.getElementById("food_velocityX").disabled = true;
+            document.getElementById("food_velocityY").disabled = true;
         }
 
         if (params.LARGE_ENERGY_THRESHOLD) {
@@ -224,15 +232,16 @@ class PopulationManager {
             Agent.DEATH_ENERGY_THRESH = 0;
         }
 
-        if (params.AGENT_PER_WORLD === 0) {
-            document.getElementById("displayOnTheSameWorld").checked = false;
-        }
-
         if (document.activeElement.id !== "agent_per_world") {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
             //Force turning the split specie on
             if (params.AGENT_PER_WORLD !== 0) {
                 document.getElementById("split_species").checked = true;
+                document.getElementById("displayOnTheSameWorld").disabled = false;
+            }
+            else{      
+                document.getElementById("displayOnTheSameWorld").checked = false;
+                document.getElementById("displayOnTheSameWorld").disabled = true;
             }
         }
 
@@ -312,10 +321,6 @@ class PopulationManager {
         }
 
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
-        if (params.SAVE_TO_DB) {
-            document.getElementById("db_download_data").disabled = false;
-        }
-        else document.getElementById("db_download_data").disabled = true;
 
         //Cleans up all of the food/poison for the world
         this.worlds.forEach((members, worldId) => {
