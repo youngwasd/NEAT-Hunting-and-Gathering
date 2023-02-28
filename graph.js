@@ -14,16 +14,16 @@ socket.on("find", (data) => {
 
 const downloadData = (e) => {
     //Get relevant variables
-    let ctx = document.getElementById("chart").getContext("2d");
     db = document.getElementById("db").value;
     db_collection = document.getElementById("db_collection").value;
 
-    console.log(`db: ${db} collection: ${db_collection}`);
+    console.log(`db: ${db}\ncollection: ${db_collection}`);
     socket.emit("find", 
     {
         db: db, 
         collection: db_collection
     });
+    console.log("Download successfully");
 }
 
 const parseData = (data) => {
@@ -85,4 +85,3 @@ const serializeData = (data, key, avgColumn = false) => {
     return str;
 }
 
-document.getElementById("download_data").addEventListener("click", downloadData);

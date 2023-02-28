@@ -23,7 +23,23 @@ class GameEngine {
     };
 
     startInput() {
-        document.getElementById("restart_sim").addEventListener("click", () => {params.SIM_CURR_TRIAL = 1; this.population.resetSim();});
+        document.getElementById("restart_sim").addEventListener("click", () => { params.SIM_CURR_TRIAL = 1; this.population.resetSim(); });
+
+        //Pausing listener
+        document.getElementById("pause_sim").addEventListener("click", () => {
+            params.SIM_PAUSE = params.SIM_PAUSE ? false : true;
+            var elem = document.getElementById("pause_sim");
+            if (params.SIM_PAUSE){
+                elem.innerHTML = "Resume Simulation";
+                elem.setAttribute('style', "background-color: red; color:white;");
+            } 
+            else {
+                elem.innerHTML = "Pause Simulation";
+                elem.setAttribute('style', "background-color: green; color:white;");
+            }
+        });
+
+        document.getElementById("db_download_data").addEventListener("click", downloadData);
     };
 
     start() {
@@ -41,35 +57,18 @@ class GameEngine {
                 execAsync(members.draw());
             }
             else {
-                members.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
-                members.home.draw(members.ctx);
-                members.food.forEach(food => {
-                    if (!food.removeFromWorld) {
-                        food.draw(members.ctx)
-                    }
-                });
-                members.poison.forEach(poison => {
-                    if (!poison.removeFromWorld) {
-                        poison.draw(members.ctx)
-                    }
-                });
-                members.agents.forEach(agent => {
-                    if (!agent.removeFromWorld) {
-                        agent.draw(members.ctx)
-                    }
-                });
-                members.display.draw(members.ctx);
-
-                if (params.INNER_WALL) {
-                    members.walls.forEach(wall => {
-                        wall.draw(members.ctx)
-                    });
-                }
+                members.draw();
             }
         });
     };
 
     update() {
+        //Pausing update
+        if (params.SIM_PAUSE) {
+            return;
+        }
+
+
         if (!params.WORLD_UPDATE_ASYNC) {
             this.population.worlds.forEach((members) => {
                 members.food.forEach((food) => {

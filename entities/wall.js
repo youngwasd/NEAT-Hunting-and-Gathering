@@ -166,12 +166,21 @@ class Wall {
             //console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
             X.deactivateAgent();
         });
-
-
-
     };
 
     draw(ctx) {
+        if (params.DISPLAY_SAME_WORLD){
+            //this.game.population.worlds.get(0).value[1].ctx;
+            ctx = this.game.population.worlds.get(0).ctx;
+            let color = this.game.population.worlds.get(this.worldId).worldColor;
+            ctx.fillStyle = `hsl(${color}, 100%, 50%)`;
+            ctx.strokeStyle = `hsl(${color}, 100%, 50%)`;
+        }
+        else{
+            ctx.strokeStyle = this.strokeColor;
+            ctx.fillStyle = this.fillColor;
+        }
+
         ctx.lineWidth = this.lineThickness;
 
         //Draw the line
@@ -179,8 +188,7 @@ class Wall {
         ctx.moveTo(this.xStart, this.yStart);
         ctx.lineTo(this.xEnd, this.yEnd);
 
-        ctx.strokeStyle = this.strokeColor;
-        ctx.fillStyle = this.fillColor;
+        
 
         ctx.fill();
         ctx.stroke();
