@@ -32,6 +32,7 @@ const parseData = (data) => {
 }
 
 const download = (filename, text) => {
+    if(!txt) return;
     console.log("should work now...");
     let pom = document.createElement('a');
     downloader++;
