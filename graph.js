@@ -1,7 +1,7 @@
-socket_download = null;
+let socket = null;
 let downloader = 0;
 if (window.io) {
-	socket_download = io.connect('http://73.225.31.4:8888');
+	socket = io.connect('http://73.225.31.4:8888');
 	console.log("Database connected!");
 }
 
@@ -9,7 +9,7 @@ let histograms = {
     histoAvgFitness: []
 }
 
-socket_download.on("find", (data) => {
+socket.on("find", (data) => {
     console.log("processing query...");
     if(data.length > 0) parseData(data);
     else console.log("Empty Data...");
@@ -22,7 +22,7 @@ const downloadData = (e) => {
     db_collection = document.getElementById("db_collection").value;
 
     console.log(`db: ${db}\ncollection: ${db_collection}`);
-    socket_download.emit("find", 
+    socket.emit("find", 
     {
         db: db, 
         collection: db_collection

@@ -219,7 +219,7 @@ class PopulationManager {
             params.FOOD_VELOCITY_X = parseFloat(document.getElementById("food_velocityX").value);
             params.FOOD_VELOCITY_Y = parseFloat(document.getElementById("food_velocityY").value);
         }
-        else{
+        else {
             document.getElementById("movingFoodPattern").disabled = true;
             document.getElementById("food_velocityX").disabled = true;
             document.getElementById("food_velocityY").disabled = true;
@@ -239,7 +239,7 @@ class PopulationManager {
                 document.getElementById("split_species").checked = true;
                 document.getElementById("displayOnTheSameWorld").disabled = false;
             }
-            else{      
+            else {
                 document.getElementById("displayOnTheSameWorld").checked = false;
                 document.getElementById("displayOnTheSameWorld").disabled = true;
             }
@@ -950,15 +950,19 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if(params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+        if (params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
             params.SIM_CURR_TRIAL++;
             //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
             let fitnessData = this.agentTracker.getAvgFitnessData();
             fitnessData = fitnessData.slice(0, fitnessData.length - 1);
             let consumptionData = this.foodTracker.getConsumptionData();
             consumptionData = consumptionData.slice(0, consumptionData.length - 1);
-            if(params.SAVE_TO_DB) logData({avgFitness: fitnessData, consumption: consumptionData});
-            if(params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+            
+            //Sending data to data base
+            if (params.SAVE_TO_DB) {
+                logData({ avgFitness: fitnessData, consumption: consumptionData });   
+            }
+            if (params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
                 this.resetSim();
                 return;
             }

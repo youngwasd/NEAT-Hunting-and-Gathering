@@ -15,6 +15,9 @@ class DataDisplay {
         ctx.lineWidth = 2;
         ctx.strokeText(`Generation: ${PopulationManager.GEN_NUM}`, 10, 30);
         ctx.strokeText(`Next In: ${params.GEN_TICKS - this.game.population.tickCounter} ticks`, 10, 60);
+        if (params.SAVE_TO_DB){
+            ctx.strokeText(`Trial: ${params.SIM_CURR_TRIAL}`, 10, 90);
+        }
         ctx.textAlign = "center";
         if (params.SPLIT_SPECIES) {
             ctx.strokeText(`Species: ${this.game.population.worlds.get(this.worldId).specieId}`, params.CANVAS_SIZE / 2 - 75, 30);
