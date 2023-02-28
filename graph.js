@@ -5,10 +5,6 @@ if (window.io) {
 	console.log("Database connected!");
 }
 
-let histograms = {
-    histoAvgFitness: []
-}
-
 socket.on("find", (data) => {
     console.log("processing query...");
     if(data.length > 0) parseData(data);
@@ -31,9 +27,8 @@ const downloadData = (e) => {
 }
 
 const parseData = (data) => {
-    let serializedData = serializeData(data);
-    download("AvgRawFitness-" + db + "-" + db_collection + ".csv", serializedData.avgFit);
-    download("Consumption-" + db + "-" + db_collection + ".csv", serializedData.cons);
+    download("AvgRawFitness-" + db + "-" + db_collection + ".csv", serializeData(data, "avgFitness", true));
+    download("Consumption-" + db + "-" + db_collection + ".csv", serializeData(data, "consumption", true));
 }
 
 const download = (filename, text) => {
@@ -47,52 +42,47 @@ const download = (filename, text) => {
     console.log("Downloading: " + filename);
 }
 
-/*const serializeAvgFitness = (data) => {
-    var str = "";
-    for(let i = 0; i < data.length; i++) {
-        if(!data[i].avgFitness.includes(null)) str += data[i].avgFitness + "\n";
-    }
-    return str;
-}*/
-
-const serializeData = (data) => {
-    var avgFitStr = "";
-    var consStr = "";
-    let foundRow = false;
+const serializeData = (data, key, avgColumn = false) => {
+    if(!data[0][key]) return undefined;
+    let str = "";
     let j = 0;
+    let foundRow = true;
     do{
-        foundRow = false;
-        af = "";
-        c = "";
-        for(let i = 0; i < data.length; i++) {
-            if(j < data[i].avgFitness.length){
-                af += data[i].avgFitness[j];
-                c += data[i].consumption[j];
-                foundRow = true;
-                console.log("success");
-            }else{
-                console.log(data[i].avgFitness.length);
+        if(j == 0){
+            for(let i = 0; i < data.length; i++){
+                str += "Trial " + (i+1);
+                if(i+1 < data.length) str += ",";
             }
-            if(i < data.length - 1){
-                af += ",";
-                c += ",";
+            if(avgColumn) str+= ",Average";
+            str += "\n";
+            j++;
+        }else{
+            foundRow = false;
+            ds = "";
+            let total = 0;
+            for(let i = 0; i < data.length; i++) {
+                if(j < data[i][key].length){
+                    let v = data[i][key][j];
+                    ds += v;
+                    total += v;
+                    foundRow = true;
+                }else{
+                    console.log(data[i][key].length);
+                }
+                if(i < data.length - 1){
+                    ds += ",";
+                }
             }
+            if(foundRow) {
+                str += ds;
+                if(avgColumn) str += "," + total/data.length;
+                str += "\n";
+                console.log("ds: " + ds);
+            }
+            j++;
         }
-        if(foundRow) {
-            avgFitStr += af;
-            consStr += c;
-            avgFitStr += "\n";
-            consStr += "\n";
-        }
-        j++;
     }while(foundRow);
-
-    return {avgFit: avgFitStr, cons: consStr};
-    
-}
-
-const serializeFoodConsump = (data) => {
-
+    return str;
 }
 
 document.getElementById("download_data").addEventListener("click", downloadData);
