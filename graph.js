@@ -78,7 +78,6 @@ const serializeData = (data, key, avgColumn = false) => {
                 str += ds;
                 if(avgColumn) str += "," + total/data.length;
                 str += "\n";
-                console.log("ds: " + ds);
             }
             j++;
         }
