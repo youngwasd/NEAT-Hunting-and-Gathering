@@ -29,10 +29,10 @@ class GameEngine {
         document.getElementById("pause_sim").addEventListener("click", () => {
             params.SIM_PAUSE = params.SIM_PAUSE ? false : true;
             var elem = document.getElementById("pause_sim");
-            if (params.SIM_PAUSE){
+            if (params.SIM_PAUSE) {
                 elem.innerHTML = "Resume Simulation";
                 elem.setAttribute('style', "background-color: red; color:white;");
-            } 
+            }
             else {
                 elem.innerHTML = "Pause Simulation";
                 elem.setAttribute('style', "background-color: green; color:white;");
@@ -52,14 +52,16 @@ class GameEngine {
     };
 
     draw() {
-        this.population.worlds.forEach(members => {
-            if (params.WORLD_UPDATE_ASYNC) {
-                execAsync(members.draw());
-            }
-            else {
-                members.draw();
-            }
-        });
+        if (!params.PAUSE_DRAWING) {
+            this.population.worlds.forEach(members => {
+                if (params.WORLD_UPDATE_ASYNC) {
+                    execAsync(members.draw());
+                }
+                else {
+                    members.draw();
+                }
+            });
+        }
     };
 
     update() {

@@ -210,6 +210,7 @@ class PopulationManager {
         params.LARGE_ENERGY_THRESHOLD = document.getElementById("largeEnergyThresh").checked;
         params.MOVING_FOOD = document.getElementById("moving_food").checked;
         params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
+        params.PAUSE_DRAWING = document.getElementById("pauseDrawing").checked;
 
         if (params.MOVING_FOOD) {
             document.getElementById("movingFoodPattern").disabled = false;
