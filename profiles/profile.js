@@ -69,6 +69,17 @@ const loadProfile = (profile) => {
         document.getElementById("food_velocityY").value = profile.FOOD_VELOCITY_Y;
     }
 
+    //Wall & Border
+    if (profile.INNERWALL){
+        params.INNERWALL = profile.INNERWALL;
+        document.getElementById("inner_wall").checked = profile.INNERWALL;
+    }
+
+    if (profile.NO_BORDER){
+        params.NO_BORDER = profile.NO_BORDER;
+        document.getElementById("no_border").checked = profile.NO_BORDER;
+    }
+
 
 
 
@@ -164,6 +175,59 @@ const simulationProfile_movingFood_DrunkenSailor = {
     AGENT_PER_WORLD : 1,
 };
 
+//Wall + Border
+const simulationProfile_Border_No_InnerWall = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "Border_No_InnerWall",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 5,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+
+    NO_BORDER: false,
+    INNERWALL: false,
+};
+
+const simulationProfile_Border_InnerWall = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "Border_InnerWall",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 5,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+
+    NO_BORDER: false,
+    INNERWALL: true,
+};
+
+const simulationProfile_No_Border_No_InnerWall = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "No_Border_No_InnerWall",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 5,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+
+    NO_BORDER: true,
+    INNERWALL: false,
+};
+
+const simulationProfile_No_Border_InnerWall = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "No_Border_InnerWall",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 5,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+
+    NO_BORDER: true,
+    INNERWALL: true,
+};
+
 const profileList = {
     "25 Number of agents": simulationProfile_numberOfAgents_25,
     "50 Number of agents": simulationProfile_numberOfAgents_50,
@@ -172,6 +236,10 @@ const profileList = {
     "Stationary food": simulationProfile_movingFood_Stationary,
     "Direct Moving Food": simulationProfile_movingFood_Direct,
     "Drunken Sailor Moving Food": simulationProfile_movingFood_DrunkenSailor,
+    "Border and no Wall": simulationProfile_Border_No_InnerWall,
+    "Border and inner Wall": simulationProfile_Border_InnerWall,
+    "No border and no Wall": simulationProfile_No_Border_No_InnerWall,
+    "No Border and inner Wall": simulationProfile_No_Border_InnerWall,
 };
 
 const initProfiles = () => {
