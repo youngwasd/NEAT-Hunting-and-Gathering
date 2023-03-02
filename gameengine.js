@@ -20,6 +20,8 @@ class GameEngine {
     init() {
         this.startInput();
         this.timer = new Timer();
+        
+        initProfiles();
     };
 
     startInput() {
@@ -37,6 +39,11 @@ class GameEngine {
                 elem.innerHTML = "Pause Simulation";
                 elem.setAttribute('style', "background-color: green; color:white;");
             }
+        });
+
+        document.getElementById("loadProfile").addEventListener("click", () => { 
+            let profile = profileList[document.getElementById("profileOption").value];
+            loadProfile(profile);
         });
 
         document.getElementById("db_download_data").addEventListener("click", downloadData);

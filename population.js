@@ -212,6 +212,16 @@ class PopulationManager {
         params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
         params.PAUSE_DRAWING = document.getElementById("pauseDrawing").checked;
 
+        //Loading Profile
+        if (document.getElementById("runByProfileMode").checked){
+            document.getElementById("profileOption").disabled = false;
+            document.getElementById("loadProfile").disabled = false;
+        }
+        else{
+            document.getElementById("profileOption").disabled = true;
+            document.getElementById("loadProfile").disabled = true;
+        }
+
         if (params.MOVING_FOOD) {
             document.getElementById("movingFoodPattern").disabled = false;
             document.getElementById("food_velocityX").disabled = false;
