@@ -52,6 +52,7 @@ const params = {
     FOOD_VELOCITY_X: 1,
     FOOD_VELOCITY_Y: 1,
     SIM_PAUSE: false,
+    PAUSE_DRAWING: false,
 };
 
 const getMedian = (arr) => {

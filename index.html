@@ -16,6 +16,7 @@
     <script type="text/javascript" src="./entities/food.js"></script>
     <script type="text/javascript" src="./entities/home.js"></script>
     <script type="text/javascript" src="./entities/wall.js"></script>
+    <script type="text/javascript" src="./profiles/profile.js"></script>
     <script type="text/javascript" src="./neuralnetwork/custommaptypes.js"></script>
     <script type="text/javascript" src="./neuralnetwork/neuralnetutil.js"></script>
     <script type="text/javascript" src="./neuralnetwork/neuralnet.js"></script>
@@ -200,14 +201,27 @@
     <br>
     <div>
         <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
-    </div>
-    <div>
+        <br>
         <input type="checkbox" id="worldUpdateAsync" checked=true> World Update Asynchronously
-    </div>
-    <div>
+        <br>
+        <input type="checkbox" id="pauseDrawing"> Pause Drawing (To speed up the simulation)
+        <br>
         <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation output
         data (Put 0 to disable)
     </div>
+
+    <div>
+        <input type="checkbox" id="runByProfileMode"> Enable run by profile mode
+        &emsp;
+        <select name="profileOption" id="profileOption">
+        </select>
+        &emsp;
+        <button type="button" id="loadProfile"> Load Profile </button>
+    <br>
+        
+
+    </div>
+
     <br> <br>
     <div>
         <strong>Database Options</strong>
