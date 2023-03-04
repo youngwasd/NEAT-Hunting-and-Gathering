@@ -90,7 +90,7 @@ const loadProfile = (profile) => {
 //Just copy param for now
 const simulationProfile_numberOfAgents_25 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "NumberOfAgents_25",
+    DB_COLLECTION: "TotalNumberOfAgents_25",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 3,
     
@@ -101,7 +101,7 @@ const simulationProfile_numberOfAgents_25 = {
 //Just copy param for now
 const simulationProfile_numberOfAgents_50 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "NumberOfAgents_50",
+    DB_COLLECTION: "TotalNumberOfAgents_50",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 3,
     
@@ -111,7 +111,7 @@ const simulationProfile_numberOfAgents_50 = {
 
 const simulationProfile_numberOfAgents_75 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "NumberOfAgents_75",
+    DB_COLLECTION: "TotalNumberOfAgents_75",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 3,
     
@@ -121,7 +121,7 @@ const simulationProfile_numberOfAgents_75 = {
 
 const simulationProfile_numberOfAgents_100 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "NumberOfAgents_100",
+    DB_COLLECTION: "TotalNumberOfAgents_100",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 3,
     

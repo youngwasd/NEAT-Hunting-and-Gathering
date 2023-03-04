@@ -980,8 +980,9 @@ class PopulationManager {
             if (params.SAVE_TO_DB) {
                 logData({ avgFitness: fitnessData, consumption: consumptionData });   
             }
-            if (params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
-                this.resetSim();
+    
+            this.resetSim();
+            if (params.SIM_TRIAL_NUM < params.SIM_CURR_TRIAL) {
                 //Call pausing button
                 let pauseButton = document.getElementById('pause_sim');
                 if (pauseButton){
@@ -992,9 +993,9 @@ class PopulationManager {
                     downloadDataButton.innerHTML = "Trials run complete, click here to download Data";
                     downloadDataButton.setAttribute('style', "background-color: green; color:white;");
                 }
-
-                return;
             }
+            
+            return;
         }
 
         PopulationManager.GEN_NUM++;
