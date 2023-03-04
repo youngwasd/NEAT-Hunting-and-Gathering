@@ -222,6 +222,13 @@ class PopulationManager {
             document.getElementById("loadProfile").disabled = true;
         }
 
+        if (params.NO_DECAYING_FOOD){
+            document.getElementById("caloriesPerFood").disabled = false;
+            params.CALORIES_PER_FOOD = parseFloat(document.getElementById("caloriesPerFood").value);
+        } else {
+            document.getElementById("caloriesPerFood").disabled = true;
+        }
+
         if (params.MOVING_FOOD) {
             document.getElementById("movingFoodPattern").disabled = false;
             document.getElementById("food_velocityX").disabled = false;
@@ -237,10 +244,10 @@ class PopulationManager {
         }
 
         if (params.LARGE_ENERGY_THRESHOLD) {
-            Agent.DEATH_ENERGY_THRESH = -100000000;
+            Agent.START_ENERGY = 1000000;
         }
         else {
-            Agent.DEATH_ENERGY_THRESH = 0;
+            Agent.START_ENERGY = 100;
         }
 
         if (document.activeElement.id !== "agent_per_world") {
@@ -961,7 +968,7 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
-        if (params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
+        if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
             params.SIM_CURR_TRIAL++;
             //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
             let fitnessData = this.agentTracker.getAvgFitnessData();
@@ -975,6 +982,17 @@ class PopulationManager {
             }
             if (params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
                 this.resetSim();
+                //Call pausing button
+                let pauseButton = document.getElementById('pause_sim');
+                if (pauseButton){
+                    pauseButton.click();
+                }
+                let downloadDataButton = document.getElementById('db_download_data');
+                if (downloadDataButton){
+                    downloadDataButton.innerHTML = "Trials run complete, click here to download Data";
+                    downloadDataButton.setAttribute('style', "background-color: green; color:white;");
+                }
+
                 return;
             }
         }

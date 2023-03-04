@@ -20,7 +20,7 @@ class GameEngine {
     init() {
         this.startInput();
         this.timer = new Timer();
-        
+
         initProfiles();
     };
 
@@ -41,12 +41,17 @@ class GameEngine {
             }
         });
 
-        document.getElementById("loadProfile").addEventListener("click", () => { 
+        document.getElementById("loadProfile").addEventListener("click", () => {
             let profile = profileList[document.getElementById("profileOption").value];
             loadProfile(profile);
         });
 
-        document.getElementById("db_download_data").addEventListener("click", downloadData);
+        document.getElementById("db_download_data").addEventListener("click", () => {
+            let downloadButton = document.getElementById("db_download_data");
+            downloadButton.innerHTML = "Download Data";
+            downloadButton.setAttribute('style', "background-color: red; color:white;");
+            downloadData();
+        });
     };
 
     start() {

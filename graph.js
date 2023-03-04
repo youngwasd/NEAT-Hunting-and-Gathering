@@ -68,7 +68,7 @@ const serializeData = (data, key, avgColumn = false) => {
                     total += v;
                     foundRow = true;
                 }else{
-                    console.log(data[i][key].length);
+                    //console.log(data[i][key].length);
                 }
                 if(i < data.length - 1){
                     ds += ",";

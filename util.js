@@ -26,6 +26,7 @@ const params = {
     FITNESS_POTENTIAL_CALORIES: 6,
     GEN_STOP: false,
     NO_DECAYING_FOOD: true,
+    CALORIES_PER_FOOD: 50,
     INNER_WALL: false,
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,

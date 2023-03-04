@@ -6,7 +6,7 @@
 class Agent {
 
     /** The amount of energy at which an Agent will die */
-    static DEATH_ENERGY_THRESH = 0;//-10000000;
+    static DEATH_ENERGY_THRESH = 0;
 
     /** The amount of energy an Agent is given upon spawn */
     static START_ENERGY = 100;

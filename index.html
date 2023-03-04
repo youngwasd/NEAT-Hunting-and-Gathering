@@ -122,6 +122,10 @@
         <input type="checkbox" id="no_decaying" checked="true"> No decaying food
         &emsp;
         <input type="checkbox" id="randomizing_food_spawn_pattern" checked="true"> Randomize food spawning pattern
+        &emsp;
+        <label for="caloriesPerFood"> Calories reward per food:  </label>
+        <input type="text" id="caloriesPerFood" value="50">
+
         <div>
             <input type="checkbox" id="moving_food"> Moving food
 
@@ -229,7 +233,7 @@
         <label for="save_to_db"> Enable Saving: </label> 
         <input type="checkbox" id="save_to_db">
         &emsp;
-        <button type="button" id="db_download_data"> Download Data </button>
+        <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data </button>
         <br>
         <label for="db"> Database Name: </label>
         <input type="text" id="db" value="test">
