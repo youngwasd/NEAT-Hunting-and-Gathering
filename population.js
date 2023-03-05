@@ -969,7 +969,7 @@ class PopulationManager {
         this.genomeTracker.addNewGeneration();
 
         if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
-            
+            params.SIM_CURR_TRIAL++;
             //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
             let fitnessData = this.agentTracker.getAvgFitnessData();
             fitnessData = fitnessData.slice(0, fitnessData.length - 1);
@@ -994,7 +994,7 @@ class PopulationManager {
                     downloadDataButton.setAttribute('style', "background-color: green; color:white;");
                 }
             }
-            params.SIM_CURR_TRIAL++;
+            
             return;
         }
 
