@@ -35,7 +35,7 @@ class PopulationManager {
         this.resetWorldColorPool();
 
         //Check for splitting agents
-        if (params.AGENT_PER_WORLD == 0) {
+        if (params.AGENT_PER_WORLD === 0) {
             this.initNewWorld(PopulationManager.SPECIES_ID);
             this.spawnAgents(PopulationManager.SPECIES_ID);
             this.specieWorldList.set(PopulationManager.SPECIES_ID, [0]);

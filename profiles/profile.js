@@ -30,6 +30,7 @@ const loadProfile = (profile) => {
     if (profile.AGENT_PER_WORLD){
         params.AGENT_PER_WORLD = profile.AGENT_PER_WORLD;
         document.getElementById("agent_per_world").value = profile.AGENT_PER_WORLD;
+        document.getElementById("restart_sim").click();
     }
 
     //Update fitness
@@ -80,10 +81,7 @@ const loadProfile = (profile) => {
         document.getElementById("no_border").checked = profile.NO_BORDER;
     }
 
-
-
-
-    params.SIM_CURR_TRIAL = 1; 
+    params.SIM_CURR_TRIAL = 0; 
     gameEngine.population.resetSim(); 
 };
 
@@ -105,7 +103,7 @@ const simulationProfile_numberOfAgents_50 = {
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 3,
     
-    NUM_AGENTS: 25,
+    NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
 };
 
@@ -128,6 +126,47 @@ const simulationProfile_numberOfAgents_100 = {
     NUM_AGENTS: 100,
     AGENT_PER_WORLD : 1,
 };
+
+//Agent per world
+const simulationProfile_agentPerWorld_2 = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "NEATtests_AgentPerWorld_2",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 3,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 2,
+};
+const simulationProfile_agentPerWorld_5 = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "NEATtests_AgentPerWorld_5",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 3,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 5,
+};
+
+const simulationProfile_agentPerWorld_10 = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "NEATtests_AgentPerWorld_10",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 3,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 10,
+};
+
+const simulationProfile_agentPerWorld_unlimit = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "NEATtests_AgentPerWorld_0",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 3,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 0,
+};
+
 
 //Moving Food Sim Profile
 
@@ -240,6 +279,11 @@ const profileList = {
     "Border and inner Wall": simulationProfile_Border_InnerWall,
     "No border and no Wall": simulationProfile_No_Border_No_InnerWall,
     "No Border and inner Wall": simulationProfile_No_Border_InnerWall,
+    "2 Agents Per world ": simulationProfile_agentPerWorld_2,
+    "5 Agents Per world ": simulationProfile_agentPerWorld_5,
+    "10 Agents Per world ": simulationProfile_agentPerWorld_10,
+    "Not limiting agents per world ": simulationProfile_agentPerWorld_unlimit,
+
 };
 
 const initProfiles = () => {
