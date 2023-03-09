@@ -485,7 +485,7 @@ class Agent {
         if (params.AGENT_PER_WORLD === 0) {
             walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
         }
-        else if (this.worldId)
+        else if (this.worldId && this.game.population.worlds.get(this.worldId))
             walls = this.game.population.worlds.get(this.worldId).walls;
         else
             walls = this.game.population.worlds.get(0).walls;
@@ -564,8 +564,8 @@ class Agent {
     draw(ctx) {
         //let ctx = this.ctx;
         if (params.DISPLAY_SAME_WORLD) {
-            //ctx = this.game.population.worlds.entries().next().value[1].ctx;
-            ctx = this.game.population.worlds.get(0).ctx;
+            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+            //ctx = this.game.population.worlds.get(0).ctx;
         }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.diameter / 2, 0, 2 * Math.PI);
@@ -574,9 +574,9 @@ class Agent {
             color = this.game.population.worlds.get(this.worldId).worldColor;
         }
 
-        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD) ? 0 : 50}%)`;
+        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD || !params.SPLIT_SPECIES) ? 0 : 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
-        if (!params.DISPLAY_SAME_WORLD) {
+        if (!params.DISPLAY_SAME_WORLD || !params.SPLIT_SPECIES) {
             ctx.lineWidth = 2;
         }
         else {
@@ -594,7 +594,7 @@ class Agent {
         ctx.stroke();
         ctx.closePath();
 
-        if (params.DISPLAY_SAME_WORLD) {
+        if (params.DISPLAY_SAME_WORLD && params.SPLIT_SPECIES) {
             ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
             ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);

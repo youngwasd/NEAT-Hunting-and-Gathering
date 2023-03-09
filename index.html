@@ -21,7 +21,6 @@
     <script type="text/javascript" src="./neuralnetwork/neuralnetutil.js"></script>
     <script type="text/javascript" src="./neuralnetwork/neuralnet.js"></script>
     <script type="text/javascript" src="./neuralnetwork/genome.js"></script>
-    <script type="text/javascript" src="./population.js"></script>
     <script type="text/javascript" src="./histogram.js"></script> 
     <script type="text/javascript" src="./graph.js"></script>
     <script type="text/javascript" src="./entities/world.js"></script>
@@ -29,6 +28,7 @@
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./datadisplay.js"></script>
     <script type="text/javascript" src="./timer.js"></script>
+    <script type="text/javascript" src="./population.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
     <script type="text/javascript" src="./main.js"></script>
 
@@ -259,10 +259,10 @@
 
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) + <input type="text"
-            id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound)
-        + <input type="text" id="fitness_calories" value="24"> (Calories Eaten) + <input type="text"
-            id="fitness_potential_cal" value="6"> (Potential Calories Reward)
+        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) + 
+        <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) + 
+        <input type="text" id="fitness_calories" value="24.0"> (Calories Eaten) + 
+        <input type="text" id="fitness_potential_cal" value="6"> (Potential Calories Reward)
     </div>
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">

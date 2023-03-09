@@ -254,12 +254,12 @@ class PopulationManager {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
             //Force turning the split specie on
             if (params.AGENT_PER_WORLD !== 0) {
-                document.getElementById("split_species").checked = true;
-                document.getElementById("displayOnTheSameWorld").disabled = false;
+                // document.getElementById("split_species").checked = true;
+                // document.getElementById("displayOnTheSameWorld").disabled = false;
             }
             else {
-                document.getElementById("displayOnTheSameWorld").checked = false;
-                document.getElementById("displayOnTheSameWorld").disabled = true;
+                // document.getElementById("displayOnTheSameWorld").checked = false;
+                // document.getElementById("displayOnTheSameWorld").disabled = true;
             }
         }
 
@@ -295,7 +295,8 @@ class PopulationManager {
             params.AGENT_NEIGHBOR_COUNT = parseInt(document.getElementById("agent_neighbor_count").value);
         }
         if (document.activeElement.id !== "fitness_calories") {
-            params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
+            if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
+                params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
         }
 
         if (document.activeElement.id !== "FITNESS_BUMPING_INTO_WALL") {

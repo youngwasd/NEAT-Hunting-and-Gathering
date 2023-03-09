@@ -404,8 +404,8 @@ class Food {
         }
 
         if (params.DISPLAY_SAME_WORLD) {
-            //ctx = this.game.population.worlds.entries().next().value[1].ctx;
-            ctx = this.game.population.worlds.get(0).ctx;
+            ctx = this.game.population.worlds.entries().next().value[1].ctx;
+            //ctx = this.game.population.worlds.get(0).ctx;
         }
 
         //Debugging starting position
@@ -453,7 +453,7 @@ class Food {
         ctx.stroke();
         ctx.closePath();
 
-        if (params.DISPLAY_SAME_WORLD) {
+        if (params.DISPLAY_SAME_WORLD && params.SPLIT_SPECIES) {
             ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
             ctx.fillText(this.worldId, this.x + this.phase_properties[this.phase].radius / 4, this.y + this.phase_properties[this.phase].radius / 4);
