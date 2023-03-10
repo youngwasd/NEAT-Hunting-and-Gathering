@@ -36,7 +36,8 @@ class PopulationManager {
 
         //Check for splitting agents
         if (params.AGENT_PER_WORLD === 0) {
-            this.initNewWorld(PopulationManager.SPECIES_ID);
+            let world = this.initNewWorld(PopulationManager.SPECIES_ID);
+            world.speciesList.add(0);
             this.spawnAgents(PopulationManager.SPECIES_ID);
             this.specieWorldList.set(PopulationManager.SPECIES_ID, [0]);
             this.spawnFood(PopulationManager.SPECIES_ID, false);
@@ -54,7 +55,11 @@ class PopulationManager {
             //Distribute the agents to the world
             while (numberOfAgentToSpawned > 0) {
                 let agentNum = Math.min(numberOfAgentToSpawned, params.AGENT_PER_WORLD);
-                this.initNewWorld(worldSpawned, PopulationManager.SPECIES_ID);
+                let world = this.initNewWorld(worldSpawned);
+
+                //Add to the list of species the world contains
+                world.speciesList.add(0);//The first species
+
                 this.spawnAgents(worldSpawned, agentNum);
                 this.specieWorldList.get(PopulationManager.SPECIES_ID).push(worldSpawned);
 
@@ -253,14 +258,14 @@ class PopulationManager {
         if (document.activeElement.id !== "agent_per_world") {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
             //Force turning the split specie on
-            if (params.AGENT_PER_WORLD !== 0) {
-                // document.getElementById("split_species").checked = true;
-                // document.getElementById("displayOnTheSameWorld").disabled = false;
-            }
-            else {
-                // document.getElementById("displayOnTheSameWorld").checked = false;
-                // document.getElementById("displayOnTheSameWorld").disabled = true;
-            }
+            // if (params.AGENT_PER_WORLD !== 0) {
+            //     document.getElementById("split_species").checked = true;
+            //     document.getElementById("displayOnTheSameWorld").disabled = false;
+            // }
+            // else {
+            //     document.getElementById("displayOnTheSameWorld").checked = false;
+            //     document.getElementById("displayOnTheSameWorld").disabled = true;
+            // }
         }
 
         params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
@@ -493,7 +498,7 @@ class PopulationManager {
         });
     };
 
-    registerChildAgents(children) {
+        registerChildAgents(children) {
         let repMap = new Map();
         PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
             // choose a rep for each species
@@ -536,10 +541,11 @@ class PopulationManager {
                     if (params.AGENT_PER_WORLD === 0) {
                         //Create a new world for the new specie 
                         PopulationManager.WORLD_CREATED++;
-                        this.initNewWorld(child.speciesId, child.specieId);
+                        let world = this.initNewWorld(child.speciesId);
                         this.specieWorldList.set(child.speciesId, [child.speciesId]);
                         this.spawnFood(child.speciesId, false, params.FOOD_AGENT_RATIO);
                         this.spawnFood(child.speciesId, true, params.POISON_AGENT_RATIO);
+                        world.speciesList.add(child.speciesId);
                     } else {
                         this.specieWorldList.set(child.speciesId, [++PopulationManager.WORLD_CREATED]);
                     }
@@ -553,12 +559,13 @@ class PopulationManager {
                 let world = this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0);
                 //Create a new world when the world has not been created
                 if (!world) {
-                    world = this.initNewWorld(child.speciesId, child.specieId);
+                    world = this.initNewWorld(child.speciesId);
                     this.spawnFood(child.speciesId, false, params.FOOD_AGENT_RATIO);
                     this.spawnFood(child.speciesId, true, params.POISON_AGENT_RATIO);
                 }
                 world.agents.push(child);
                 child.worldId = child.speciesId;
+                world.speciesList.add(child.speciesId);
             }
         });
     };
@@ -629,24 +636,46 @@ class PopulationManager {
         //Resetting the specie by world list
         this.specieWorldList = new Map();
 
-        PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {
+        let specieAllocationList = [];
+        if (params.SPLIT_SPECIES){
+            PopulationManager.SPECIES_MEMBERS.forEach((specie) =>{
+                specieAllocationList.push(specie);
+            });
+            
+        }
+        else{
+            //Not splitting species
+            // Add the agents into one container and shuffle it up
+            let agentPool = [];
+            PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) =>{
+                agentPool.push(...specie);
+            });
+            agentPool = shuffleArray(agentPool);
+            specieAllocationList.push(agentPool);
+        }
+
+        specieAllocationList.forEach((agentContainer) => {
             //Resetting the specie by world list
+            let speciesId = agentContainer[0].speciesId;
             this.specieWorldList.set(speciesId, []);
 
-            for (let i = specie.length - 1; i >= 0; --i) {
-                let agent = specie[i];
+            for (let i = agentContainer.length - 1; i >= 0; --i) {
+                let agent = agentContainer[i];
+                
                 //No world like it has been created or it's full
                 if (!this.worlds.get(worldId) || this.worlds.get(worldId).agents.length >= params.AGENT_PER_WORLD) {
                     ++worldId;
-                    this.initNewWorld(worldId, speciesId);
+                    let world = this.initNewWorld(worldId);
                     this.specieWorldList.get(speciesId).push(worldId);
                     agent.worldId = worldId;
-                    this.worlds.get(worldId).agents.push(agent);
-
+                    world.agents.push(agent);
+                    world.speciesList.add(agent.speciesId);
                     ++agentDistributed;
                 } else {
                     agent.worldId = worldId;
-                    this.worlds.get(worldId).agents.push(agent);
+                    let world = this.worlds.get(worldId);
+                    world.agents.push(agent);
+                    world.speciesList.add(agent.speciesId);
                     ++agentDistributed;
                 }
 
@@ -654,6 +683,7 @@ class PopulationManager {
             ++worldId;
         });
         PopulationManager.WORLD_CREATED = worldId;
+        //console.log("agent distributed", agentDistributed);
     }
 
     cleanUpWorlds() {
@@ -700,8 +730,8 @@ class PopulationManager {
 
     }
 
-    initNewWorld(worldId, specieId) {
-        let world = new World(this.game, worldId, specieId);
+    initNewWorld(worldId) {
+        let world = new World(this.game, worldId);
         this.worlds.set(worldId, world);
 
         if (params.FREE_RANGE) {

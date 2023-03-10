@@ -3,12 +3,9 @@
  */
 
 class World {
-    constructor(game, worldId, specieId, worldColor = 360) {
-        if (specieId == undefined) {
-            specieId = worldId;
-        }
+    constructor(game, worldId, worldColor = 360) {
         let world = this.createWorldCanvas(worldId);
-        Object.assign(this, { game, worldId, specieId, worldColor });
+        Object.assign(this, { game, worldId, worldColor });
         this.agents = [];
         this.food = [];
         this.poison = [];
@@ -19,7 +16,7 @@ class World {
         this.walls = [];
         this.home.worldId = worldId;
         this.display.worldId = worldId;
-
+        this.speciesList = new Set();//Keep track of the list of species the world contains
         //Just for testing
         this.worldColor = PopulationManager.getNextAvailableWorldColor();
 
@@ -225,6 +222,7 @@ class World {
         //     ctx = this.game.population.worlds.entries().next().value[1].ctx;
         // }
         this.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
+        
         this.home.draw(ctx);
         this.food.forEach(food => {
             if (!food.removeFromWorld) {

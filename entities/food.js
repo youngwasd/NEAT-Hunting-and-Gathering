@@ -433,7 +433,7 @@ class Food {
             false
         );
         let color = 100;
-        if (params.SPLIT_SPECIES && params.DISPLAY_SAME_WORLD) {
+        if (params.DISPLAY_SAME_WORLD) {
             color = this.game.population.worlds.get(this.worldId).worldColor;
         }
 
@@ -453,7 +453,7 @@ class Food {
         ctx.stroke();
         ctx.closePath();
 
-        if (params.DISPLAY_SAME_WORLD && params.SPLIT_SPECIES) {
+        if (params.DISPLAY_SAME_WORLD) {
             ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
             ctx.fillText(this.worldId, this.x + this.phase_properties[this.phase].radius / 4, this.y + this.phase_properties[this.phase].radius / 4);

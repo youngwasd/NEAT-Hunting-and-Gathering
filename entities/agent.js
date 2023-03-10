@@ -71,7 +71,8 @@ class Agent {
         this.biteTicks = 0;
         this.maxEatingCompletion = 0;
         this.totalOutputs = [0, 0, 0];
-
+        
+        this.speciesId = null;
         this.worldId = null;
     };
 
@@ -574,9 +575,9 @@ class Agent {
             color = this.game.population.worlds.get(this.worldId).worldColor;
         }
 
-        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD || !params.SPLIT_SPECIES) ? 0 : 50}%)`;
+        ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD) ? 0 : 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
-        if (!params.DISPLAY_SAME_WORLD || !params.SPLIT_SPECIES) {
+        if (!params.DISPLAY_SAME_WORLD) {
             ctx.lineWidth = 2;
         }
         else {
@@ -594,7 +595,7 @@ class Agent {
         ctx.stroke();
         ctx.closePath();
 
-        if (params.DISPLAY_SAME_WORLD && params.SPLIT_SPECIES) {
+        if (params.DISPLAY_SAME_WORLD) {
             ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
             ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);
