@@ -353,7 +353,7 @@ class Agent {
         }
 
         //METABOLISM: Defined by the power of the wheels
-        this.energy -= Math.abs(this.leftWheel) * Math.abs(this.rightWheel) / 3;
+        this.energy -= (Math.abs(this.leftWheel) + Math.abs(this.rightWheel)) / 2;
         this.energy -= this.biting ? 0.1 : 0;
         this.energy -= 0.1; // this is a baseline metabolism that is independent of Agent physical activity
 
