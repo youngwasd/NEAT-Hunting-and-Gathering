@@ -215,6 +215,39 @@ class World {
 
     }
 
+    //Update food hierarchy of all agents in this world
+    updateFoodHierarchy(){
+        //Hunting mode is turned off
+        if (!params.HUNTING_MODE) {
+            return;
+        }
+
+        //foodHierarchy of agent per world
+        let foodHierarchy = false;
+        let startPosX = params.CANVAS_SIZE / 2;
+        let startPosY = params.CANVAS_SIZE / 2;
+        if (params.HUNTING_MODE === "hierarchy") {
+            foodHierarchy = {
+                index: 0,
+                step: 100 / params.AGENT_PER_WORLD,
+            };
+        }
+
+        this.agents.forEach(agent => {
+            //Assign their food hiercarchy index based on how many agents per world
+            if (foodHierarchy) {
+                agent.foodHierarchyIndex = foodHierarchy.index;
+                foodHierarchy.index += foodHierarchy.step;
+
+                //Update the agent position so they don't bump into each other when spawned
+                startPosX = randomInt(params.CANVAS_SIZE - 300) + 300;
+                startPosY = randomInt(params.CANVAS_SIZE - 300) + 300;
+                agent.x = startPosX;
+                agent.y = startPosY;
+            }
+        });
+    }
+
     //Async drawing
     draw() {
         let ctx = this.ctx;
@@ -235,7 +268,7 @@ class World {
             }
         });
         this.agents.forEach(agent => {
-            if (!agent.removeFromWorld) {
+            if (!agent.removeFromWorld && agent.isActive) {
                 agent.draw(ctx);
             }
         });
@@ -256,6 +289,5 @@ class World {
         });
         createSlideShow(tmp, 'canvas');
     };
-
 
 };

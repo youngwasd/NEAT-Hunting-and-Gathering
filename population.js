@@ -28,6 +28,11 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED.add(defaultSensorColor);
         PopulationManager.SPECIES_SENSOR_COLORS.set(0, defaultSensorColor);
 
+        //Set temporary default to hunting mode
+        params.HUNTING_MODE = "hierarchy";
+        document.getElementById("huntingMode").value = "hierarchy";
+        document.getElementById("agent_neighbors").checked =  params.HUNTING_MODE === "hierarchy";
+
         this.worlds = new Map();
         this.createFoodPodLayout();
 
@@ -66,6 +71,7 @@ class PopulationManager {
                 this.spawnFood(worldSpawned, false);
                 this.spawnFood(worldSpawned, true);
 
+                world.updateFoodHierarchy();
                 numberOfAgentToSpawned -= agentNum;
                 worldSpawned++;
             }
@@ -188,6 +194,15 @@ class PopulationManager {
             params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
         }
 
+        //Update hunting mode
+        params.HUNTING_MODE = document.getElementById("huntingMode").value;
+        if (params.HUNTING_MODE === "deactivated") {
+            params.HUNTING_MODE = false;
+            
+        }
+        document.getElementById("agent_neighbors").checked =  params.HUNTING_MODE === "hierarchy";
+
+
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
 
@@ -218,16 +233,16 @@ class PopulationManager {
         params.PAUSE_DRAWING = document.getElementById("pauseDrawing").checked;
 
         //Loading Profile
-        if (document.getElementById("runByProfileMode").checked){
+        if (document.getElementById("runByProfileMode").checked) {
             document.getElementById("profileOption").disabled = false;
             document.getElementById("loadProfile").disabled = false;
         }
-        else{
+        else {
             document.getElementById("profileOption").disabled = true;
             document.getElementById("loadProfile").disabled = true;
         }
 
-        if (params.NO_DECAYING_FOOD){
+        if (params.NO_DECAYING_FOOD) {
             document.getElementById("caloriesPerFood").disabled = false;
             params.CALORIES_PER_FOOD = parseFloat(document.getElementById("caloriesPerFood").value);
         } else {
@@ -498,7 +513,7 @@ class PopulationManager {
         });
     };
 
-        registerChildAgents(children) {
+    registerChildAgents(children) {
         let repMap = new Map();
         PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
             // choose a rep for each species
@@ -637,17 +652,17 @@ class PopulationManager {
         this.specieWorldList = new Map();
 
         let specieAllocationList = [];
-        if (params.SPLIT_SPECIES){
-            PopulationManager.SPECIES_MEMBERS.forEach((specie) =>{
+        if (params.SPLIT_SPECIES) {
+            PopulationManager.SPECIES_MEMBERS.forEach((specie) => {
                 specieAllocationList.push(specie);
             });
-            
+
         }
-        else{
+        else {
             //Not splitting species
             // Add the agents into one container and shuffle it up
             let agentPool = [];
-            PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) =>{
+            PopulationManager.SPECIES_MEMBERS.forEach((specie, speciesId) => {
                 agentPool.push(...specie);
             });
             agentPool = shuffleArray(agentPool);
@@ -661,7 +676,7 @@ class PopulationManager {
 
             for (let i = agentContainer.length - 1; i >= 0; --i) {
                 let agent = agentContainer[i];
-                
+
                 //No world like it has been created or it's full
                 if (!this.worlds.get(worldId) || this.worlds.get(worldId).agents.length >= params.AGENT_PER_WORLD) {
                     ++worldId;
@@ -739,6 +754,13 @@ class PopulationManager {
         }
         return world;
     };
+
+    //Update food hierarchy of all agents in all world
+    updateWorldsFoodHierarchy() {
+        this.worlds.forEach(world => {
+            world.updateFoodHierarchy();
+        });
+    }
 
     createWorldCanvas(worldId) {
         let canvas = document.createElement("canvas");
@@ -933,6 +955,7 @@ class PopulationManager {
         //Replenish food or poison
         this.checkFoodLevels();
 
+
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
         PopulationManager.SPECIES_MEMBERS = new Map();
@@ -956,7 +979,12 @@ class PopulationManager {
                 agent.resetCalorieCounts();
                 agent.resetCounters();
             });
+
+             //Update food hierarchy of all agents in all world
+            this.updateWorldsFoodHierarchy();
         }
+
+       
 
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
@@ -1006,26 +1034,26 @@ class PopulationManager {
             fitnessData = fitnessData.slice(0, fitnessData.length - 1);
             let consumptionData = this.foodTracker.getConsumptionData();
             consumptionData = consumptionData.slice(0, consumptionData.length - 1);
-            
+
             //Sending data to data base
             if (params.SAVE_TO_DB) {
-                logData({ avgFitness: fitnessData, consumption: consumptionData });   
+                logData({ avgFitness: fitnessData, consumption: consumptionData });
             }
-    
+
             this.resetSim();
             if (params.SIM_TRIAL_NUM < params.SIM_CURR_TRIAL) {
                 //Call pausing button
                 let pauseButton = document.getElementById('pause_sim');
-                if (pauseButton){
+                if (pauseButton) {
                     pauseButton.click();
                 }
                 let downloadDataButton = document.getElementById('db_download_data');
-                if (downloadDataButton){
+                if (downloadDataButton) {
                     downloadDataButton.innerHTML = "Trials run complete, click here to download Data";
                     downloadDataButton.setAttribute('style', "background-color: green; color:white;");
                 }
             }
-            
+
             return;
         }
 

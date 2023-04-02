@@ -29,7 +29,7 @@ const params = {
     CALORIES_PER_FOOD: 50,
     INNER_WALL: false,
     NUM_AGENTS: 50,
-    AGENT_PER_WORLD : 1,
+    AGENT_PER_WORLD : 2,
     DYNAMIC_AGENT_SIZING: false,
     AGENT_VISION_RAYS: 13,
     AGENT_VISION_ANGLE: 180,
@@ -54,6 +54,7 @@ const params = {
     FOOD_VELOCITY_Y: 1,
     SIM_PAUSE: false,
     PAUSE_DRAWING: false,
+    HUNTING_MODE: "hierarchy",
 };
 
 const getMedian = (arr) => {

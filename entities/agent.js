@@ -71,9 +71,12 @@ class Agent {
         this.biteTicks = 0;
         this.maxEatingCompletion = 0;
         this.totalOutputs = [0, 0, 0];
-        
+
         this.speciesId = null;
         this.worldId = null;
+
+        this.foodHierarchyIndex = 0;//Index to see whether it is predator or prey, higher means predator
+        this.isActive = true;//Whether the agent is still active and has been consumed or not
     };
 
     /** Assigns this Agent's fitness */
@@ -533,7 +536,7 @@ class Agent {
             });
 
             entities.forEach(entity => {
-                if ((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity != this) {
+                if ((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity != this && entity.isActive) {
                     let newSpot = this.visionRayCollision(line, entity, eyes);
                     let newDist = distance(eyes, newSpot);
                     if (newDist < minDist) {
@@ -577,6 +580,11 @@ class Agent {
 
         ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD) ? 0 : 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.energy > Agent.DEATH_ENERGY_THRESH ? '100' : '33'}%, 50%)`;
+        if (params.HUNTING_MODE === "hierarchy") {
+            ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.foodHierarchyIndex + 20}%, 50%)`;
+
+        }
+
         if (!params.DISPLAY_SAME_WORLD) {
             ctx.lineWidth = 2;
         }
@@ -595,10 +603,16 @@ class Agent {
         ctx.stroke();
         ctx.closePath();
 
-        if (params.DISPLAY_SAME_WORLD) {
+        if (params.DISPLAY_SAME_WORLD || params.HUNTING_MODE === "hierarchy") {
             ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
-            ctx.fillText(this.worldId, this.x + this.diameter / 4, this.y + this.diameter / 4);
+
+            let agentInnerText = this.worldId;
+            if (params.HUNTING_MODE === "hierarchy") {
+                agentInnerText = this.foodHierarchyIndex;
+            }
+
+            ctx.fillText(agentInnerText, this.x + this.diameter / 4, this.y + this.diameter / 4);
         }
 
         ctx.lineWidth = 2;
