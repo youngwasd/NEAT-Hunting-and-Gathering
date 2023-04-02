@@ -195,17 +195,17 @@ class PopulationManager {
 
     update() {
         //Update the params
-        params.FREE_RANGE = document.getElementById("free_range").checked;
+        //params.FREE_RANGE = document.getElementById("free_range").checked;
         params.AGENT_NEIGHBORS = document.getElementById("agent_neighbors").checked;
         params.FOOD_OUTSIDE = document.getElementById("food_outside_circle").checked;
         params.FOOD_INSIDE = document.getElementById("food_inside_circle").checked;
         params.ENFORCE_MIN_FOOD = document.getElementById("enforce_min_food").checked;
-        params.ENFORCE_MIN_POISON = document.getElementById("enforce_min_poison").checked;
-        params.RAND_FOOD_PHASES = document.getElementById("rand_food_phases").checked;
-        params.RAND_FOOD_LIFETIME = document.getElementById("rand_food_lifetime").checked;
+        //params.ENFORCE_MIN_POISON = document.getElementById("enforce_min_poison").checked;
+        //params.RAND_FOOD_PHASES = document.getElementById("rand_food_phases").checked;
+        //params.RAND_FOOD_LIFETIME = document.getElementById("rand_food_lifetime").checked;
         params.RAND_DEFAULT_WEIGHTS = document.getElementById("rand_default_weights").checked;
         params.GEN_STOP = document.getElementById("gen_stop").checked;
-        params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
+        //params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
         params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
         params.INNER_WALL = document.getElementById("inner_wall").checked;
@@ -390,7 +390,7 @@ class PopulationManager {
             //For debugging k and m purposes
             //console.clear();
             this.tickCounter = 0;
-            this.processGeneration();
+            this.processGeneration(this.agentsAsList());
 
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
@@ -811,7 +811,7 @@ class PopulationManager {
         createSlideShow(tmp, 'canvas');
     };
 
-
+    
     processGeneration() {
         //Data collections for histograms
         let avgLeftWheelOut = new Array(20).fill(0);
@@ -859,70 +859,8 @@ class PopulationManager {
 
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
-            let rouletteOrder = [...reprodFitMap.keys()].sort();
-            let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
-            let deathFitMap = new Map();
-            for (let i = 0; i < ascendingFitSpecies.length; i++) {
-                deathFitMap.set(ascendingFitSpecies[i], reprodFitMap.get(ascendingFitSpecies[ascendingFitSpecies.length - i - 1]));
-            }
-
-            let deadCount = this.countDeads(); // this call is if we are transitioning from free range -> generational mode
-            let numAgents = this.agentsAsList().length;
-            for (let i = 0; i < Math.ceil(numAgents / 2) - deadCount; i++) { // death roulette -> kill the ceiling to ensure agent list is always even
-                let killed = false;
-                while (!killed) { // keep rolling the roulette wheel until someone dies
-                    let rouletteResult = randomFloat(sumShared);
-                    let rouletteIndex = 0;
-                    let accumulator = 0;
-                    let flag = false;
-                    while (!flag) {
-                        let nextSpecies = rouletteOrder[rouletteIndex];
-                        accumulator += deathFitMap.get(nextSpecies);
-                        if (accumulator >= rouletteResult) { // we try to kill a parent... might not be successful
-                            flag = true;
-                            let killOptions = shuffleArray(PopulationManager.SPECIES_MEMBERS.get(nextSpecies));
-                            let j = 0;
-                            while (j < killOptions.length && !killed) {
-                                let toKill = killOptions[j];
-                                if (!toKill.removeFromWorld) {
-                                    killed = true;
-                                    toKill.removeFromWorld = true;
-                                }
-                                j++;
-                            }
-                        }
-                        rouletteIndex++;
-                    }
-                }
-            }
-
-            let children = [];
-            let alives = this.countAlives(); // if free range mode kills off everybody, we produce at least 1 new agent
-            // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
-            for (let i = 0; i < PopulationManager.NUM_AGENTS - alives; i++) {
-                let rouletteResult = randomFloat(sumShared);
-                let rouletteIndex = 0;
-                let accumulator = 0;
-                let flag = false;
-                let parent1, parent2;
-                while (!flag) {
-                    let nextSpecies = rouletteOrder[rouletteIndex];
-                    accumulator += reprodFitMap.get(nextSpecies);
-                    if (accumulator >= rouletteResult) {
-                        flag = true;
-                        let possibleParents = PopulationManager.SPECIES_MEMBERS.get(nextSpecies);
-                        parent1 = possibleParents[randomInt(possibleParents.length)];
-                        parent2 = possibleParents[randomInt(possibleParents.length)];
-                    }
-                    rouletteIndex++;
-                }
-                let childGenome = Genome.crossover(parent1.genome, parent2.genome);
-                childGenome.mutate();
-                let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
-                children.push(child);
-            }
-
-            this.registerChildAgents(children);
+            this.deathRoulette(reprodFitMap, sumShared);
+            this.crossover(reprodFitMap, sumShared);
         }
 
         //Clean up some of the dead worlds and balence agents count
@@ -986,15 +924,15 @@ class PopulationManager {
 
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());
-        generateAgeChart(this.agentTracker.getAgeData());
+        //generateAgeChart(this.agentTracker.getAgeData());
         generateFoodConsumptionChart(this.foodTracker.getConsumptionData());
-        generateFoodStageChart(this.foodTracker.getLifeStageData());
-        generateConnectionChart(this.genomeTracker.getConnectionData());
-        generateCycleChart(this.genomeTracker.getCycleData());
-        generateNodeChart(this.genomeTracker.getNodeData());
+        //generateFoodStageChart(this.foodTracker.getLifeStageData());
+        //generateConnectionChart(this.genomeTracker.getConnectionData());
+        //generateCycleChart(this.genomeTracker.getCycleData());
+        //generateNodeChart(this.genomeTracker.getNodeData());
         generateCurrentFitnessChart(this.agentTracker.getFitnessData());
         this.foodTracker.computePercentiles();
-        generateFoodTimeChart(this.foodTracker.getPercentileData());
+        //generateFoodTimeChart(this.foodTracker.getPercentileData());
         this.foodTracker.addNewGeneration();
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
@@ -1033,5 +971,75 @@ class PopulationManager {
         this.resetCanvases();
     };
 
+
+    deathRoulette(reprodFitMap, sumShared){
+        let rouletteOrder = [...reprodFitMap.keys()].sort();
+        let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
+        let deathFitMap = new Map();
+        for (let i = 0; i < ascendingFitSpecies.length; i++) {
+            deathFitMap.set(ascendingFitSpecies[i], reprodFitMap.get(ascendingFitSpecies[ascendingFitSpecies.length - i - 1]));
+        }
+
+        let deadCount = this.countDeads(); // this call is if we are transitioning from free range -> generational mode
+        let numAgents = this.agentsAsList().length;
+        for (let i = 0; i < Math.ceil(numAgents / 2) - deadCount; i++) { // death roulette -> kill the ceiling to ensure agent list is always even
+            let killed = false;
+            while (!killed) { // keep rolling the roulette wheel until someone dies
+                let rouletteResult = randomFloat(sumShared);
+                let rouletteIndex = 0;
+                let accumulator = 0;
+                let flag = false;
+                while (!flag) {
+                    let nextSpecies = rouletteOrder[rouletteIndex];
+                    accumulator += deathFitMap.get(nextSpecies);
+                    if (accumulator >= rouletteResult) { // we try to kill a parent... might not be successful
+                        flag = true;
+                        let killOptions = shuffleArray(PopulationManager.SPECIES_MEMBERS.get(nextSpecies));
+                        let j = 0;
+                        while (j < killOptions.length && !killed) {
+                            let toKill = killOptions[j];
+                            if (!toKill.removeFromWorld) {
+                                killed = true;
+                                toKill.removeFromWorld = true;
+                            }
+                            j++;
+                        }
+                    }
+                    rouletteIndex++;
+                }
+            }
+        }
+    }
+
+    crossover(reprodFitMap, sumShared){
+        // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
+        let children = [];
+        let alives = this.countAlives(); // if free range mode kills off everybody, we produce at least 1 new agent
+        let rouletteOrder = [...reprodFitMap.keys()].sort();
+        for (let i = 0; i < PopulationManager.NUM_AGENTS - alives; i++) {
+            let rouletteResult = randomFloat(sumShared);
+            let rouletteIndex = 0;
+            let accumulator = 0;
+            let flag = false;
+            let parent1, parent2;
+            while (!flag) {
+                let nextSpecies = rouletteOrder[rouletteIndex];
+                accumulator += reprodFitMap.get(nextSpecies);
+                if (accumulator >= rouletteResult) {
+                    flag = true;
+                    let possibleParents = PopulationManager.SPECIES_MEMBERS.get(nextSpecies);
+                    parent1 = possibleParents[randomInt(possibleParents.length)];
+                    parent2 = possibleParents[randomInt(possibleParents.length)];
+                }
+                rouletteIndex++;
+            }
+            let childGenome = Genome.crossover(parent1.genome, parent2.genome);
+            childGenome.mutate();
+            let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
+            children.push(child);
+        }
+
+        this.registerChildAgents(children);
+    }
 
 };

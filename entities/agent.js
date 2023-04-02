@@ -326,7 +326,7 @@ class Agent {
             }
 
             if (params.AGENT_BITING) {
-                this.biting = Math.abs(output[2]) > 0.5;
+                this.biting = output[2] >= 0;
                 this.totalOutputs[2] += output[2];
                 if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA != 0 && this.game.population.currentBiteHist != null)
                     this.game.population.currentBiteHist.data[slot][determineBucket(output[2], -1, 1)]++;
