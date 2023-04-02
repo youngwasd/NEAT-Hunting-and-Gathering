@@ -456,8 +456,10 @@ class Food {
         if (params.DISPLAY_SAME_WORLD) {
             ctx.fillStyle = "orange";
             ctx.font = "10px sans-serif";
+            
             ctx.fillText(this.worldId, this.x + this.phase_properties[this.phase].radius / 4, this.y + this.phase_properties[this.phase].radius / 4);
         }
+
     };
 };
 

@@ -54,7 +54,7 @@ class DataDisplay {
             //console.log(speciesText, speciesText.length);
             ctx.font = "16px sans-serif";
             speciesText.forEach(text => {
-                ctx.strokeText(`${yStart == 90 ? "Species: ": "" } ${text}`, params.CANVAS_SIZE / 2, yStart);
+                ctx.strokeText(`${yStart == 90 ? "Species: ": "" }${text}`, params.CANVAS_SIZE / 2, yStart);
                 yStart += 30;
             });
             
