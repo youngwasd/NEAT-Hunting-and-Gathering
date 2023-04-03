@@ -116,7 +116,7 @@ class Food {
         this.ticksToConsume = params.MAX_TICKS_TO_CONSUME;
         this.lastTickBeingEaten = -1;
         this.updateBoundingCircle(); // update our BC to reflect our position
-
+        this.isActive = true;
         this.updateMovingDestination();
     };
 

@@ -214,8 +214,6 @@
     <div>
         <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
         <br>
-        <input type="checkbox" id="worldUpdateAsync" checked=true> World Update Asynchronously
-        <br>
         <input type="checkbox" id="pauseDrawing"> Pause Drawing (To speed up the simulation)
         <br>
         <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation output
@@ -267,6 +265,7 @@
 
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>
+        <input type="text" id="FITNESS_HUNTING_PREY" value="12"> (Prey hunted) + 
         <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) + 
         <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) + 
         <input type="text" id="fitness_calories" value="24.0"> (Calories Eaten) + 

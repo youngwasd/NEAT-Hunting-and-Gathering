@@ -43,7 +43,7 @@ class World {
             }
         }
         for (let i = 0; i < this.agents.length; i++) {
-            if (!this.agents[i].removeFromWorld) {
+            if (!this.agents[i].removeFromWorld && this.agents[i].isActive) {
                 this.agents[i].update();
             }
         }
@@ -226,10 +226,14 @@ class World {
         let foodHierarchy = false;
         let startPosX = params.CANVAS_SIZE / 2;
         let startPosY = params.CANVAS_SIZE / 2;
+        let numberOfAgent = params.AGENT_PER_WORLD;
+        if (params.AGENT_PER_WORLD === 0){  
+            numberOfAgent = params.NUM_AGENTS;
+        }
         if (params.HUNTING_MODE === "hierarchy") {
             foodHierarchy = {
                 index: 0,
-                step: 100 / params.AGENT_PER_WORLD,
+                step: 100 / numberOfAgent,
             };
         }
 
@@ -244,6 +248,7 @@ class World {
                 startPosY = randomInt(params.CANVAS_SIZE - 300) + 300;
                 agent.x = startPosX;
                 agent.y = startPosY;
+                agent.activateAgent();
             }
         });
     }
