@@ -1,13 +1,13 @@
 /** Global Parameters Object */
 const params = {
-    CANVAS_SIZE: 800,
+    CANVAS_SIZE: 1000,
     DB: "test",
     DB_COLLECTION: "NEATtests",
     GEN_TO_SAVE: 40,
     FOOD_OUTSIDE: false,
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
-    AGENT_NEIGHBORS: false,
+    AGENT_NEIGHBORS: true,
     FOOD_AGENT_RATIO: 1,
     POISON_AGENT_RATIO: 0,
     COMPAT_THRESH: 0.04,
@@ -54,7 +54,9 @@ const params = {
     FOOD_VELOCITY_Y: 1,
     SIM_PAUSE: false,
     PAUSE_DRAWING: false,
-    HUNTING_MODE: "hierarchy",
+    HUNTING_MODE: "deactivated",
+    AGENT_DIAMETER: 15,
+    FOOD_DIAMETER: 24,
 };
 
 const getMedian = (arr) => {

@@ -43,16 +43,16 @@
 
 <body>
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
-    <div style="float: left; width: 850px" id="carouselCanvasIndicators" class="carousel carousel-dark"
+    <div style="float: left; width:1000; height:1000; " id="carouselCanvasIndicators" class="carousel carousel-dark"
         data-bs-ride="carousel">
         <div id="canvas-indicators" class="carousel-indicators">
         </div>
-        <div style="padding-left: 0;
-        padding-right: 0;
+        <div style="padding-left: 5;
+        padding-right: 5;
         margin-left: auto;
         margin-right: auto;
         display: block;
-        width: 805px;" id="canvas-carousel" class="carousel-inner">
+        width: 1005px;" id="canvas-carousel" class="carousel-inner">
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
             data-bs-slide="prev">
@@ -76,7 +76,7 @@
         take effect)
     </div>
     <div>
-        <input type="checkbox" id="agent_neighbors"> Agent Neighbors
+        <input type="checkbox" id="agent_neighbors" checked="true"> Agent Neighbors
     </div>
     <div>
         <input type="checkbox" id="dynamic_agent_sizing"> Agent Size Changes With Energy
@@ -157,7 +157,7 @@
     </div>
 
     <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
-    <select name="huntingMode" id="huntingMode">
+    <select name="huntingMode" id="huntingMode"  value="deactivated">
         <option value="deactivated">Deactivated</option>
         <option value="hierarchy">Food Hierarchy Index</option>
         <option value="multipleGeneration">Multiple Generation</option>
@@ -204,6 +204,12 @@
     </div>
     <div>
         <input type="text" id="max_ticks_to_consume" value="1"> Number of Ticks to Consume
+    </div>
+    <div>
+        <input type="text" id="agent_diameter" value="15"> Agent Diameter
+    </div>
+    <div>
+        <input type="text" id="food_diameter" value="24"> Food Diameter
     </div>
     <div>
         <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)

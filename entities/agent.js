@@ -11,8 +11,6 @@ class Agent {
     /** The amount of energy an Agent is given upon spawn */
     static START_ENERGY = 100;
 
-    static BASE_DIAMETER = 15;
-
     static distForBiteReward = [
         {
             maxGen: 20,
@@ -32,7 +30,7 @@ class Agent {
         },*/
         /*{
             maxGen: Infinity,
-            dist: Agent.BASE_DIAMETER/2
+            dist: params.AGENT_DIAMETER/2
         },*/
     ]
 
@@ -466,11 +464,11 @@ class Agent {
             let addOn = 0; // the amount we add onto the base diameter
 
             if (this.energy > Agent.DEATH_ENERGY_THRESH) { // if alive, scale by how well this Agent has eaten its allotted food
-                addOn = Agent.BASE_DIAMETER / 2 * Math.min(1, this.energy / (params.FOOD_AGENT_RATIO * max_food_cal));
+                addOn = params.AGENT_DIAMETER / 2 * Math.min(1, this.energy / (params.FOOD_AGENT_RATIO * max_food_cal));
             }
-            this.diameter = Agent.BASE_DIAMETER + addOn;
+            this.diameter = params.AGENT_DIAMETER + addOn;
         } else {
-            this.diameter = Agent.BASE_DIAMETER;
+            this.diameter = params.AGENT_DIAMETER;
         }
     };
 
@@ -658,17 +656,18 @@ class Agent {
         ctx.closePath();
 
         ctx.setLineDash([]);
-
+        
         if (params.DISPLAY_SAME_WORLD || params.HUNTING_MODE === "hierarchy") {
             ctx.fillStyle = "orange";
-            ctx.font = "10px sans-serif";
+            ctx.font = parseInt(2 * this.diameter / 3) + "px sans-serif";
 
             let agentInnerText = this.worldId;
             if (params.HUNTING_MODE === "hierarchy") {
                 agentInnerText = this.foodHierarchyIndex;
             }
-
-            ctx.fillText(agentInnerText, this.x + this.diameter / 4, this.y + this.diameter / 4);
+            ctx.textAlign = "center";
+            ctx.fillText(agentInnerText, this.x, this.y + this.diameter / 4);
+            ctx.textAlign = "left";
         }
 
         ctx.lineWidth = 2;

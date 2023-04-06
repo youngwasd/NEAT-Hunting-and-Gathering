@@ -28,11 +28,6 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED.add(defaultSensorColor);
         PopulationManager.SPECIES_SENSOR_COLORS.set(0, defaultSensorColor);
 
-        //Set temporary default to hunting mode
-        params.HUNTING_MODE = "hierarchy";
-        document.getElementById("huntingMode").value = "hierarchy";
-        document.getElementById("agent_neighbors").checked =  params.HUNTING_MODE === "hierarchy";
-
         this.worlds = new Map();
         this.createFoodPodLayout();
 
@@ -340,6 +335,14 @@ class PopulationManager {
 
         if (document.activeElement.id !== "max_ticks_to_consume") {
             params.MAX_TICKS_TO_CONSUME = parseInt(document.getElementById("max_ticks_to_consume").value);
+        }
+
+        if (document.activeElement.id !== "food_diameter") {
+            params.FOOD_DIAMETER = parseFloat(document.getElementById("food_diameter").value);
+        }
+
+        if (document.activeElement.id !== "agent_diameter") {
+            params.AGENT_DIAMETER = parseFloat(document.getElementById("agent_diameter").value);
         }
 
         if (document.activeElement.id !== "tickToUpdateCurrentGenOutputData") {
