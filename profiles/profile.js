@@ -33,6 +33,11 @@ const loadProfile = (profile) => {
         document.getElementById("restart_sim").click();
     }
 
+    if (profile.FOOD_AGENT_RATIO){
+        params.FOOD_AGENT_RATIO = profile.FOOD_AGENT_RATIO;
+        document.getElementById("food_agent_ratio").value = profile.FOOD_AGENT_RATIO;
+    }
+
     //Update fitness
     if (profile.FITNESS_CALORIES){
         params.FITNESS_CALORIES = profile.FITNESS_CALORIES;
@@ -292,12 +297,13 @@ const simulationProfile_No_Border_InnerWall = {
 
 const simulationProfile_Agent_Food_Size_12_12 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Size",
+    DB_COLLECTION: "Agent_Food_Custom_Size",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 5,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 5,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 12,
@@ -307,12 +313,13 @@ const simulationProfile_Agent_Food_Size_12_12 = {
 
 const simulationProfile_Agent_Food_Size_10_20 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Size",
+    DB_COLLECTION: "Agent_Food_Custom_Size",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 5,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 5,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 10,
@@ -322,12 +329,13 @@ const simulationProfile_Agent_Food_Size_10_20 = {
 
 const simulationProfile_Agent_Food_Size_15_15 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Size",
+    DB_COLLECTION: "Agent_Food_Custom_Size",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 5,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 5,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 15,
@@ -337,12 +345,13 @@ const simulationProfile_Agent_Food_Size_15_15 = {
 
 const simulationProfile_Agent_Food_Size_15_12 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Size",
+    DB_COLLECTION: "Agent_Food_Custom_Size",
     GEN_TO_SAVE: 200,
     SIM_TRIAL_NUM: 5,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 5,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 15,
