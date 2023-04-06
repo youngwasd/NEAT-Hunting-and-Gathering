@@ -303,7 +303,7 @@ const simulationProfile_Agent_Food_Size_12_12 = {
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
-    FOOD_AGENT_RATIO: 5,
+    FOOD_AGENT_RATIO: 10,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 12,
@@ -319,7 +319,7 @@ const simulationProfile_Agent_Food_Size_10_20 = {
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
-    FOOD_AGENT_RATIO: 5,
+    FOOD_AGENT_RATIO: 10,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 10,
@@ -335,7 +335,7 @@ const simulationProfile_Agent_Food_Size_15_15 = {
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
-    FOOD_AGENT_RATIO: 5,
+    FOOD_AGENT_RATIO: 10,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 15,
@@ -351,7 +351,7 @@ const simulationProfile_Agent_Food_Size_15_12 = {
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
-    FOOD_AGENT_RATIO: 5,
+    FOOD_AGENT_RATIO: 10,
 
     HUNTING_MODE: "deactivated",
     AGENT_DIAMETER: 15,
