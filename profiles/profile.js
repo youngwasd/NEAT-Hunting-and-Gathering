@@ -297,9 +297,9 @@ const simulationProfile_No_Border_InnerWall = {
 
 const simulationProfile_Agent_Food_Size_12_12 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Custom_Size_12_12",
+    DB_COLLECTION: "Agent_Food_Size_12_12",
     GEN_TO_SAVE: 200,
-    SIM_TRIAL_NUM: 5,
+    SIM_TRIAL_NUM: 2,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
@@ -313,9 +313,9 @@ const simulationProfile_Agent_Food_Size_12_12 = {
 
 const simulationProfile_Agent_Food_Size_10_20 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Custom_Size_10_20",
+    DB_COLLECTION: "Agent_Food_Size_10_20",
     GEN_TO_SAVE: 200,
-    SIM_TRIAL_NUM: 5,
+    SIM_TRIAL_NUM: 2,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
@@ -329,9 +329,9 @@ const simulationProfile_Agent_Food_Size_10_20 = {
 
 const simulationProfile_Agent_Food_Size_15_15 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Custom_Size_15_15",
+    DB_COLLECTION: "Agent_Food_Size_15_15",
     GEN_TO_SAVE: 200,
-    SIM_TRIAL_NUM: 5,
+    SIM_TRIAL_NUM: 2,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
@@ -345,9 +345,9 @@ const simulationProfile_Agent_Food_Size_15_15 = {
 
 const simulationProfile_Agent_Food_Size_15_12 = {
     DB: "NEATWi23",
-    DB_COLLECTION: "Agent_Food_Custom_Size_15_12",
+    DB_COLLECTION: "Agent_Food_Size_15_12",
     GEN_TO_SAVE: 200,
-    SIM_TRIAL_NUM: 5,
+    SIM_TRIAL_NUM: 2,
     
     NUM_AGENTS: 50,
     AGENT_PER_WORLD : 1,
