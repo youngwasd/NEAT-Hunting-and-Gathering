@@ -54,7 +54,7 @@ const params = {
     FOOD_VELOCITY_Y: 1,
     SIM_PAUSE: false,
     PAUSE_DRAWING: false,
-    HUNTING_MODE: "deactivated",
+    HUNTING_MODE: "hierarchy",
     AGENT_DIAMETER: 15,
     FOOD_DIAMETER: 24,
 };
