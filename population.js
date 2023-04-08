@@ -231,6 +231,7 @@ class PopulationManager {
         params.MOVING_FOOD = document.getElementById("moving_food").checked;
         params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
         params.PAUSE_DRAWING = document.getElementById("pauseDrawing").checked;
+        params.FOOD_BUSH = document.getElementById("food_bush").checked;
 
         //Loading Profile
         if (document.getElementById("runByProfileMode").checked) {
@@ -296,6 +297,7 @@ class PopulationManager {
         if (document.activeElement.id !== "food_agent_ratio") {
             params.FOOD_AGENT_RATIO = parseInt(document.getElementById("food_agent_ratio").value);
         }
+        
         if (document.activeElement.id !== "poison_agent_ratio") {
             params.POISON_AGENT_RATIO = parseInt(document.getElementById("poison_agent_ratio").value);
         }
@@ -337,6 +339,10 @@ class PopulationManager {
 
         if (document.activeElement.id !== "max_ticks_to_consume") {
             params.MAX_TICKS_TO_CONSUME = parseInt(document.getElementById("max_ticks_to_consume").value);
+        }
+
+        if (document.activeElement.id !== "cooldown_to_regen") {
+            params.COOLDOWN_TO_REGEN = parseInt(document.getElementById("cooldown_to_regen").value);
         }
 
         if (document.activeElement.id !== "tickToUpdateCurrentGenOutputData") {
