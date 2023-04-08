@@ -1,13 +1,13 @@
 /** Global Parameters Object */
 const params = {
-    CANVAS_SIZE: 800,
+    CANVAS_SIZE: 1000,
     DB: "test",
     DB_COLLECTION: "NEATtests",
     GEN_TO_SAVE: 40,
     FOOD_OUTSIDE: false,
     FOOD_INSIDE: false,
     GEN_TICKS: 700,
-    AGENT_NEIGHBORS: false,
+    AGENT_NEIGHBORS: true,
     FOOD_AGENT_RATIO: 1,
     POISON_AGENT_RATIO: 0,
     COMPAT_THRESH: 0.07,
@@ -24,6 +24,7 @@ const params = {
     FITNESS_BUMPING_INTO_WALL: 0,
     FITNESS_OUT_OF_BOUND: -1,
     FITNESS_POTENTIAL_CALORIES: 6,
+    FITNESS_HUNTING_PREY: 12,
     GEN_STOP: false,
     NO_DECAYING_FOOD: true,
     CALORIES_PER_FOOD: 50,
@@ -43,7 +44,6 @@ const params = {
     GENOME_DEFAULT_K_VAL: 0.75,
     NO_BORDER: false,
     DISPLAY_SAME_WORLD: false,
-    WORLD_UPDATE_ASYNC: true,
     LARGE_ENERGY_THRESHOLD: false,
     SIM_TRIAL_NUM: 3,
     SIM_CURR_TRIAL: 1,
@@ -56,6 +56,8 @@ const params = {
     SIM_PAUSE: false,
     PAUSE_DRAWING: false,
     HUNTING_MODE: "hierarchy",
+    AGENT_DIAMETER: 15,
+    FOOD_DIAMETER: 24,
     FOOD_BUSH: true,
 };
 

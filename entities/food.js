@@ -82,28 +82,28 @@ class Food {
             this.phase_properties = [ // configures the ticks, visual properties, calories, and set state for this food's individual lifecycle phases
                 {
                     ticks: phase_ticks[0],
-                    radius: 12,
+                    radius: params.FOOD_DIAMETER / 2,
                     color: this.isPoison ? 60 : 330,
                     calories: params.CALORIES_PER_FOOD,
                     isSet: false,
                 },
                 {
                     ticks: phase_ticks[1],
-                    radius: 12,
+                    radius: params.FOOD_DIAMETER / 2,
                     color: this.isPoison ? 60 : 330,
                     calories: params.CALORIES_PER_FOOD,
                     isSet: false,
                 },
                 {
                     ticks: phase_ticks[2],
-                    radius: 12,
+                    radius: params.FOOD_DIAMETER / 2,
                     color: this.isPoison ? 60 : 330,
                     calories: params.CALORIES_PER_FOOD,
                     isSet: false,
                 },
                 {
                     ticks: phase_ticks[3],
-                    radius: 12,
+                    radius: params.FOOD_DIAMETER / 2,
                     color: 330,
                     calories: params.CALORIES_PER_FOOD,
                     isSet: false,
@@ -116,7 +116,7 @@ class Food {
         this.ticksToConsume = params.MAX_TICKS_TO_CONSUME;
         this.lastTickBeingEaten = -1;
         this.updateBoundingCircle(); // update our BC to reflect our position
-
+        this.isActive = true;
         this.updateMovingDestination();
     };
 
@@ -479,12 +479,13 @@ class Food {
         ctx.strokeStyle = "black";//`hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD)? 0: 50}%)`;
         ctx.stroke();
         ctx.closePath();
-
         if (params.DISPLAY_SAME_WORLD) {
             ctx.fillStyle = "orange";
-            ctx.font = "10px sans-serif";
-            
-            ctx.fillText(this.worldId, this.x + this.phase_properties[this.phase].radius / 4, this.y + this.phase_properties[this.phase].radius / 4);
+            ctx.font = parseInt(2 * params.FOOD_DIAMETER / 3) + "px sans-serif";
+            console.log(ctx.font);
+            ctx.textAlign = "center";
+            ctx.fillText(this.worldId, this.x, this.y + this.phase_properties[this.phase].radius / 2);
+            ctx.textAlign = "left";
         }
 
     };

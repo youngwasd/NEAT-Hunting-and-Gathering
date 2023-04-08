@@ -28,11 +28,6 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED.add(defaultSensorColor);
         PopulationManager.SPECIES_SENSOR_COLORS.set(0, defaultSensorColor);
 
-        //Set temporary default to hunting mode
-        params.HUNTING_MODE = "hierarchy";
-        document.getElementById("huntingMode").value = "hierarchy";
-        document.getElementById("agent_neighbors").checked =  params.HUNTING_MODE === "hierarchy";
-
         this.worlds = new Map();
         this.createFoodPodLayout();
 
@@ -47,6 +42,7 @@ class PopulationManager {
             this.specieWorldList.set(PopulationManager.SPECIES_ID, [0]);
             this.spawnFood(PopulationManager.SPECIES_ID, false);
             this.spawnFood(PopulationManager.SPECIES_ID, true);
+            world.updateFoodHierarchy();
             this.resetCanvases();
         }
         else {
@@ -224,7 +220,6 @@ class PopulationManager {
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
         params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
         params.INNER_WALL = document.getElementById("inner_wall").checked;
-        params.WORLD_UPDATE_ASYNC = document.getElementById("worldUpdateAsync").checked;
         params.AGENT_BITING = document.getElementById("agent_biting").checked;
         params.NO_BORDER = document.getElementById("no_border").checked;
         params.LARGE_ENERGY_THRESHOLD = document.getElementById("largeEnergyThresh").checked;
@@ -320,6 +315,9 @@ class PopulationManager {
             if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
                 params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
         }
+        if (document.activeElement.id !== "FITNESS_HUNTING_PREY") {
+            params.FITNESS_HUNTING_PREY = parseFloat(document.getElementById("FITNESS_HUNTING_PREY").value);
+        }
 
         if (document.activeElement.id !== "FITNESS_BUMPING_INTO_WALL") {
             params.FITNESS_BUMPING_INTO_WALL = parseFloat(document.getElementById("FITNESS_BUMPING_INTO_WALL").value);
@@ -339,6 +337,14 @@ class PopulationManager {
 
         if (document.activeElement.id !== "max_ticks_to_consume") {
             params.MAX_TICKS_TO_CONSUME = parseInt(document.getElementById("max_ticks_to_consume").value);
+        }
+
+        if (document.activeElement.id !== "food_diameter") {
+            params.FOOD_DIAMETER = parseFloat(document.getElementById("food_diameter").value);
+        }
+
+        if (document.activeElement.id !== "agent_diameter") {
+            params.AGENT_DIAMETER = parseFloat(document.getElementById("agent_diameter").value);
         }
 
         if (document.activeElement.id !== "cooldown_to_regen") {

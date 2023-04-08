@@ -82,29 +82,9 @@ class GameEngine {
             return;
         }
 
-
-        if (!params.WORLD_UPDATE_ASYNC) {
-            this.population.worlds.forEach((members) => {
-                members.food.forEach((food) => {
-                    food.update();
-                });
-                members.poison.forEach(poison => {
-                    poison.update();
-                });
-                members.agents.forEach(agent => {
-                    agent.update()
-                });
-                members.walls.forEach(wall => {
-                    wall.update(members.ctx)
-                });
-            });
-        }
-        else {
-            //Update world async
-            this.population.worlds.forEach((world) => {
-                execAsync(world.update());
-            });
-        }
+        this.population.worlds.forEach((world) => {
+            world.update();
+        });
 
         let isNewGeneration = this.population.update();
 
@@ -132,3 +112,4 @@ class GameEngine {
 // KV Le was here :)
 // and Artem Potafiy
 // and Gabe Bryan
+// and Toan Nguyen

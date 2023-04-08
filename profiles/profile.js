@@ -33,6 +33,11 @@ const loadProfile = (profile) => {
         document.getElementById("restart_sim").click();
     }
 
+    if (profile.FOOD_AGENT_RATIO){
+        params.FOOD_AGENT_RATIO = profile.FOOD_AGENT_RATIO;
+        document.getElementById("food_agent_ratio").value = profile.FOOD_AGENT_RATIO;
+    }
+
     //Update fitness
     if (profile.FITNESS_CALORIES){
         params.FITNESS_CALORIES = profile.FITNESS_CALORIES;
@@ -79,6 +84,29 @@ const loadProfile = (profile) => {
     if (profile.NO_BORDER){
         params.NO_BORDER = profile.NO_BORDER;
         document.getElementById("no_border").checked = profile.NO_BORDER;
+    }
+
+    //Agent Size and Food Size
+    if (profile.AGENT_DIAMETER){
+        params.AGENT_DIAMETER = profile.AGENT_DIAMETER;
+        document.getElementById("agent_diameter").value = profile.AGENT_DIAMETER;
+    }
+
+    if (profile.FOOD_DIAMETER){
+        params.FOOD_DIAMETER = profile.FOOD_DIAMETER;
+        document.getElementById("food_diameter").value = profile.FOOD_DIAMETER;
+    }
+
+    //Hunting Mode
+    if (profile.HUNTING_MODE){
+        params.HUNTING_MODE = profile.HUNTING_MODE;
+        document.getElementById("huntingMode").value = profile.HUNTING_MODE;
+    }
+
+    //Agent can detect other agents neighboring to it
+    if (profile.AGENT_NEIGHBORS){
+        params.AGENT_NEIGHBORS = profile.AGENT_NEIGHBORS;
+        document.getElementById("agent_neighbors").checked = profile.AGENT_NEIGHBORS;
     }
 
     params.SIM_CURR_TRIAL = 0; 
@@ -267,6 +295,70 @@ const simulationProfile_No_Border_InnerWall = {
     INNERWALL: true,
 };
 
+const simulationProfile_Agent_Food_Size_12_12 = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "Agent_Food_Size_12_12",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 2,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 10,
+
+    HUNTING_MODE: "deactivated",
+    AGENT_DIAMETER: 12,
+    FOOD_DIAMETER: 12,
+    AGENT_NEIGHBORS: false,
+};
+
+const simulationProfile_Agent_Food_Size_10_20 = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "Agent_Food_Size_10_20",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 2,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 10,
+
+    HUNTING_MODE: "deactivated",
+    AGENT_DIAMETER: 10,
+    FOOD_DIAMETER: 20,
+    AGENT_NEIGHBORS: false,
+};
+
+const simulationProfile_Agent_Food_Size_15_15 = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "Agent_Food_Size_15_15",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 2,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 10,
+
+    HUNTING_MODE: "deactivated",
+    AGENT_DIAMETER: 15,
+    FOOD_DIAMETER: 15,
+    AGENT_NEIGHBORS: false,
+};
+
+const simulationProfile_Agent_Food_Size_15_12 = {
+    DB: "NEATWi23",
+    DB_COLLECTION: "Agent_Food_Size_15_12",
+    GEN_TO_SAVE: 200,
+    SIM_TRIAL_NUM: 2,
+    
+    NUM_AGENTS: 50,
+    AGENT_PER_WORLD : 1,
+    FOOD_AGENT_RATIO: 10,
+
+    HUNTING_MODE: "deactivated",
+    AGENT_DIAMETER: 15,
+    FOOD_DIAMETER: 12,
+    AGENT_NEIGHBORS: false,
+};
+
 const profileList = {
     "25 Number of agents": simulationProfile_numberOfAgents_25,
     "50 Number of agents": simulationProfile_numberOfAgents_50,
@@ -283,7 +375,10 @@ const profileList = {
     "5 Agents Per world ": simulationProfile_agentPerWorld_5,
     "10 Agents Per world ": simulationProfile_agentPerWorld_10,
     "Not limiting agents per world ": simulationProfile_agentPerWorld_unlimit,
-
+    "Agent Diameter 12 Food Diameter 12": simulationProfile_Agent_Food_Size_12_12,
+    "Agent Diameter 10 Food Diameter 20": simulationProfile_Agent_Food_Size_10_20,
+    "Agent Diameter 15 Food Diameter 15": simulationProfile_Agent_Food_Size_15_15,
+    "Agent Diameter 15 Food Diameter 12": simulationProfile_Agent_Food_Size_15_12,
 };
 
 const initProfiles = () => {
