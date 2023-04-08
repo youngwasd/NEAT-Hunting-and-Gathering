@@ -60,8 +60,6 @@ class Agent {
         this.resetOrigin(); // assigns this Agent's origin point to its current position
         this.updateBoundingCircle(); // initialize the bounding circle
 
-        this.tickCounter = 0;
-
         this.isOutOfBound = false;//Whether the agent is Out of Bound
         this.numberOfTickOutOfBounds = 0;//Total ticks the agent spent out of bounds
         this.numberOfTickBumpingIntoWalls = 0;//Total ticks "bumping" into walls
@@ -308,6 +306,7 @@ class Agent {
         let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 
+        console.log(input);
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
             this.rightWheel = 0;
@@ -406,7 +405,6 @@ class Agent {
         else {
             this.isOutOfBound = false;
         }
-        this.tickCounter++;
     };
 
     /** Updates this Agent's diameter in alignment with the DYNAMIC_AGENT_SIZING sim parameter */

@@ -10,7 +10,7 @@ const params = {
     AGENT_NEIGHBORS: false,
     FOOD_AGENT_RATIO: 1,
     POISON_AGENT_RATIO: 0,
-    COMPAT_THRESH: 0.04,
+    COMPAT_THRESH: 0.07,
     ENFORCE_MIN_FOOD: true,
     ENFORCE_MIN_POISON: false,
     AGENT_VISION_RADIUS: 500,
@@ -35,7 +35,8 @@ const params = {
     AGENT_VISION_ANGLE: 180,
     AGENT_VISION_IS_CONE: true,
     AGENT_VISION_DRAW_CONE: false,
-    MAX_TICKS_TO_CONSUME: 1,
+    MAX_TICKS_TO_CONSUME: 50,
+    COOLDOWN_TO_REGEN: 10,
     EVOLVE_K_AND_M: true,
     TICK_TO_UPDATE_CURRENT_GEN_DATA: 0,
     AGENT_BITING: false,
@@ -55,6 +56,7 @@ const params = {
     SIM_PAUSE: false,
     PAUSE_DRAWING: false,
     HUNTING_MODE: "hierarchy",
+    FOOD_BUSH: true,
 };
 
 const getMedian = (arr) => {

@@ -162,6 +162,12 @@
         <option value="hierarchy">Food Hierarchy Index</option>
         <option value="multipleGeneration">Multiple Generation</option>
     </select>
+    <div>
+        <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
+    </div>
+    <div>
+        <input type="checkbox" id="food_bush" checked = "true"> Bush Food (Touch food otherwise)
+    </div>
 
     <div>
         <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input
@@ -180,7 +186,7 @@
         <input type="text" id="generation_time" value="700"> Generation Time (ticks)
     </div>
     <div>
-        <input type="text" id="compat_threshold" value="0.04"> Species Compatibility Threshold
+        <input type="text" id="compat_threshold" value="0.07"> Species Compatibility Threshold
     </div>
     <div>
         <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
@@ -203,11 +209,12 @@
         on)
     </div>
     <div>
-        <input type="text" id="max_ticks_to_consume" value="1"> Number of Ticks to Consume
+        <input type="text" id="max_ticks_to_consume" value="50"> Number of Ticks to Consume
     </div>
     <div>
-        <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
+        <input type="text" id="cooldown_to_regen" value="10"> Number of Ticks for Food to Begin Regen
     </div>
+    
     <br> <br>
     <strong>Debug Options</strong>
     <br>

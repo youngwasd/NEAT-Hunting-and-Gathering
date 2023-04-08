@@ -120,6 +120,11 @@ class Food {
         this.updateMovingDestination();
     };
 
+
+    getDisplayHue(){
+        return this.ticksToConsume / params.MAX_TICKS_TO_CONSUME * 110;
+    };
+
     /** Indicates whether this food is currently decaying */
     isDecaying() {
         return this.phase === this.lifecycle_phases.decaying;
@@ -206,7 +211,13 @@ class Food {
      * @returns "{calories, consumption completion fraction}"
     */
     consume() {
-        this.ticksToConsume--;
+        if(this.ticksToConsume >= 0) this.ticksToConsume--;
+        this.lastTickBeingEaten = this.game.population.tickCounter;
+        if(params.FOOD_BUSH) return this.gradualConsume();
+        else return this.singleConsume();
+    };
+
+    singleConsume() {
         // if this food is poisonous, then our calories are NEGATED
         if (this.ticksToConsume <= 0) {
             let cals = this.getCalories();
@@ -220,13 +231,27 @@ class Food {
             return { calories: cals, completion: 1 };
         }
         return { calories: 0, completion: (params.MAX_TICKS_TO_CONSUME - this.ticksToConsume) / params.MAX_TICKS_TO_CONSUME };
-    };
+    
+    }
+
+    gradualConsume(){
+        if(this.ticksToConsume >= 0) {
+            let cals = this.getCalories() / params.MAX_TICKS_TO_CONSUME;
+            this.foodTracker.addCalories(cals);
+            return {calories: cals, completion: this.getConsumptionCompletion()};
+        }
+        return {calories: 0, completion: this.getConsumptionCompletion()};
+    }
 
     getCalories() {
         if (this.phase >= this.lifecycle_phases.dead) return 0;
         return this.isPoison ?
             Math.abs(this.phase_properties[this.phase].calories) * -1
             : this.phase_properties[this.phase].calories;
+    }
+
+    getConsumptionCompletion(){
+        return (params.MAX_TICKS_TO_CONSUME - this.ticksToConsume) / params.MAX_TICKS_TO_CONSUME;
     }
 
     /** Processes a reproduction operation on this food */
@@ -390,7 +415,9 @@ class Food {
             }
         }
 
-        if (this.tickCounter > this.lastTickBeingEaten + 2 && this.ticksToConsume < params.MAX_TICKS_TO_CONSUME) this.ticksToConsume++;
+        if (this.game.population.tickCounter - this.lastTickBeingEaten >= params.COOLDOWN_TO_REGEN 
+            && this.ticksToConsume < params.MAX_TICKS_TO_CONSUME) 
+            this.ticksToConsume++;
 
         if (!this.removeFromWorld) {
             this.updateBoundingCircle(); // update our bounding circle to reflect our state
@@ -437,7 +464,7 @@ class Food {
             color = this.game.population.worlds.get(this.worldId).worldColor;
         }
 
-        ctx.fillStyle = `hsl(${this.phase_properties[this.phase].color}, 100%, 50%)`;
+        ctx.fillStyle = `hsl(${this.getDisplayHue()}, 100%, 50%)`;
         if (params.POISON_AGENT_RATIO === 0 && params.DISPLAY_SAME_WORLD) {
             ctx.fillStyle = `hsl(${color}, 100%, 50%)`;
         }
