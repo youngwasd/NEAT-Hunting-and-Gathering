@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
-
+    
 <head>
     <meta charset="utf-8">
     <title>TCSS 499 NEAT Simulation</title>
@@ -42,17 +42,18 @@
 </head>
 
 <body>
+
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
-    <div style="float: left; width:1000; height:1000; " id="carouselCanvasIndicators" class="carousel carousel-dark"
+    <div style="float: left; width:1010; height:1010; " id="carouselCanvasIndicators" class="carousel carousel-dark"
         data-bs-ride="carousel">
         <div id="canvas-indicators" class="carousel-indicators">
         </div>
         <div style="padding-left: 5;
-        padding-right: 5;
+        padding-right: 5;  
         margin-left: auto;
         margin-right: auto;
         display: block;
-        width: 1005px;" id="canvas-carousel" class="carousel-inner">
+        width: 1015px;" id="canvas-carousel" class="carousel-inner">
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
             data-bs-slide="prev">
@@ -76,7 +77,7 @@
         take effect)
     </div>
     <div>
-        <input type="checkbox" id="agent_neighbors"> Agent Neighbors
+        <input type="checkbox" id="agent_neighbors" checked="true"> Agent Neighbors
     </div>
     <div>
         <!--<input type="checkbox" id="dynamic_agent_sizing"> Agent Size Changes With Energy-->
@@ -157,9 +158,9 @@
     </div>
 
     <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
-    <select name="huntingMode" id="huntingMode"  value="hierarchy">
+    <select name="huntingMode" id="huntingMode">
         <option value="deactivated">Deactivated</option>
-        <option value="hierarchy">Food Hierarchy Index</option>
+        <option selected="selected" value="hierarchy">Food Hierarchy Index</option>
         <option value="multipleGeneration">Multiple Generation</option>
     </select>
     <div>
@@ -189,7 +190,7 @@
         <input type="text" id="compat_threshold" value="0.07"> Species Compatibility Threshold
     </div>
     <div>
-        <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
+        <input type="text" id="food_agent_ratio" value="10"> Food to Agent Ratio
     </div>
     <div>
         <input type="text" id="poison_agent_ratio" value="0"> Poison to Agent Ratio
@@ -227,7 +228,11 @@
     <div>
         <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
         <br>
-        <input type="checkbox" id="pauseDrawing"> Pause Drawing (To speed up the simulation)
+       
+        <label for="pauseDrawing"> 
+            <input type="checkbox" id="pauseDrawing" name="pauseDrawing"> 
+            Pause Drawing (To speed up the simulation) 
+        </label>
         <br>
         <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation output
         data (Put 0 to disable)

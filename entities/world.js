@@ -224,8 +224,15 @@ class World {
 
         //foodHierarchy of agent per world
         let foodHierarchy = false;
-        let startPosX = params.CANVAS_SIZE / 2;
-        let startPosY = params.CANVAS_SIZE / 2;
+        let halfSize = params.CANVAS_SIZE / 2;
+        let quarterSize = halfSize / 4;
+        
+        //Divide the map into 4 quadrants
+        //Coordinate of the four quadrants
+        let startPosX = [quarterSize, quarterSize + halfSize, quarterSize, quarterSize + halfSize,];
+        let startPosY = [quarterSize, quarterSize + halfSize, quarterSize + halfSize, quarterSize];
+        let spawnRadius = 100;
+
         let numberOfAgent = params.AGENT_PER_WORLD;
         if (params.AGENT_PER_WORLD === 0){  
             numberOfAgent = params.NUM_AGENTS;
@@ -233,21 +240,24 @@ class World {
         if (params.HUNTING_MODE === "hierarchy") {
             foodHierarchy = {
                 index: 0,
-                step: 100 / numberOfAgent,
+                step: 10,
             };
         }
-
-        this.agents.forEach(agent => {
+        
+        let i = randomInt(4);
+        shuffleArray(this.agents).forEach(agent => {
             //Assign their food hiercarchy index based on how many agents per world
             if (foodHierarchy) {
                 agent.foodHierarchyIndex = foodHierarchy.index;
                 foodHierarchy.index += foodHierarchy.step;
 
                 //Update the agent position so they don't bump into each other when spawned
-                startPosX = randomInt(params.CANVAS_SIZE - 300) + 300;
-                startPosY = randomInt(params.CANVAS_SIZE - 300) + 300;
-                agent.x = startPosX;
-                agent.y = startPosY;
+                //Respawn at the opposite quadrant
+            
+                agent.x = randomInt(spawnRadius * 2) - spawnRadius + startPosX[i];
+                agent.y = randomInt(spawnRadius * 2) - spawnRadius + startPosY[i];
+                i++;
+                i %= 4;
                 agent.activateAgent();
             }
         });

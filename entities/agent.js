@@ -61,6 +61,7 @@ class Agent {
         this.isOutOfBound = false;//Whether the agent is Out of Bound
         this.numberOfTickOutOfBounds = 0;//Total ticks the agent spent out of bounds
         this.numberOfTickBumpingIntoWalls = 0;//Total ticks "bumping" into walls
+        this.numberOfTimesConsumed = 0;//Total number of time being eaten by predators
         this.visCol = []; //initialize the array of all vision collisions
         this.spotted = [];
         this.biting = false;
@@ -150,7 +151,8 @@ class Agent {
 
     /**
      * Get the hue based on food index
-     * @param {*} entity The entity that called getDataHue
+     * @param {*} entity The we are checking food Hierarchy Index against 
+     * @return a lower hue to display that entity is dangerous or higher hue for safe or consumable
      */
     getDataHue(entity) {
         if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
@@ -235,6 +237,8 @@ class Agent {
     resetCounters() {
         this.numberOfTickBumpingIntoWalls = 0;
         this.numberOfTickOutOfBounds = 0;
+        this.numberOfPreyHunted = 0;
+        this.numberOfTimesConsumed = 0;
         this.totalOutputs = [0, 0, 0];
     }
 
@@ -278,6 +282,51 @@ class Agent {
     activateAgent() {
         this.isActive = true;
         this.energy = Agent.START_ENERGY;
+    }
+
+    /**
+     * Action that performed when being consumed
+     *  @param {*} predator the predator that is consuming this entity
+     */
+    consume(predator){
+        //Exit if having the same or bigger food Hierarchy Index
+        if (this.foodHierarchyIndex >= predator.foodHierarchyIndex){
+            return 0;
+        }
+
+        this.numberOfTimesConsumed++;
+        
+        let calReward = 0;
+        //Determine the level of reward based on how far the index
+        if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 10){
+            calReward = 1;
+        } else if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 20){
+            calReward = 0.5;
+        } else {
+            calReward = 0.1;
+        }
+
+        calReward *= 50;//Base Reward is 50 calories
+        
+        //Reset prey position
+        let halfMapSize = params.CANVAS_SIZE / 2;
+        let spawnRadius = 100;
+        let spawnPointX = params.CANVAS_SIZE / 4;
+        let spawnPointY = params.CANVAS_SIZE / 4;
+
+        if (predator.x < halfMapSize){
+            spawnPointX += halfMapSize;
+        }
+
+        if (predator.y < halfMapSize){
+            spawnPointY += halfMapSize;
+        }
+
+        //Respawn at the opposite quadrant
+        this.x = randomInt(spawnRadius * 2) - spawnRadius + spawnPointX;
+        this.y = randomInt(spawnRadius * 2) - spawnRadius + spawnPointY;
+
+        return calReward;
     }
 
     /** Updates this Agent for the current tick */
@@ -342,7 +391,6 @@ class Agent {
         let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 
-        console.log(input);
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
             this.rightWheel = 0;
@@ -421,13 +469,13 @@ class Agent {
                     foundFood = true;
                 }
 
-                if (entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
+                //If the entity is an agent, check the hierarchy index
+                if (params.HUNTING_MODE === "hierarchy" && entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
                     if (this.biting || !params.AGENT_BITING) {
-                        let cals = entity.caloriesReward;
+                        let cals = entity.consume(this);
                         this.energy += cals;
-                        entity.deactivateAgent();
-                        entity.isActive = false;
                         ++this.numberOfPreyHunted;
+
                     }
                 }
             });

@@ -109,6 +109,11 @@ const loadProfile = (profile) => {
         document.getElementById("agent_neighbors").checked = profile.AGENT_NEIGHBORS;
     }
 
+    if (profile.MAX_TICKS_TO_CONSUME){
+        params.MAX_TICKS_TO_CONSUME = profile.MAX_TICKS_TO_CONSUME;
+        document.getElementById("max_ticks_to_consume").value = profile.MAX_TICKS_TO_CONSUME;     
+    }
+
     params.SIM_CURR_TRIAL = 0; 
     gameEngine.population.resetSim(); 
 };

@@ -123,7 +123,7 @@ class PopulationManager {
             let centerX = params.CANVAS_SIZE / 2 + randomDist * Math.cos(theta);
             let centerY = params.CANVAS_SIZE / 2 + randomDist * Math.sin(theta);
             let currList = flag ? poisonPods : foodPods;
-            currList.push(new FoodPod(this.game, centerX, centerY, 100, flag));
+            currList.push(new FoodPod(this.game, centerX, centerY, params.CANVAS_SIZE / 5, flag));
             flag = !flag;
         }
         this.foodPodLayout = foodPods;
@@ -193,10 +193,19 @@ class PopulationManager {
         //Update hunting mode
         params.HUNTING_MODE = document.getElementById("huntingMode").value;
         if (params.HUNTING_MODE === "deactivated") {
-            params.HUNTING_MODE = false;
+            params.HUNTING_MODE = false;   
+        }
+        else if (params.HUNTING_MODE === "hierarchy") {
+            params.AGENT_NEIGHBORS = true;
+            document.getElementById("agent_neighbors").checked = true;
+            params.SPLIT_SPECIES = false;
+            document.getElementById("split_species").checked = false;
+            params.FOOD_BUSH = false;
+            document.getElementById("food_bush").checked = false;
+            params.MAX_TICKS_TO_CONSUME = 1;
+            document.getElementById("max_ticks_to_consume").value = 1;
             
         }
-        document.getElementById("agent_neighbors").checked =  params.HUNTING_MODE === "hierarchy";
 
 
         Genome.resetAll();
@@ -923,7 +932,9 @@ class PopulationManager {
         //Resets all agents
         if (!params.FREE_RANGE) {
             this.agentsAsList().forEach(agent => {
-                agent.moveToWorldCenter();
+                if (params.HUNTING_MODE !== "hierarchy"){
+                    agent.moveToWorldCenter();
+                }  
                 agent.resetOrigin();
                 agent.resetEnergy();
                 agent.resetCalorieCounts();
