@@ -197,7 +197,7 @@ class PopulationManager {
         if (params.HUNTING_MODE === "deactivated") {
             params.HUNTING_MODE = false;   
         }
-        else if (params.HUNTING_MODE === "hierarchy") {
+        else if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum")  {
             params.AGENT_NEIGHBORS = true;
             document.getElementById("agent_neighbors").checked = true;
             params.SPLIT_SPECIES = false;
@@ -206,7 +206,7 @@ class PopulationManager {
             document.getElementById("food_bush").checked = false;
             params.MAX_TICKS_TO_CONSUME = 1;
             document.getElementById("max_ticks_to_consume").value = 1;
-            
+            //Genome.DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index
         }
 
 
@@ -353,6 +353,10 @@ class PopulationManager {
 
         if (document.activeElement.id !== "food_diameter") {
             params.FOOD_DIAMETER = parseFloat(document.getElementById("food_diameter").value);
+        }
+
+        if (document.activeElement.id !== "agent_max_speed") {
+            params.AGENT_MAX_SPEED = parseFloat(document.getElementById("agent_max_speed").value);
         }
 
         if (document.activeElement.id !== "agent_diameter") {
@@ -824,6 +828,14 @@ class PopulationManager {
         return canvas;
     };
 
+    activateWorld(worldId){
+        this.worlds.get(worldId).activate();
+    }
+
+    deactivateWorld(worldId){
+        this.worlds.get(worldId).deactivate();
+    }
+
     removeWorld(worldId) {
         //Replenish the world color pool
         PopulationManager.WORLD_COLOR_POOL.push(this.worlds.get(worldId).worldColor);
@@ -888,7 +900,6 @@ class PopulationManager {
 
     
     processGeneration() {
-        
         //Data collections for histograms
         let avgLeftWheelOut = new Array(20).fill(0);
         let avgRightWheelOut = new Array(20).fill(0);
@@ -963,8 +974,17 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED = new Set([...PopulationManager.SENSOR_COLORS_USED].filter(color => remainingSensorColors.has(color)));
 
         //Resets all agents
-        this.resetAgents();
-
+        if (!params.FREE_RANGE) {
+            this.agentsAsList().forEach(agent => {
+                if (params.HUNTING_MODE !== "hierarchy" && params.HUNTING_MODE !== "hierarchy_spectrum"){
+                    agent.moveToWorldCenter();
+                }  
+                agent.resetOrigin();
+                agent.resetEnergy();
+                agent.resetCalorieCounts();
+                agent.resetCounters();
+            });
+        }
        
 
         //Clear current walls and add random walls to the map. Will be different for each world

@@ -27,10 +27,16 @@ class World {
         else {
             this.addBorderToWorld();
         }
+
+        this.isActive = true;//Keep track of whether this world is still active
     };
 
     //Async update
     update() {
+        //Do not update if world is not active
+        if (!this.isActive){
+            return;
+        }
         for (let i = 0; i < this.food.length; i++) {
             if (!this.food[i].removeFromWorld) {
                 this.food[i].update();
@@ -143,6 +149,11 @@ class World {
         let southWall = new Wall(this.game, this.worldId, params.CANVAS_SIZE, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
         let westWall = new Wall(this.game, this.worldId, 0, 0, params.CANVAS_SIZE, 0);
 
+        // let northWall = new Wall(this.game, this.worldId, 0, 0, 0, params.CANVAS_SIZE - 100);
+        // let eastWall = new Wall(this.game, this.worldId, 0, params.CANVAS_SIZE - 100, params.CANVAS_SIZE  - 100, params.CANVAS_SIZE - 100);
+        // let southWall = new Wall(this.game, this.worldId, params.CANVAS_SIZE - 100, 0, params.CANVAS_SIZE - 100, params.CANVAS_SIZE - 100);
+        // let westWall = new Wall(this.game, this.worldId, 0, 0, params.CANVAS_SIZE - 100 , 0);
+
         this.walls.push(northWall);
         this.walls.push(eastWall);
         this.walls.push(southWall);
@@ -215,10 +226,18 @@ class World {
 
     }
 
+    activate(){
+        this.isActive = true; 
+    }
+
+    deactivate(){
+        this.isActive = false;
+    }
+
     //Update food hierarchy of all agents in this world
-    updateFoodHierarchy(){
+    updateFoodHierarchy() {
         //Hunting mode is turned off
-        if (!params.HUNTING_MODE) {
+        if (params.HUNTING_MODE === "deactivated") {
             return;
         }
 
@@ -226,38 +245,70 @@ class World {
         let foodHierarchy = false;
         let halfSize = params.CANVAS_SIZE / 2;
         let quarterSize = halfSize / 4;
-        
+
         //Divide the map into 4 quadrants
         //Coordinate of the four quadrants
-        let startPosX = [quarterSize, quarterSize + halfSize, quarterSize, quarterSize + halfSize,];
-        let startPosY = [quarterSize, quarterSize + halfSize, quarterSize + halfSize, quarterSize];
-        let spawnRadius = 100;
+        // let startPosX = [quarterSize, quarterSize + halfSize, quarterSize, quarterSize + halfSize,];
+        // let startPosY = [quarterSize, quarterSize + halfSize, quarterSize + halfSize, quarterSize];
+        // let i = randomInt(4);
+        // let spawnRadius = 100;
 
         let numberOfAgent = params.AGENT_PER_WORLD;
-        if (params.AGENT_PER_WORLD === 0){  
+        if (params.AGENT_PER_WORLD === 0) {
             numberOfAgent = params.NUM_AGENTS;
         }
-        if (params.HUNTING_MODE === "hierarchy") {
+
+        let agentAssigned = 0;
+        if (params.HUNTING_MODE === "hierarchy_spectrum") {
             foodHierarchy = {
                 index: 0,
-                step: 10,
+                step: (100 - 0) / params.AGENT_PER_WORLD,
             };
         }
-        
-        let i = randomInt(4);
+
+        let spawnRadius = 300;
+        let prevX = halfSize, prevY = halfSize;
+
         shuffleArray(this.agents).forEach(agent => {
             //Assign their food hiercarchy index based on how many agents per world
             if (foodHierarchy) {
-                agent.foodHierarchyIndex = foodHierarchy.index;
-                foodHierarchy.index += foodHierarchy.step;
 
-                //Update the agent position so they don't bump into each other when spawned
-                //Respawn at the opposite quadrant
-            
-                agent.x = randomInt(spawnRadius * 2) - spawnRadius + startPosX[i];
-                agent.y = randomInt(spawnRadius * 2) - spawnRadius + startPosY[i];
-                i++;
-                i %= 4;
+                //Spread the food hierarchy index accress the whole agent population
+                ++agentAssigned;
+                if (params.HUNTING_MODE === "hierarchy_spectrum") {
+                    agent.foodHierarchyIndex = foodHierarchy.index;
+                    foodHierarchy.index += foodHierarchy.step;
+                }
+                else{
+                    //Assign either predator or prey
+                    if (agnetAssigned >= this.agents.length / 2){
+                        agent.foodHierarchyIndex = 50;
+                    }
+                    else{
+                        agent.foodHierarchyIndex = 0;
+                    }
+                }
+
+
+                // //Update the agent position so they don't bump into each other when spawned
+                // //Respawn at the opposite quadrant
+                // agent.x = randomInt(spawnRadius * 2) - spawnRadius + startPosX[i];
+                // agent.y = randomInt(spawnRadius * 2) - spawnRadius + startPosY[i];
+                // i++;
+                // i %= 4;
+
+                this.x = randomInt(spawnRadius * 2) - spawnRadius + prevX + 100;
+                this.y = randomInt(spawnRadius * 2) - spawnRadius + prevY + 100;
+
+                if (isOutOfBound(this.x)) {
+                    this.x = -randomInt(spawnRadius * 2) + spawnRadius + prevX - 100;
+                }
+                if (isOutOfBound(this.y)) {
+                    this.y = -randomInt(spawnRadius * 2) + spawnRadius + prevY - 100;
+                }
+                prevX = this.x;
+                prevY = this.y;
+
                 agent.activateAgent();
             }
         });
@@ -282,14 +333,13 @@ class World {
         }
     }
 
-    //Async drawing
     draw() {
         let ctx = this.ctx;
         // if (params.DISPLAY_SAME_WORLD) {
         //     ctx = this.game.population.worlds.entries().next().value[1].ctx;
         // }
         this.ctx.clearRect(0, 0, params.CANVAS_SIZE, params.CANVAS_SIZE);
-        
+
         this.home.draw(ctx);
         this.food.forEach(food => {
             if (!food.removeFromWorld) {
@@ -308,11 +358,9 @@ class World {
         });
         this.display.draw(ctx);
 
-        if (params.INNER_WALL) {
-            this.walls.forEach(wall => {
-                wall.draw(ctx)
-            });
-        }
+        this.walls.forEach(wall => {
+            wall.draw(ctx)
+        });
     }
 
 

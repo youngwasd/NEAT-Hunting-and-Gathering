@@ -31,44 +31,51 @@ class DataDisplay {
             let i = 0, j = 0;
             let text = "";
             let speciesPerLine = Math.sqrt(world.speciesList.size);
-            
+
             world.speciesList.forEach(specie => {
-                if (text !== ""){
-                    text += ", ";    
+                if (text !== "") {
+                    text += ", ";
                 }
                 text += specie;
                 i++;
-                if (i >= speciesPerLine){
+                if (i >= speciesPerLine) {
                     i = 0;
                     speciesText.push(text);
                     text = "";
                 }
             });
-            if (text !== ""){
+            if (text !== "") {
                 speciesText.push(text);
             }
             let yStart = 90;
 
             //Insert enter for viewing capability
-            
+
             //console.log(speciesText, speciesText.length);
             ctx.font = "16px sans-serif";
             speciesText.forEach(text => {
-                ctx.strokeText(`${yStart == 90 ? "Species: ": "" }${text}`, params.CANVAS_SIZE / 2, yStart);
+                ctx.strokeText(`${yStart == 90 ? "Species: " : ""}${text}`, params.CANVAS_SIZE / 2, yStart);
                 yStart += 30;
             });
-            
+
         }
 
         ctx.font = "20px sans-serif";
 
-        //Alart user that all agents are drawned in the first world
-        if (params.DISPLAY_SAME_WORLD) {
-            let firstWorldId = this.game.population.worlds.entries().next().value[1].worldId;
-            if (this.worldId !== firstWorldId) {
-                ctx.strokeText(`All agents and food are drawn in the first world with the ID: ${firstWorldId}`, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 3);
+        //Alert user that all agents are drawned in the first world
+
+        let firstWorldId = this.game.population.worlds.entries().next().value[1].worldId;
+        if (this.worldId !== firstWorldId) {
+            if (!this.game.population.worlds.get(this.worldId).isActive) {
+                ctx.strokeText("World is not active", params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 3);
             }
+            else if (params.DISPLAY_SAME_WORLD) {
+                    ctx.strokeText(`All agents and food are drawn in the first world with the ID: ${firstWorldId}`, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 3);
+                }
+
         }
+
+
 
         ctx.textAlign = "right";
         ctx.strokeText(`Living Species: ${PopulationManager.SPECIES_MEMBERS.size}`, params.CANVAS_SIZE - 10, 30);

@@ -66,12 +66,7 @@ class GameEngine {
     draw() {
         if (!params.PAUSE_DRAWING) {
             this.population.worlds.forEach(members => {
-                if (params.WORLD_UPDATE_ASYNC) {
-                    execAsync(members.draw());
-                }
-                else {
-                    members.draw();
-                }
+                members.draw();
             });
         }
     };

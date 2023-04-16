@@ -52,7 +52,7 @@ class Agent {
         this.resetEnergy(); // set the Agent's energy to the statically defined start energy
         this.updateDiameter(); // how wide the agent's circle is drawn
         this.wheelRadius = 1; // an agent is more or less structured like a Roomba vacuum robot, and this is the radius of one of its 2 wheels
-        this.maxVelocity = 5; // a UNITLESS value which controls the movement speed of Agents in the sim
+        this.maxVelocity = params.AGENT_MAX_SPEED; // a UNITLESS value which controls the movement speed of Agents in the sim
         this.resetCalorieCounts(); // resets the Agent's good and bad calories eaten
         this.age = 0; // all Agents start at age 0
         this.resetOrigin(); // assigns this Agent's origin point to its current position
@@ -83,8 +83,8 @@ class Agent {
         /**
          * @returns the agent's fitness in regard of hunting
          */
-        const huntingFitness = () =>{
-            let fitnessFromHunting = 0; 
+        const huntingFitness = () => {
+            let fitnessFromHunting = 0;
             fitnessFromHunting += params.FITNESS_HUNTING_PREY * this.numberOfPreyHunted;
             return fitnessFromHunting;
         }
@@ -155,10 +155,12 @@ class Agent {
      * @return a lower hue to display that entity is dangerous or higher hue for safe or consumable
      */
     getDataHue(entity) {
-        if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
-            return 40;
+        //Food or safe 
         if (entity.foodHierarchyIndex < this.foodHierarchyIndex)
             return 300;
+        //Danger
+        if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
+            return 40;
     }
 
     /**
@@ -288,50 +290,76 @@ class Agent {
      * Action that performed when being consumed
      *  @param {*} predator the predator that is consuming this entity
      */
-    consume(predator){
+    consume(predator) {
         //Exit if having the same or bigger food Hierarchy Index
-        if (this.foodHierarchyIndex >= predator.foodHierarchyIndex){
+        if (this.foodHierarchyIndex >= predator.foodHierarchyIndex) {
             return 0;
         }
 
         this.numberOfTimesConsumed++;
-        
+
         let calReward = 0;
         //Determine the level of reward based on how far the index
-        if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 10){
+        if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 10) {
             calReward = 1;
-        } else if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 20){
+        } else if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 20) {
             calReward = 0.5;
         } else {
             calReward = 0.1;
         }
 
-        calReward *= 50;//Base Reward is 50 calories
-        
+        calReward *= 75;//Base Reward is 50 calories
+
         //Reset prey position
         let halfMapSize = params.CANVAS_SIZE / 2;
-        let spawnRadius = 100;
+
         let spawnPointX = params.CANVAS_SIZE / 4;
         let spawnPointY = params.CANVAS_SIZE / 4;
 
-        if (predator.x < halfMapSize){
+        if (predator.x < halfMapSize) {
             spawnPointX += halfMapSize;
         }
 
-        if (predator.y < halfMapSize){
+        if (predator.y < halfMapSize) {
             spawnPointY += halfMapSize;
         }
 
-        //Respawn at the opposite quadrant
-        this.x = randomInt(spawnRadius * 2) - spawnRadius + spawnPointX;
-        this.y = randomInt(spawnRadius * 2) - spawnRadius + spawnPointY;
+        //let spawnRadius = 100;
+
+        // //Respawn at the opposite quadrant
+        // this.x = randomInt(spawnRadius * 2) - spawnRadius + spawnPointX;
+        // this.y = randomInt(spawnRadius * 2) - spawnRadius + spawnPointY;
+
+        //Respawn predator
+        if (params.HUNTING_MODE === "hierarchy_spectrum"){
+            this.respawn(predator);
+        }
+        
+
+        
 
         return calReward;
+    }
+
+    respawn(predator){
+         //Respawn near the predator
+         let spawnRadius = 300;
+         this.x = randomInt(spawnRadius * 2) - spawnRadius + predator.x + 100;
+         this.y = randomInt(spawnRadius * 2) - spawnRadius + predator.y + 100;
+ 
+         if (isOutOfBound(this.x)) {
+             this.x = -randomInt(spawnRadius * 2) + spawnRadius + predator.x - 100;
+         }
+         if (isOutOfBound(this.y)) {
+             this.y = -randomInt(spawnRadius * 2) + spawnRadius + predator.y - 100;
+         }
     }
 
     /** Updates this Agent for the current tick */
     update() {
         let oldPos = { x: this.x, y: this.y }; // note where we are before moving
+
+        this.maxVelocity = params.AGENT_MAX_SPEED;
 
         let spottedNeighbors = [];
 
@@ -344,10 +372,10 @@ class Agent {
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
         let entities = 0;
-        if (params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0){
+        if (params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
             entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
         }
-        else{
+        else {
             entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         }
 
@@ -371,18 +399,19 @@ class Agent {
             // add input for the neighbors we have spotted, up to AGENT_NEIGHBOR_COUNT
             for (let i = 0; i < Math.min(spottedNeighbors.length, params.AGENT_NEIGHBOR_COUNT); i++) {
                 let neighbor = spottedNeighbors[i];
-                
+
                 //Add prey or predator's hue to ANN input 
-                if (params.HUNTING_MODE === "hierarchy" && neighbor instanceof Agent){
+                if (params.HUNTING_MODE === "hierarchy" && neighbor instanceof Agent) {
                     input.push(AgentInputUtil.normalizeHue(this.getDataHue(neighbor))); // the data hue
-                }else{
+                } else {
                     //Push the food input
                     input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue())); // the data hue
                 }
-                
+
                 input.push(AgentInputUtil.normalizeAngle(this.getRelativePositionAngle({ x: neighbor.x - this.x, y: neighbor.y - this.y }))); // normalized relative position angle
                 input.push(AgentInputUtil.normalizeDistance(distance(neighbor.BC.center, this.BC.center))); // normalized distance from the entity
             }
+
             for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
                 input.push(0);
             }
@@ -390,6 +419,11 @@ class Agent {
 
         let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
+
+        // //Push the hierarchy index to input 
+        // if (params.HUNTING_MODE === "hierarchy") {
+        //     input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
+        // }   
 
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
@@ -452,19 +486,21 @@ class Agent {
             let foundFood = false;
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    if (this.biting || !params.AGENT_BITING) {
-                        let consOut = entity.consume();
-                        let cals = consOut.calories;
-                        let completion = consOut.completion;
-                        if (cals < 0) {
-                            this.badCaloriesEaten += Math.abs(cals);
-                        } else {
-                            this.caloriesEaten += cals;
-                        }
-                        this.energy += cals;
+                    if (params.HUNTING_MODE === "hierarchy" && this.foodHierarchyIndex === 0) {//Only the lowest prey get to eat normal food
+                        if (this.biting || !params.AGENT_BITING) {
+                            let consOut = entity.consume();
+                            let cals = consOut.calories;
+                            let completion = consOut.completion;
+                            if (cals < 0) {
+                                this.badCaloriesEaten += Math.abs(cals);
+                            } else {
+                                this.caloriesEaten += cals;
+                            }
+                            this.energy += cals;
 
-                        this.eatingCompletion = completion;
-                        this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
+                            this.eatingCompletion = completion;
+                            this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
+                        }
                     }
                     foundFood = true;
                 }
@@ -634,6 +670,11 @@ class Agent {
                     if (newDist < minDist) {
                         minDist = newDist;
                         hueOfMinDist = entity.getDataHue();
+
+                        //
+                        if (params.HUNTING_MODE === "hierarchy" && entity instanceof Agent) {
+                            hueOfMinDist = this.getDataHue(entity);
+                        }
                         closestPoint = newSpot;
                     }
                 }
@@ -645,12 +686,22 @@ class Agent {
             //console.log("minDist: " + minDist);
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
-            let distInput = Math.max(1 - minDist / 800, 0);
+            let distInput = AgentInputUtil.normalizeVisionDist(minDist);
             input.push(distInput);
             //console.log("hueOfMinDist: " + hueOfMinDist);
             input.push((hueOfMinDist) / 360);
             currAngle += angleBetw;
+
+
         }
+    }
+
+    drawTextAgent(ctx, text, x = this.x, y = this.y, color = "orange", align = "center") {
+        ctx.fillStyle = color;
+        ctx.font = parseInt(2 * this.diameter / 3) + "px sans-serif";
+        ctx.textAlign = align;
+        ctx.fillText(text, x, y);
+        ctx.textAlign = "left";
     }
     /**
      * Draws this agent on its world canvas
@@ -673,10 +724,6 @@ class Agent {
         ctx.strokeStyle = `hsl(${color}, 100%, ${(!params.DISPLAY_SAME_WORLD) ? 0 : 50}%)`;
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, 100%, 50%)`;
 
-        if (params.HUNTING_MODE === "hierarchy") {
-            ctx.fillStyle = `hsl(${this.getDisplayHue()}, ${this.foodHierarchyIndex + 20}%, 50%)`;
-
-        }
         //Agent got deactivated
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) {
             ctx.strokeStyle = `hsl(${color}, 0%, ${(!params.DISPLAY_SAME_WORLD) ? 0 : 50}%)`;
@@ -702,18 +749,20 @@ class Agent {
         ctx.closePath();
 
         ctx.setLineDash([]);
-        
-        if (params.DISPLAY_SAME_WORLD || params.HUNTING_MODE === "hierarchy") {
-            ctx.fillStyle = "orange";
-            ctx.font = parseInt(2 * this.diameter / 3) + "px sans-serif";
 
-            let agentInnerText = this.worldId;
-            if (params.HUNTING_MODE === "hierarchy") {
-                agentInnerText = this.foodHierarchyIndex;
-            }
-            ctx.textAlign = "center";
-            ctx.fillText(agentInnerText, this.x, this.y + this.diameter / 4);
-            ctx.textAlign = "left";
+        //Display World ID
+        if (params.DISPLAY_SAME_WORLD) {
+            this.drawTextAgent(ctx, this.worldId, this.x, this.y + this.diameter / 4);
+        }
+
+        //Display hierarchy index
+        if (params.HUNTING_MODE === "hierarchy") {
+            this.drawTextAgent(ctx, this.foodHierarchyIndex, this.x, this.y - this.diameter - 2, "red");
+        }
+
+        //Display species id
+        if (params.SPLIT_SPECIES === false) {
+            this.drawTextAgent(ctx, this.speciesId, this.x, this.y + this.diameter + 2);
         }
 
         ctx.lineWidth = 2;

@@ -44,16 +44,16 @@
 <body>
 
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
-    <div style="float: left; width:1010; height:1010; " id="carouselCanvasIndicators" class="carousel carousel-dark"
+    <div style="float: left; width:1010; " id="carouselCanvasIndicators" class="carousel carousel-dark"
         data-bs-ride="carousel">
         <div id="canvas-indicators" class="carousel-indicators">
         </div>
-        <div style="padding-left: 5;
-        padding-right: 5;  
+        <div style="padding-left: 0;
+        padding-right: 0;  
         margin-left: auto;
         margin-right: auto;
         display: block;
-        width: 1015px;" id="canvas-carousel" class="carousel-inner">
+        width: 1010px;" id="canvas-carousel" class="carousel-inner">
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
             data-bs-slide="prev">
@@ -161,6 +161,7 @@
     <select name="huntingMode" id="huntingMode">
         <option value="deactivated">Deactivated</option>
         <option selected="selected" value="hierarchy">Food Hierarchy Index</option>
+        <option value="hierarchy_spectrum">Food Hierarchy Index Spectrum (Multiple Prey/Predator levels)</option>
         <option value="multipleGeneration">Multiple Generation</option>
     </select>
     <div>
@@ -193,7 +194,7 @@
         <input type="text" id="compat_threshold" value="0.07"> Species Compatibility Threshold
     </div>
     <div>
-        <input type="text" id="food_agent_ratio" value="10"> Food to Agent Ratio
+        <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
     </div>
     <div>
         <input type="text" id="poison_agent_ratio" value="0"> Poison to Agent Ratio
@@ -214,6 +215,9 @@
     </div>
     <div>
         <input type="text" id="max_ticks_to_consume" value="50"> Number of Ticks to Consume
+    </div>
+    <div>
+        <input type="text" id="agent_max_speed" value="5"> Agent Max Speed
     </div>
     <div>
         <input type="text" id="agent_diameter" value="15"> Agent Diameter
