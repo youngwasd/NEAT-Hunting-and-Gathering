@@ -916,7 +916,7 @@ class PopulationManager {
             this.genomeTracker.processGenome(agent.genome);
             agent.age++;
             agent.assignFitness();
-            totalRawFitness += agent.genome.rawFitness;
+            totalRawFitness += params.MIRROR_ROLES ? agent.genome.rawFitness/2 : agent.genome.rawFitness;
             //Sort average output data for the histograms into their buckets
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
