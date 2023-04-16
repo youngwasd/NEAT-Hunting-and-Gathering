@@ -273,7 +273,7 @@ class World {
         let agents = [...this.agents].sort((a, b) => a.foodHierarchyIndex - b.foodHierarchyIndex);
         let i = 0;
         let j = agents.length - 1;
-        while(i != j){
+        while(i != j && j > 0){
             let indexI = agents[i].foodHierarchyIndex;
             agents[i].foodHierarchyIndex = agents[j].foodHierarchyIndex;
             agents[j].foodHierarchyIndex = indexI;
