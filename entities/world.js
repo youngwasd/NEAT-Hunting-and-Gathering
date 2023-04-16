@@ -263,6 +263,25 @@ class World {
         });
     }
 
+    /**
+     * Reverses the food hierarchy by swapping the food hierarchy indecies such that everyone would have 
+     * and index mirroring their current position on the hierarchy space.
+     * 
+     * Ex: starting with A = 0, B = 10, C = 20 would turn to A = 20, B = 10, C = 0
+     */
+    swapFoodHierarchies() {
+        let agents = [...this.agents].sort((a, b) => a.foodHierarchyIndex - b.foodHierarchyIndex);
+        let i = 0;
+        let j = agents.length - 1;
+        while(i != j){
+            let indexI = agents[i].foodHierarchyIndex;
+            agents[i].foodHierarchyIndex = agents[j].foodHierarchyIndex;
+            agents[j].foodHierarchyIndex = indexI;
+            i++;
+            j--;
+        }
+    }
+
     //Async drawing
     draw() {
         let ctx = this.ctx;

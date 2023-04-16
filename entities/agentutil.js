@@ -6,7 +6,7 @@ class AgentInputUtil {
     
     static normalizeDistance = (distance) => 1 - Math.min(1, distance / params.AGENT_VISION_RADIUS);
 
-    static normalizeVisionDist = (distance) => Math.sqrt(2) * params.CANVAS_SIZE;
+    static normalizeVisionDist = (distance) => Math.max(1 - distance / (params.CANVAS_SIZE * Math.sqrt(2)), 0);
     
     static relativeLeft = (heading, vectAngle) => (heading < vectAngle ? heading + (2 * Math.PI - vectAngle) : heading - vectAngle) * -1;
     

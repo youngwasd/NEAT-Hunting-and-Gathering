@@ -59,6 +59,7 @@ const params = {
     AGENT_DIAMETER: 15,
     FOOD_DIAMETER: 24,
     FOOD_BUSH: true,
+    MIRROR_ROLES: true
 };
 
 const getMedian = (arr) => {

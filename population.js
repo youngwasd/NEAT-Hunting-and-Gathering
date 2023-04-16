@@ -92,6 +92,8 @@ class PopulationManager {
             //Generational
             this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
         }
+
+        this.rolesMirrored = false;
     };
 
     //Return NULL if no color is availble
@@ -236,6 +238,7 @@ class PopulationManager {
         params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
         params.PAUSE_DRAWING = document.getElementById("pauseDrawing").checked;
         params.FOOD_BUSH = document.getElementById("food_bush").checked;
+        params.MIRROR_ROLES = document.getElementById("mirror_roles").checked;
 
         //Loading Profile
         if (document.getElementById("runByProfileMode").checked) {
@@ -426,7 +429,13 @@ class PopulationManager {
             //For debugging k and m purposes
             //console.clear();
             this.tickCounter = 0;
-            this.processGeneration(this.agentsAsList());
+            if(params.MIRROR_ROLES && !this.rolesMirrored){
+                this.resetAgents(false);
+                this.swapHierarchyValues();
+            }else{
+                this.processGeneration(this.agentsAsList());
+            }
+            this.rolesMirrored = !this.rolesMirrored;
 
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
@@ -436,6 +445,29 @@ class PopulationManager {
         }
         return false;
     };
+
+    resetAgents(newGen = true){
+        if (!params.FREE_RANGE) {
+            this.agentsAsList().forEach(agent => {
+                if (params.HUNTING_MODE !== "hierarchy"){
+                    agent.moveToWorldCenter();
+                }  
+                agent.resetOrigin();
+                agent.resetEnergy();
+                agent.resetCalorieCounts();
+                if(newGen) agent.resetCounters();
+            });
+
+             //Update food hierarchy of all agents in all world
+            this.updateWorldsFoodHierarchy();
+        }
+    }
+
+    swapHierarchyValues(){
+        this.worlds.forEach(world => {
+            world.swapFoodHierarchies();
+        });
+    }
 
     isFoodGone() {
 
@@ -856,6 +888,7 @@ class PopulationManager {
 
     
     processGeneration() {
+        
         //Data collections for histograms
         let avgLeftWheelOut = new Array(20).fill(0);
         let avgRightWheelOut = new Array(20).fill(0);
@@ -930,20 +963,7 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED = new Set([...PopulationManager.SENSOR_COLORS_USED].filter(color => remainingSensorColors.has(color)));
 
         //Resets all agents
-        if (!params.FREE_RANGE) {
-            this.agentsAsList().forEach(agent => {
-                if (params.HUNTING_MODE !== "hierarchy"){
-                    agent.moveToWorldCenter();
-                }  
-                agent.resetOrigin();
-                agent.resetEnergy();
-                agent.resetCalorieCounts();
-                agent.resetCounters();
-            });
-
-             //Update food hierarchy of all agents in all world
-            this.updateWorldsFoodHierarchy();
-        }
+        this.resetAgents();
 
        
 
