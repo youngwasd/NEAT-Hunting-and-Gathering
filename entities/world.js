@@ -31,10 +31,9 @@ class World {
         this.isActive = true;//Keep track of whether this world is still active
     };
 
-    //Async update
     update() {
         //Do not update if world is not active
-        if (!this.isActive){
+        if (!this.isActive) {
             return;
         }
         for (let i = 0; i < this.food.length; i++) {
@@ -49,7 +48,7 @@ class World {
             }
         }
         for (let i = 0; i < this.agents.length; i++) {
-            if (!this.agents[i].removeFromWorld && this.agents[i].isActive) {
+            if (!this.agents[i].removeFromWorld) {
                 this.agents[i].update();
             }
         }
@@ -226,11 +225,11 @@ class World {
 
     }
 
-    activate(){
-        this.isActive = true; 
+    activate() {
+        this.isActive = true;
     }
 
-    deactivate(){
+    deactivate() {
         this.isActive = false;
     }
 
@@ -271,46 +270,47 @@ class World {
 
         shuffleArray(this.agents).forEach(agent => {
             //Assign their food hiercarchy index based on how many agents per world
-            if (foodHierarchy) {
-
-                //Spread the food hierarchy index accress the whole agent population
-                ++agentAssigned;
-                if (params.HUNTING_MODE === "hierarchy_spectrum") {
-                    agent.foodHierarchyIndex = foodHierarchy.index;
-                    foodHierarchy.index += foodHierarchy.step;
-                }
-                else{
-                    //Assign either predator or prey
-                    if (agnetAssigned >= this.agents.length / 2){
-                        agent.foodHierarchyIndex = 50;
-                    }
-                    else{
-                        agent.foodHierarchyIndex = 0;
-                    }
-                }
-
-
-                // //Update the agent position so they don't bump into each other when spawned
-                // //Respawn at the opposite quadrant
-                // agent.x = randomInt(spawnRadius * 2) - spawnRadius + startPosX[i];
-                // agent.y = randomInt(spawnRadius * 2) - spawnRadius + startPosY[i];
-                // i++;
-                // i %= 4;
-
-                this.x = randomInt(spawnRadius * 2) - spawnRadius + prevX + 100;
-                this.y = randomInt(spawnRadius * 2) - spawnRadius + prevY + 100;
-
-                if (isOutOfBound(this.x)) {
-                    this.x = -randomInt(spawnRadius * 2) + spawnRadius + prevX - 100;
-                }
-                if (isOutOfBound(this.y)) {
-                    this.y = -randomInt(spawnRadius * 2) + spawnRadius + prevY - 100;
-                }
-                prevX = this.x;
-                prevY = this.y;
-
-                agent.activateAgent();
+            //Spread the food hierarchy index accress the whole agent population
+            if (params.HUNTING_MODE === "hierarchy_spectrum") {
+                agent.foodHierarchyIndex = foodHierarchy.index;
+               
+                foodHierarchy.index += foodHierarchy.step;
             }
+            else if (params.HUNTING_MODE === "hierarchy") {
+                //Assign either predator or prey
+                if (agentAssigned >= this.agents.length / 2) {
+                    agent.foodHierarchyIndex = 50;
+                }
+                else {
+                    agent.foodHierarchyIndex = 0;
+                }
+            }
+
+            console.log(agent.foodHierarchyIndex, this.worldId, params.HUNTING_MODE);
+
+
+            // //Update the agent position so they don't bump into each other when spawned
+            // //Respawn at the opposite quadrant
+            // agent.x = randomInt(spawnRadius * 2) - spawnRadius + startPosX[i];
+            // agent.y = randomInt(spawnRadius * 2) - spawnRadius + startPosY[i];
+            // i++;
+            // i %= 4;
+
+            agent.x = randomInt(spawnRadius * 2) - spawnRadius + prevX + 150;
+            agent.y = randomInt(spawnRadius * 2) - spawnRadius + prevY + 150;
+
+            if (isOutOfBound(agent.x)) {
+                agent.x = -randomInt(spawnRadius * 2) + spawnRadius + prevX - 150;
+            }
+            if (isOutOfBound(agent.y)) {
+                agent.y = -randomInt(spawnRadius * 2) + spawnRadius + prevY - 150;
+            }
+
+            prevX = agent.x;
+            prevY = agent.y;
+
+            agent.activateAgent();
+            ++agentAssigned;
         });
     }
 
@@ -324,10 +324,8 @@ class World {
         let agents = [...this.agents].sort((a, b) => a.foodHierarchyIndex - b.foodHierarchyIndex);
         let i = 0;
         let j = agents.length - 1;
-        while(i != j){
-            let indexI = agents[i].foodHierarchyIndex;
-            agents[i].foodHierarchyIndex = agents[j].foodHierarchyIndex;
-            agents[j].foodHierarchyIndex = indexI;
+        while (i < j) {
+            [agents[i].foodHierarchyIndex, agents[j].foodHierarchyIndex] = [agents[j].foodHierarchyIndex, agents[i].foodHierarchyIndex];
             i++;
             j--;
         }

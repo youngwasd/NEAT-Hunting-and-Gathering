@@ -42,7 +42,7 @@ class PopulationManager {
             this.specieWorldList.set(PopulationManager.SPECIES_ID, [0]);
             this.spawnFood(PopulationManager.SPECIES_ID, false);
             this.spawnFood(PopulationManager.SPECIES_ID, true);
-            world.updateFoodHierarchy();
+
             this.resetCanvases();
         }
         else {
@@ -66,14 +66,16 @@ class PopulationManager {
 
                 this.spawnFood(worldSpawned, false);
                 this.spawnFood(worldSpawned, true);
-
-                world.updateFoodHierarchy();
+                
+                //console.log(world.agents);
                 numberOfAgentToSpawned -= agentNum;
                 worldSpawned++;
             }
             PopulationManager.WORLD_CREATED = worldSpawned;
             this.resetCanvases();
         }
+
+        this.updateWorldsFoodHierarchy();
 
         this.currentLeftWheelHist = new Histogram(20, 5, "Current Generation Left Wheel Output Chart");
         this.currentLeftWheelHist.data.push(new Array(20).fill(0));
@@ -453,7 +455,7 @@ class PopulationManager {
     resetAgents(newGen = true){
         if (!params.FREE_RANGE) {
             this.agentsAsList().forEach(agent => {
-                if (params.HUNTING_MODE !== "hierarchy"){
+                if (params.HUNTING_MODE === "deactivated"){
                     agent.moveToWorldCenter();
                 }  
                 agent.resetOrigin();
@@ -469,7 +471,9 @@ class PopulationManager {
 
     swapHierarchyValues(){
         this.worlds.forEach(world => {
-            world.swapFoodHierarchies();
+            if (world.agents){
+                world.swapFoodHierarchies();
+            }
         });
     }
 
@@ -815,6 +819,7 @@ class PopulationManager {
     //Update food hierarchy of all agents in all world
     updateWorldsFoodHierarchy() {
         this.worlds.forEach(world => {
+            world.activate();
             world.updateFoodHierarchy();
         });
     }
@@ -976,15 +981,17 @@ class PopulationManager {
         //Resets all agents
         if (!params.FREE_RANGE) {
             this.agentsAsList().forEach(agent => {
-                if (params.HUNTING_MODE !== "hierarchy" && params.HUNTING_MODE !== "hierarchy_spectrum"){
+                if (params.HUNTING_MODE === "deactivated"){
                     agent.moveToWorldCenter();
-                }  
+                } 
                 agent.resetOrigin();
                 agent.resetEnergy();
                 agent.resetCalorieCounts();
                 agent.resetCounters();
             });
         }
+
+        this.updateWorldsFoodHierarchy();
        
 
         //Clear current walls and add random walls to the map. Will be different for each world

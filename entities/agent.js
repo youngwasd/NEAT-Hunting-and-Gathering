@@ -331,28 +331,32 @@ class Agent {
         // this.y = randomInt(spawnRadius * 2) - spawnRadius + spawnPointY;
 
         //Respawn predator
-        if (params.HUNTING_MODE === "hierarchy_spectrum"){
+        if (params.HUNTING_MODE === "hierarchy_spectrum") {
             this.respawn(predator);
         }
-        
 
-        
+        //Deactivate world in 1 prey 1 predator mode
+        if (params.HUNTING_MODE === "hierarchy") {
+            this.game.population.deactivateWorld(this.worldId);
+            //console.log(this.x, this.y, this.worldId, predator.x, predator.y, this.game.population.tickCounter);
+        }
+
 
         return calReward;
     }
 
-    respawn(predator){
-         //Respawn near the predator
-         let spawnRadius = 300;
-         this.x = randomInt(spawnRadius * 2) - spawnRadius + predator.x + 100;
-         this.y = randomInt(spawnRadius * 2) - spawnRadius + predator.y + 100;
- 
-         if (isOutOfBound(this.x)) {
-             this.x = -randomInt(spawnRadius * 2) + spawnRadius + predator.x - 100;
-         }
-         if (isOutOfBound(this.y)) {
-             this.y = -randomInt(spawnRadius * 2) + spawnRadius + predator.y - 100;
-         }
+    respawn(predator) {
+        //Respawn near the predator
+        let spawnRadius = 300;
+        this.x = randomInt(spawnRadius * 2) - spawnRadius + predator.x + 100;
+        this.y = randomInt(spawnRadius * 2) - spawnRadius + predator.y + 100;
+
+        if (isOutOfBound(this.x)) {
+            this.x = -randomInt(spawnRadius * 2) + spawnRadius + predator.x - 100;
+        }
+        if (isOutOfBound(this.y)) {
+            this.y = -randomInt(spawnRadius * 2) + spawnRadius + predator.y - 100;
+        }
     }
 
     /** Updates this Agent for the current tick */
@@ -486,7 +490,7 @@ class Agent {
             let foundFood = false;
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    if (params.HUNTING_MODE === "hierarchy" && this.foodHierarchyIndex === 0) {//Only the lowest prey get to eat normal food
+                    if ((params.HUNTING_MODE === "hierarchy" || (params.HUNTING_MODE === "hierarchy_spectrum")) && this.foodHierarchyIndex === 0) {//Only the lowest prey get to eat normal food
                         if (this.biting || !params.AGENT_BITING) {
                             let consOut = entity.consume();
                             let cals = consOut.calories;
@@ -506,12 +510,14 @@ class Agent {
                 }
 
                 //If the entity is an agent, check the hierarchy index
-                if (params.HUNTING_MODE === "hierarchy" && entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
-                    if (this.biting || !params.AGENT_BITING) {
-                        let cals = entity.consume(this);
-                        this.energy += cals;
-                        ++this.numberOfPreyHunted;
+                if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") && this.game.population.tickCounter !== 0) {
+                    if (entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
+                        if (this.biting || !params.AGENT_BITING) {
+                            let cals = entity.consume(this);
+                            this.energy += cals;
+                            ++this.numberOfPreyHunted;
 
+                        }
                     }
                 }
             });
@@ -756,7 +762,7 @@ class Agent {
         }
 
         //Display hierarchy index
-        if (params.HUNTING_MODE === "hierarchy") {
+        if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             this.drawTextAgent(ctx, this.foodHierarchyIndex, this.x, this.y - this.diameter - 2, "red");
         }
 
