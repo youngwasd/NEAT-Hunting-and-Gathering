@@ -353,14 +353,18 @@ class Agent {
     respawn(predator) {
         //Respawn near the predator
         let spawnRadius = 300;
-        this.x = randomInt(spawnRadius * 2) - spawnRadius + predator.x + 100;
-        this.y = randomInt(spawnRadius * 2) - spawnRadius + predator.y + 100;
+        let rx = randomInt(2) * (-2) + 1;
+        let ry = randomInt(2) * (-2) + 1;
+        agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.x;
+        agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.y;
 
-        if (isOutOfBound(this.x)) {
-            this.x = -randomInt(spawnRadius * 2) + spawnRadius + predator.x - 100;
+        if (isOutOfBound(agent.x)) {
+            rx *= -1;
+            agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.x;
         }
-        if (isOutOfBound(this.y)) {
-            this.y = -randomInt(spawnRadius * 2) + spawnRadius + predator.y - 100;
+        if (isOutOfBound(agent.y)) {
+            ry *= -1;
+            agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.y;
         }
     }
 

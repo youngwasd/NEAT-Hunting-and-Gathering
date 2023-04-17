@@ -292,15 +292,19 @@ class World {
             // agent.y = randomInt(spawnRadius * 2) - spawnRadius + startPosY[i];
             // i++;
             // i %= 4;
-
-            agent.x = randomInt(spawnRadius * 2) - spawnRadius + prevX + 150;
-            agent.y = randomInt(spawnRadius * 2) - spawnRadius + prevY + 150;
+            let rx = randomInt(2) * (-2) + 1;
+            let ry = randomInt(2) * (-2) + 1;
+            agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + 150) + prevX;
+            agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + 150) + prevY;
 
             if (isOutOfBound(agent.x)) {
-                agent.x = -randomInt(spawnRadius * 2) + spawnRadius + prevX - 150;
+                rx *= -1;
+                agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + 150) + prevX;
             }
             if (isOutOfBound(agent.y)) {
-                agent.y = -randomInt(spawnRadius * 2) + spawnRadius + prevY - 150;
+                ry *= -1;
+                agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + 150) + prevY;
+
             }
 
             prevX = agent.x;
