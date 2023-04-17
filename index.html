@@ -284,6 +284,7 @@
     </div>
 
 
+    <!-- Old fitness function
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>
         <input type="text" id="FITNESS_HUNTING_PREY" value="12"> (Prey hunted) + 
@@ -292,6 +293,14 @@
         <input type="text" id="fitness_calories" value="24.0"> (Calories Eaten) + 
         <input type="text" id="fitness_potential_cal" value="6"> (Potential Calories Reward)
     </div>
+    -->
+
+    <div>
+        <br> </br><strong>Agent Fitness Function = </strong><br> </br>
+        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="1"> Energy Efficiency (calories gained/calories spent) + 
+        <input type="text" id="FITNESS_PERCENT_ALIVE" value="1"> Percentage of ticks spent alive
+    </div>
+    
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
         <div id="agentCurrentOutputContainers">

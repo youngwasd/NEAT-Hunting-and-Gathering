@@ -323,6 +323,8 @@ class PopulationManager {
         if (document.activeElement.id !== "agent_neighbor_count") {
             params.AGENT_NEIGHBOR_COUNT = parseInt(document.getElementById("agent_neighbor_count").value);
         }
+
+        /*
         if (document.activeElement.id !== "fitness_calories") {
             if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
                 params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
@@ -341,6 +343,13 @@ class PopulationManager {
 
         if (document.activeElement.id !== "fitness_potential_cal") {
             params.FITNESS_POTENTIAL_CALORIES = parseFloat(document.getElementById("fitness_potential_cal").value);
+        }*/
+        if (document.activeElement.id !== "FITNESS_ENERGY_EFFICIENCY") {
+            params.FITNESS_ENERGY_EFFICIENCY = parseFloat(document.getElementById("FITNESS_ENERGY_EFFICIENCY").value);
+        }
+
+        if (document.activeElement.id !== "FITNESS_PERCENT_ALIVE") {
+            params.FITNESS_PERCENT_ALIVE = parseFloat(document.getElementById("FITNESS_PERCENT_ALIVE").value);
         }
 
         if (document.activeElement.id !== "num_agents") {
@@ -900,7 +909,7 @@ class PopulationManager {
             this.genomeTracker.processGenome(agent.genome);
             agent.age++;
             agent.assignFitness();
-            totalRawFitness += params.MIRROR_ROLES ? agent.genome.rawFitness/2 : agent.genome.rawFitness;
+            totalRawFitness += agent.genome.rawFitness;
             //Sort average output data for the histograms into their buckets
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
