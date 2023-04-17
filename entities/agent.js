@@ -144,7 +144,7 @@ class Agent {
         }
 
         const predPreyFitnessFunct = () => {
-            return this.caloriesEaten/this.caloriesSpent + this.ticksAlive/this.totalTicks;
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten/this.caloriesSpent + params.FITNESS_PERCENT_DEAD * (this.totalTicks - this.ticksAlive)/this.totalTicks;
         }
 
         this.genome.rawFitness = predPreyFitnessFunct();

@@ -348,8 +348,8 @@ class PopulationManager {
             params.FITNESS_ENERGY_EFFICIENCY = parseFloat(document.getElementById("FITNESS_ENERGY_EFFICIENCY").value);
         }
 
-        if (document.activeElement.id !== "FITNESS_PERCENT_ALIVE") {
-            params.FITNESS_PERCENT_ALIVE = parseFloat(document.getElementById("FITNESS_PERCENT_ALIVE").value);
+        if (document.activeElement.id !== "FITNESS_PERCENT_DEAD") {
+            params.FITNESS_PERCENT_DEAD = parseFloat(document.getElementById("FITNESS_PERCENT_DEAD").value);
         }
 
         if (document.activeElement.id !== "num_agents") {
