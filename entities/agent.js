@@ -66,6 +66,8 @@ class Agent {
         this.spotted = [];
         this.biting = false;
         this.biteTicks = 0;
+        this.ticksAlive = 0;
+        this.totalTicks = 0;
         this.maxEatingCompletion = 0;
         this.totalOutputs = [0, 0, 0];
 
@@ -146,7 +148,11 @@ class Agent {
             return rawFitness;
         }
 
-        this.genome.rawFitness = fitnessFunct();
+        const predPreyFitnessFunct = () => {
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten/this.caloriesSpent + params.FITNESS_PERCENT_DEAD * (this.totalTicks - this.ticksAlive)/this.totalTicks;
+        }
+
+        this.genome.rawFitness = predPreyFitnessFunct();
     };
 
     /** Updates this Agent's bounding circle to reflect its current position */
@@ -238,6 +244,7 @@ class Agent {
     resetCalorieCounts() {
         this.caloriesEaten = 0;
         this.badCaloriesEaten = 0;
+        this.caloriesSpent = 0;
     };
 
     /** Resets counters for the numbers of tick out of bound and bumping into walls */
@@ -370,6 +377,8 @@ class Agent {
 
     /** Updates this Agent for the current tick */
     update() {
+        this.totalTicks++;
+
         let oldPos = { x: this.x, y: this.y }; // note where we are before moving
 
         this.maxVelocity = params.AGENT_MAX_SPEED;
@@ -482,17 +491,11 @@ class Agent {
         }
         
         //METABOLISM: Defined by the power of the wheels
-        this.energy -= (Math.abs(this.leftWheel) + Math.abs(this.rightWheel)) / 10;
-        if (this.energy === NaN){
-            console.log(input);
-            let pauseButton = document.getElementById('pause_sim');
-                if (pauseButton) {
-                    pauseButton.click();
-                }   
-        }
-        this.energy -= this.biting ? 0.1 : 0;
-
-        this.energy -= 0.1; // this is a baseline metabolism that is independent of Agent physical activity
+        let energySpent = (Math.abs(this.leftWheel) + Math.abs(this.rightWheel)) / 10;
+        energySpent += this.biting ? 0.1 : 0;
+        energySpent += 0.1; // this is a baseline metabolism that is independent of Agent physical activity
+        this.energy -= energySpent;
+        this.caloriesSpent += energySpent
 
         /** Update our diameter and BC to reflect our current position */
         this.updateDiameter();
@@ -555,6 +558,8 @@ class Agent {
         else {
             this.isOutOfBound = false;
         }
+
+        if(this.energy > Agent.DEATH_ENERGY_THRESH) this.ticksAlive++;
     };
 
     /** Updates this Agent's diameter in alignment with the DYNAMIC_AGENT_SIZING sim parameter */
