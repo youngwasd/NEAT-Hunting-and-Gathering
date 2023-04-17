@@ -65,15 +65,15 @@ class DataDisplay {
         //Alert user that all agents are drawned in the first world
 
         let firstWorldId = this.game.population.worlds.entries().next().value[1].worldId;
-        if (this.worldId !== firstWorldId) {
-            if (!this.game.population.worlds.get(this.worldId).isActive) {
-                ctx.strokeText("World is not active", params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 3);
-            }
-            else if (params.DISPLAY_SAME_WORLD) {
-                    ctx.strokeText(`All agents and food are drawn in the first world with the ID: ${firstWorldId}`, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 3);
-                }
-
+        let message = "";
+        if (!this.game.population.worlds.get(this.worldId).isActive && !params.DISPLAY_SAME_WORLD) {
+            message = "World is not active";
         }
+        if (this.worldId !== firstWorldId && params.DISPLAY_SAME_WORLD) {
+            message = `All agents and food are drawn in the first world with the ID: ${firstWorldId}`;
+        }
+
+        ctx.strokeText(message, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 3);
 
 
 

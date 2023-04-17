@@ -86,6 +86,7 @@ class Agent {
         const huntingFitness = () => {
             let fitnessFromHunting = 0;
             fitnessFromHunting += params.FITNESS_HUNTING_PREY * this.numberOfPreyHunted;
+            fitnessFromHunting -= params.FITNESS_HUNTING_PREY * this.numberOfTimesConsumed;
             return fitnessFromHunting;
         }
         /**
@@ -125,6 +126,10 @@ class Agent {
 
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
+
+            if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum"){
+                totalRawFitness += huntingFitness();
+            }
             if (params.AGENT_BITING) totalRawFitness += this.biteTicks;
             return totalRawFitness;
         };
@@ -154,13 +159,13 @@ class Agent {
      * @param {*} entity The we are checking food Hierarchy Index against 
      * @return a lower hue to display that entity is dangerous or higher hue for safe or consumable
      */
-    getDataHue(entity) {
+    getHuntingDataHue(entity) {
         //Food or safe 
         if (entity.foodHierarchyIndex < this.foodHierarchyIndex)
             return 300;
         //Danger
-        if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
-            return 40;
+        //else if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
+        return 40;
     }
 
     /**
@@ -405,8 +410,8 @@ class Agent {
                 let neighbor = spottedNeighbors[i];
 
                 //Add prey or predator's hue to ANN input 
-                if (params.HUNTING_MODE === "hierarchy" && neighbor instanceof Agent) {
-                    input.push(AgentInputUtil.normalizeHue(this.getDataHue(neighbor))); // the data hue
+                if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && neighbor instanceof Agent) {
+                    input.push(AgentInputUtil.normalizeHue(this.getHuntingDataHue(neighbor))); // the data hue
                 } else {
                     //Push the food input
                     input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue())); // the data hue
@@ -420,15 +425,10 @@ class Agent {
                 input.push(0);
             }
         }
-
+                                              
         let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
-
-        // //Push the hierarchy index to input 
-        // if (params.HUNTING_MODE === "hierarchy") {
-        //     input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
-        // }   
-
+       
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
             this.rightWheel = 0;
@@ -436,7 +436,8 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
-            if (!this.leftWheel || !this.rightWheel) {
+         
+            if ((!this.leftWheel || !this.rightWheel) && (this.rightWheel !== 0 && this.leftWheel != 0)) {
                 console.log("Error");
             }
             this.totalOutputs[0] += this.leftWheel;
@@ -475,10 +476,18 @@ class Agent {
         } else if (this.heading >= 2 * Math.PI) {
             this.heading -= 2 * Math.PI;
         }
-
+        
         //METABOLISM: Defined by the power of the wheels
         this.energy -= (Math.abs(this.leftWheel) + Math.abs(this.rightWheel)) / 10;
+        if (this.energy === NaN){
+            console.log(input);
+            let pauseButton = document.getElementById('pause_sim');
+                if (pauseButton) {
+                    pauseButton.click();
+                }   
+        }
         this.energy -= this.biting ? 0.1 : 0;
+
         this.energy -= 0.1; // this is a baseline metabolism that is independent of Agent physical activity
 
         /** Update our diameter and BC to reflect our current position */
@@ -501,7 +510,7 @@ class Agent {
                                 this.caloriesEaten += cals;
                             }
                             this.energy += cals;
-
+                            
                             this.eatingCompletion = completion;
                             this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
                         }
@@ -514,6 +523,7 @@ class Agent {
                     if (entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
                         if (this.biting || !params.AGENT_BITING) {
                             let cals = entity.consume(this);
+                         
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
 
@@ -670,7 +680,7 @@ class Agent {
             });
 
             entities.forEach(entity => {
-                if ((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity != this && entity.isActive) {
+                if ((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity !== this && entity.isActive) {
                     let newSpot = this.visionRayCollision(line, entity, eyes);
                     let newDist = distance(eyes, newSpot);
                     if (newDist < minDist) {
@@ -678,8 +688,8 @@ class Agent {
                         hueOfMinDist = entity.getDataHue();
 
                         //
-                        if (params.HUNTING_MODE === "hierarchy" && entity instanceof Agent) {
-                            hueOfMinDist = this.getDataHue(entity);
+                        if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && (entity instanceof Agent)) {
+                           hueOfMinDist = this.getHuntingDataHue(entity);
                         }
                         closestPoint = newSpot;
                     }
@@ -689,12 +699,10 @@ class Agent {
             let spotVals = { dist: minDist, angle: currAngle };
             this.spotted.push(spotVals);
 
-            //console.log("minDist: " + minDist);
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
             let distInput = AgentInputUtil.normalizeVisionDist(minDist);
             input.push(distInput);
-            //console.log("hueOfMinDist: " + hueOfMinDist);
             input.push((hueOfMinDist) / 360);
             currAngle += angleBetw;
 

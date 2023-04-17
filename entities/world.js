@@ -286,9 +286,6 @@ class World {
                 }
             }
 
-            console.log(agent.foodHierarchyIndex, this.worldId, params.HUNTING_MODE);
-
-
             // //Update the agent position so they don't bump into each other when spawned
             // //Respawn at the opposite quadrant
             // agent.x = randomInt(spawnRadius * 2) - spawnRadius + startPosX[i];
