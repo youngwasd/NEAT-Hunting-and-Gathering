@@ -129,7 +129,7 @@ class Agent {
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
 
-            if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum"){
+            if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
                 totalRawFitness += huntingFitness();
             }
             if (params.AGENT_BITING) totalRawFitness += this.biteTicks;
@@ -149,7 +149,7 @@ class Agent {
         }
 
         const predPreyFitnessFunct = () => {
-            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten/this.caloriesSpent + params.FITNESS_PERCENT_DEAD * (this.totalTicks - this.ticksAlive)/this.totalTicks;
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent + params.FITNESS_PERCENT_DEAD * (this.totalTicks - this.ticksAlive) / this.totalTicks;
         }
 
         this.genome.rawFitness = predPreyFitnessFunct();
@@ -161,11 +161,14 @@ class Agent {
     };
 
     /**
-     * Get the hue based on food index
+     * Get the hue based on food index or Supplies this Agent's data hue that is visible by other Agent's in the sim
      * @param {*} entity The we are checking food Hierarchy Index against 
      * @return a lower hue to display that entity is dangerous or higher hue for safe or consumable
      */
-    getHuntingDataHue(entity) {
+    getDataHue(entity = null) {
+        if (entity === null) {//Regular food or agent
+            return PopulationManager.SPECIES_SENSOR_COLORS.get(this.speciesId);
+        }
         //Food or safe 
         if (entity.foodHierarchyIndex < this.foodHierarchyIndex)
             return 300;
@@ -173,15 +176,6 @@ class Agent {
         //else if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
         return 40;
     }
-
-    /**
-     * Supplies this Agent's data hue that is visible by other Agent's in the sim
-     * 
-     * @returns this Agent's data hue
-     */
-    getDataHue() {
-        return PopulationManager.SPECIES_SENSOR_COLORS.get(this.speciesId);
-    };
 
     /**
      * Suppplies this Agent's visual hue that is used solely for visual distinction in the sim display.
@@ -360,20 +354,25 @@ class Agent {
     respawn(predator) {
         //Respawn near the predator
         let spawnRadius = 300;
+        let buffer = 100;
         let rx = randomInt(2) * (-2) + 1;
         let ry = randomInt(2) * (-2) + 1;
-        agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.x;
-        agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.y;
 
-        if (isOutOfBound(agent.x)) {
+        this.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.x;
+        this.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.y;
+
+        if (isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
             rx *= -1;
-            agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.x;
+            this.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.x;
         }
-        if (isOutOfBound(agent.y)) {
+        if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y, buffer)) {
             ry *= -1;
-            agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + 150) + predator.y;
+            this.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.y;
+
         }
     }
+
+
 
     /** Updates this Agent for the current tick */
     update() {
@@ -424,7 +423,7 @@ class Agent {
 
                 //Add prey or predator's hue to ANN input 
                 if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && neighbor instanceof Agent) {
-                    input.push(AgentInputUtil.normalizeHue(this.getHuntingDataHue(neighbor))); // the data hue
+                    input.push(AgentInputUtil.normalizeHue(this.getDataHue(neighbor))); // the data hue
                 } else {
                     //Push the food input
                     input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue())); // the data hue
@@ -438,10 +437,10 @@ class Agent {
                 input.push(0);
             }
         }
-                                              
+
         let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
-       
+
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
             this.rightWheel = 0;
@@ -449,7 +448,7 @@ class Agent {
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];
-         
+
             if ((!this.leftWheel || !this.rightWheel) && (this.rightWheel !== 0 && this.leftWheel != 0)) {
                 console.log("Error");
             }
@@ -489,7 +488,7 @@ class Agent {
         } else if (this.heading >= 2 * Math.PI) {
             this.heading -= 2 * Math.PI;
         }
-        
+
         //METABOLISM: Defined by the power of the wheels
         let energySpent = (Math.abs(this.leftWheel) + Math.abs(this.rightWheel)) / 10;
         energySpent += this.biting ? 0.1 : 0;
@@ -517,7 +516,7 @@ class Agent {
                                 this.caloriesEaten += cals;
                             }
                             this.energy += cals;
-                            
+
                             this.eatingCompletion = completion;
                             this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
                         }
@@ -530,7 +529,7 @@ class Agent {
                     if (entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
                         if (this.biting || !params.AGENT_BITING) {
                             let cals = entity.consume(this);
-                         
+
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
 
@@ -559,7 +558,7 @@ class Agent {
             this.isOutOfBound = false;
         }
 
-        if(this.energy > Agent.DEATH_ENERGY_THRESH) this.ticksAlive++;
+        if (this.energy > Agent.DEATH_ENERGY_THRESH) this.ticksAlive++;
     };
 
     /** Updates this Agent's diameter in alignment with the DYNAMIC_AGENT_SIZING sim parameter */
@@ -698,7 +697,7 @@ class Agent {
 
                         //
                         if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && (entity instanceof Agent)) {
-                           hueOfMinDist = this.getHuntingDataHue(entity);
+                            hueOfMinDist = this.getDataHue(entity);
                         }
                         closestPoint = newSpot;
                     }

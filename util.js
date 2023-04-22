@@ -240,11 +240,11 @@ const createSlideShow = (array, id) => {
  * Return true if out of bound
  * Return false if not
  */
-const isOutOfBound = (x, y) => {
-    if (x < 0 || x > params.CANVAS_SIZE){
+const isOutOfBound = (x, y = params.CANVAS_SIZE / 2, buffer = 0) => {
+    if (x - buffer < 0 || x > params.CANVAS_SIZE - buffer){
         return true;
     }
-    if (y < 0 || y > params.CANVAS_SIZE){
+    if (y - buffer < 0 || y > params.CANVAS_SIZE - buffer){
         return true;
     }
     return false;
