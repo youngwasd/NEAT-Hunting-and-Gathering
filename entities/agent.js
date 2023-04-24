@@ -436,10 +436,16 @@ class Agent {
             for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
                 input.push(0);
             }
+
         }
 
         let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
+
+        // //Push the food hierarchy index into agents input
+        // if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
+        //     input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
+        // }
 
         if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
             this.leftWheel = 0;
@@ -481,6 +487,10 @@ class Agent {
         this.heading += dh;
 
         this.speed = Math.sqrt(dx ** 2 + dy ** 2);
+
+        // if (Math.abs(this.leftWheel) > 1 || Math.abs(this.rightWheel) > 1) {
+        //     console.log(this.leftWheel, this.rightWheel);
+        // }
 
         /** Make sure our new heading is between 0 and 2pi exclusive */
         if (this.heading < 0) {

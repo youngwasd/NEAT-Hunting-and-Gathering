@@ -478,7 +478,9 @@ class PopulationManager {
                 agent.resetOrigin();
                 agent.resetEnergy();
                 agent.resetCalorieCounts();
-                if(newGen) agent.resetCounters();
+                if(newGen) {
+                    agent.resetCounters();
+                }
             });
 
              //Update food hierarchy of all agents in all world
@@ -928,6 +930,8 @@ class PopulationManager {
         let avgBiteOut = new Array(20).fill(0);
         //evaluate the agents
         let totalRawFitness = 0;
+        let totalGenTicks = params.GEN_TICKS * (params.MIRROR_ROLES ? 2: 1);
+    
         this.agentsAsList().forEach(agent => {
             this.agentTracker.processAgent(agent);
             this.genomeTracker.processGenome(agent.genome);
@@ -935,9 +939,10 @@ class PopulationManager {
             agent.assignFitness();
             totalRawFitness += agent.genome.rawFitness;
             //Sort average output data for the histograms into their buckets
-            avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / params.GEN_TICKS, -1, 1)]++;
-            avgRightWheelOut[determineBucket(agent.totalOutputs[1] / params.GEN_TICKS, -1, 1)]++;
-            if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / params.GEN_TICKS, -1, 1)]++;
+            //console.log(agent.totalOutputs[0], agent.totalOutputs[1] );
+            avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / totalGenTicks, -1, 1)]++;
+            avgRightWheelOut[determineBucket(agent.totalOutputs[1] / totalGenTicks, -1, 1)]++;  
+            if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / totalGenTicks, -1, 1)]++;
         });
         this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
         //console.log(`Raw fitness: ${totalRawFitness}`);
@@ -1036,7 +1041,6 @@ class PopulationManager {
         this.currentRightWheelHist.reset();
 
         //Add to the number of prey consumed
-        console.log(this.preyConsumedData.chart);
         this.preyConsumedData.chart.addEntry([
             PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
         ]);
