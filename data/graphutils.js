@@ -697,3 +697,33 @@ const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftW
     
 };
 
+/**
+ * 
+ * @param {*} outputLineGraph The histogram wants to output
+ * @param {*} chartElementID The HTML Element ID
+ * @param {*} container The HTML Element container the histogram
+ * @param {*} style The style the Element would have
+ * @param {*} width The width of the element
+ * @param {*} height The height of the element
+ */
+const generateLineChart = (outputLineGraph, chartElementID = 'lineChart', container = 'lineChartOutputContainters', style = '', width = 800, height = 500) => {
+    let canvas = document.createElement('canvas');
+    if (!document.getElementById(chartElementID) ) {
+        document.getElementById(container).appendChild(canvas);
+    }else{
+        canvas = document.getElementById(chartElementID);
+    }
+    
+    canvas.setAttribute('id', chartElementID);
+    canvas.setAttribute('style', style);
+    canvas.setAttribute('width', width);
+    canvas.setAttribute('height', height);
+    
+    let ctx = canvas.getContext("2d");
+   
+    outputLineGraph.draw(ctx);
+    
+  
+    
+};
+

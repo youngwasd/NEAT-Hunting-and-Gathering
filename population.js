@@ -95,6 +95,11 @@ class PopulationManager {
             this.biteHist = new Histogram(20, 5, "Average Bite Output Per Generation");
         }
 
+        this.preyConsumedData = {
+            chart: new Linechart(this, 20, 50, 700, 400, [], "Prey Consumed Per Generations Chart", "Generations", "Times consumed"),
+            currentGenData:0,
+        }
+        
         this.rolesMirrored = false;
     };
 
@@ -175,6 +180,9 @@ class PopulationManager {
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
         this.rightWheelHist = new Histogram(20, 5, "Average Right Wheel Output Per Generation");
+
+        this.preyConsumedData.chart.reset();
+        this.preyConsumedData.currentGenData = 0;
 
         if (params.AGENT_BITING) {
             //Generational
@@ -1026,6 +1034,17 @@ class PopulationManager {
         //Reset current generation Histogram
         this.currentLeftWheelHist.reset();
         this.currentRightWheelHist.reset();
+
+        //Add to the number of prey consumed
+        console.log(this.preyConsumedData.chart);
+        this.preyConsumedData.chart.addEntry([
+            PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
+        ]);
+        this.preyConsumedData.currentGenData = 0;
+        if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
+            generateLineChart(this.preyConsumedData.chart, "preyConsumptionLineChart", "lineChartOutputContainters");
+        }
+        
         if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
 

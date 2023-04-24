@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
-    
+
 <head>
     <meta charset="utf-8">
     <title>TCSS 499 NEAT Simulation</title>
@@ -21,13 +21,14 @@
     <script type="text/javascript" src="./neuralnetwork/neuralnetutil.js"></script>
     <script type="text/javascript" src="./neuralnetwork/neuralnet.js"></script>
     <script type="text/javascript" src="./neuralnetwork/genome.js"></script>
-    <script type="text/javascript" src="./histogram.js"></script> 
+    <script type="text/javascript" src="./histogram.js"></script>
+    <script type="text/javascript" src="./linechart.js"></script>
     <script type="text/javascript" src="./graph.js"></script>
     <script type="text/javascript" src="./entities/world.js"></script>
     <script type="text/javascript" src="./boundingcircle.js"></script>
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./datadisplay.js"></script>
-    <script type="text/javascript" src="./timer.js"></script>
+    <script type="text/javascript" src="./timer.js"></script>   
     <script type="text/javascript" src="./population.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
     <script type="text/javascript" src="./main.js"></script>
@@ -124,7 +125,7 @@
         &emsp;
         <input type="checkbox" id="randomizing_food_spawn_pattern" checked="true"> Randomize food spawning pattern
         &emsp;
-        <label for="caloriesPerFood"> Calories reward per food:  </label>
+        <label for="caloriesPerFood"> Calories reward per food: </label>
         <input type="text" id="caloriesPerFood" value="50">
 
         <div>
@@ -168,10 +169,10 @@
         <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
     </div>
     <div>
-        <input type="checkbox" id="food_bush" checked = "true"> Bush Food (Touch food otherwise)
+        <input type="checkbox" id="food_bush" checked="true"> Bush Food (Touch food otherwise)
     </div>
     <div>
-        <input type="checkbox" id="mirror_roles" checked = "true"> Mirrored Prey-Predator Roles Runs
+        <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs
     </div>
 
     <div>
@@ -228,17 +229,17 @@
     <div>
         <input type="text" id="cooldown_to_regen" value="10"> Number of Ticks for Food to Begin Regen
     </div>
-    
+
     <br> <br>
     <strong>Debug Options</strong>
     <br>
     <div>
         <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
         <br>
-       
-        <label for="pauseDrawing"> 
-            <input type="checkbox" id="pauseDrawing" name="pauseDrawing"> 
-            Pause Drawing (To speed up the simulation) 
+
+        <label for="pauseDrawing">
+            <input type="checkbox" id="pauseDrawing" name="pauseDrawing">
+            Pause Drawing (To speed up the simulation)
         </label>
         <br>
         <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation output
@@ -252,8 +253,8 @@
         </select>
         &emsp;
         <button type="button" id="loadProfile"> Load Profile </button>
-    <br>
-        
+        <br>
+
 
     </div>
 
@@ -261,28 +262,28 @@
     <div>
         <strong>Database Options</strong>
         <br>
-        <label for="save_to_db"> Enable Saving: </label> 
+        <label for="save_to_db"> Enable Saving: </label>
         <input type="checkbox" id="save_to_db">
         &emsp;
         <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data </button>
         <br>
         <label for="db"> Database Name: </label>
         <input type="text" id="db" value="test">
-        
-        
+
+
         <br>
         <label for="db_collection"> Collection Name: </label>
-        <input type="text" id="db_collection" value="NEATtests"> 
-        
+        <input type="text" id="db_collection" value="NEATtests">
+
         <br>
-        <label for="gen_to_save">  Generation to Save to DB: </label>
+        <label for="gen_to_save"> Generation to Save to DB: </label>
         <input type="text" id="gen_to_save" value="40">
-        
+
         <br>
-        <label for="sim_trial_num">  Simulation Trials </label>
+        <label for="sim_trial_num"> Simulation Trials </label>
         <input type="text" id="sim_trial_num" value=3>
-    
-        
+
+
     </div>
 
     </div>
@@ -301,27 +302,21 @@
 
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="1"> Energy Efficiency (calories gained/calories spent) + 
+        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="1"> Energy Efficiency (calories gained/calories spent)
+        +
         <input type="text" id="FITNESS_PERCENT_DEAD" value="-1"> Percentage of Ticks Dead
     </div>
-    
+
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
         <div id="agentCurrentOutputContainers">
-            <!-- <div>
-                <canvas id="agentGenAvgLeftWheelChart",
-                    style="background: rgb(255, 255, 255);"></canvas>
-            </div>
-            <div>
-                <canvas id="agentGenAvgRightWheelChart",
-                    style="background: rgb(255, 255, 255);"></canvas>
-            </div>
-            <div>
-                <canvas id="agentGenAvgBiteChart",
-                    style="background: rgb(255, 255, 255);"></canvas>
-            </div> -->
+
         </div>
         <div id="agentAvgOutputContainers">
+
+        </div>
+
+        <div id="lineChartOutputContainters">
 
         </div>
 
@@ -347,8 +342,8 @@
             <span class="visually-hidden">Next</span>
         </button>
         </div> -->
-        
-        
+
+
         <div id="foodConsumptionChartContainer">
             <canvas id="foodConsumptionChart"></canvas>
         </div>
