@@ -165,9 +165,11 @@ class Food {
      * 
      * @returns this Food's data hue
      */
-    getDataHue() {
+    getDataHue(entity = null) {
         if (this.phase_properties[this.phase] == undefined) console.error("Undefined phase properties. Phase is: " + this.phase);
-        return this.phase_properties[this.phase].color;
+        if(entity == null) return this.phase_properties[this.phase].color;
+        let baseColor = entity.foodHierarchyIndex > 0 ? 180 : this.phase_properties[this.phase].color;
+        return baseColor * (1 - 0.2 * this.getConsumptionCompletion());
     };
 
     updateMovingDestination() {

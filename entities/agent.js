@@ -170,7 +170,7 @@ class Agent {
             return PopulationManager.SPECIES_SENSOR_COLORS.get(this.speciesId);
         }
         //Food or safe 
-        if (entity.foodHierarchyIndex < this.foodHierarchyIndex)
+        if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
             return 300;
         //Danger
         //else if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
@@ -394,7 +394,7 @@ class Agent {
          */
         let entities = 0;
         if (params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
-            entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
+            entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         }
         else {
             entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
@@ -423,10 +423,10 @@ class Agent {
 
                 //Add prey or predator's hue to ANN input 
                 if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && neighbor instanceof Agent) {
-                    input.push(AgentInputUtil.normalizeHue(this.getDataHue(neighbor))); // the data hue
+                    input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue(this))); // the data hue
                 } else {
                     //Push the food input
-                    input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue())); // the data hue
+                    input.push(AgentInputUtil.normalizeHue(neighbor.getDataHue(this))); // the data hue
                 }
 
                 input.push(AgentInputUtil.normalizeAngle(this.getRelativePositionAngle({ x: neighbor.x - this.x, y: neighbor.y - this.y }))); // normalized relative position angle
@@ -504,7 +504,7 @@ class Agent {
         energySpent += this.biting ? 0.1 : 0;
         energySpent += 0.1; // this is a baseline metabolism that is independent of Agent physical activity
         this.energy -= energySpent;
-        this.caloriesSpent += energySpent
+        this.caloriesSpent += energySpent;
 
         /** Update our diameter and BC to reflect our current position */
         this.updateDiameter();
@@ -646,10 +646,10 @@ class Agent {
         this.spotted = [];
         this.visCol = [];
 
-        let entities = this.game.population.getEntitiesInWorld(params.SPLIT_SPECIES ? this.worldId : 0, !params.AGENT_NEIGHBORS);
+        let entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         let walls = [];
         if (params.AGENT_PER_WORLD === 0) {
-            walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
+            walls = this.game.population.worlds.get(this.worldId).walls;
         }
         else if (this.worldId && this.game.population.worlds.get(this.worldId))
             walls = this.game.population.worlds.get(this.worldId).walls;
@@ -703,18 +703,18 @@ class Agent {
                     let newDist = distance(eyes, newSpot);
                     if (newDist < minDist) {
                         minDist = newDist;
-                        hueOfMinDist = entity.getDataHue();
+                        hueOfMinDist = entity.getDataHue(this);
 
                         //
                         if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && (entity instanceof Agent)) {
-                            hueOfMinDist = this.getDataHue(entity);
+                            hueOfMinDist = entity.getDataHue(this);
                         }
                         closestPoint = newSpot;
                     }
                 }
             });
             if (closestPoint != null) this.visCol.push(closestPoint);
-            let spotVals = { dist: minDist, angle: currAngle };
+            let spotVals = { dist: minDist, angle: currAngle, hue: hueOfMinDist};
             this.spotted.push(spotVals);
 
             //Hard coded k value was hand tweaked, and not analytically determined
@@ -819,9 +819,9 @@ class Agent {
     }
     drawVFinal(ctx) {
         let eyes = this.getEyePos();
-        ctx.strokeStyle = "Red";
         ctx.linewidth = 2;
         for (let i = 0; i < this.spotted.length; i++) {
+            ctx.strokeStyle = `hsl(${this.spotted[i].hue}, 100%, 50%)`;
             let angle = this.spotted[i].angle;
             let dist = this.spotted[i].dist == Infinity ? 9999 : this.spotted[i].dist;
             ctx.beginPath();
