@@ -166,10 +166,12 @@ class Food {
      * @returns this Food's data hue
      */
     getDataHue(entity = null) {
+        
         if (this.phase_properties[this.phase] == undefined) console.error("Undefined phase properties. Phase is: " + this.phase);
-        if(entity == null) return this.phase_properties[this.phase].color;
-        let baseColor = entity.foodHierarchyIndex > 0 ? 180 : this.phase_properties[this.phase].color;
-        return baseColor * (1 - 0.2 * this.getConsumptionCompletion());
+        if(entity === null) return this.phase_properties[this.phase].color;
+        let baseColor = entity.foodHierarchyIndex > 0 ? 180 : this.phase_properties[this.phase].color;//Predator sees food differently than prey
+        let res = baseColor * (1 - 0.2 * this.getConsumptionCompletion());
+        return res;
     };
 
     updateMovingDestination() {
@@ -484,7 +486,7 @@ class Food {
         if (params.DISPLAY_SAME_WORLD) {
             ctx.fillStyle = "orange";
             ctx.font = parseInt(2 * params.FOOD_DIAMETER / 3) + "px sans-serif";
-            console.log(ctx.font);
+            
             ctx.textAlign = "center";
             ctx.fillText(this.worldId, this.x, this.y + this.phase_properties[this.phase].radius / 2);
             ctx.textAlign = "left";

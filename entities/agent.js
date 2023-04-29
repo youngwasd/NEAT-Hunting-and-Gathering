@@ -169,12 +169,12 @@ class Agent {
         if (entity === null) {//Regular food or agent
             return PopulationManager.SPECIES_SENSOR_COLORS.get(this.speciesId);
         }
-        //Food or safe 
+        //Danger 
         if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
-            return 300;
-        //Danger
+            return 40;
+        //Safe
         //else if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
-        return 40;
+        return 300;
     }
 
     /**
@@ -389,14 +389,15 @@ class Agent {
         input.push(1); // bias node always = 1
 
         /**
-         * if we have split species on, then we only get entities in the world corresponding to our species id, otherwise all entities
+         * if we have split species and don't split agent per world , then we only get entities in the world corresponding to our species id, otherwise all entities
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
         let entities = 0;
-        if (params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
-            entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
+        
+        if (!params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
+            entities = this.game.population.getEntitiesInWorld(0, !params.AGENT_NEIGHBORS);
         }
-        else {
+        else{
             entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         }
 
@@ -515,7 +516,7 @@ class Agent {
             let foundFood = false;
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    if ((params.HUNTING_MODE === "hierarchy" || (params.HUNTING_MODE === "hierarchy_spectrum")) && this.foodHierarchyIndex === 0) {//Only the lowest prey get to eat normal food
+                    if (params.HUNTING_MODE === "deactivated" || ((params.HUNTING_MODE === "hierarchy" || (params.HUNTING_MODE === "hierarchy_spectrum")) && this.foodHierarchyIndex === 0)) {//Only the lowest prey get to eat normal food
                         if (this.biting || !params.AGENT_BITING) {
                             let consOut = entity.consume();
                             let cals = consOut.calories;
@@ -535,7 +536,7 @@ class Agent {
                 }
 
                 //If the entity is an agent, check the hierarchy index
-                if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") && this.game.population.tickCounter !== 0) {
+                if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum")) {
                     if (entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
                         if (this.biting || !params.AGENT_BITING) {
                             let cals = entity.consume(this);
@@ -706,9 +707,9 @@ class Agent {
                         hueOfMinDist = entity.getDataHue(this);
 
                         //
-                        if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && (entity instanceof Agent)) {
-                            hueOfMinDist = entity.getDataHue(this);
-                        }
+                        // if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && (entity instanceof Agent)) {
+                        //     hueOfMinDist = entity.getDataHue(this);
+                        // }
                         closestPoint = newSpot;
                     }
                 }

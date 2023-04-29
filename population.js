@@ -290,15 +290,6 @@ class PopulationManager {
 
         if (document.activeElement.id !== "agent_per_world") {
             params.AGENT_PER_WORLD = parseInt(document.getElementById("agent_per_world").value);
-            //Force turning the split specie on
-            // if (params.AGENT_PER_WORLD !== 0) {
-            //     document.getElementById("split_species").checked = true;
-            //     document.getElementById("displayOnTheSameWorld").disabled = false;
-            // }
-            // else {
-            //     document.getElementById("displayOnTheSameWorld").checked = false;
-            //     document.getElementById("displayOnTheSameWorld").disabled = true;
-            // }
         }
 
         params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
@@ -334,7 +325,7 @@ class PopulationManager {
             params.AGENT_NEIGHBOR_COUNT = parseInt(document.getElementById("agent_neighbor_count").value);
         }
 
-        /*
+        
         if (document.activeElement.id !== "fitness_calories") {
             if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
                 params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
@@ -353,7 +344,7 @@ class PopulationManager {
 
         if (document.activeElement.id !== "fitness_potential_cal") {
             params.FITNESS_POTENTIAL_CALORIES = parseFloat(document.getElementById("fitness_potential_cal").value);
-        }*/
+        }
         if (document.activeElement.id !== "FITNESS_ENERGY_EFFICIENCY") {
             params.FITNESS_ENERGY_EFFICIENCY = parseFloat(document.getElementById("FITNESS_ENERGY_EFFICIENCY").value);
         }
