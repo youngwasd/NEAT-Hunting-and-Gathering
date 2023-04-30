@@ -49,7 +49,7 @@ class Agent {
         this.heading = randomInt(361) * Math.PI / 180; // the angle at which an Agent is traveling (fall between 0 to 2pi exclusive)
         this.genome = genome === undefined ? new Genome() : genome; // create a new Genome if none is supplied, otherwise perform an assignment
         this.neuralNet = new NeuralNet(this.genome); // create a new neural network corresponding to the previously assigned Genome
-        this.resetEnergy(); // set the Agent's energy to the statically defined start energy
+        this.activateAgent(); // set the Agent's energy to the statically defined start energy
         this.updateDiameter(); // how wide the agent's circle is drawn
         this.wheelRadius = 1; // an agent is more or less structured like a Roomba vacuum robot, and this is the radius of one of its 2 wheels
         this.maxVelocity = params.AGENT_MAX_SPEED; // a UNITLESS value which controls the movement speed of Agents in the sim
@@ -153,6 +153,7 @@ class Agent {
         }
 
         this.genome.rawFitness = predPreyFitnessFunct();
+        this.genome.rawFitness += fitnessFunct();
     };
 
     /** Updates this Agent's bounding circle to reflect its current position */
@@ -169,12 +170,12 @@ class Agent {
         if (entity === null) {//Regular food or agent
             return PopulationManager.SPECIES_SENSOR_COLORS.get(this.speciesId);
         }
-        //Danger 
+        //Food
         if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
-            return 40;
-        //Safe
+            return 330;
+        //Danger
         //else if (entity.foodHierarchyIndex > this.foodHierarchyIndex)
-        return 300;
+        return 40;
     }
 
     /**
@@ -229,11 +230,6 @@ class Agent {
         this.y = params.CANVAS_SIZE / 2;
     };
 
-    /**  Resets this Agent's energy to the predefined starting energy for Agents */
-    resetEnergy() {
-        this.energy = Agent.START_ENERGY;
-    };
-
     /** Resets the good and bad calories eaten by this Agent to 0 */
     resetCalorieCounts() {
         this.caloriesEaten = 0;
@@ -248,6 +244,20 @@ class Agent {
         this.numberOfPreyHunted = 0;
         this.numberOfTimesConsumed = 0;
         this.totalOutputs = [0, 0, 0];
+    }
+
+    //Make the energy = energy threshold
+    deactivateAgent() {
+        this.energy = Agent.DEATH_ENERGY_THRESH;
+        this.isActive = false;
+        this.leftWheel = 0;
+        this.rightWheel = 0;
+    }
+
+    /**  Resets this Agent's energy to the predefined starting energy for Agents */
+    activateAgent() {
+        this.isActive = true;
+        this.energy = Agent.START_ENERGY;
     }
 
     /**
@@ -281,16 +291,6 @@ class Agent {
         let relRight = AgentInputUtil.relativeRight(this.heading, vectAngle);
         return Math.abs(relLeft) < Math.abs(relRight) ? relLeft : relRight;
     };
-
-    //Make the energy = energy threshold
-    deactivateAgent() {
-        this.energy = Agent.DEATH_ENERGY_THRESH;
-    }
-
-    activateAgent() {
-        this.isActive = true;
-        this.energy = Agent.START_ENERGY;
-    }
 
     /**
      * Action that performed when being consumed
@@ -372,6 +372,20 @@ class Agent {
         }
     }
 
+    /**
+     * Check to see if the agent still has energy
+     * @returns True if the agent still have energy, false other wise
+     */
+    checkEnergy(){
+        if (params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy" ){
+            if (this.foodHierarchyIndex > 0){//Is a predator so apply unlimited energy condition
+                return false;
+            }
+        }
+        if (this.energy <= Agent.DEATH_ENERGY_THRESH)
+            return true;
+        return false;
+    }
 
 
     /** Updates this Agent for the current tick */
@@ -393,11 +407,11 @@ class Agent {
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
         let entities = 0;
-        
+
         if (!params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
             entities = this.game.population.getEntitiesInWorld(0, !params.AGENT_NEIGHBORS);
         }
-        else{
+        else {
             entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         }
 
@@ -448,9 +462,8 @@ class Agent {
         //     input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
         // }
 
-        if (this.energy <= Agent.DEATH_ENERGY_THRESH) { // if we are dead, we don't move
-            this.leftWheel = 0;
-            this.rightWheel = 0;
+        if (this.checkEnergy()) { // if we are out of energy, we don't move and become deactivated
+            this.deactivateAgent();
         } else { // if we are still alive, set our wheel power values to the output of our neural net
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
@@ -512,7 +525,7 @@ class Agent {
         this.updateBoundingCircle();
 
         /** If we are still alive, and we just bit loop through spotted food and eat those we are colliding with */
-        if (this.energy > Agent.DEATH_ENERGY_THRESH) {
+        if (this.isActive) {
             let foundFood = false;
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
@@ -569,7 +582,7 @@ class Agent {
             this.isOutOfBound = false;
         }
 
-        if (this.energy > Agent.DEATH_ENERGY_THRESH) this.ticksAlive++;
+        if (this.isActive) this.ticksAlive++;
     };
 
     /** Updates this Agent's diameter in alignment with the DYNAMIC_AGENT_SIZING sim parameter */
@@ -580,7 +593,7 @@ class Agent {
             const max_food_cal = 150;
             let addOn = 0; // the amount we add onto the base diameter
 
-            if (this.energy > Agent.DEATH_ENERGY_THRESH) { // if alive, scale by how well this Agent has eaten its allotted food
+            if (this.isActive) { // if alive, scale by how well this Agent has eaten its allotted food
                 addOn = params.AGENT_DIAMETER / 2 * Math.min(1, this.energy / (params.FOOD_AGENT_RATIO * max_food_cal));
             }
             this.diameter = params.AGENT_DIAMETER + addOn;
@@ -715,7 +728,7 @@ class Agent {
                 }
             });
             if (closestPoint != null) this.visCol.push(closestPoint);
-            let spotVals = { dist: minDist, angle: currAngle, hue: hueOfMinDist};
+            let spotVals = { dist: minDist, angle: currAngle, hue: hueOfMinDist };
             this.spotted.push(spotVals);
 
             //Hard coded k value was hand tweaked, and not analytically determined

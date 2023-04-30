@@ -352,7 +352,7 @@ class World {
             }
         });
         this.agents.forEach(agent => {
-            if (!agent.removeFromWorld && agent.isActive) {
+            if (!agent.removeFromWorld) {
                 agent.draw(ctx);
             }
         });

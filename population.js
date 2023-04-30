@@ -467,7 +467,7 @@ class PopulationManager {
                     agent.moveToWorldCenter();
                 }  
                 agent.resetOrigin();
-                agent.resetEnergy();
+                agent.activateAgent();
                 agent.resetCalorieCounts();
                 if(newGen) {
                     agent.resetCounters();
@@ -998,7 +998,7 @@ class PopulationManager {
                     agent.moveToWorldCenter();
                 } 
                 agent.resetOrigin();
-                agent.resetEnergy();
+                agent.activateAgent();
                 agent.resetCalorieCounts();
                 agent.resetCounters();
             });
