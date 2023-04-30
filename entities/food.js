@@ -266,6 +266,17 @@ class Food {
             this.game.population.worlds.get(this.worldId).poison.length :
             this.game.population.worlds.get(this.worldId).food.length;
 
+        //Do not reproduce if too much food is left
+        if (params.ENFORCE_MIN_FOOD && (numAgents * params.FOOD_AGENT_RATIO < this.game.population.worlds.get(this.worldId).food.length)){
+            return;
+        }
+
+        //Do not reproduce if too much poison is left
+        if (params.ENFORCE_MIN_POISON && numAgents * params.POISON_AGENT_RATIO < this.game.population.worlds.get(this.worldId).poison.length){
+            return;
+        }
+
+
         const maxAdditionalChildren = 3; // the maximum number of additional seedlings this food can produce
         let numChildren = numFood > numAgents * (this.isPoison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) ?
             randomInt(2) : // produce either 0 or 1 children if we are already at our food cap in this food's world
@@ -286,7 +297,7 @@ class Food {
                 const distance = Math.random() * maxDist;
                 const x = Math.cos(angle) * distance;
                 const y = Math.sin(angle) * distance;
-                let seedling = new Food(this.game, this.x + x, this.y + y, this.isPoison, this.foodTracker);
+                let seedling = new Food(this.game, this.x + x, this.y + y, this.isPoison, this.foodTracker, this.worldId);
                 children.push(seedling);
                 angle += increment;
             }

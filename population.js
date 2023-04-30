@@ -66,7 +66,7 @@ class PopulationManager {
 
                 this.spawnFood(worldSpawned, false);
                 this.spawnFood(worldSpawned, true);
-                
+
                 //console.log(world.agents);
                 numberOfAgentToSpawned -= agentNum;
                 worldSpawned++;
@@ -97,9 +97,9 @@ class PopulationManager {
 
         this.preyConsumedData = {
             chart: new Linechart(this, 20, 50, 700, 400, [], "Prey Consumed Per Generations Chart", "Generations", "Times consumed"),
-            currentGenData:0,
+            currentGenData: 0,
         }
-        
+
         this.rolesMirrored = false;
     };
 
@@ -205,9 +205,9 @@ class PopulationManager {
         //Update hunting mode
         params.HUNTING_MODE = document.getElementById("huntingMode").value;
         if (params.HUNTING_MODE === "deactivated") {
-            params.HUNTING_MODE = false;   
+            params.HUNTING_MODE = false;
         }
-        else if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum")  {
+        else if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             params.AGENT_NEIGHBORS = true;
             document.getElementById("agent_neighbors").checked = true;
             params.SPLIT_SPECIES = false;
@@ -295,17 +295,17 @@ class PopulationManager {
         params.DISPLAY_SAME_WORLD = document.getElementById("displayOnTheSameWorld").checked;
 
 
-        if (params.AGENT_PER_WORLD === 0 && params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
-            this.mergeWorlds();
-        } else if (params.AGENT_PER_WORLD === 0 && !params.SPLIT_SPECIES && document.getElementById("split_species").checked) {
-            this.splitWorlds();
-        }
+        // if (params.AGENT_PER_WORLD === 0 && params.SPLIT_SPECIES && !document.getElementById("split_species").checked) {
+        //     this.mergeWorlds();
+        // } else if (params.AGENT_PER_WORLD === 0 && !params.SPLIT_SPECIES && document.getElementById("split_species").checked) {
+        //     this.splitWorlds();
+        // }
         params.SPLIT_SPECIES = document.getElementById("split_species").checked;
 
         if (document.activeElement.id !== "food_agent_ratio") {
             params.FOOD_AGENT_RATIO = parseInt(document.getElementById("food_agent_ratio").value);
         }
-        
+
         if (document.activeElement.id !== "poison_agent_ratio") {
             params.POISON_AGENT_RATIO = parseInt(document.getElementById("poison_agent_ratio").value);
         }
@@ -325,7 +325,7 @@ class PopulationManager {
             params.AGENT_NEIGHBOR_COUNT = parseInt(document.getElementById("agent_neighbor_count").value);
         }
 
-        
+
         if (document.activeElement.id !== "fitness_calories") {
             if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
                 params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
@@ -400,16 +400,18 @@ class PopulationManager {
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
 
         //Cleans up all of the food/poison for the world
-        this.worlds.forEach((members, worldId) => {
-            members.cleanupFood(false); //cleanup food
-            members.cleanupFood(true); //cleanup poison
-            if (params.ENFORCE_MIN_FOOD && members.food.length < params.FOOD_AGENT_RATIO * members.agents.length) {
-                this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
-            }
-            if (params.ENFORCE_MIN_POISON && members.poison.length < params.POISON_AGENT_RATIO * members.agents.length) {
-                this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
-            }
-        });
+        // this.worlds.forEach((members, worldId) => {
+        //     members.cleanupFood(false); //cleanup food
+        //     members.cleanupFood(true); //cleanup poison
+        //     if (params.ENFORCE_MIN_FOOD && members.food.length < params.FOOD_AGENT_RATIO * members.agents.length) {
+        //         this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
+        //     }
+        //     if (params.ENFORCE_MIN_POISON && members.poison.length < params.POISON_AGENT_RATIO * members.agents.length) {
+        //         this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
+        //     }
+        // });
+        this.checkFoodLevels();
+
         if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA !== 0 && this.tickCounter % params.TICK_TO_UPDATE_CURRENT_GEN_DATA == 0) {
             //Output the Charts for current generation data
             generateNeuralNetWorkData(this.currentLeftWheelHist, 'agentCurrentLeftWheelChart', 'agentCurrentOutputContainers');
@@ -443,10 +445,13 @@ class PopulationManager {
             //For debugging k and m purposes
             //console.clear();
             this.tickCounter = 0;
-            if(params.MIRROR_ROLES && !this.rolesMirrored){
+            if (params.MIRROR_ROLES && !this.rolesMirrored) {
                 this.resetAgents(false);
                 this.swapHierarchyValues();
-            }else{
+
+                //Clean up the food
+                this.checkFoodLevels();;
+            } else {
                 this.processGeneration(this.agentsAsList());
             }
             this.rolesMirrored = !this.rolesMirrored;
@@ -460,28 +465,28 @@ class PopulationManager {
         return false;
     };
 
-    resetAgents(newGen = true){
+    resetAgents(newGen = true) {
         if (!params.FREE_RANGE) {
             this.agentsAsList().forEach(agent => {
-                if (params.HUNTING_MODE === "deactivated"){
+                if (params.HUNTING_MODE === "deactivated") {
                     agent.moveToWorldCenter();
-                }  
+                }
                 agent.resetOrigin();
                 agent.activateAgent();
                 agent.resetCalorieCounts();
-                if(newGen) {
+                if (newGen) {
                     agent.resetCounters();
                 }
             });
 
-             //Update food hierarchy of all agents in all world
+            //Update food hierarchy of all agents in all world
             this.updateWorldsFoodHierarchy();
         }
     }
 
-    swapHierarchyValues(){
+    swapHierarchyValues() {
         this.worlds.forEach(world => {
-            if (world.agents){
+            if (world.agents) {
                 world.swapFoodHierarchies();
             }
         });
@@ -512,10 +517,20 @@ class PopulationManager {
     checkFoodLevels() { // periodic food/poison repopulation function
         this.worlds.forEach((members, worldId) => {
             members.cleanupFood(true);
-            this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
-
             members.cleanupFood(false);
-            this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
+
+            let beforeFood = members.food.length;
+            if (params.ENFORCE_MIN_FOOD && members.food.length < params.FOOD_AGENT_RATIO * members.agents.length) {
+                this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
+
+
+
+            }
+            if (params.ENFORCE_MIN_POISON && members.poison.length < params.POISON_AGENT_RATIO * members.agents.length) {
+                this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
+            }
+
+
         });
     };
 
@@ -549,6 +564,7 @@ class PopulationManager {
     };
 
     spawnFood(worldId, poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length) {
+
         let seedlings = [];
         let index = 0;
         let spawnSlot = [];
@@ -706,7 +722,7 @@ class PopulationManager {
      */
     distributeAgents() {
         //EXIT IF NOT IN AGENT PER WORLD MODE
-        if (params.AGENT_PER_WORLD == 0) {
+        if (params.AGENT_PER_WORLD === 0) {
             return;
         }
 
@@ -843,11 +859,11 @@ class PopulationManager {
         return canvas;
     };
 
-    activateWorld(worldId){
+    activateWorld(worldId) {
         this.worlds.get(worldId).activate();
     }
 
-    deactivateWorld(worldId){
+    deactivateWorld(worldId) {
         this.worlds.get(worldId).deactivate();
     }
 
@@ -913,7 +929,7 @@ class PopulationManager {
         createSlideShow(tmp, 'canvas');
     };
 
-    
+
     processGeneration() {
         //Data collections for histograms
         let avgLeftWheelOut = new Array(20).fill(0);
@@ -921,8 +937,8 @@ class PopulationManager {
         let avgBiteOut = new Array(20).fill(0);
         //evaluate the agents
         let totalRawFitness = 0;
-        let totalGenTicks = params.GEN_TICKS * (params.MIRROR_ROLES ? 2: 1);
-    
+        let totalGenTicks = params.GEN_TICKS * (params.MIRROR_ROLES ? 2 : 1);
+
         this.agentsAsList().forEach(agent => {
             this.agentTracker.processAgent(agent);
             this.genomeTracker.processGenome(agent.genome);
@@ -932,7 +948,7 @@ class PopulationManager {
             //Sort average output data for the histograms into their buckets
             //console.log(agent.totalOutputs[0], agent.totalOutputs[1] );
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / totalGenTicks, -1, 1)]++;
-            avgRightWheelOut[determineBucket(agent.totalOutputs[1] / totalGenTicks, -1, 1)]++;  
+            avgRightWheelOut[determineBucket(agent.totalOutputs[1] / totalGenTicks, -1, 1)]++;
             if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / totalGenTicks, -1, 1)]++;
         });
         this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
@@ -994,9 +1010,9 @@ class PopulationManager {
         //Resets all agents
         if (!params.FREE_RANGE) {
             this.agentsAsList().forEach(agent => {
-                if (params.HUNTING_MODE === "deactivated"){
+                if (params.HUNTING_MODE === "deactivated") {
                     agent.moveToWorldCenter();
-                } 
+                }
                 agent.resetOrigin();
                 agent.activateAgent();
                 agent.resetCalorieCounts();
@@ -1005,7 +1021,7 @@ class PopulationManager {
         }
 
         this.updateWorldsFoodHierarchy();
-       
+
 
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
@@ -1039,7 +1055,7 @@ class PopulationManager {
         if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             generateLineChart(this.preyConsumedData.chart, "preyConsumptionLineChart", "lineChartOutputContainters");
         }
-        
+
         if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
 
@@ -1093,7 +1109,7 @@ class PopulationManager {
     };
 
 
-    deathRoulette(reprodFitMap, sumShared){
+    deathRoulette(reprodFitMap, sumShared) {
         let rouletteOrder = [...reprodFitMap.keys()].sort();
         let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
         let deathFitMap = new Map();
@@ -1132,7 +1148,7 @@ class PopulationManager {
         }
     }
 
-    crossover(reprodFitMap, sumShared){
+    crossover(reprodFitMap, sumShared) {
         // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
         let children = [];
         let alives = this.countAlives(); // if free range mode kills off everybody, we produce at least 1 new agent

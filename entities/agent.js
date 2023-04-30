@@ -47,7 +47,7 @@ class Agent {
         this.leftWheel = 0; // the "power" supplied to the Agent's left wheel (falls in the range -1 to 1 inclusive)
         this.rightWheel = 0; // the "power" supplied to the Agent's right wheel (falls in the range -1 to 1 inclusive)
         this.heading = randomInt(361) * Math.PI / 180; // the angle at which an Agent is traveling (fall between 0 to 2pi exclusive)
-        this.genome = genome === undefined ? new Genome() : genome; // create a new Genome if none is supplied, otherwise perform an assignment
+        this.genome = (genome === undefined) ? new Genome() : genome; // create a new Genome if none is supplied, otherwise perform an assignment
         this.neuralNet = new NeuralNet(this.genome); // create a new neural network corresponding to the previously assigned Genome
         this.activateAgent(); // set the Agent's energy to the statically defined start energy
         this.updateDiameter(); // how wide the agent's circle is drawn
@@ -771,7 +771,7 @@ class Agent {
         ctx.fillStyle = `hsl(${this.getDisplayHue()}, 100%, 50%)`;
 
         //Agent got deactivated
-        if (this.energy <= Agent.DEATH_ENERGY_THRESH) {
+        if (!this.isActive) {
             ctx.strokeStyle = `hsl(${color}, 0%, ${(!params.DISPLAY_SAME_WORLD) ? 0 : 50}%)`;
             ctx.setLineDash([1]);
         }

@@ -36,12 +36,17 @@ class World {
         if (!this.isActive) {
             return;
         }
+        let counter = 0;
         for (let i = 0; i < this.food.length; i++) {
             if (!this.food[i].removeFromWorld) {
                 this.food[i].update();
-
+                counter++;
             }
         }
+
+        // if (counter > 2){
+        //     console.log(this.worldId + " this world has more food " + this.food.length + " active " + counter);
+        // }
         for (let i = 0; i < this.poison.length; i++) {
             if (!this.poison[i].removeFromWorld) {
                 this.poison[i].update();
@@ -343,12 +348,12 @@ class World {
         this.home.draw(ctx);
         this.food.forEach(food => {
             if (!food.removeFromWorld) {
-                food.draw(ctx)
+                food.draw(ctx);
             }
         });
         this.poison.forEach(poison => {
             if (!poison.removeFromWorld) {
-                poison.draw(ctx)
+                poison.draw(ctx);
             }
         });
         this.agents.forEach(agent => {
