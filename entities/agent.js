@@ -68,6 +68,7 @@ class Agent {
         this.biteTicks = 0;
         this.ticksAlive = 0;
         this.totalTicks = 0;
+        this.concludingTick = 0;
         this.maxEatingCompletion = 0;
         this.totalOutputs = [0, 0, 0];
 
@@ -151,8 +152,13 @@ class Agent {
         }
 
         const predPreyFitnessFunct = () => {
-            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent + params.FITNESS_PERCENT_DEAD * (this.totalTicks - this.ticksAlive) / this.totalTicks;
+            let winnerBonus = this.concludingTick / params.GEN_TICKS;
+            if(params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") winnerBonus /= 2;
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent 
+                + params.FITNESS_PERCENT_DEAD * (this.totalTicks - this.ticksAlive) / this.totalTicks
+                + params.FITNESS_WINNER_BONUS * winnerBonus;
         }
+
 
         this.genome.rawFitness = predPreyFitnessFunct();
         this.genome.rawFitness += fitnessFunct();
@@ -243,6 +249,8 @@ class Agent {
     resetCounters() {
         this.numberOfTickBumpingIntoWalls = 0;
         this.numberOfTickOutOfBounds = 0;
+        this.totalTicks = 0;
+        this.ticksAlive = 0;
         this.numberOfPreyHunted = 0;
         this.numberOfTimesConsumed = 0;
         this.totalOutputs = [0, 0, 0];
@@ -350,6 +358,7 @@ class Agent {
         }
 
         this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
+        this.concludingTick += this.game.population.tickCounter;
         return calReward;
     }
 
@@ -550,9 +559,11 @@ class Agent {
         /** If we are still alive, and we just bit loop through spotted food and eat those we are colliding with */
         if (this.isActive) {
             let foundFood = false;
+            let predPreyMode = params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum";
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    if (params.HUNTING_MODE === "deactivated" || ((params.HUNTING_MODE === "hierarchy" || (params.HUNTING_MODE === "hierarchy_spectrum")) && this.foodHierarchyIndex === 0)) {//Only the lowest prey get to eat normal food
+                    if(!predPreyMode) console.log("Hunting mode: " + params.HUNTING_MODE);
+                    if (params.HUNTING_MODE === "deactivated" || (predPreyMode && this.foodHierarchyIndex === 0)) {//Only the lowest prey get to eat normal food
                         if (this.biting || !params.AGENT_BITING) {
                             let consOut = entity.consume();
                             let cals = consOut.calories;
@@ -572,13 +583,15 @@ class Agent {
                 }
 
                 //If the entity is an agent, check the hierarchy index
-                if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum")) {
+                if (predPreyMode) {
                     if (entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
                         if (this.biting || !params.AGENT_BITING) {
                             let cals = entity.consume(this);
 
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
+                            //Only count the first prey hunted incase there's multiple prey
+                            if(this.numberOfPreyHunted == 1) this.concludingTick += this.game.population.tickCounter;
 
                         }
                     }
