@@ -28,7 +28,8 @@
     <script type="text/javascript" src="./boundingcircle.js"></script>
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./datadisplay.js"></script>
-    <script type="text/javascript" src="./timer.js"></script>   
+    <script type="text/javascript" src="./timer.js"></script>
+    <script type="text/javascript" src="./minimap.js"></script>
     <script type="text/javascript" src="./population.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
     <script type="text/javascript" src="./main.js"></script>
@@ -158,13 +159,18 @@
         <input type="checkbox" id="largeEnergyThresh"> Large Energy Threshold
     </div>
 
-    <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
-    <select name="huntingMode" id="huntingMode">
-        <option value="deactivated">Deactivated</option>
-        <option selected="selected" value="hierarchy">Food Hierarchy Index</option>
-        <option value="hierarchy_spectrum">Food Hierarchy Index Spectrum (Multiple Prey/Predator levels)</option>
-        <option value="multipleGeneration">Multiple Generation</option>
-    </select>
+    <div>
+        <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
+        <select name="huntingMode" id="huntingMode">
+            <option value="deactivated">Deactivated</option>
+            <option selected="selected" value="hierarchy">Food Hierarchy Index</option>
+            <option value="hierarchy_spectrum">Food Hierarchy Index Spectrum (Multiple Prey/Predator levels)</option>
+            <option value="multipleGeneration">Multiple Generation</option>
+        </select>
+        <input type="text" id="prey_speed" value="5"> Prey Max Speed
+        <input type="text" id="predator_speed" value="5"> Predator Max Speed
+    </div>
+
     <div>
         <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
     </div>
@@ -292,13 +298,13 @@
     <!-- Old fitness function -->
     <div>
         <br> </br><strong>Old Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_HUNTING_PREY" value="0"> (Prey hunted) + 
-        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) + 
-        <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) + 
-        <input type="text" id="fitness_calories" value="0"> (Calories Eaten) + 
+        <input type="text" id="FITNESS_HUNTING_PREY" value="0"> (Prey hunted) +
+        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
+        <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) +
+        <input type="text" id="fitness_calories" value="0"> (Calories Eaten) +
         <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
     </div>
-   
+
 
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>

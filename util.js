@@ -59,6 +59,8 @@ const params = {
     PAUSE_DRAWING: false,
     HUNTING_MODE: "hierarchy",
     AGENT_MAX_SPEED: 5,
+    PREY_MAX_SPEED: 5,
+    PREDATOR_MAX_SPEED: 5,
     AGENT_DIAMETER: 15,
     FOOD_DIAMETER: 24,
     FOOD_BUSH: true,

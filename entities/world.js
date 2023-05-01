@@ -317,6 +317,7 @@ class World {
             prevY = agent.y;
 
             agent.activateAgent();
+            agent.updateMaxSpeed();
             ++agentAssigned;
         });
     }
@@ -333,6 +334,8 @@ class World {
         let j = agents.length - 1;
         while (i < j) {
             [agents[i].foodHierarchyIndex, agents[j].foodHierarchyIndex] = [agents[j].foodHierarchyIndex, agents[i].foodHierarchyIndex];
+            agents[i].updateMaxSpeed();
+            agents[j].updateMaxSpeed();
             i++;
             j--;
         }

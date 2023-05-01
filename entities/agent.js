@@ -52,7 +52,7 @@ class Agent {
         this.activateAgent(); // set the Agent's energy to the statically defined start energy
         this.updateDiameter(); // how wide the agent's circle is drawn
         this.wheelRadius = 1; // an agent is more or less structured like a Roomba vacuum robot, and this is the radius of one of its 2 wheels
-        this.maxVelocity = params.AGENT_MAX_SPEED; // a UNITLESS value which controls the movement speed of Agents in the sim
+        
         this.resetCalorieCounts(); // resets the Agent's good and bad calories eaten
         this.age = 0; // all Agents start at age 0
         this.resetOrigin(); // assigns this Agent's origin point to its current position
@@ -78,6 +78,8 @@ class Agent {
         this.isActive = true;//Whether the agent is still active and has been consumed or not
         this.caloriesReward = 50;
         this.numberOfPreyHunted = 0;
+        this.updateMaxSpeed(); // Update speed to a UNITLESS value which controls the movement speed of Agents in the sim
+        
     };
 
     /** Assigns this Agent's fitness */
@@ -387,14 +389,30 @@ class Agent {
         return false;
     }
 
+    /**
+     * Update max speed of the agent according to hunting mode
+     */
+    updateMaxSpeed(){
+        //"Prey or predator" hunting mode
+        if (params.HUNTING_MODE === "hierarchy" ){
+            if (this.foodHierarchyIndex > 0){
+                this.maxVelocity = params.PREDATOR_MAX_SPEED;
+            }
+            else{
+                this.maxVelocity = params.PREY_MAX_SPEED;
+            }
+        }
+        else{//Normal mode
+            this.maxVelocity = params.AGENT_MAX_SPEED;
+        }
+    }
+
 
     /** Updates this Agent for the current tick */
     update() {
         this.totalTicks++;
 
         let oldPos = { x: this.x, y: this.y }; // note where we are before moving
-
-        this.maxVelocity = params.AGENT_MAX_SPEED;
 
         let spottedNeighbors = [];
 
@@ -451,6 +469,11 @@ class Agent {
             for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
                 input.push(0);
             }
+
+            // //Add food hierarchy index to agents neural input
+            // for (let i = input.length; i < Genome.DEFAULT_INPUTS - 2; i++) { // fill all unused input nodes with 0's
+            //     input.push(0);
+            // }
 
         }
 
