@@ -417,7 +417,6 @@ class Agent {
         let spottedNeighbors = [];
 
         let input = []; // the input to the neural network
-
         input.push(1); // bias node always = 1
 
         /**
@@ -485,9 +484,9 @@ class Agent {
         //     input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
         // }
 
-        if (this.checkEnergy()) { // if we are out of energy, we don't move and become deactivated
+        if (this.checkEnergy() ) { // if we are out of energy, we don't move and become deactivated
             this.deactivateAgent();
-        } else { // if we are still alive, set our wheel power values to the output of our neural net
+        } else if (this.isActive) { // if we are still alive, set our wheel power values to the output of our neural net
             let output = this.neuralNet.processInput(input);
             this.leftWheel = output[0];
             this.rightWheel = output[1];

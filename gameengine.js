@@ -69,6 +69,11 @@ class GameEngine {
                 members.draw();
             });
         }
+
+        //Draw the minimap
+        if (params.DISPLAY_MINIMAP){
+            drawMinimap();
+        }
     };
 
     update() {

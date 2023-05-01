@@ -46,6 +46,7 @@ const params = {
     GENOME_DEFAULT_K_VAL: 0.75,
     NO_BORDER: false,
     DISPLAY_SAME_WORLD: false,
+    DISPLAY_MINIMAP: true,
     LARGE_ENERGY_THRESHOLD: false,
     SIM_TRIAL_NUM: 3,
     SIM_CURR_TRIAL: 1,
@@ -236,6 +237,8 @@ const createSlideShow = (array, id) => {
         count++;
     });
 };
+
+
 
 /**
  * Check whether a coordinate is out of bound of the map

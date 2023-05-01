@@ -12,6 +12,7 @@ class PopulationManager {
     static NUM_AGENTS = params.NUM_AGENTS;
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
     static WORLD_COLOR_POOL = [];
+    static MINIMAP;
 
     static IS_LAST_TICK = false;//Use for debugging purposes; to determine whether the current population is at its last tick
 
@@ -101,6 +102,10 @@ class PopulationManager {
         }
 
         this.rolesMirrored = false;
+
+        PopulationManager.MINIMAP = new Minimap(game);
+        //Update the spec for minimap
+        PopulationManager.MINIMAP.updateSpec(this.worlds.size);
     };
 
     //Return NULL if no color is availble
@@ -257,6 +262,7 @@ class PopulationManager {
         params.PAUSE_DRAWING = document.getElementById("pauseDrawing").checked;
         params.FOOD_BUSH = document.getElementById("food_bush").checked;
         params.MIRROR_ROLES = document.getElementById("mirror_roles").checked;
+        params.DISPLAY_MINIMAP = document.getElementById("display_minimap").checked;
 
         //Loading Profile
         if (document.getElementById("runByProfileMode").checked) {
@@ -678,6 +684,9 @@ class PopulationManager {
                 world.speciesList.add(child.speciesId);
             }
         });
+
+        //Update the spec for minimap
+        PopulationManager.MINIMAP.updateSpec(this.worlds.size);
     };
 
     countDeads(worldId = undefined) {
@@ -793,6 +802,8 @@ class PopulationManager {
             ++worldId;
         });
         PopulationManager.WORLD_CREATED = worldId;
+        //Update the spec for minimap
+        PopulationManager.MINIMAP.updateSpec(this.worlds.size);
         //console.log("agent distributed", agentDistributed);
     }
 
@@ -999,7 +1010,6 @@ class PopulationManager {
         }
         //Replenish food or poison
         this.checkFoodLevels();
-
 
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors

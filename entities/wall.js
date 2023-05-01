@@ -165,6 +165,7 @@ class Wall {
             X.numberOfTickBumpingIntoWalls++;
             //console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
             X.deactivateAgent();
+            X.isActive = false;
         });
     };
 
@@ -187,7 +188,7 @@ class Wall {
         ctx.beginPath();
         ctx.moveTo(this.xStart, this.yStart);
         ctx.lineTo(this.xEnd, this.yEnd);
-
+        ctx.closePath();
         
 
         ctx.fill();
