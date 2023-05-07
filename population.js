@@ -210,7 +210,7 @@ class PopulationManager {
         //Update hunting mode
         params.HUNTING_MODE = document.getElementById("huntingMode").value;
         if (params.HUNTING_MODE === "deactivated") {
-            params.HUNTING_MODE = false;
+            //params.HUNTING_MODE = false;
             document.getElementById("prey_speed").disabled = true;
             document.getElementById("predator_speed").disabled = true;
         }
@@ -367,6 +367,10 @@ class PopulationManager {
             params.FITNESS_PERCENT_DEAD = parseFloat(document.getElementById("FITNESS_PERCENT_DEAD").value);
         }
 
+        if (document.activeElement.id !== "FITNESS_WINNER_BONUS") {
+            params.FITNESS_WINNER_BONUS = parseFloat(document.getElementById("FITNESS_WINNER_BONUS").value);
+        }
+
         if (document.activeElement.id !== "num_agents") {
             params.NUM_AGENTS = parseInt(document.getElementById("num_agents").value);
         }
@@ -487,8 +491,8 @@ class PopulationManager {
                 }
                 agent.resetOrigin();
                 agent.activateAgent();
-                agent.resetCalorieCounts();
                 if (newGen) {
+                    agent.resetCalorieCounts();
                     agent.resetCounters();
                 }
             });
