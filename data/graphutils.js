@@ -704,11 +704,27 @@ const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftW
  */
 const generateSpecieAttributeBarChart = (data, attribute, title = '', elementID = 'specieSuccessfulHuntCountChart', containerID = 'barChartContainer' ) => {
     if (document.getElementById(elementID) != undefined) {
-        document.getElementById(elementID).remove();
+        let elem = document.getElementById(elementID);
+        elem.remove();
+        elem = null;
     }
-    const ctx = document.createElement('canvas');
-    ctx.setAttribute('id', elementID);
-    document.getElementById(containerID).appendChild(ctx);
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('id', elementID);
+    document.getElementById(containerID).appendChild(canvas);
+
+    // let canvas = null;
+    // let ctx = null;
+    // if (!document.getElementById(elementID)) {
+    //     canvas = document.createElement('canvas');
+    //     ctx = canvas.getContext("2d");
+    //     canvas.setAttribute('id', elementID);
+    //     document.getElementById(containerID).appendChild(canvas);
+    // } else {
+    //     canvas = document.getElementById(elementID);
+    //     console.log(canvas);
+    //     ctx = canvas.getContext("2d");
+    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // }
 
     const current = data[data.length - 1];
     current.sort((a, b) => a.speciesId - b.speciesId);
@@ -717,7 +733,7 @@ const generateSpecieAttributeBarChart = (data, attribute, title = '', elementID 
         Number.MAX_VALUE
     );
     const datasets = [];
-    current.forEach((obj) => {
+    current.forEach((obj) => {  
         const temp = {
             label: `ID: ${obj.speciesId}`,
             data: [obj[attribute]],
@@ -736,10 +752,10 @@ const generateSpecieAttributeBarChart = (data, attribute, title = '', elementID 
         datasets.push(temp);
     });
 
-    const myChart = new Chart(ctx, {
+    const myChart = new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: '',
+            labels: [''],
             datasets,
         },
         options: {
@@ -763,7 +779,7 @@ const generateSpecieAttributeBarChart = (data, attribute, title = '', elementID 
         },
     });
 
-    return ctx;
+    return canvas;
 };
 
 /**
