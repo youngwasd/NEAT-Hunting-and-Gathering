@@ -1070,7 +1070,7 @@ class PopulationManager {
         this.currentRightWheelHist.reset();
 
         //Add to the number of prey consumed
-        this.preyConsumedData.chart.addEntry([
+        this.preyConsumedData.chart.addEntry(0, [
             PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
         ]);
         this.preyConsumedData.currentGenData = 0;
