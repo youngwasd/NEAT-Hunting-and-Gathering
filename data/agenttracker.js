@@ -1,7 +1,7 @@
 /**
  * A class for tracking agent data for each generation
  */
- class AgentTracker {
+class AgentTracker {
     constructor() {
         this.currentGeneration = -1;
         this.generations = [];
@@ -21,7 +21,10 @@
             minEnergy: Number.MAX_VALUE,
             energy: [],
             speciesFitness: [],
-            avgFitness: 0
+            avgFitness: 0,
+            speciesFoodConsumptionCount: [],
+            speciesSuccessfulHuntCount: [],
+            speciesTotalTickOutOfBound: [],
         };
     }
 
@@ -55,14 +58,23 @@
 
     /**
      *
-     * @param {obj} data object containing species id and fitness {speciedId, fitness}
+     * @param {obj} data object containing species id and fitness {speciesId, fitness}
      */
     addSpeciesFitness(data) {
         this.generations[this.currentGeneration].speciesFitness.push(data);
     }
 
-    addAvgFitness(data){
+    addAvgFitness(data) {
         this.generations[this.currentGeneration].avgFitness = data;
+    }
+
+    /**
+     * A general helper method to push data to
+     * @param {str} attribute name of the field or attribute we want to push data to
+     * @param {obj} data object containing species id and the attribute (as the name of attribute) we want to push to {speciesId : int, "attribute": data}
+     */
+    addSpeciesAttribute(attribute, data) {
+        this.generations[this.currentGeneration][attribute].push(data);
     }
 
     /**
@@ -111,5 +123,13 @@
 
     getAvgFitnessData() {
         return this.generations.map((obj) => obj.avgFitness);
+    }
+    /**
+     * Retrieve information of a certain attribute as a list
+     * @param {str} attribute name of the attribute to retrieve
+     * @returns {obj} the information of the attribute stores in agent tracker
+     */
+    getAgentTrackerAttributes(attribute) {
+        return this.generations.map((obj) => obj[attribute]);
     }
 }

@@ -103,12 +103,32 @@ class Linechart {
         }
     }
 
+    replaceData(index = 0, newData = []){
+        if ((index < 0 || index > this.data.length)) {
+            //Stop adding if newData is invalid
+            console.error("Invalid Data Format, Adding Aborted.");
+            return;
+        }
+        let oldData = this.data[index];
+        this.data[index] = [];
+        for (let i = 0; i < newData.length; i++){
+            if (!this.addEntry(index, newData[i])){
+                console.error("Invalid Data Format, Adding Aborted.");
+                this.data[index] = oldData;
+                return null;
+            }
+        }
+
+        return true;
+
+    }
+
     //Add a new single entry to existing data
     addEntry(index = 0, newEntry = []) {
         if (newEntry.length < 2 || (index < 0 || index > this.data.length)) {
-            //Stop adding if newData is invalid
+            //Stop adding if newEntry is invalid
             console.error("Invalid Entry Format, Adding Aborted.");
-            return;
+            return null;
         }
         if (index == this.data.length) {
             this.data.push([]);
@@ -128,6 +148,7 @@ class Linechart {
         // console.log("Step: ", stepValueX, stepValueY);
         // console.log("X: ",this.minValueX, this.maxValueX, this.data.length);
         // console.log("Y: ",this.minValueY, this.maxValueY, this.data.length);
+        return true;
     }
 
     resize(width, height) {

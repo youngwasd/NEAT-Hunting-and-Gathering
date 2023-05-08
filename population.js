@@ -952,6 +952,52 @@ class PopulationManager {
         createSlideShow(tmp, 'canvas');
     };
 
+    /**
+     * Collect data during the run and put them into agent trackers
+     */
+    collectData(){
+        let specieOOBData = new Map();
+        let specieFoodEatenData = new Map();
+        let speciePreyHuntedData = new Map();
+        this.agentsAsList().forEach((agent) => {
+            let OOBData = specieOOBData.get(agent.speciesId);
+            specieOOBData.set(agent.speciesId,
+                (OOBData?OOBData:0) + agent.numberOfTickOutOfBounds
+            );
+
+            let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
+            specieFoodEatenData.set(agent.speciesId,
+                (FoodEatenData?FoodEatenData:0) + agent.numberOfFoodEaten
+            );
+
+            let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
+            speciePreyHuntedData.set(agent.speciesId,
+                (PreyHuntedData?PreyHuntedData:0) + agent.numberOfPreyHunted
+            );
+        });
+
+        //Log the data into agent Tracker
+        specieOOBData.forEach((data, speciesId) => {
+            let entry = {};
+            entry['speciesId'] = speciesId;
+            entry['speciesTotalTickOutOfBound'] = data;
+            this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry)
+        });
+
+        specieFoodEatenData.forEach((data, speciesId) => {
+            let entry = {};
+            entry['speciesId'] = speciesId;
+            entry['speciesFoodConsumptionCount'] = data;
+            this.agentTracker.addSpeciesAttribute('speciesFoodConsumptionCount', entry)
+        });
+
+        speciePreyHuntedData.forEach((data, speciesId) => {
+            let entry = {};
+            entry['speciesId'] = speciesId;
+            entry['speciesSuccessfulHuntCount'] = data;
+            this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry)
+        });
+    }
 
     processGeneration() {
         //Data collections for histograms
@@ -1000,6 +1046,10 @@ class PopulationManager {
             sumShared += reprodFitMap.get(speciesId);
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
+        
+        //Collect data for the other charts
+        this.collectData();
+
 
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
@@ -1090,6 +1140,11 @@ class PopulationManager {
         //generateCycleChart(this.genomeTracker.getCycleData());
         //generateNodeChart(this.genomeTracker.getNodeData());
         generateCurrentFitnessChart(this.agentTracker.getFitnessData());
+        
+        generateSpecieAttributeBarChart(this.agentTracker.getAgentTrackerAttributes('speciesSuccessfulHuntCount'), 'speciesSuccessfulHuntCount', "Successful Hunt Count Per Specie Per Gen", 'specieSuccessfulHuntCountChart')
+        generateSpecieAttributeBarChart(this.agentTracker.getAgentTrackerAttributes('speciesFoodConsumptionCount'), 'speciesFoodConsumptionCount', "Food Consumption Per Specie Per Gen", 'speciesFoodConsumptionCountChart')
+        generateSpecieAttributeBarChart(this.agentTracker.getAgentTrackerAttributes('speciesTotalTickOutOfBound'), 'speciesTotalTickOutOfBound', "Ticks Out Of Bound Per Specie Per Gen", 'speciesTotalTickOutOfBoundChart')
+
         this.foodTracker.computePercentiles();
         //generateFoodTimeChart(this.foodTracker.getPercentileData());
         this.foodTracker.addNewGeneration();

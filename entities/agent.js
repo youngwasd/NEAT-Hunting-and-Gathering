@@ -79,6 +79,8 @@ class Agent {
         this.isActive = true;//Whether the agent is still active and has been consumed or not
         this.caloriesReward = 50;
         this.numberOfPreyHunted = 0;
+        this.numberOfFoodEaten = 0;
+        this.numberOfGoingOutOfBound = 0;
         this.updateMaxSpeed(); // Update speed to a UNITLESS value which controls the movement speed of Agents in the sim
         
     };
@@ -242,7 +244,7 @@ class Agent {
     resetCalorieCounts() {
         this.caloriesEaten = 0;
         this.badCaloriesEaten = 0;
-        this.caloriesSpent = 0;
+        this.caloriesSpent = 0;  
     };
 
     /** Resets counters for the numbers of tick out of bound and bumping into walls */
@@ -254,6 +256,8 @@ class Agent {
         this.numberOfPreyHunted = 0;
         this.numberOfTimesConsumed = 0;
         this.totalOutputs = [0, 0, 0];
+        this.numberOfFoodEaten = 0;
+        this.numberOfGoingOutOfBound = 0;
     }
 
     //Make the energy = energy threshold
@@ -576,6 +580,8 @@ class Agent {
 
                             this.eatingCompletion = completion;
                             this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
+
+                            this.numberOfFoodEaten++;
                         }
                     }
                     foundFood = true;

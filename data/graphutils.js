@@ -7,15 +7,15 @@
  * That being said, the graph should still fundamentally show the same thing.
  * @param {array} timeData food consumption time for each generation
  */
- const generateFoodTimeChart = (timeData)=>{
+const generateFoodTimeChart = (timeData) => {
     const datasets = [];
     FoodTracker.percentileMapping.forEach((obj, i) => {
         let hue = 0;
-        if(i == 1){
+        if (i == 1) {
             hue = 50;
-        } else if(i == 2) {
+        } else if (i == 2) {
             hue = 100;
-        } else if(i == 3) {
+        } else if (i == 3) {
             hue = 230;
         }
         datasets.push({
@@ -35,7 +35,7 @@
     canvas.setAttribute('id', 'foodTimeChart');
     document.getElementById('foodTimeChartContainer').appendChild(canvas);
     const labels = [];
-    for(let i = 0 ; i < timeData[0].length; i++) {
+    for (let i = 0; i < timeData[0].length; i++) {
         labels.push(i);
     }
     new Chart(canvas, {
@@ -127,7 +127,7 @@ const getFitnessChart = (speciesFitnesses) => {
     }
     const datasets = [];
     speciesFitnesses.forEach((obj) => {
-        while(obj.fitnesses.length < longestGen){
+        while (obj.fitnesses.length < longestGen) {
             obj.fitnesses.unshift(undefined);
         }
         datasets.push({
@@ -184,8 +184,9 @@ const getFitnessChart = (speciesFitnesses) => {
 };
 
 /**
- *
- * @param {2d array} data array of arrays of life stage counts per generation
+ * Create canvas chart for species fitness over time.
+ * @param {array} speciesFitnesses array of fitness data
+ * @returns {html} canvas
  */
 const generateCurrentFitnessChart = (data) => {
     if (document.getElementById('currentFitnessChart') != undefined) {
@@ -247,6 +248,7 @@ const generateCurrentFitnessChart = (data) => {
             },
         },
     });
+    return ctx;
 };
 
 /**
@@ -456,7 +458,7 @@ const generateConnectionChart = (data) => {
  *
  * @param {array} data array of arrays of data
  */
-const generateEnergyChart = (data) => {};
+const generateEnergyChart = (data) => { };
 
 /**
  *
@@ -675,26 +677,93 @@ const generateFoodStageChart = (data) => {
  */
 const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftWheelChart', container = 'agentCurrentOutputContainers', style = '', width = 400, height = 100) => {
     let canvas = document.createElement('canvas');
-    if (!document.getElementById(chartElementID) ) {
+    if (!document.getElementById(chartElementID)) {
         document.getElementById(container).appendChild(canvas);
-    }else{
+    } else {
         canvas = document.getElementById(chartElementID);
     }
-    
+
     canvas.setAttribute('id', chartElementID);
     canvas.setAttribute('style', style);
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
-    
+
     let ctx = canvas.getContext("2d");
 
     //Clear the retangle
     ctx.clearRect(0, 0, width, height);
-    
     outputHistogram.draw(ctx);
-    
     outputHistogram.ctx = ctx;
-    
+};
+
+/**
+ * Create canvas chart for species fitness over time.
+ * @param {array} data array of data data
+ * @param {str} attribute attribute we are generating the bar chart for 
+ * @returns {html} canvas
+ */
+const generateSpecieAttributeBarChart = (data, attribute, title = '', elementID = 'specieSuccessfulHuntCountChart', containerID = 'barChartContainer' ) => {
+    if (document.getElementById(elementID) != undefined) {
+        document.getElementById(elementID).remove();
+    }
+    const ctx = document.createElement('canvas');
+    ctx.setAttribute('id', elementID);
+    document.getElementById(containerID).appendChild(ctx);
+
+    const current = data[data.length - 1];
+    current.sort((a, b) => a.speciesId - b.speciesId);
+    const min = current.reduce(
+        (acc, curr) => Math.min(curr[attribute], acc),
+        Number.MAX_VALUE
+    );
+    const datasets = [];
+    current.forEach((obj) => {
+        const temp = {
+            label: `ID: ${obj.speciesId}`,
+            data: [obj[attribute]],
+            borderColor: [
+                `hsl(${PopulationManager.SPECIES_COLORS.get(
+                    obj.speciesId
+                )}, 100%, 50%)`,
+            ],
+            backgroundColor: [
+                `hsla(${PopulationManager.SPECIES_COLORS.get(
+                    obj.speciesId
+                )}, 100%, 50%, 0.7)`,
+            ],
+            borderWidth: 1,
+        };
+        datasets.push(temp);
+    });
+
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: '',
+            datasets,
+        },
+        options: {
+            scales: {
+                y: {
+                    // min: Math.max(Math.floor(min - 100), 0),
+                    beginAtZero: true,
+                },
+            },
+            elements: {
+                line: {
+                    tension: 0.1,
+                },
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: title,
+                },
+            },
+        },
+    });
+
+    return ctx;
 };
 
 /**
@@ -708,22 +777,22 @@ const generateNeuralNetWorkData = (outputHistogram, chartElementID = 'agentLeftW
  */
 const generateLineChart = (outputLineGraph, chartElementID = 'lineChart', container = 'lineChartOutputContainters', style = '', width = 800, height = 500) => {
     let canvas = document.createElement('canvas');
-    if (!document.getElementById(chartElementID) ) {
+    if (!document.getElementById(chartElementID)) {
         document.getElementById(container).appendChild(canvas);
-    }else{
+    } else {
         canvas = document.getElementById(chartElementID);
     }
-    
+
     canvas.setAttribute('id', chartElementID);
     canvas.setAttribute('style', style);
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
-    
+
     let ctx = canvas.getContext("2d");
-   
+
     outputLineGraph.draw(ctx);
-    
-  
-    
+
+
+
 };
 
