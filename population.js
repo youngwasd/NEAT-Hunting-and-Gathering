@@ -485,6 +485,9 @@ class PopulationManager {
 
     resetAgents(newGen = true) {
         if (!params.FREE_RANGE) {
+            //Update food hierarchy of all agents in all world
+            this.updateWorldsFoodHierarchy();
+
             this.agentsAsList().forEach(agent => {
                 if (params.HUNTING_MODE === "deactivated") {
                     agent.moveToWorldCenter();
@@ -496,9 +499,6 @@ class PopulationManager {
                     agent.resetCounters();
                 }
             });
-
-            //Update food hierarchy of all agents in all world
-            this.updateWorldsFoodHierarchy();
         }
     }
 
@@ -959,6 +959,9 @@ class PopulationManager {
         let specieOOBData = new Map();
         let specieFoodEatenData = new Map();
         let speciePreyHuntedData = new Map();
+        let sumPercDead = 0;
+        let sumEnergySpent = 0;
+        let sumPredWinnerBonus = 0;
         this.agentsAsList().forEach((agent) => {
             let OOBData = specieOOBData.get(agent.speciesId);
             specieOOBData.set(agent.speciesId,
@@ -974,6 +977,9 @@ class PopulationManager {
             speciePreyHuntedData.set(agent.speciesId,
                 (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
             );
+            sumPercDead += agent.getPercentDead();
+            sumEnergySpent += agent.caloriesSpent;
+            if(agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.winnerBonus;
         });
 
         //Log the data into agent Tracker
@@ -1003,6 +1009,12 @@ class PopulationManager {
 
             this.agentTracker.addToAttribute('totalPreyHuntedCount', data);
         });
+
+        //Add averages to agent tracker
+        this.agentTracker.addAvgPercDead(sumPercDead/this.agentsAsList().length);
+        this.agentTracker.addAvgEnergySpent(sumEnergySpent/this.agentsAsList().length);
+        this.agentTracker.addAvgPredWinnerBonus(sumPredWinnerBonus/this.agentsAsList().length)
+
 
 
     }
@@ -1109,7 +1121,6 @@ class PopulationManager {
 
 
 
-
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
             this.deathRoulette(reprodFitMap, sumShared);
@@ -1123,7 +1134,6 @@ class PopulationManager {
         }
         //Replenish food or poison
         this.checkFoodLevels();
-
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
         PopulationManager.SPECIES_MEMBERS = new Map();
@@ -1139,7 +1149,7 @@ class PopulationManager {
         PopulationManager.SENSOR_COLORS_USED = new Set([...PopulationManager.SENSOR_COLORS_USED].filter(color => remainingSensorColors.has(color)));
 
         //Resets all agents
-        if (!params.FREE_RANGE) {
+        /*if (!params.FREE_RANGE) {
             this.agentsAsList().forEach(agent => {
                 if (params.HUNTING_MODE === "deactivated") {
                     agent.moveToWorldCenter();
@@ -1150,8 +1160,9 @@ class PopulationManager {
                 agent.resetCounters();
             });
         }
-
-        this.updateWorldsFoodHierarchy();
+        
+        this.updateWorldsFoodHierarchy();*/
+        this.resetAgents(true);
 
 
         //Clear current walls and add random walls to the map. Will be different for each world
@@ -1196,6 +1207,15 @@ class PopulationManager {
         this.agentTracker.addNewGeneration();
         this.genomeTracker.addNewGeneration();
 
+        //Runs database updates and checks to see if there is a  
+        //trial end before incrementing the generation number
+        if(!this.generationalDBUpdate()){
+            PopulationManager.GEN_NUM++;
+            this.resetCanvases();
+        }
+    };
+
+    generationalDBUpdate(){
         if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
             params.SIM_CURR_TRIAL++;
             //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
@@ -1203,10 +1223,19 @@ class PopulationManager {
             fitnessData = fitnessData.slice(0, fitnessData.length - 1);
             let consumptionData = this.foodTracker.getConsumptionData();
             consumptionData = consumptionData.slice(0, consumptionData.length - 1);
+            let energySpentData = this.agentTracker.getAvgEnergySpentData();
+            energySpentData = energySpentData.slice(0, energySpentData.length - 1);
+            let percDeadData = this.agentTracker.getAvgPercDeadData();
+            percDeadData = percDeadData.slice(0, percDeadData.length - 1);
+            let winnerBonusData = this.agentTracker.getAvgPredWinnerBonusData();
+            winnerBonusData = winnerBonusData.slice(0, winnerBonusData.length - 1);
 
             //Sending data to data base
             if (params.SAVE_TO_DB) {
-                logData({ avgFitness: fitnessData, consumption: consumptionData });
+                logData({ avgFitness: fitnessData, consumption: consumptionData, 
+                    avgEnergySpent: energySpentData, avgPredWinnerBonus: winnerBonusData,
+                    avgPercDead: percDeadData}, 
+                    params.DB, params.DB_COLLECTION);
             }
 
             this.resetSim();
@@ -1223,12 +1252,10 @@ class PopulationManager {
                 }
             }
 
-            return;
+            return true;
         }
-
-        PopulationManager.GEN_NUM++;
-        this.resetCanvases();
-    };
+        return false;
+    }
 
 
     deathRoulette(reprodFitMap, sumShared) {
