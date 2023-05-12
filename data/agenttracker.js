@@ -20,8 +20,11 @@ class AgentTracker {
             maxEnergy: 0,
             minEnergy: Number.MAX_VALUE,
             energy: [],
+            avgEnergySpent: 0,
             speciesFitness: [],
             avgFitness: 0,
+            avgPercDead: 0,
+            avgPredWinnerBonus: 0,
             speciesFoodConsumptionCount: [],
             speciesSuccessfulHuntCount: [],
             speciesTotalTickOutOfBound: [],
@@ -66,6 +69,18 @@ class AgentTracker {
 
     addAvgFitness(data) {
         this.generations[this.currentGeneration].avgFitness = data;
+    }
+
+    addAvgPercDead(data){
+        this.generations[this.currentGeneration].avgPercDead = data;
+    }
+
+    addAvgEnergySpent(data){
+        this.generations[this.currentGeneration].avgEnergySpent = data;
+    }
+
+    addAvgPredWinnerBonus(data){
+        this.generations[this.currentGeneration].avgPredWinnerBonus = data;
     }
 
     /**
@@ -123,6 +138,18 @@ class AgentTracker {
 
     getAvgFitnessData() {
         return this.generations.map((obj) => obj.avgFitness);
+    }
+
+    getAvgEnergySpentData(){
+        return this.generations.map((obj) => obj.avgEnergySpent);
+    }
+
+    getAvgPredWinnerBonusData(){
+        return this.generations.map((obj) => obj.avgPredWinnerBonus);
+    }
+
+    getAvgPercDeadData(){
+        return this.generations.map((obj) => obj.avgPercDead);
     }
     /**
      * Retrieve information of a certain attribute as a list

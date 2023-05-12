@@ -68,7 +68,8 @@ class Agent {
         this.biteTicks = 0;
         this.ticksAlive = 0;
         this.totalTicks = 0;
-        this.concludingTick = 0;
+        //this.concludingTick = 0;
+        this.winnerBonus = 0;
         this.maxEatingCompletion = 0;
         this.totalOutputs = [0, 0, 0];
 
@@ -155,14 +156,15 @@ class Agent {
 
         const predPreyFitnessFunct = () => {
             let winnerBonus = this.concludingTick / params.GEN_TICKS;
-            if(params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") winnerBonus /= 2;
+            if(params.MIRROR_ROLES) winnerBonus /= 2;
             return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent 
-                + params.FITNESS_PERCENT_DEAD * (this.totalTicks - this.ticksAlive) / this.totalTicks
-                + params.FITNESS_WINNER_BONUS * winnerBonus;
+                + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
+                + params.FITNESS_WINNER_BONUS * this.winnerBonus;
         }
 
 
-        this.genome.rawFitness = predPreyFitnessFunct();
+        if(params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") 
+            this.genome.rawFitness = predPreyFitnessFunct();
         this.genome.rawFitness += fitnessFunct();
     };
 
@@ -258,6 +260,7 @@ class Agent {
         this.totalOutputs = [0, 0, 0];
         this.numberOfFoodEaten = 0;
         this.numberOfGoingOutOfBound = 0;
+        this.winnerBonus = 0;
     }
 
     //Make the energy = energy threshold
@@ -272,6 +275,7 @@ class Agent {
     activateAgent() {
         this.isActive = true;
         this.energy = Agent.START_ENERGY;
+        if(params.FITNESS_WINNER_BONUS != 0 && this.foodHierarchyIndex == 0) this.winnerBonus += 1;
     }
 
     /**
@@ -362,7 +366,7 @@ class Agent {
         }
 
         this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
-        this.concludingTick += this.game.population.tickCounter;
+        this.winnerBonus -= 1 - (this.game.population.tickCounter / params.GEN_TICKS);
         return calReward;
     }
 
@@ -400,6 +404,10 @@ class Agent {
         if (this.energy <= Agent.DEATH_ENERGY_THRESH)
             return true;
         return false;
+    }
+
+    getPercentDead(){
+        return (this.totalTicks - this.ticksAlive) / this.totalTicks;
     }
 
     /**
@@ -596,7 +604,7 @@ class Agent {
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
                             //Only count the first prey hunted incase there's multiple prey
-                            if(this.numberOfPreyHunted == 1) this.concludingTick += this.game.population.tickCounter;
+                            if(this.numberOfPreyHunted == 1) this.winnerBonus += 1 - (this.game.population.tickCounter / params.GEN_TICKS);
 
                         }
                     }

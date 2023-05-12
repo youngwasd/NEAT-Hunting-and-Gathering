@@ -26,9 +26,25 @@ const downloadData = (e) => {
     console.log("Download successfully");
 }
 
+const downloadGenomes = (e) =>{
+    db = document.getElementById("genome_db").value;
+    db_collection = document.getElementById("genome_db_collection").value;
+
+    console.log(`db: ${db}\ncollection: ${db_collection}`);
+    socket.emit("find", 
+    {
+        db: db, 
+        collection: db_collection
+    });
+    console.log("Download successfully");
+}
+
 const parseData = (data) => {
     download("AvgRawFitness-" + db + "-" + db_collection + ".csv", serializeData(data, "avgFitness", true));
     download("Consumption-" + db + "-" + db_collection + ".csv", serializeData(data, "consumption", true));
+    download("PercDead-" + db + "-" + db_collection + ".csv", serializeData(data, "avgPercDead", true));
+    download("PredWinnerBonus-" + db + "-" + db_collection + ".csv", serializeData(data, "avgPredWinnerBonus", true));
+    download("EnergySpent-" + db + "-" + db_collection + ".csv", serializeData(data, "avgEnergySpent", true));
 }
 
 const download = (filename, text) => {
