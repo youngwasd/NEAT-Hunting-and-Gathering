@@ -1027,34 +1027,19 @@ class PopulationManager {
         });
 
         //Add averages to agent tracker
-        this.agentTracker.addAvgPercDead(sumPercDead/this.agentsAsList().length);
-        this.agentTracker.addAvgEnergySpent(sumEnergySpent/this.agentsAsList().length);
-        this.agentTracker.addAvgPredWinnerBonus(sumPredWinnerBonus/this.agentsAsList().length)
+        this.agentTracker.addAvgPercDead(sumPercDead/params.NUM_AGENTS * 100);
+        this.agentTracker.addAvgEnergySpent(sumEnergySpent/params.NUM_AGENTS);
+        this.agentTracker.addAvgPredWinnerBonus(sumPredWinnerBonus/params.NUM_AGENTS)
 
 
 
     }
 
     displayDataChart() {
-        //Generate the data chart for prey hunting 
+        //Generate the line chart for prey hunting 
         if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             this.preyConsumedData.chart.addEntry(this.agentTracker.getCurrentGenAttriBute('totalPreyHuntedCount'));
             generateLineChart({ chart: this.preyConsumedData.chart }, "preyHuntedLineChart", "lineChartOutputContainters");
-
-            generateLineChart(
-                {
-                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalFoodConsumptionCount'),
-                    title: 'Total Food Consumption Per Generation'
-                },
-                "foodConsumptionLineChart", "lineChartOutputContainters",
-            );
-            generateLineChart(
-                {
-                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds'),
-                    title: 'Total Ticks Out of Bounds Per Generation'
-                },
-                "totalTicksOOBLineChart", "lineChartOutputContainters",
-            );
 
             generateLineChart(
                 {
@@ -1071,14 +1056,46 @@ class PopulationManager {
                 },
                 "totalTicksOOBPreyLineChart", "lineChartOutputContainters",
             );
-
-
-            // this.preyConsumedData = {
-            //     chart: new Linechart(this, 20, 50, 700, 400, [], "Prey Consumed Per Generations Chart", "Generations", "Times consumed"),
-            //     currentGenData: 0,
-            // }
-            //generateLineChart(this.agentTracker.getCurrentGenAttriBute('totalPreyConsumptionCount'), "preyConsumptionLineChart", "lineChartOutputContainters");
+                
+            generateLineChart(
+                {
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('avgPredWinnerBonus'),
+                    title: 'Average Hunting Bonus of An Agent Per Generation'
+                },
+                "avgPredWinnerBonusLineChart", "lineChartOutputContainters",
+            );
         }
+
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('totalFoodConsumptionCount'),
+                title: 'Total Food Consumption Per Generation'
+            },
+            "foodConsumptionLineChart", "lineChartOutputContainters",
+        );
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds'),
+                title: 'Total Ticks Out of Bounds Per Generation'
+            },
+            "totalTicksOOBLineChart", "lineChartOutputContainters",
+        );
+
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('avgEnergySpent'),
+                title: ' Average Energy Spent of An Agent Per Generation '
+            },
+            "avgEnergySpentLineChart", "lineChartOutputContainters",
+        );
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('avgPercDead'),
+                title: 'Average Percentage of Ticks Deactivated Per Generation'
+            },
+            "avgPercDeadLineChart", "lineChartOutputContainters",
+        );
+     
 
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());

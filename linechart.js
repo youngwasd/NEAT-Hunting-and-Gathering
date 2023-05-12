@@ -89,6 +89,16 @@ class Linechart {
         this.startY = this.bottom + 100;
         this.endY = this.top + 6;
 
+        //Set the drawing a little bit back
+        if (String(this.maxValueY).length > 3) {
+            this.startX = this.left + 45;
+          
+            if (String(this.maxValueY).length > 5) {
+                this.startX = this.left + 50;
+            }
+
+        }
+
         this.actualStepValueX = Math.max(this.maxDataLength / (this.maxValueX - this.minValueX), 1);
         if (!this.actualStepValueX) {
             this.actualStepValueX = 1;
@@ -191,6 +201,7 @@ class Linechart {
     }
 
     draw(ctx) {
+        
         ctx.clearRect(this.left, this.bottom, this.right, this.top);
         ctx.beginPath();
         ctx.strokeStyle = "black";
@@ -199,7 +210,7 @@ class Linechart {
         ctx.closePath();
 
         let stepCoorX = (this.endX - this.startX) / Math.min(20, this.maxDataLength);
-        let stepCoorY = (this.endY - this.startY) / Math.min(26, (this.maxValueY - this.minValueY));
+        let stepCoorY = (this.endY - this.startY) / Math.min(26, this.maxDataLength);
 
         //Draw the label
         this.drawChartText(ctx, this.title, (this.left + this.right) / 2, this.bottom + this.startY / 4, this.height / 15);//Title
@@ -222,10 +233,9 @@ class Linechart {
 
         //Draw reference line 
         //Set light grey color for reference lines  
-
-        let stepValueY = Math.max((this.maxValueY - this.minValueY) / Math.min(26, (this.maxValueY - this.minValueY)), 1);
-        let stepValueX = Math.max((this.maxValueX - this.minValueX) / Math.min(20, this.maxDataLength), 1);
-
+        let diffY = this.maxValueY - this.minValueY;
+        let stepValueY = (this.maxValueY - this.minValueY) / Math.min(26, this.maxDataLength);
+        let stepValueX = (this.maxValueX - this.minValueX) / Math.min(20, this.maxDataLength);
         
         ctx.strokeStyle = "green";//`hsl(297, 2%, 50%)`;//Light green
 
@@ -233,11 +243,13 @@ class Linechart {
 
         let fontSizeY = 12;
         //Set the font size for x
-        if (this.maxValueY >= 1000) {
+        if (String(this.maxValueY).length > 3) {
             fontSizeY = 10;
-            if (this.maxValueY >= 100000) {
-                fontSizeY = 8;
+          
+            if (String(this.maxValueY).length > 5) {
+                fontSizeY = 9;
             }
+
         }
 
         //Set up the indexes and reference line
@@ -248,9 +260,9 @@ class Linechart {
                 ctx.lineTo(this.endX, yy);
                 ctx.stroke();
                 ctx.closePath();
-
+                
             }
-            this.drawChartText(ctx, Math.round(valY, 1), this.left + 20, yy, fontSizeY, "black");//Draw the values
+            this.drawChartText(ctx, parseFloat(valY.toFixed(2)), this.left + 20, yy, fontSizeY, "black");//Draw the values
 
         }
 
@@ -258,9 +270,9 @@ class Linechart {
         //console.log(this.minValueX, this.maxValueX, this.minValueY, this.maxValueY, stepValueX, stepCoorX);
         let fontSizeX = 12;
         //Set the font size for x
-        if (this.maxValueX >= 1000) {
+        if (String(this.maxValueX).length > 3) {
             fontSizeX = 10;
-            if (this.maxValueX >= 100000) {
+            if (String(this.maxValueX).length > 6) {
                 fontSizeX = 8;
             }
         }
