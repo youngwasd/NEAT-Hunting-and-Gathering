@@ -589,8 +589,9 @@ class Agent {
 
                             this.eatingCompletion = completion;
                             this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
-
-                            this.numberOfFoodEaten++;
+                            if (!this.eatingCompletion === 1){
+                                this.numberOfFoodEaten++;
+                            }
                         }
                     }
                     foundFood = true;

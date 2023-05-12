@@ -86,6 +86,10 @@ class World {
         return true;
     };
 
+    resetFood(){
+        this.food = [];
+    }
+
     cleanupFood(poison = false) {
         let foodList = poison ? this.poison : this.food;
         for (let i = foodList.length - 1; i >= 0; --i) { // remove eaten or dead food/poison

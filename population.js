@@ -228,10 +228,7 @@ class PopulationManager {
             document.getElementById("predator_speed").disabled = false;
             params.PREY_MAX_SPEED = parseFloat(document.getElementById("prey_speed").value);
             params.PREDATOR_MAX_SPEED = parseFloat(document.getElementById("predator_speed").value);
-
-
         }
-
 
         Genome.resetAll();
         this.game.population = new PopulationManager(this.game);
@@ -467,8 +464,9 @@ class PopulationManager {
                 this.resetAgents(false);
                 this.swapHierarchyValues();
 
-                //Clean up the food
-                this.checkFoodLevels();;
+                //Clean up the food  
+                this.resetAllWorldsFood();
+                this.checkFoodLevels();
             } else {
                 this.processGeneration(this.agentsAsList());
             }
@@ -532,19 +530,23 @@ class PopulationManager {
 
     };
 
+    resetAllWorldsFood(){
+        this.worlds.forEach((members, worldId) => {
+            members.resetFood();
+        
+        });
+    }
+
     checkFoodLevels() { // periodic food/poison repopulation function
         this.worlds.forEach((members, worldId) => {
             members.cleanupFood(true);
             members.cleanupFood(false);
 
             let beforeFood = members.food.length;
-            if (params.ENFORCE_MIN_FOOD && members.food.length < params.FOOD_AGENT_RATIO * members.agents.length) {
+            if (params.ENFORCE_MIN_FOOD && (members.food.length < params.FOOD_AGENT_RATIO * members.agents.length)) {
                 this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
-
-
-
             }
-            if (params.ENFORCE_MIN_POISON && members.poison.length < params.POISON_AGENT_RATIO * members.agents.length) {
+            if (params.ENFORCE_MIN_POISON && (members.poison.length < params.POISON_AGENT_RATIO * members.agents.length)) {
                 this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
             }
 
@@ -582,12 +584,20 @@ class PopulationManager {
     };
 
     spawnFood(worldId, poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length) {
+        let maxFoodCount = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length;
+        let currentCount = poison ? this.worlds.get(worldId).poison.length : this.worlds.get(worldId).food.length;
+        
+        //Do not spawn food if current food is too much
+        if (maxFoodCount <= currentCount){
+            return;
+        }
+
 
         let seedlings = [];
         let index = 0;
         let spawnSlot = [];
         let podLength = poison ? this.poisonPodLayout.length : this.foodPodLayout.length;
-
+        
         for (let i = 0; i < podLength; i++) {
             spawnSlot[i] = i;
         }
