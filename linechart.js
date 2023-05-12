@@ -5,7 +5,6 @@
 class Linechart {
     /**
      *
-     * @param {*} game 
      * @param {*} x starting x position to draw the chart on Canvas
      * @param {*} y starting y position to draw the chart on Canvas
      * @param {*} width Width of the chart
@@ -17,8 +16,8 @@ class Linechart {
      * @param {*} labelX Label for the x axis 
      * @param {*} labelY Label for the y axis 
      */
-    constructor(game, x, y, width, height, data = [], title = "", labelX = "", labelY = "") {
-        Object.assign(this, { game, x, y, width, height, title, labelX, labelY });
+    constructor(x, y, width, height, data = [], title = "", labelX = "", labelY = "") {
+        Object.assign(this, {x, y, width, height, title, labelX, labelY });
         this.updateCoordinate(x, y);
         this.maxValueX = -Infinity;
         this.maxValueY = -Infinity;
@@ -49,6 +48,7 @@ class Linechart {
             console.error("Empty Data, Adding Aborted.");
             return;
         }
+       // console.log(newData);
         //Adding new data in to ensure there is always x and y values for each entry
         let dataToBeAdded = [];
         let xMax = -Infinity;
@@ -58,17 +58,20 @@ class Linechart {
         this.maxDataLength = Math.max(this.maxDataLength, newData.length);
   
         for (let i = 0; i < newData.length; i++) {
-            if (newData[i].length < 2) {
-                //Stop adding if newData is invalid
-                console.error("Invalid Entry Format, Adding Aborted.");
-                return;
+            let newEntry = newData[i];
+            if (!(newEntry instanceof Array)){
+                newEntry = [newEntry];
             }
-            
-            dataToBeAdded.push([newData[i][0], newData[i][1]]);
-            xMax = Math.max(newData[i][0], xMax);
-            yMax = Math.max(newData[i][1], yMax);
-            xMin = Math.min(newData[i][0], xMin);
-            yMin = Math.min(newData[i][1], yMin);
+            if (newEntry.length == 1){
+                newEntry.push(newEntry[0]);
+                newEntry[0] = i;
+            }
+    
+            dataToBeAdded.push([newEntry[0], newEntry[1]]);
+            xMax = Math.max(newEntry[0], xMax);
+            yMax = Math.max(newEntry[1], yMax);
+            xMin = Math.min(newEntry[0], xMin);
+            yMin = Math.min(newEntry[1], yMin);
         }
 
         this.data.push(dataToBeAdded);
@@ -124,12 +127,22 @@ class Linechart {
     }
 
     //Add a new single entry to existing data
-    addEntry(index = 0, newEntry = []) {
-        if (newEntry.length < 2 || (index < 0 || index > this.data.length)) {
+    addEntry(newEntry = [], index = 0) {
+    
+        if ((index < 0 || index > this.data.length)) {
             //Stop adding if newEntry is invalid
             console.error("Invalid Entry Format, Adding Aborted.");
             return null;
         }
+        if (!(newEntry instanceof Array)){
+            newEntry = [newEntry];
+        }
+        if (newEntry.length == 1){
+            newEntry.push(newEntry[0]);
+            newEntry[0] = this.data[index].length;
+        }
+
+
         if (index == this.data.length) {
             this.data.push([]);
         }

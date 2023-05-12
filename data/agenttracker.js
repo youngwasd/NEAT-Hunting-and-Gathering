@@ -22,6 +22,9 @@ class AgentTracker {
             energy: [],
             speciesFitness: [],
             avgFitness: 0,
+            totalPreyHuntedCount: 0,
+            totalTicksOutOfBounds: 0,
+            totalFoodConsumptionCount: 0,
             speciesFoodConsumptionCount: [],
             speciesSuccessfulHuntCount: [],
             speciesTotalTickOutOfBound: [],
@@ -78,6 +81,24 @@ class AgentTracker {
     }
 
     /**
+     * A general helper method to replace existing data in a field
+     * @param {str} attribute name of the field or attribute we want to replace the data with
+     * @param {obj} data the data we want to replace
+     */
+    setAttribute(attribute, data) {
+        this.generations[this.currentGeneration][attribute] = data;
+    }
+
+    /**
+     * A general helper method to add data to
+     * @param {str} attribute name of the field or attribute we want to add data to
+     * @param {obj} data the data we want to add to existing data
+     */
+    addToAttribute(attribute, data) {
+        this.generations[this.currentGeneration][attribute] += data;
+    }
+
+    /**
      * Public method
      * @param {object} agent agent object
      */
@@ -124,12 +145,26 @@ class AgentTracker {
     getAvgFitnessData() {
         return this.generations.map((obj) => obj.avgFitness);
     }
+
+    /**
+     * A general helper method to get data from a field or attribute of the current generation
+     * @param {str} attribute name of the field or attribute we want to get data
+     * @return {obj} the data we want to get
+     */
+    getCurrentGenAttriBute(attribute){
+        let res =  this.generations[this.currentGeneration][attribute];
+        return res;
+    }
+
     /**
      * Retrieve information of a certain attribute as a list
      * @param {str} attribute name of the attribute to retrieve
      * @returns {obj} the information of the attribute stores in agent tracker
      */
-    getAgentTrackerAttributes(attribute) {
-        return this.generations.map((obj) => obj[attribute]);
+    getAgentTrackerAttributesAsList(attribute) {
+        let res =  this.generations.map((obj) => obj[attribute]);
+        return res;
     }
+
+   
 }

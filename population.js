@@ -97,7 +97,7 @@ class PopulationManager {
         }
 
         this.preyConsumedData = {
-            chart: new Linechart(this, 20, 50, 700, 400, [], "Prey Consumed Per Generations Chart", "Generations", "Times consumed"),
+            chart: new Linechart(20, 50, 700, 400, [], "Prey Consumed Per Generations Chart", "Generations", "Times consumed"),
             currentGenData: 0,
         }
 
@@ -955,7 +955,7 @@ class PopulationManager {
     /**
      * Collect data during the run and put them into agent trackers
      */
-    collectData() {
+    processRawData() {
         let specieOOBData = new Map();
         let specieFoodEatenData = new Map();
         let speciePreyHuntedData = new Map();
@@ -981,25 +981,62 @@ class PopulationManager {
             let entry = {};
             entry['speciesId'] = speciesId;
             entry['speciesTotalTickOutOfBound'] = data / PopulationManager.SPECIES_MEMBERS.get(speciesId).length * 100;
-            this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry)
+            this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
+
+            this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
         });
 
         specieFoodEatenData.forEach((data, speciesId) => {
             let entry = {};
             entry['speciesId'] = speciesId;
             entry['speciesFoodConsumptionCount'] = data / PopulationManager.SPECIES_MEMBERS.get(speciesId).length;
-            this.agentTracker.addSpeciesAttribute('speciesFoodConsumptionCount', entry)
+            this.agentTracker.addSpeciesAttribute('speciesFoodConsumptionCount', entry);
+
+            this.agentTracker.addToAttribute('totalFoodConsumptionCount', data);
         });
 
         speciePreyHuntedData.forEach((data, speciesId) => {
             let entry = {};
             entry['speciesId'] = speciesId;
             entry['speciesSuccessfulHuntCount'] = data / PopulationManager.SPECIES_MEMBERS.get(speciesId).length;
-            this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry)
+            this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry);
+
+            this.agentTracker.addToAttribute('totalPreyHuntedCount', data);
         });
+
+
     }
 
     displayDataChart() {
+        //Generate the data chart for prey hunting 
+        if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
+            this.preyConsumedData.chart.addEntry(this.agentTracker.getCurrentGenAttriBute('totalPreyHuntedCount'));
+            generateLineChart({ chart: this.preyConsumedData.chart }, "preyHuntedLineChart", "lineChartOutputContainters");
+
+            generateLineChart(
+                {
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalFoodConsumptionCount'),
+                    title: 'Total Food Consumption Per Generation'
+                },
+                "foodConsumptionLineChart", "lineChartOutputContainters",
+            );
+            generateLineChart(
+                {
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds'),
+                    title: 'Total Ticks Out of Bounds Per Generation'
+                },
+                "totalTicksOOBLineChart", "lineChartOutputContainters",
+            );
+
+
+
+            // this.preyConsumedData = {
+            //     chart: new Linechart(this, 20, 50, 700, 400, [], "Prey Consumed Per Generations Chart", "Generations", "Times consumed"),
+            //     currentGenData: 0,
+            // }
+            //generateLineChart(this.agentTracker.getCurrentGenAttriBute('totalPreyConsumptionCount'), "preyConsumptionLineChart", "lineChartOutputContainters");
+        }
+
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getFitnessData());
         //generateAgeChart(this.agentTracker.getAgeData());
@@ -1010,14 +1047,14 @@ class PopulationManager {
         //generateNodeChart(this.genomeTracker.getNodeData());
         generateCurrentFitnessChart(this.agentTracker.getFitnessData());
 
-        generateSpecieAttributeBarChart(this.agentTracker.getAgentTrackerAttributes('speciesSuccessfulHuntCount'),
-             'speciesSuccessfulHuntCount', "Successful hunt Percentage Per Specie Per Gen", 'specieSuccessfulHuntCountChart'); 
-                
-        generateSpecieAttributeBarChart(this.agentTracker.getAgentTrackerAttributes('speciesFoodConsumptionCount'),
-            'speciesFoodConsumptionCount', "Average Food Consumption Count Per Specie Per Gen", 'speciesFoodConsumptionCountChart');
+        generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesSuccessfulHuntCount'),
+            'speciesSuccessfulHuntCount', "Current Gen Successful hunt Percentage Per Specie", 'specieSuccessfulHuntCountChart');
 
-        generateSpecieAttributeBarChart(this.agentTracker.getAgentTrackerAttributes('speciesTotalTickOutOfBound'),
-            'speciesTotalTickOutOfBound', "Average Ticks Out Of Bound Per Specie Per Gen", 'speciesTotalTickOutOfBoundChart');
+        generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesFoodConsumptionCount'),
+            'speciesFoodConsumptionCount', "Current Gen Average Food Consumption Count Per Specie", 'speciesFoodConsumptionCountChart');
+
+        generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesTotalTickOutOfBound'),
+            'speciesTotalTickOutOfBound', "Current Gen Average Ticks Out Of Bound Per Specie", 'speciesTotalTickOutOfBoundChart');
     }
 
     processGeneration() {
@@ -1029,6 +1066,8 @@ class PopulationManager {
         let totalRawFitness = 0;
         let totalGenTicks = params.GEN_TICKS * (params.MIRROR_ROLES ? 2 : 1);
 
+        //Collect data for the other charts
+        this.processRawData();
         this.agentsAsList().forEach(agent => {
             this.agentTracker.processAgent(agent);
             this.genomeTracker.processGenome(agent.genome);
@@ -1068,8 +1107,7 @@ class PopulationManager {
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
 
-        //Collect data for the other charts
-        this.collectData();
+
 
 
         //Selection process for killing off agents
@@ -1141,13 +1179,11 @@ class PopulationManager {
         this.currentRightWheelHist.reset();
 
         //Add to the number of prey consumed
-        this.preyConsumedData.chart.addEntry(0, [
-            PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
-        ]);
-        this.preyConsumedData.currentGenData = 0;
-        if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
-            generateLineChart(this.preyConsumedData.chart, "preyConsumptionLineChart", "lineChartOutputContainters");
-        }
+        // this.preyConsumedData.chart.addEntry(0, [
+        //     PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
+        // ]);
+        // this.preyConsumedData.currentGenData = 0;
+
 
         if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;

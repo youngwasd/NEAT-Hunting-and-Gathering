@@ -361,7 +361,8 @@ class Agent {
             //console.log(this.x, this.y, this.worldId, predator.x, predator.y, this.game.population.tickCounter);
         }
 
-        this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
+        //this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
+   
         this.concludingTick += this.game.population.tickCounter;
         return calReward;
     }

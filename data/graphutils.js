@@ -726,7 +726,7 @@ const generateSpecieAttributeBarChart = (data, attribute, title = '', elementID 
     //     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // }
 
-    const current = data[data.length - 1];
+    const current = data;
     current.sort((a, b) => a.speciesId - b.speciesId);
     const min = current.reduce(
         (acc, curr) => Math.min(curr[attribute], acc),
@@ -791,21 +791,29 @@ const generateSpecieAttributeBarChart = (data, attribute, title = '', elementID 
  * @param {*} width The width of the element
  * @param {*} height The height of the element
  */
-const generateLineChart = (outputLineGraph, chartElementID = 'lineChart', container = 'lineChartOutputContainters', style = '', width = 800, height = 500) => {
+const generateLineChart = (info = {}, chartElementID = 'lineChart', container = 'lineChartOutputContainters', style = '', width = 800, height = 500) => {
     let canvas = document.createElement('canvas');
     if (!document.getElementById(chartElementID)) {
         document.getElementById(container).appendChild(canvas);
     } else {
         canvas = document.getElementById(chartElementID);
     }
-
     canvas.setAttribute('id', chartElementID);
     canvas.setAttribute('style', style);
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
 
     let ctx = canvas.getContext("2d");
-
+    
+    let outputLineGraph = null;
+    if (info.chart){
+        outputLineGraph = info.chart;
+    }
+    else{
+        outputLineGraph = new Linechart(20, 50, 700, 400, info.data, info.title);
+       // console.log(outputLineGraph.data);
+    }
+     
     outputLineGraph.draw(ctx);
 
 
