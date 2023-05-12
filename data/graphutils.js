@@ -811,7 +811,7 @@ const generateLineChart = (info = {}, chartElementID = 'lineChart', container = 
     }
     else{
         outputLineGraph = new Linechart(20, 50, 700, 400, info.data, info.title);
-       // console.log(outputLineGraph.data);
+        //console.log(outputLineGraph.data);
     }
      
     outputLineGraph.draw(ctx);

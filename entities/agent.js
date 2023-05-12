@@ -60,6 +60,8 @@ class Agent {
 
         this.isOutOfBound = false;//Whether the agent is Out of Bound
         this.numberOfTickOutOfBounds = 0;//Total ticks the agent spent out of bounds
+        this.numberOfTickOutOfBounds_Prey = 0;
+        this.numberOfTickOutOfBounds_Predator = 0;
         this.numberOfTickBumpingIntoWalls = 0;//Total ticks "bumping" into walls
         this.numberOfTimesConsumed = 0;//Total number of time being eaten by predators
         this.visCol = []; //initialize the array of all vision collisions
@@ -568,13 +570,15 @@ class Agent {
         this.updateDiameter();
         this.updateBoundingCircle();
 
+        let predPreyMode = params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum";
+
         /** If we are still alive, and we just bit loop through spotted food and eat those we are colliding with */
         if (this.isActive) {
             let foundFood = false;
-            let predPreyMode = params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum";
+            
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    if(!predPreyMode) console.log("Hunting mode: " + params.HUNTING_MODE);
+                    
                     if (params.HUNTING_MODE === "deactivated" || (predPreyMode && this.foodHierarchyIndex === 0)) {//Only the lowest prey get to eat normal food
                         if (this.biting || !params.AGENT_BITING) {
                             let consOut = entity.consume();
@@ -589,7 +593,7 @@ class Agent {
 
                             this.eatingCompletion = completion;
                             this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
-                            if (!this.eatingCompletion === 1){
+                            if (this.eatingCompletion === 1){
                                 this.numberOfFoodEaten++;
                             }
                         }
@@ -625,6 +629,14 @@ class Agent {
             //Deactivate the agent when they go out of bound
             if (!params.NO_BORDER) {
                 ++this.numberOfTickOutOfBounds;
+                if (predPreyMode){
+                    if (this.foodHierarchyIndex === 0){
+                        this.numberOfTickOutOfBounds_Prey++;
+                    }
+                    else{
+                        this.numberOfTickOutOfBounds_Predator++;
+                    }    
+                }
                 this.deactivateAgent();
             }
 

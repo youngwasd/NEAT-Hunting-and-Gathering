@@ -224,9 +224,9 @@ class Linechart {
         //Set light grey color for reference lines  
 
         let stepValueY = Math.max((this.maxValueY - this.minValueY) / Math.min(26, (this.maxValueY - this.minValueY)), 1);
-        let stepValueX = Math.max((this.maxValueX - this.minValueX) / Math.min(20, this.data.length), 1);
+        let stepValueX = Math.max((this.maxValueX - this.minValueX) / Math.min(20, this.maxDataLength), 1);
 
-
+        
         ctx.strokeStyle = "green";//`hsl(297, 2%, 50%)`;//Light green
 
         ctx.setLineDash([1, 12]);
@@ -255,7 +255,7 @@ class Linechart {
         }
 
 
-
+        //console.log(this.minValueX, this.maxValueX, this.minValueY, this.maxValueY, stepValueX, stepCoorX);
         let fontSizeX = 12;
         //Set the font size for x
         if (this.maxValueX >= 1000) {

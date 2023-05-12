@@ -972,6 +972,8 @@ class PopulationManager {
         let sumPercDead = 0;
         let sumEnergySpent = 0;
         let sumPredWinnerBonus = 0;
+        let totalOOB_Prey = 0;
+        let totalOOB_Predator = 0;
         this.agentsAsList().forEach((agent) => {
             let OOBData = specieOOBData.get(agent.speciesId);
             specieOOBData.set(agent.speciesId,
@@ -990,6 +992,9 @@ class PopulationManager {
             sumPercDead += agent.getPercentDead();
             sumEnergySpent += agent.caloriesSpent;
             if(agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.winnerBonus;
+
+            this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
+            this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
         });
 
         //Log the data into agent Tracker
@@ -1000,6 +1005,7 @@ class PopulationManager {
             this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
 
             this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
+
         });
 
         specieFoodEatenData.forEach((data, speciesId) => {
@@ -1050,6 +1056,21 @@ class PopulationManager {
                 "totalTicksOOBLineChart", "lineChartOutputContainters",
             );
 
+            generateLineChart(
+                {
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds_Predator'),
+                    title: 'Total Ticks Out of Bounds AS Predator Per Generation'
+                },
+                "totalTicksOOBPredatorLineChart", "lineChartOutputContainters",
+            );
+
+            generateLineChart(
+                {
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds_Prey'),
+                    title: 'Total Ticks Out of Bounds AS Prey Per Generation'
+                },
+                "totalTicksOOBPreyLineChart", "lineChartOutputContainters",
+            );
 
 
             // this.preyConsumedData = {
