@@ -17,7 +17,7 @@ class Linechart {
      * @param {*} labelY Label for the y axis 
      */
     constructor(x, y, width, height, data = [], title = "", labelX = "", labelY = "") {
-        Object.assign(this, {x, y, width, height, title, labelX, labelY });
+        Object.assign(this, { x, y, width, height, title, labelX, labelY });
         this.updateCoordinate(x, y);
         this.maxValueX = -Infinity;
         this.maxValueY = -Infinity;
@@ -48,7 +48,7 @@ class Linechart {
             console.error("Empty Data, Adding Aborted.");
             return;
         }
-       // console.log(newData);
+        // console.log(newData);
         //Adding new data in to ensure there is always x and y values for each entry
         let dataToBeAdded = [];
         let xMax = -Infinity;
@@ -56,17 +56,17 @@ class Linechart {
         let xMin = Infinity;
         let yMin = Infinity;
         this.maxDataLength = Math.max(this.maxDataLength, newData.length);
-  
+
         for (let i = 0; i < newData.length; i++) {
             let newEntry = newData[i];
-            if (!(newEntry instanceof Array)){
+            if (!(newEntry instanceof Array)) {
                 newEntry = [newEntry];
             }
-            if (newEntry.length == 1){
+            if (newEntry.length == 1) {
                 newEntry.push(newEntry[0]);
                 newEntry[0] = i;
             }
-    
+
             dataToBeAdded.push([newEntry[0], newEntry[1]]);
             xMax = Math.max(newEntry[0], xMax);
             yMax = Math.max(newEntry[1], yMax);
@@ -92,7 +92,7 @@ class Linechart {
         //Set the drawing a little bit back
         if (String(this.maxValueY).length > 3) {
             this.startX = this.left + 45;
-          
+
             if (String(this.maxValueY).length > 5) {
                 this.startX = this.left + 50;
             }
@@ -116,7 +116,7 @@ class Linechart {
         }
     }
 
-    replaceData(index = 0, newData = []){
+    replaceData(index = 0, newData = []) {
         if ((index < 0 || index > this.data.length)) {
             //Stop adding if newData is invalid
             console.error("Invalid Data Format, Adding Aborted.");
@@ -124,8 +124,8 @@ class Linechart {
         }
         let oldData = this.data[index];
         this.data[index] = [];
-        for (let i = 0; i < newData.length; i++){
-            if (!this.addEntry(index, newData[i])){
+        for (let i = 0; i < newData.length; i++) {
+            if (!this.addEntry(index, newData[i])) {
                 console.error("Invalid Data Format, Adding Aborted.");
                 this.data[index] = oldData;
                 return null;
@@ -138,16 +138,16 @@ class Linechart {
 
     //Add a new single entry to existing data
     addEntry(newEntry = [], index = 0) {
-    
+
         if ((index < 0 || index > this.data.length)) {
             //Stop adding if newEntry is invalid
             console.error("Invalid Entry Format, Adding Aborted.");
             return null;
         }
-        if (!(newEntry instanceof Array)){
+        if (!(newEntry instanceof Array)) {
             newEntry = [newEntry];
         }
-        if (newEntry.length == 1){
+        if (newEntry.length == 1) {
             newEntry.push(newEntry[0]);
             newEntry[0] = this.data[index].length;
         }
@@ -200,8 +200,29 @@ class Linechart {
         ctx.closePath();
     }
 
+    drawDottedHorizontalLine(ctx, x1, x2, yy) {
+        let tempSS = ctx.strokeStyle;
+        ctx.strokeStyle = "green";//`hsl(297, 2%, 50%)`;//Light green
+        ctx.setLineDash([1, 12]);
+        ctx.beginPath();
+        ctx.moveTo(x1, yy);
+        ctx.lineTo(x2, yy);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = tempSS;
+    }
+
+    checkRange(val, m, buffer) {
+        let arr = m.filter((v) => {
+            //console.log(v, Math.abs(v - val) <= buffer );
+            return (Math.abs(v - val) <= buffer)
+        });
+        return arr.length === 0;
+    }
+
     draw(ctx) {
-        
+
         ctx.clearRect(this.left, this.bottom, this.right, this.top);
         ctx.beginPath();
         ctx.strokeStyle = "black";
@@ -220,7 +241,7 @@ class Linechart {
         //Draw the axis
         //Y axis
         ctx.beginPath();
-        ctx.strokeStyle = "black";//Light grey
+        ctx.strokeStyle = "black";
         ctx.moveTo(this.startX, this.startY);
         ctx.lineTo(this.startX, this.endY);
         //X axis
@@ -236,38 +257,22 @@ class Linechart {
         let diffY = this.maxValueY - this.minValueY;
         let stepValueY = (this.maxValueY - this.minValueY) / Math.min(26, this.maxDataLength);
         let stepValueX = (this.maxValueX - this.minValueX) / Math.min(20, this.maxDataLength);
-        
-        ctx.strokeStyle = "green";//`hsl(297, 2%, 50%)`;//Light green
 
-        ctx.setLineDash([1, 12]);
+
+
+
 
         let fontSizeY = 12;
         //Set the font size for x
         if (String(this.maxValueY).length > 3) {
             fontSizeY = 10;
-          
+
             if (String(this.maxValueY).length > 5) {
                 fontSizeY = 9;
             }
 
         }
 
-        //Set up the indexes and reference line
-        for (let yy = this.endY, valY = this.minValueY; yy > this.startY - 1; yy -= stepCoorY, valY += stepValueY) {
-            if (yy != this.endY) {
-                ctx.beginPath();
-                ctx.moveTo(this.startX, yy);
-                ctx.lineTo(this.endX, yy);
-                ctx.stroke();
-                ctx.closePath();
-                
-            }
-            this.drawChartText(ctx, parseFloat(valY.toFixed(2)), this.left + 20, yy, fontSizeY, "black");//Draw the values
-
-        }
-
-
-        //console.log(this.minValueX, this.maxValueX, this.minValueY, this.maxValueY, stepValueX, stepCoorX);
         let fontSizeX = 12;
         //Set the font size for x
         if (String(this.maxValueX).length > 3) {
@@ -276,24 +281,63 @@ class Linechart {
                 fontSizeX = 8;
             }
         }
-        for (let xx = this.startX, valX = this.minValueX; xx <= this.endX; xx += stepCoorX, valX += stepValueX) {
-            this.drawChartText(ctx, Math.round(valX, 1), xx, this.endY + 15, fontSizeX, "black");
-        }
+
+        //Set up the indexes and reference line
+        // for (let yy = this.endY, valY = this.minValueY; yy > this.startY - 1; yy -= stepCoorY, valY += stepValueY) {
+        //     if (yy != this.endY) {
+        // ctx.beginPath();
+        // ctx.moveTo(this.startX, yy);
+        // ctx.lineTo(this.endX, yy);
+        // ctx.stroke();
+        // ctx.closePath();
+
+        //     }
+        //     this.drawChartText(ctx, parseFloat(valY.toFixed(2)), this.left + 20, yy, fontSizeY, "black");//Draw the values
+
+        // }
+
+
+        //console.log(this.minValueX, this.maxValueX, this.minValueY, this.maxValueY, stepValueX, stepCoorX);
+
+        // for (let xx = this.startX, valX = this.minValueX; xx <= this.endX; xx += stepCoorX, valX += stepValueX) {
+        //     this.drawChartText(ctx, Math.round(valX, 1), xx, this.endY + 15, fontSizeX, "black");
+        // }
 
         ctx.stroke();
 
-        ctx.setLineDash([]);
         ctx.closePath();
 
         //Draw the points
         let pointColor = 200;
         let lineColor = 300;
+        let drawListY = [];
+        let drawListX = [];
         for (let k = 0; k < this.data.length; k++) {
             let prevX = 0;
             let prevY = 0;
+
+            let stepToHighlight = Math.max(Math.floor(this.data[k].length / 20), 1);
+            //console.log(stepToHighlight);
+            let stepY = 0;
+
             for (let i = 0; i < this.data[k].length; i++) {
-                let x = (this.data[k][i][0] - this.minValueX) * this.coordinateStepValueX + this.startX;
-                let y = this.endY - (this.data[k][i][1] - this.minValueY) * this.coordinateStepValueY;//+ this.startY;
+                let valX = this.data[k][i][0];
+                let valY = this.data[k][i][1];
+                let x = (valX - this.minValueX) * this.coordinateStepValueX + this.startX;
+                let y = this.endY - (valY - this.minValueY) * this.coordinateStepValueY;//+ this.startY;
+
+                if ((this.maxDataLength === this.data[k].length) && i % stepToHighlight === 0) {
+                    if (this.checkRange(y, drawListY, fontSizeY)) {
+                        this.drawChartText(ctx, parseFloat(valY.toFixed(2)), this.left + 20, y, fontSizeY, "black");//Draw the value on the y axis
+                        drawListY.push(y);
+                        this.drawDottedHorizontalLine(ctx, this.startX, this.endX, y);
+                    }
+
+                    if (this.checkRange(x, drawListX, fontSizeX)) {
+                        this.drawChartText(ctx, Math.round(valX, 1), x, this.endY + 15, fontSizeX, "black");
+                        drawListX.push(x);
+                    }
+                }
 
                 //connect the points to create a line
                 if (i !== 0) {
@@ -334,12 +378,12 @@ class Linechart {
 
     updateMax() {
         this.data.forEach(data => {
-            for (let i = 0; i < data.length; i++){
+            for (let i = 0; i < data.length; i++) {
                 this.maxValX = Math.max(...data[i][0]);
                 this.maxValY = Math.max(...data[i][1]);
             }
         });
-        
+
     }
 }
 
