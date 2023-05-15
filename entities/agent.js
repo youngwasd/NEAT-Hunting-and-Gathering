@@ -52,7 +52,7 @@ class Agent {
         this.activateAgent(); // set the Agent's energy to the statically defined start energy
         this.updateDiameter(); // how wide the agent's circle is drawn
         this.wheelRadius = 1; // an agent is more or less structured like a Roomba vacuum robot, and this is the radius of one of its 2 wheels
-        
+
         this.resetCalorieCounts(); // resets the Agent's good and bad calories eaten
         this.age = 0; // all Agents start at age 0
         this.resetOrigin(); // assigns this Agent's origin point to its current position
@@ -85,7 +85,7 @@ class Agent {
         this.numberOfFoodEaten = 0;
         this.numberOfGoingOutOfBound = 0;
         this.updateMaxSpeed(); // Update speed to a UNITLESS value which controls the movement speed of Agents in the sim
-        
+
     };
 
     /** Assigns this Agent's fitness */
@@ -158,14 +158,14 @@ class Agent {
 
         const predPreyFitnessFunct = () => {
             let winnerBonus = this.concludingTick / params.GEN_TICKS;
-            if(params.MIRROR_ROLES) winnerBonus /= 2;
-            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent 
+            if (params.MIRROR_ROLES) winnerBonus /= 2;
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent
                 + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
                 + params.FITNESS_WINNER_BONUS * this.winnerBonus;
         }
 
 
-        if(params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") 
+        if (params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy")
             this.genome.rawFitness = predPreyFitnessFunct();
         this.genome.rawFitness += fitnessFunct();
     };
@@ -248,7 +248,7 @@ class Agent {
     resetCalorieCounts() {
         this.caloriesEaten = 0;
         this.badCaloriesEaten = 0;
-        this.caloriesSpent = 0;  
+        this.caloriesSpent = 0;
     };
 
     /** Resets counters for the numbers of tick out of bound and bumping into walls */
@@ -277,7 +277,7 @@ class Agent {
     activateAgent() {
         this.isActive = true;
         this.energy = Agent.START_ENERGY;
-        if(params.FITNESS_WINNER_BONUS != 0 && this.foodHierarchyIndex == 0) this.winnerBonus += 1;
+        if (params.FITNESS_WINNER_BONUS != 0 && this.foodHierarchyIndex == 0) this.winnerBonus += 1;
     }
 
     /**
@@ -368,7 +368,7 @@ class Agent {
         }
 
         //this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
-   
+
         this.concludingTick += this.game.population.tickCounter;
         return calReward;
     }
@@ -398,9 +398,9 @@ class Agent {
      * Check to see if the agent still has energy
      * @returns True if the agent still have energy, false other wise
      */
-    checkEnergy(){
-        if (params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy" ){
-            if (this.foodHierarchyIndex > 0){//Is a predator so apply unlimited energy condition
+    checkEnergy() {
+        if (params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") {
+            if (this.foodHierarchyIndex > 0) {//Is a predator so apply unlimited energy condition
                 return false;
             }
         }
@@ -409,24 +409,24 @@ class Agent {
         return false;
     }
 
-    getPercentDead(){
+    getPercentDead() {
         return (this.totalTicks - this.ticksAlive) / this.totalTicks;
     }
 
     /**
      * Update max speed of the agent according to hunting mode
      */
-    updateMaxSpeed(){
+    updateMaxSpeed() {
         //"Prey or predator" hunting mode
-        if (params.HUNTING_MODE === "hierarchy" ){
-            if (this.foodHierarchyIndex > 0){
+        if (params.HUNTING_MODE === "hierarchy") {
+            if (this.foodHierarchyIndex > 0) {
                 this.maxVelocity = params.PREDATOR_MAX_SPEED;
             }
-            else{
+            else {
                 this.maxVelocity = params.PREY_MAX_SPEED;
             }
         }
-        else{//Normal mode
+        else {//Normal mode
             this.maxVelocity = params.AGENT_MAX_SPEED;
         }
     }
@@ -461,6 +461,13 @@ class Agent {
             if (entity !== this && !entity.removeFromWorld && entity.isActive && distance(entity.BC.center, this.BC.center) <= params.AGENT_VISION_RADIUS) {
                 spottedNeighbors.push(entity);
             }
+
+            //Count dead agent as still alive
+            if (params.INACTIVE_PREY_TARGETABLE) {
+                if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && entity instanceof Agent) {
+                    spottedNeighbors.push(entity);
+                }
+            }
         });
 
         /** sorts the spotted neighbors in increasing order of proxomity */
@@ -489,26 +496,30 @@ class Agent {
                 input.push(AgentInputUtil.normalizeDistance(distance(neighbor.BC.center, this.BC.center))); // normalized distance from the entity
             }
 
-            for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
-                input.push(0);
+            if (params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") {
+                //Add food hierarchy index to agents neural input
+                for (let i = input.length; i < Genome.DEFAULT_INPUTS - 2; i++) { // fill all unused input nodes with 0's
+                    input.push(0);
+                }
+            }
+            else {
+                for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
+                    input.push(0);
+                }
             }
 
-            // //Add food hierarchy index to agents neural input
-            // for (let i = input.length; i < Genome.DEFAULT_INPUTS - 2; i++) { // fill all unused input nodes with 0's
-            //     input.push(0);
-            // }
 
         }
 
         let normEnergy = this.energy / Agent.START_ENERGY;
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 
-        // //Push the food hierarchy index into agents input
-        // if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
-        //     input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
-        // }
+        //Push the food hierarchy index into agents input
+        if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
+            input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
+        }
 
-        if (this.checkEnergy() ) { // if we are out of energy, we don't move and become deactivated
+        if (this.checkEnergy()) { // if we are out of energy, we don't move and become deactivated
             this.deactivateAgent();
         } else if (this.isActive) { // if we are still alive, set our wheel power values to the output of our neural net
             let output = this.neuralNet.processInput(input);
@@ -575,10 +586,10 @@ class Agent {
         /** If we are still alive, and we just bit loop through spotted food and eat those we are colliding with */
         if (this.isActive) {
             let foundFood = false;
-            
+
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
-                    
+
                     if (params.HUNTING_MODE === "deactivated" || (predPreyMode && this.foodHierarchyIndex === 0)) {//Only the lowest prey get to eat normal food
                         if (this.biting || !params.AGENT_BITING) {
                             let consOut = entity.consume();
@@ -593,7 +604,7 @@ class Agent {
 
                             this.eatingCompletion = completion;
                             this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
-                            if (this.eatingCompletion === 1){
+                            if (this.eatingCompletion === 1) {
                                 this.numberOfFoodEaten++;
                             }
                         }
@@ -610,7 +621,7 @@ class Agent {
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
                             //Only count the first prey hunted incase there's multiple prey
-                            if(this.numberOfPreyHunted == 1) this.winnerBonus += 1 - (this.game.population.tickCounter / params.GEN_TICKS);
+                            if (this.numberOfPreyHunted == 1) this.winnerBonus += 1 - (this.game.population.tickCounter / params.GEN_TICKS);
 
                         }
                     }
@@ -629,13 +640,13 @@ class Agent {
             //Deactivate the agent when they go out of bound
             if (!params.NO_BORDER) {
                 ++this.numberOfTickOutOfBounds;
-                if (predPreyMode){
-                    if (this.foodHierarchyIndex === 0){
+                if (predPreyMode) {
+                    if (this.foodHierarchyIndex === 0) {
                         this.numberOfTickOutOfBounds_Prey++;
                     }
-                    else{
+                    else {
                         this.numberOfTickOutOfBounds_Predator++;
-                    }    
+                    }
                 }
                 this.deactivateAgent();
             }

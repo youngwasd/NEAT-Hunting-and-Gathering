@@ -70,7 +70,8 @@ const params = {
     AGENT_DIAMETER: 15,
     FOOD_DIAMETER: 24,
     FOOD_BUSH: true,
-    MIRROR_ROLES: true
+    MIRROR_ROLES: true,
+    INACTIVE_PREY_TARGETABLE: true
 };
 
 const getMedian = (arr) => {
