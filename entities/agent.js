@@ -86,6 +86,17 @@ class Agent {
         this.numberOfGoingOutOfBound = 0;
         this.updateMaxSpeed(); // Update speed to a UNITLESS value which controls the movement speed of Agents in the sim
 
+        //Increase base energy for prey
+
+        if (params.INACTIVE_PREY_TARGETABLE) {
+            Agent.START_ENERGY = 250;
+            if (this.foodHierarchyIndex == 0) {
+                this.energy = Agent.START_ENERGY;
+            }
+        }
+        else{
+            Agent.START_ENERGY = 100;
+        }
     };
 
     /** Assigns this Agent's fitness */
@@ -119,7 +130,7 @@ class Agent {
                 fitnessFromPotCal += 0.3 * this.maxEatingCompletion;
                 //Part 4: punish them based on how fast they were going, or if they were dead
                 fitnessFromPotCal /= this.energy > Agent.DEATH_ENERGY_THRESH ? this.speed + 1 : 10;
-
+    
                 totalRawFitness += this.closestFood.cals * params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
                 //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
@@ -157,8 +168,8 @@ class Agent {
         }
 
         const predPreyFitnessFunct = () => {
-            let winnerBonus = this.concludingTick / params.GEN_TICKS;
-            if (params.MIRROR_ROLES) winnerBonus /= 2;
+            // let winnerBonus = this.concludingTick / params.GEN_TICKS;
+            // if (params.MIRROR_ROLES) winnerBonus /= 2;
             return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent
                 + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
                 + params.FITNESS_WINNER_BONUS * this.winnerBonus;
@@ -277,6 +288,7 @@ class Agent {
     activateAgent() {
         this.isActive = true;
         this.energy = Agent.START_ENERGY;
+
         if (params.FITNESS_WINNER_BONUS != 0 && this.foodHierarchyIndex == 0) this.winnerBonus += 1;
     }
 
@@ -318,23 +330,29 @@ class Agent {
      */
     consume(predator) {
         //Exit if having the same or bigger food Hierarchy Index
-        if (this.foodHierarchyIndex >= predator.foodHierarchyIndex) {
+        if (!predator || this.foodHierarchyIndex >= predator.foodHierarchyIndex ) {
             return 0;
         }
 
         this.numberOfTimesConsumed++;
+        //console.log(this.worldId, predator.worldId, PopulationManager.GEN_NUM, this.numberOfTimesConsumed);
 
         let calReward = 0;
         //Determine the level of reward based on how far the index
-        if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 10) {
+        if (params.HUNTING_MODE === "hierarchy_spectrum") {
+            if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 10) {
+                calReward = 1;
+            } else if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 20) {
+                calReward = 0.5;
+            } else {
+                calReward = 0.1;
+            }
+        }
+        else {
             calReward = 1;
-        } else if (predator.foodHierarchyIndex - this.foodHierarchyIndex < 20) {
-            calReward = 0.5;
-        } else {
-            calReward = 0.1;
         }
 
-        calReward *= 75;//Base Reward is 50 calories
+        calReward *= this.caloriesEaten;//Reward the predator the same amount of calories that this prey has eaten.
 
         //Reset prey position
         let halfMapSize = params.CANVAS_SIZE / 2;
@@ -457,13 +475,15 @@ class Agent {
         }
 
         entities.forEach(entity => {
+            let added = false;
             /** add all entities to our spotted neighbors that aren't ourselves, not dead, and are within our vision radius */
             if (entity !== this && !entity.removeFromWorld && entity.isActive && distance(entity.BC.center, this.BC.center) <= params.AGENT_VISION_RADIUS) {
                 spottedNeighbors.push(entity);
+                added = true;
             }
 
             //Count dead agent as still alive
-            if (params.INACTIVE_PREY_TARGETABLE) {
+            if (params.INACTIVE_PREY_TARGETABLE && !added) {
                 if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && entity instanceof Agent) {
                     spottedNeighbors.push(entity);
                 }
@@ -617,6 +637,8 @@ class Agent {
                     if (entity instanceof Agent && this.BC.collide(entity.BC) && this.foodHierarchyIndex > entity.foodHierarchyIndex) {
                         if (this.biting || !params.AGENT_BITING) {
                             let cals = entity.consume(this);
+
+                            this.caloriesEaten += cals;
 
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
