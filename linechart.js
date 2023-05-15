@@ -312,6 +312,10 @@ class Linechart {
         let lineColor = 300;
         let drawListY = [];
         let drawListX = [];
+
+        this.drawChartText(ctx, parseFloat(this.maxValueY.toFixed(2)), this.left + 20, this.endY - (this.maxValueY - this.minValueY) * this.coordinateStepValueY, fontSizeY, "black");//Draw the value on the y axis
+        drawListY.push(this.endY - (this.maxValueY - this.minValueY) * this.coordinateStepValueY);
+
         for (let k = 0; k < this.data.length; k++) {
             let prevX = 0;
             let prevY = 0;
@@ -320,6 +324,10 @@ class Linechart {
             //console.log(stepToHighlight);
             let stepY = 0;
 
+            //Draw the highest y
+
+           
+           
             for (let i = 0; i < this.data[k].length; i++) {
                 let valX = this.data[k][i][0];
                 let valY = this.data[k][i][1];
