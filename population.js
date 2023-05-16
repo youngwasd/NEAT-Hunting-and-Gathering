@@ -1034,8 +1034,8 @@ class PopulationManager {
         //Add averages to agent tracker
         this.agentTracker.addAvgPercDead(sumPercDead/params.NUM_AGENTS * 100);
         this.agentTracker.addAvgEnergySpent(sumEnergySpent/params.NUM_AGENTS);
-        let predWinnerLength = sumPredWinnerBonus/params.NUM_AGENTS;
-        if(!params.MIRROR_ROLES) predWinnerLength *= 2;
+        let predWinnerBonus = sumPredWinnerBonus/params.NUM_AGENTS;
+        if(!params.MIRROR_ROLES) predWinnerBonus *= 2;
         this.agentTracker.addAvgPredWinnerBonus(predWinnerBonus)
 
 
