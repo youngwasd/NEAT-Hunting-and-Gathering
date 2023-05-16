@@ -7,6 +7,11 @@ class Minimap {
     constructor(game, ctx = null, totalWidth = 1000, totalHeight = 1000) {
         Object.assign(this, { game, ctx, totalWidth, totalHeight });
         this.resize(totalWidth, totalHeight);
+        if (ctx != null) {
+            this.startInput();
+        }
+        this.selectedWorld = -1;
+        this.hoveringWorld = -1;
     }
 
     //Resize the minimap
@@ -24,27 +29,86 @@ class Minimap {
             numberOfWorld = params.NUM_AGENTS;
         }
         //Adjust the number of world to be drawn because a world is square
-        if (Math.round(Math.sqrt(numberOfWorld)) ** 2 < numberOfWorld ){
-            numberOfWorld = Math.round(Math.sqrt(numberOfWorld) + 1) ** 2 
+        if (Math.round(Math.sqrt(numberOfWorld)) ** 2 < numberOfWorld) {
+            numberOfWorld = Math.round(Math.sqrt(numberOfWorld) + 1) ** 2
         }
 
         this.sizeOfAWorld = Math.round(Math.sqrt(this.totalWidth * this.totalHeight / numberOfWorld));
         this.scale = this.sizeOfAWorld / params.CANVAS_SIZE;
         this.worldPerRow = Math.round(this.totalHeight / this.sizeOfAWorld);
         this.worldPerCol = Math.round(this.totalWidth / this.sizeOfAWorld);
+        this.numberOfWorld = numberOfWorld;
 
         this.bufferRow = Math.max(1, this.totalHeight - this.sizeOfAWorld * this.worldPerRow);
         this.bufferCol = Math.max(1, this.totalWidth - this.sizeOfAWorld * this.worldPerCol);
 
+    }
 
-
-
-
+    startInput(ctx = null) {
+        if (!ctx) {
+            //Won't start input if ctx is null or undefined
+            return;
+        }
+        this.ctx = ctx;
         
+        const getXandY = e => ({
+            x: e.clientX - this.ctx.canvas.getBoundingClientRect().left,
+            y: e.clientY - this.ctx.canvas.getBoundingClientRect().top
+        });
+
+        this.ctx.canvas.addEventListener("mousemove", e => {
+            this.mouse = getXandY(e);
+        });
+
+        this.ctx.canvas.addEventListener("click", e => {
+            //console.log("CLICK", getXandY(e));
+            this.click = getXandY(e);
+        });
+
+
+    };
+
+    updateMousePos(mouse){
+        if (mouse){
+            let i = Math.floor(mouse.y / this.sizeOfAWorld) * this.worldPerCol;
+            let j = Math.floor(mouse.x / this.sizeOfAWorld);
+            return Math.round(i) + Math.round(j);
+            
+        }
+        
+        return 0;
+        
+         
+    }
+
+    updateMainDisplay(worldDisplay){
+        //"carousel-item active"
+        this.game.population.worlds.forEach((world) => {
+            let doc = document.getElementById('worldCanvas'+world.worldId);
+            if (worldDisplay === world.worldId){
+                
+                
+                doc.setAttribute('class', 'carousel-item active');
+
+            }
+            else{
+                doc.setAttribute('class', 'carousel-item');
+            }
+        });
     }
 
     update() {
-
+        if (this.mouse){
+            this.hoveringWorld = this.updateMousePos(this.mouse);   
+            
+        }
+        if (this.click){
+            this.selectedWorld = this.updateMousePos(this.click);
+            this.updateMainDisplay(this.selectedWorld);
+            //Resetting the click
+            this.click = null;
+        }
+        //console.log("Current hovering world ", this.hoveringWorld, this.selectedWorld);
     }
 
     /**
@@ -163,9 +227,13 @@ class Minimap {
         ctx.fillStyle = tmpFillStyle;
     }
 
-    drawWall(ctx, wall, startX, startY, world = null) {
+    drawWall(ctx, wall, startX, startY, color = "black") {
         let tmpStrokeStyle = ctx.strokeStyle;
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = color;
+        let tmpLineWidth = ctx.lineWidth;
+        if (color != "black"){
+            ctx.lineWidth = 3;
+        }
 
         ctx.beginPath();
         let [cx, cy] = this.convertCoordinate(wall.xStart, wall.yStart, startX, startY);
@@ -178,11 +246,14 @@ class Minimap {
         ctx.closePath();
 
         ctx.strokeStyle = tmpStrokeStyle;
+
+        ctx.lineWidth = tmpLineWidth;
     }
 
     draw(ctx = null) {
         if (!ctx) {
             ctx = this.ctx;
+
             //Don't draw if there is no contex
             if (!this.ctx) {
                 return;
@@ -209,18 +280,27 @@ class Minimap {
             //Draw world Id in the corner
             ctx.fillStyle = "blue";
             ctx.font = Math.round(this.sizeOfAWorld / 10) + "px sans-serif";
-            
-            ctx.fillText(world.worldId, startX, startY + this.sizeOfAWorld + this.bufferRow );
-            
-            if (!world.isActive){
+
+            ctx.fillText(world.worldId, startX, startY + this.sizeOfAWorld + this.bufferRow);
+
+            if (!world.isActive) {
                 ctx.font = Math.round(this.sizeOfAWorld / 25) + "px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText("World is not active", startX + (this.sizeOfAWorld + this.bufferRow)/ 2, startY + (this.sizeOfAWorld + this.bufferRow)/ 2);
+                ctx.fillText("World is not active", startX + (this.sizeOfAWorld + this.bufferRow) / 2, startY + (this.sizeOfAWorld + this.bufferRow) / 2);
             }
             ctx.textAlign = "left";
+            
+            let wallColor = "black";
+            if (worldDrew == this.hoveringWorld){
+                wallColor = "red";
+            }
 
+            if (worldDrew == this.selectedWorld){
+                wallColor = "green";
+            }
+            
             world.walls.forEach((wall) => {
-                this.drawWall(ctx, wall, startX, startY);
+                this.drawWall(ctx, wall, startX, startY, wallColor);
 
             });
 
@@ -239,7 +319,7 @@ class Minimap {
 
             });
 
-        
+
 
 
             ++j;
@@ -252,6 +332,7 @@ class Minimap {
             else {
                 startX += this.sizeOfAWorld + this.bufferCol;
             }
+            worldDrew++;
         });
 
 
@@ -269,10 +350,15 @@ class Minimap {
  */
 const drawMinimap = (minimap = PopulationManager.MINIMAP, minimapElementID = 'minimap', container = 'minimapContainters', style = '', width = 1000, height = 1000) => {
     let canvas = document.createElement('canvas');
+
     if (!document.getElementById(minimapElementID)) {
         document.getElementById(container).appendChild(canvas);
+        minimap.startInput(canvas.getContext("2d"));
     } else {
         canvas = document.getElementById(minimapElementID);
+        if (!minimap.ctx){
+            minimap.startInput(canvas.getContext("2d"));
+        }
     }
 
     canvas.setAttribute('id', minimapElementID);
@@ -281,6 +367,7 @@ const drawMinimap = (minimap = PopulationManager.MINIMAP, minimapElementID = 'mi
     canvas.setAttribute('height', height);
 
     let ctx = canvas.getContext("2d");
+
 
     minimap.draw(ctx);
 

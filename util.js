@@ -72,6 +72,7 @@ const params = {
     FOOD_BUSH: true,
     MIRROR_ROLES: true,
     BUSH_SIGHT_MODE: "solid",
+    INACTIVE_PREY_TARGETABLE: true,
 };
 
 const agentTrackerAttributesToCollect = [
@@ -237,14 +238,17 @@ const createSlideShow = (array, id) => {
     });
 
     let count = 0;
+    
     array.forEach((elem) => {
         const div = document.createElement('div');
         div.setAttribute(
+
             'class',
             `carousel-item${count == activeSlide ? ' active' : ''}`
         );
         div.setAttribute('data-bs-interval', '999999999');
-        div.appendChild(elem);
+        div.setAttribute('id', `worldCanvas${elem.id}`);
+        div.appendChild(elem.canvas);
         carouselContainer.appendChild(div);
         count++;
     });

@@ -213,6 +213,7 @@ class PopulationManager {
             //params.HUNTING_MODE = false;
             document.getElementById("prey_speed").disabled = true;
             document.getElementById("predator_speed").disabled = true;
+            document.getElementById("inactive_prey_targetable").disabled = true;
         }
         else if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             params.AGENT_NEIGHBORS = true;
@@ -223,13 +224,14 @@ class PopulationManager {
             document.getElementById("food_bush").checked = false;
             params.MAX_TICKS_TO_CONSUME = 1;
             document.getElementById("max_ticks_to_consume").value = 1;
-            //Genome.DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index
+            Genome.DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index
             document.getElementById("prey_speed").disabled = false;
             document.getElementById("predator_speed").disabled = false;
             params.PREY_MAX_SPEED = parseFloat(document.getElementById("prey_speed").value);
             params.PREDATOR_MAX_SPEED = parseFloat(document.getElementById("predator_speed").value);
 
-
+            document.getElementById("inactive_prey_targetable").disabled = false;
+            params.INACTIVE_PREY_TARGETABLE = document.getElementById("inactive_prey_targetable").checked;
         }
 
         Genome.resetAll();
@@ -467,8 +469,9 @@ class PopulationManager {
                 this.resetAgents(false);
                 this.swapHierarchyValues();
 
-                //Clean up the food
-                this.checkFoodLevels();;
+                //Clean up the food  
+                this.resetAllWorldsFood();
+                this.checkFoodLevels();
             } else {
                 this.processGeneration(this.agentsAsList());
             }
@@ -532,19 +535,23 @@ class PopulationManager {
 
     };
 
+    resetAllWorldsFood(){
+        this.worlds.forEach((members, worldId) => {
+            members.resetFood();
+        
+        });
+    }
+
     checkFoodLevels() { // periodic food/poison repopulation function
         this.worlds.forEach((members, worldId) => {
             members.cleanupFood(true);
             members.cleanupFood(false);
 
             let beforeFood = members.food.length;
-            if (params.ENFORCE_MIN_FOOD && members.food.length < params.FOOD_AGENT_RATIO * members.agents.length) {
+            if (params.ENFORCE_MIN_FOOD && (members.food.length < params.FOOD_AGENT_RATIO * members.agents.length)) {
                 this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
-
-
-
             }
-            if (params.ENFORCE_MIN_POISON && members.poison.length < params.POISON_AGENT_RATIO * members.agents.length) {
+            if (params.ENFORCE_MIN_POISON && (members.poison.length < params.POISON_AGENT_RATIO * members.agents.length)) {
                 this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
             }
 
@@ -582,12 +589,20 @@ class PopulationManager {
     };
 
     spawnFood(worldId, poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length) {
+        let maxFoodCount = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length;
+        let currentCount = poison ? this.worlds.get(worldId).poison.length : this.worlds.get(worldId).food.length;
+        
+        //Do not spawn food if current food is too much
+        if (maxFoodCount <= currentCount){
+            return;
+        }
+
 
         let seedlings = [];
         let index = 0;
         let spawnSlot = [];
         let podLength = poison ? this.poisonPodLayout.length : this.foodPodLayout.length;
-
+        
         for (let i = 0; i < podLength; i++) {
             spawnSlot[i] = i;
         }
@@ -947,7 +962,7 @@ class PopulationManager {
     resetCanvases() {
         const tmp = [];
         this.worlds.forEach((val) => {
-            tmp.push(val.canvas);
+            tmp.push({canvas: val.canvas, id: val.worldId});
         });
         createSlideShow(tmp, 'canvas');
     };
@@ -962,6 +977,8 @@ class PopulationManager {
         let sumPercDead = 0;
         let sumEnergySpent = 0;
         let sumPredWinnerBonus = 0;
+        let totalOOB_Prey = 0;
+        let totalOOB_Predator = 0;
         this.agentsAsList().forEach((agent) => {
             let OOBData = specieOOBData.get(agent.speciesId);
             specieOOBData.set(agent.speciesId,
@@ -980,6 +997,9 @@ class PopulationManager {
             sumPercDead += agent.getPercentDead();
             sumEnergySpent += agent.caloriesSpent;
             if(agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.getWinnerBonus("predator");
+
+            this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
+            this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
         });
 
         //Log the data into agent Tracker
@@ -990,6 +1010,7 @@ class PopulationManager {
             this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
 
             this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
+
         });
 
         specieFoodEatenData.forEach((data, speciesId) => {
@@ -1011,45 +1032,77 @@ class PopulationManager {
         });
 
         //Add averages to agent tracker
-        this.agentTracker.addAvgPercDead(sumPercDead/this.agentsAsList().length);
-        this.agentTracker.addAvgEnergySpent(sumEnergySpent/this.agentsAsList().length);
-        let predWinnerLength = sumPredWinnerBonus/this.agentsAsList().length;
+        this.agentTracker.addAvgPercDead(sumPercDead/params.NUM_AGENTS * 100);
+        this.agentTracker.addAvgEnergySpent(sumEnergySpent/params.NUM_AGENTS);
+        let predWinnerLength = sumPredWinnerBonus/params.NUM_AGENTS;
         if(!params.MIRROR_ROLES) predWinnerLength *= 2;
-        this.agentTracker.addAvgPredWinnerBonus(sumPredWinnerBonus/this.agentsAsList().length)
+        this.agentTracker.addAvgPredWinnerBonus(predWinnerBonus)
 
 
 
     }
 
     displayDataChart() {
-        //Generate the data chart for prey hunting 
+        //Generate the line chart for prey hunting 
         if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             this.preyConsumedData.chart.addEntry(this.agentTracker.getCurrentGenAttriBute('totalPreyHuntedCount'));
             generateLineChart({ chart: this.preyConsumedData.chart }, "preyHuntedLineChart", "lineChartOutputContainters");
 
             generateLineChart(
                 {
-                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalFoodConsumptionCount'),
-                    title: 'Total Food Consumption Per Generation'
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds_Predator'),
+                    title: 'Total Ticks Out of Bounds AS Predator Per Generation'
                 },
-                "foodConsumptionLineChart", "lineChartOutputContainters",
+                "totalTicksOOBPredatorLineChart", "lineChartOutputContainters",
             );
+
             generateLineChart(
                 {
-                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds'),
-                    title: 'Total Ticks Out of Bounds Per Generation'
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds_Prey'),
+                    title: 'Total Ticks Out of Bounds AS Prey Per Generation'
                 },
-                "totalTicksOOBLineChart", "lineChartOutputContainters",
+                "totalTicksOOBPreyLineChart", "lineChartOutputContainters",
             );
-
-
-
-            // this.preyConsumedData = {
-            //     chart: new Linechart(this, 20, 50, 700, 400, [], "Prey Consumed Per Generations Chart", "Generations", "Times consumed"),
-            //     currentGenData: 0,
-            // }
-            //generateLineChart(this.agentTracker.getCurrentGenAttriBute('totalPreyConsumptionCount'), "preyConsumptionLineChart", "lineChartOutputContainters");
+                
+            generateLineChart(
+                {
+                    data: this.agentTracker.getAgentTrackerAttributesAsList('avgPredWinnerBonus'),
+                    title: 'Average Hunting Bonus of An Agent Per Generation'
+                },
+                "avgPredWinnerBonusLineChart", "lineChartOutputContainters",
+            );
         }
+
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('totalFoodConsumptionCount'),
+                title: 'Total Food Consumption Per Generation'
+            },
+            "foodConsumptionLineChart", "lineChartOutputContainters",
+        );
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('totalTicksOutOfBounds'),
+                title: 'Total Ticks Out of Bounds Per Generation'
+            },
+            "totalTicksOOBLineChart", "lineChartOutputContainters",
+        );
+
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('avgEnergySpent'),
+                title: ' Average Energy Spent of An Agent Per Generation '
+            },
+            "avgEnergySpentLineChart", "lineChartOutputContainters",
+        );
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('avgPercDead'),
+                title: 'Average Percentage of Ticks Deactivated Per Generation'
+            },
+            "avgPercDeadLineChart", "lineChartOutputContainters",
+        );
+     
 
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));//getAgentTrackerAttributesAsList("avgFitness"));

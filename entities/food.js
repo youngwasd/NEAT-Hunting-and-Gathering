@@ -272,7 +272,7 @@ class Food {
         }
 
         //Do not reproduce if too much poison is left
-        if (params.ENFORCE_MIN_POISON && numAgents * params.POISON_AGENT_RATIO < this.game.population.worlds.get(this.worldId).poison.length){
+        if (params.ENFORCE_MIN_POISON && (numAgents * params.POISON_AGENT_RATIO < this.game.population.worlds.get(this.worldId).poison.length)){
             return;
         }
 

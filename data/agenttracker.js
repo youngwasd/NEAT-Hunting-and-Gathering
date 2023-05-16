@@ -27,6 +27,8 @@ class AgentTracker {
             avgPredWinnerBonus: 0,
             totalPreyHuntedCount: 0,
             totalTicksOutOfBounds: 0,
+            totalTicksOutOfBounds_Prey: 0,
+            totalTicksOutOfBounds_Predator: 0,
             totalFoodConsumptionCount: 0,
             speciesFoodConsumptionCount: [],
             speciesSuccessfulHuntCount: [],

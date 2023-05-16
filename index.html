@@ -160,6 +160,7 @@
     </div>
 
     <div>
+        <br>
         <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
         <select name="huntingMode" id="huntingMode">
             <option value="deactivated">Deactivated</option>
@@ -167,9 +168,16 @@
             <option value="hierarchy_spectrum">Food Hierarchy Index Spectrum (Multiple Prey/Predator levels)</option>
             <option value="multipleGeneration">Multiple Generation</option>
         </select>
+        <br>
         <input type="text" id="prey_speed" value="5"> Prey Max Speed
         <input type="text" id="predator_speed" value="5"> Predator Max Speed
+        <br>
+        <input type="checkbox" id="inactive_prey_targetable" name="inactive_prey_targetable" checked="true"> Prey Is Targetable When Dead
+        <br>
+        <br>
     </div>
+
+
 
     <div>
         <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
@@ -297,15 +305,16 @@
         <br>
         <label for="genome_db"> Database Name: </label>
         <input type="text" id="genome_db" value="test">
-        <label for="genome_db_collection"> Collection Name: </label> 
+        <label for="genome_db_collection"> Collection Name: </label>
         <input type="text" id="genome_db_collection" value="NEATGenomeTests">
         <br>
         <label for="gen_to_save_genome"> Generation to Auto-Save to DB: </label>
         <input type="text" id="gen_to_save_genome" value="100">
         <br>
-        <label for="auto_save_genome"> Enable Auto Saving: </label> <input type="checkbox" id = "auto_save_genome"> &emsp;
+        <label for="auto_save_genome"> Enable Auto Saving: </label> <input type="checkbox" id="auto_save_genome"> &emsp;
         <button type="button" id="db_save_genome" style="background-color: red; color:white;"> Save Genome </button>
-        <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome </button>
+        <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome
+        </button>
     </div>
 
     </div>
@@ -324,7 +333,8 @@
 
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="1"> Energy Efficiency (calories gained/calories spent) +
+        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="1"> Energy Efficiency (calories gained/calories spent)
+        +
         <input type="text" id="FITNESS_PERCENT_DEAD" value="-1"> Percentage of Ticks Dead +
         <input type="text" id="FITNESS_WINNER_BONUS" value="1"> Winner Bonus
     </div>
@@ -332,7 +342,7 @@
     <br> <br>
     <input type="checkbox" id="display_minimap" checked=true> Display minimap
     <div id="minimapContainters">
-        
+
     </div>
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">

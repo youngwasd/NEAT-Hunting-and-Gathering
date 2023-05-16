@@ -93,6 +93,10 @@ class GameEngine {
             world.update();
         });
 
+        if (params.DISPLAY_MINIMAP){
+            PopulationManager.MINIMAP.update(); 
+        }
+
         let isNewGeneration = this.population.update();
 
         if (isNewGeneration) {
@@ -106,6 +110,8 @@ class GameEngine {
                 this.population.checkFoodLevels(true);
             }
         }
+
+        
     };
 
     loop() {
