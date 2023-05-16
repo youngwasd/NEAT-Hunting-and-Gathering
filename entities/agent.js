@@ -68,8 +68,8 @@ class Agent {
         this.biteTicks = 0;
         this.ticksAlive = 0;
         this.totalTicks = 0;
-        //this.concludingTick = 0;
-        this.winnerBonus = 0;
+        this.concludingTickPredator = params.GEN_TICKS;
+        this.concludingTickPrey = params.GEN_TICKS;
         this.maxEatingCompletion = 0;
         this.totalOutputs = [0, 0, 0];
 
@@ -155,11 +155,15 @@ class Agent {
         }
 
         const predPreyFitnessFunct = () => {
-            let winnerBonus = this.concludingTick / params.GEN_TICKS;
-            if(params.MIRROR_ROLES) winnerBonus /= 2;
+            let predPrey;
+            if(params.MIRROR_ROLES) predPrey = "both";
+            else if(this.foodHierarchyIndex == 0) predPrey = "prey";
+            else predPrey = "predator";
+            let winnerBonus = this.getWinnerBonus(predPrey);
+            console.log("winner bonus: " + winnerBonus)
             return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent 
                 + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
-                + params.FITNESS_WINNER_BONUS * this.winnerBonus;
+                + params.FITNESS_WINNER_BONUS * winnerBonus;
         }
 
 
@@ -167,6 +171,18 @@ class Agent {
             this.genome.rawFitness = predPreyFitnessFunct();
         this.genome.rawFitness += fitnessFunct();
     };
+
+    getWinnerBonus(predPrey = "both"){
+        if(predPrey = "prey"){
+            return this.concludingTickPrey / params.GEN_TICKS;
+        }
+        else if(predPrey = "predator"){
+            return 1 - (this.concludingTickPredator/params.GEN_TICKS);
+        }
+        else{
+            return (this.getWinnerBonus(predPrey = "prey") + this.getWinnerBonus(predPrey = "predator"))/2;
+        }
+    }
 
     /** Updates this Agent's bounding circle to reflect its current position */
     updateBoundingCircle() {
@@ -254,13 +270,14 @@ class Agent {
         this.numberOfTickBumpingIntoWalls = 0;
         this.numberOfTickOutOfBounds = 0;
         this.totalTicks = 0;
+        this.concludingTickPrey = params.GEN_TICKS;
+        this.concludingTickPredator = params.GEN_TICKS;
         this.ticksAlive = 0;
         this.numberOfPreyHunted = 0;
         this.numberOfTimesConsumed = 0;
         this.totalOutputs = [0, 0, 0];
         this.numberOfFoodEaten = 0;
         this.numberOfGoingOutOfBound = 0;
-        this.winnerBonus = 0;
     }
 
     //Make the energy = energy threshold
@@ -275,7 +292,6 @@ class Agent {
     activateAgent() {
         this.isActive = true;
         this.energy = Agent.START_ENERGY;
-        if(params.FITNESS_WINNER_BONUS != 0 && this.foodHierarchyIndex == 0) this.winnerBonus += 1;
     }
 
     /**
@@ -367,7 +383,7 @@ class Agent {
 
         //this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
    
-        this.concludingTick += this.game.population.tickCounter;
+        this.concludingTickPrey = this.game.population.tickCounter;
         return calReward;
     }
 
@@ -605,7 +621,7 @@ class Agent {
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
                             //Only count the first prey hunted incase there's multiple prey
-                            if(this.numberOfPreyHunted == 1) this.winnerBonus += 1 - (this.game.population.tickCounter / params.GEN_TICKS);
+                            if(this.numberOfPreyHunted == 1) this.concludingTickPredator = this.game.population.tickCounter;
 
                         }
                     }
@@ -762,7 +778,10 @@ class Agent {
             });
 
             entities.forEach(entity => {
-                if ((inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity !== this && entity.isActive) {
+                let hasPeeking = params.BUSH_SIGHT_MODE == "transparent" || (params.BUSH_SIGHT_MODE == "prey_advantage" && this.foodHierarchyIndex == 0)
+                    || (params.BUSH_SIGHT_MODE == "predator_advantage" && this.foodHierarchyIndex > 0);
+                let ignore = entity instanceof Food && hasPeeking && distance(eyes, entity) < entity.radius;
+                if (!ignore && (inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity !== this && entity.isActive) {
                     let newSpot = this.visionRayCollision(line, entity, eyes);
                     let newDist = distance(eyes, newSpot);
                     if (newDist < minDist) {
