@@ -94,7 +94,7 @@ class Agent {
                 this.energy = Agent.START_ENERGY;
             }
         }
-        else{
+        else {
             Agent.START_ENERGY = 100;
         }
     };
@@ -330,7 +330,7 @@ class Agent {
      */
     consume(predator) {
         //Exit if having the same or bigger food Hierarchy Index
-        if (!predator || this.foodHierarchyIndex >= predator.foodHierarchyIndex ) {
+        if (!predator || this.foodHierarchyIndex >= predator.foodHierarchyIndex) {
             return 0;
         }
 
@@ -756,7 +756,7 @@ class Agent {
         let entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         let walls = [];
         if (params.AGENT_PER_WORLD === 0) {
-            walls = this.game.population.worlds.get(this.worldId).walls;
+            walls = this.game.population.worlds.get(params.SPLIT_SPECIES ? this.worldId : 0).walls;
         }
         else if (this.worldId && this.game.population.worlds.get(this.worldId))
             walls = this.game.population.worlds.get(this.worldId).walls;
