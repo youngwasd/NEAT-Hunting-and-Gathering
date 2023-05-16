@@ -86,7 +86,7 @@ class Minimap {
         this.game.population.worlds.forEach((world) => {
             let doc = document.getElementById('worldCanvas'+world.worldId);
             if (worldDisplay === world.worldId){
-                console.log("Display this world", worldDisplay);
+                
                 
                 doc.setAttribute('class', 'carousel-item active');
 
@@ -98,8 +98,10 @@ class Minimap {
     }
 
     update() {
-        if (this.mouse)
+        if (this.mouse){
             this.hoveringWorld = this.updateMousePos(this.mouse);   
+            
+        }
         if (this.click){
             this.selectedWorld = this.updateMousePos(this.click);
             this.updateMainDisplay(this.selectedWorld);
@@ -354,6 +356,9 @@ const drawMinimap = (minimap = PopulationManager.MINIMAP, minimapElementID = 'mi
         minimap.startInput(canvas.getContext("2d"));
     } else {
         canvas = document.getElementById(minimapElementID);
+        if (!minimap.ctx){
+            minimap.startInput(canvas.getContext("2d"));
+        }
     }
 
     canvas.setAttribute('id', minimapElementID);
