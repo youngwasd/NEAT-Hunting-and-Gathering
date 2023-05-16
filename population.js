@@ -961,7 +961,7 @@ class PopulationManager {
     resetCanvases() {
         const tmp = [];
         this.worlds.forEach((val) => {
-            tmp.push(val.canvas);
+            tmp.push({canvas: val.canvas, id: val.worldId});
         });
         createSlideShow(tmp, 'canvas');
     };
