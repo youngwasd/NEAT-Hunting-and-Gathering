@@ -264,6 +264,7 @@ class PopulationManager {
         params.FOOD_BUSH = document.getElementById("food_bush").checked;
         params.MIRROR_ROLES = document.getElementById("mirror_roles").checked;
         params.DISPLAY_MINIMAP = document.getElementById("display_minimap").checked;
+        params.BUSH_SIGHT_MODE = document.getElementById("bush_sight_mode");
 
         //Loading Profile
         if (document.getElementById("runByProfileMode").checked) {
@@ -995,7 +996,7 @@ class PopulationManager {
             );
             sumPercDead += agent.getPercentDead();
             sumEnergySpent += agent.caloriesSpent;
-            if(agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.winnerBonus;
+            if(agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.getWinnerBonus("predator");
 
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
@@ -1033,7 +1034,9 @@ class PopulationManager {
         //Add averages to agent tracker
         this.agentTracker.addAvgPercDead(sumPercDead/params.NUM_AGENTS * 100);
         this.agentTracker.addAvgEnergySpent(sumEnergySpent/params.NUM_AGENTS);
-        this.agentTracker.addAvgPredWinnerBonus(sumPredWinnerBonus/params.NUM_AGENTS)
+        let predWinnerBonus = sumPredWinnerBonus/params.NUM_AGENTS;
+        if(!params.MIRROR_ROLES) predWinnerBonus *= 2;
+        this.agentTracker.addAvgPredWinnerBonus(predWinnerBonus)
 
 
 
@@ -1102,14 +1105,14 @@ class PopulationManager {
      
 
         //Generates the data charts
-        generateFitnessChart(this.agentTracker.getFitnessData());
+        generateFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));//getAgentTrackerAttributesAsList("avgFitness"));
         //generateAgeChart(this.agentTracker.getAgeData());
         generateFoodConsumptionChart(this.foodTracker.getConsumptionData());
         //generateFoodStageChart(this.foodTracker.getLifeStageData());
         //generateConnectionChart(this.genomeTracker.getConnectionData());
         //generateCycleChart(this.genomeTracker.getCycleData());
         //generateNodeChart(this.genomeTracker.getNodeData());
-        generateCurrentFitnessChart(this.agentTracker.getFitnessData());
+        generateCurrentFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));
 
         generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesSuccessfulHuntCount'),
             'speciesSuccessfulHuntCount', "Current Gen Successful hunt Percentage Per Specie", 'specieSuccessfulHuntCountChart');
@@ -1147,7 +1150,7 @@ class PopulationManager {
         this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
         //console.log(`Raw fitness: ${totalRawFitness}`);
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
-
+        console.log("made it 1");
         let reprodFitMap = new Map();
         let minShared = 0;
 
@@ -1172,7 +1175,8 @@ class PopulationManager {
         });
 
 
-
+        console.log(sumShared);
+        console.log(reprodFitMap);
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
             this.deathRoulette(reprodFitMap, sumShared);
@@ -1215,7 +1219,7 @@ class PopulationManager {
         
         this.updateWorldsFoodHierarchy();*/
         this.resetAgents(true);
-
+        console.log("made it 3")
 
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
@@ -1246,7 +1250,7 @@ class PopulationManager {
         //     PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
         // ]);
         // this.preyConsumedData.currentGenData = 0;
-
+        console.log("made it 4")
 
         if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
@@ -1270,23 +1274,25 @@ class PopulationManager {
     generationalDBUpdate(){
         if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
             params.SIM_CURR_TRIAL++;
-            //document.getElementById("sim_trial_num").value = params.SIM_TRIAL_NUM;
-            let fitnessData = this.agentTracker.getAvgFitnessData();
-            fitnessData = fitnessData.slice(0, fitnessData.length - 1);
+
+            let data = {};
             let consumptionData = this.foodTracker.getConsumptionData();
             consumptionData = consumptionData.slice(0, consumptionData.length - 1);
-            let energySpentData = this.agentTracker.getAvgEnergySpentData();
-            energySpentData = energySpentData.slice(0, energySpentData.length - 1);
-            let percDeadData = this.agentTracker.getAvgPercDeadData();
-            percDeadData = percDeadData.slice(0, percDeadData.length - 1);
-            let winnerBonusData = this.agentTracker.getAvgPredWinnerBonusData();
-            winnerBonusData = winnerBonusData.slice(0, winnerBonusData.length - 1);
-
+            data.consumption = consumptionData;
+            agentTrackerAttributesToCollect.forEach( (attribute) =>{
+                newCollection = this.agentTracker.getAgentTrackerAttributesAsList(attribute);
+                newCollection = newCollection.slice(0, newCollection.length - 1);
+                data[attribute] = newCollection;
+            });
+            
             //Sending data to data base
             if (params.SAVE_TO_DB) {
-                logData({ avgFitness: fitnessData, consumption: consumptionData, 
+                logData(data/*{ avgFitness: fitnessData, consumption: consumptionData, 
                     avgEnergySpent: energySpentData, avgPredWinnerBonus: winnerBonusData,
-                    avgPercDead: percDeadData}, 
+                    avgPercDead: percDeadData, preyHunted: preyHuntedCount,
+                    totalFoodConsumed: foodConsumptionCount, totalTicksOutOfBounds: foodConsumptionCount,
+                    totalTicksOutOfBounds: ticksOutOfBounds, totalTicksOutOfBoundsPrey: ticksOutOfBoundsPrey,
+                    totalTicksOutOfBoundsPredator: ticksOutOfBoundsPredator}*/, 
                     params.DB, params.DB_COLLECTION);
             }
 

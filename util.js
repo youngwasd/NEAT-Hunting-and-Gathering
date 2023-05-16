@@ -71,8 +71,15 @@ const params = {
     FOOD_DIAMETER: 24,
     FOOD_BUSH: true,
     MIRROR_ROLES: true,
+    BUSH_SIGHT_MODE: "solid",
     INACTIVE_PREY_TARGETABLE: true,
 };
+
+const agentTrackerAttributesToCollect = [
+    "avgFitness", "avgEnergySpent", "avgPercDead", "avgPredWinnerBonus",
+    "totalPreyHuntedCount", "totalFoodConsumptionCount", "totalTicksOutOfBounds",
+    "totalTicksOutOfBounds_Prey", "totalTicksOutOfBounds_Predator"
+];
 
 const getMedian = (arr) => {
     arr.sort((a, b) => a - b);
