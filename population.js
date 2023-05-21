@@ -214,6 +214,7 @@ class PopulationManager {
             document.getElementById("prey_speed").disabled = true;
             document.getElementById("predator_speed").disabled = true;
             document.getElementById("inactive_prey_targetable").disabled = true;
+            document.getElementById("push_fhi_to_ann").disabled = true;
         }
         else if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             params.AGENT_NEIGHBORS = true;
@@ -224,7 +225,7 @@ class PopulationManager {
             document.getElementById("food_bush").checked = false;
             params.MAX_TICKS_TO_CONSUME = 1;
             document.getElementById("max_ticks_to_consume").value = 1;
-            Genome.DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index
+         
             document.getElementById("prey_speed").disabled = false;
             document.getElementById("predator_speed").disabled = false;
             params.PREY_MAX_SPEED = parseFloat(document.getElementById("prey_speed").value);
@@ -232,6 +233,14 @@ class PopulationManager {
 
             document.getElementById("inactive_prey_targetable").disabled = false;
             params.INACTIVE_PREY_TARGETABLE = document.getElementById("inactive_prey_targetable").checked;
+
+            document.getElementById("push_fhi_to_ann").disabled = false;
+            params.PUSH_FHI_TO_ANN = document.getElementById("push_fhi_to_ann").checked;
+
+            if (params.PUSH_FHI_TO_ANN){
+                Genome.DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index
+            }
+            
         }
 
         Genome.resetAll();

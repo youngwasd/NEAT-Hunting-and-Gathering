@@ -73,6 +73,7 @@ const params = {
     MIRROR_ROLES: true,
     BUSH_SIGHT_MODE: "solid",
     INACTIVE_PREY_TARGETABLE: true,
+    PUSH_FHI_TO_ANN: true,
 };
 
 const agentTrackerAttributesToCollect = [

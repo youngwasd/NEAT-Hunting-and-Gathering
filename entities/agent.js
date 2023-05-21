@@ -534,7 +534,7 @@ class Agent {
                 input.push(AgentInputUtil.normalizeDistance(distance(neighbor.BC.center, this.BC.center))); // normalized distance from the entity
             }
 
-            if (params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") {
+            if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && params.PUSH_FHI_TO_ANN) {
                 //Add food hierarchy index to agents neural input
                 for (let i = input.length; i < Genome.DEFAULT_INPUTS - 2; i++) { // fill all unused input nodes with 0's
                     input.push(0);
@@ -553,7 +553,7 @@ class Agent {
         input.push(2 / (1 + Math.E ** (4 * normEnergy)));
 
         //Push the food hierarchy index into agents input
-        if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
+        if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") && params.PUSH_FHI_TO_ANN) {
             input.push(AgentInputUtil.normalizeFoodHierarchyIndex(this.foodHierarchyIndex));
         }
 
