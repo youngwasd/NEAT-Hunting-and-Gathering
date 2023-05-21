@@ -22,7 +22,7 @@ class World {
 
         //Add random box wall
         if (params.INNER_WALL) {
-            this.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8, params.CANVAS_SIZE / 10);
+            this.produceRandomWalls(2, params.CANVAS_SIZE / 4, params.CANVAS_SIZE / 8);
         }
         else {
             this.addBorderToWorld();
@@ -190,7 +190,7 @@ class World {
      * @param {*} spawningZoneStart the starting coordinate of the randomizing zone to spawn the walls 
      * @param {*} spawningZoneWidth the width of the randomizing zone to spawn the walls  
      */
-    produceRandomBoxWalls(n, spawningZoneStart, spawningZoneWidth) {
+    produceRandomWalls(n, spawningZoneStart, spawningZoneWidth = 0) {
         // let spawningCoordinateBegin = [
         //     {x: spawningZoneStart, y: spawningZoneStart},
         //     {x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart},
@@ -206,17 +206,42 @@ class World {
         // ];
 
         let spawningCoordinateBegin = [
-            { x: spawningZoneStart, y: spawningZoneStart },
-            { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
-            { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
-            { x: spawningZoneStart, y: spawningZoneStart },
+            [
+                { x: spawningZoneStart, y: spawningZoneStart },
+                { x: spawningZoneStart, y: spawningZoneStart }
+            ],
+            [
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
+                { x: params.CANVAS_SIZE - spawningZoneStart , y: spawningZoneStart }
+            ],
+            [
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart }
+            ],
+            [
+                { x:spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+                { x:spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart }
+            ],
+            
         ];
 
         let spawningCoordinateEnd = [
-            { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
-            { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
-            { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
-            { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+            [
+                { x: spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
+                { x: spawningZoneStart + spawningZoneWidth, y: spawningZoneStart }
+            ],
+            [
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
+                { x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart }
+            ],
+            [
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
+                { x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: params.CANVAS_SIZE - spawningZoneStart }
+            ],
+            [
+                { x:spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
+                { x:spawningZoneStart + spawningZoneWidth, y: params.CANVAS_SIZE - spawningZoneStart }
+            ],
         ];
 
         //Clear the walls first
@@ -228,7 +253,10 @@ class World {
         let arr = shuffleArray([0, 1, 2, 3]);
 
         for (let i = 0; i < Math.max(0, (n % 4)); i++) {
-            let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]].x, spawningCoordinateBegin[arr[i]].y, spawningCoordinateEnd[arr[i]].x, spawningCoordinateEnd[arr[i]].y);
+            let tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]][0].x, spawningCoordinateBegin[arr[i]][0].y, spawningCoordinateEnd[arr[i]][0].x, spawningCoordinateEnd[arr[i]][0].y);
+            this.walls.push(tmp);
+
+            tmp = new Wall(this.game, this.worldId, spawningCoordinateBegin[arr[i]][1].x, spawningCoordinateBegin[arr[i]][1].y, spawningCoordinateEnd[arr[i]][1].x, spawningCoordinateEnd[arr[i]][1].y);
             this.walls.push(tmp);
         }
 
@@ -240,6 +268,18 @@ class World {
 
     deactivate() {
         this.isActive = false;
+    }
+
+    checkWallColission(agent){
+        let res = false;
+        this.walls.forEach((wall) => {
+            if (wall.lineSegmentCircleCollide(agent.BC).length > 0){
+                res = true;
+                return true;
+            }
+        });
+        return res;
+        
     }
 
     //Update food hierarchy of all agents in this world
@@ -310,7 +350,7 @@ class World {
             agent.x = rx * (randomDistance) + prevX;
             
 
-            if (isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
+            if (isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer) || (params.INNER_WALL && this.checkWallColission(agent))) {
                 rx *= -1;
                 agent.x = rx * (randomDistance) + prevX;
             }
@@ -318,7 +358,7 @@ class World {
             randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
             agent.y = ry * (randomDistance) + prevY;
 
-            if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , buffer)) {
+            if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , buffer) || (params.INNER_WALL && this.checkWallColission(agent))) {
                 ry *= -1;
                 agent.y = ry * (randomDistance) + prevY;
             }
