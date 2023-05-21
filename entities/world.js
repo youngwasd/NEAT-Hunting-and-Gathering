@@ -274,7 +274,7 @@ class World {
             };
         }
 
-        let spawnRadius = 300;
+        let spawnZone = 300;
         let prevX = halfSize, prevY = halfSize;
 
         shuffleArray(this.agents).forEach(agent => {
@@ -288,7 +288,7 @@ class World {
             else if (params.HUNTING_MODE === "hierarchy") {
                 //Assign either predator or prey
                 if (agentAssigned >= this.agents.length / 2) {
-                    agent.foodHierarchyIndex = 50;
+                    agent.foodHierarchyIndex = 50;  
                 }
                 else {
                     agent.foodHierarchyIndex = 0;
@@ -301,21 +301,32 @@ class World {
             // agent.y = randomInt(spawnRadius * 2) - spawnRadius + startPosY[i];
             // i++;
             // i %= 4;
+
+            //rx and ry can only be -1 or 1
             let rx = randomInt(2) * (-2) + 1;
             let ry = randomInt(2) * (-2) + 1;
             let buffer = 100;
-            agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + prevX;
-            agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + prevY;
+            let randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
+            agent.x = rx * (randomDistance) + prevX;
+            
 
             if (isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
                 rx *= -1;
-                agent.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + prevX;
+                agent.x = rx * (randomDistance) + prevX;
             }
+
+            randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
+            agent.y = ry * (randomDistance) + prevY;
+
             if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , buffer)) {
                 ry *= -1;
-                agent.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + prevY;
-
+                agent.y = ry * (randomDistance) + prevY;
             }
+            // if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , buffer) || isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
+            //     console.log(agent.x, agent.y, rx, ry);
+
+            // }
+           
 
             prevX = agent.x;
             prevY = agent.y;

@@ -169,12 +169,12 @@ class Agent {
 
         const predPreyFitnessFunct = () => {
             let predPrey;
-            if(params.MIRROR_ROLES) predPrey = "both";
-            else if(this.foodHierarchyIndex == 0) predPrey = "prey";
+            if (params.MIRROR_ROLES) predPrey = "both";
+            else if (this.foodHierarchyIndex == 0) predPrey = "prey";
             else predPrey = "predator";
             let winnerBonus = this.getWinnerBonus(predPrey);
             console.log("winner bonus: " + winnerBonus)
-            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent 
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent
                 + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
                 + params.FITNESS_WINNER_BONUS * winnerBonus;
         }
@@ -185,15 +185,15 @@ class Agent {
         this.genome.rawFitness += fitnessFunct();
     };
 
-    getWinnerBonus(predPrey = "both"){
-        if(predPrey = "prey"){
+    getWinnerBonus(predPrey = "both") {
+        if (predPrey = "prey") {
             return this.concludingTickPrey / params.GEN_TICKS;
         }
-        else if(predPrey = "predator"){
-            return 1 - (this.concludingTickPredator/params.GEN_TICKS);
+        else if (predPrey = "predator") {
+            return 1 - (this.concludingTickPredator / params.GEN_TICKS);
         }
-        else{
-            return (this.getWinnerBonus(predPrey = "prey") + this.getWinnerBonus(predPrey = "predator"))/2;
+        else {
+            return (this.getWinnerBonus(predPrey = "prey") + this.getWinnerBonus(predPrey = "predator")) / 2;
         }
     }
 
@@ -401,7 +401,7 @@ class Agent {
         }
 
         //this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
-   
+
         this.concludingTickPrey = this.game.population.tickCounter;
         return calReward;
     }
@@ -413,18 +413,23 @@ class Agent {
         let rx = randomInt(2) * (-2) + 1;
         let ry = randomInt(2) * (-2) + 1;
 
-        this.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.x;
-        this.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.y;
-
+        let randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
+        this.x = rx * (randomDistance) + predator.x;
+ 
         if (isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
             rx *= -1;
-            this.x = rx * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.x;
+            this.x =  rx * (randomDistance) + predator.x;
         }
+
+        randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
+        this.y = ry * (randomDistance) + predator.y;
         if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y, buffer)) {
             ry *= -1;
-            this.y = ry * (randomInt(spawnRadius * 2) - spawnRadius + buffer) + predator.y;
+            this.y = ry * (randomDistance) + predator.y;
 
         }
+
+        
     }
 
     /**
@@ -655,7 +660,7 @@ class Agent {
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
                             //Only count the first prey hunted incase there's multiple prey
-                            if(this.numberOfPreyHunted == 1) this.concludingTickPredator = this.game.population.tickCounter;
+                            if (this.numberOfPreyHunted == 1) this.concludingTickPredator = this.game.population.tickCounter;
 
                         }
                     }

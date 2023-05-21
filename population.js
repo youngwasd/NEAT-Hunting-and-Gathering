@@ -1150,7 +1150,7 @@ class PopulationManager {
         this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
         //console.log(`Raw fitness: ${totalRawFitness}`);
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
-        console.log("made it 1");
+        //console.log("made it 1");
         let reprodFitMap = new Map();
         let minShared = 0;
 
@@ -1175,8 +1175,8 @@ class PopulationManager {
         });
 
 
-        console.log(sumShared);
-        console.log(reprodFitMap);
+        // console.log(sumShared);
+        // console.log(reprodFitMap);
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
             this.deathRoulette(reprodFitMap, sumShared);
@@ -1219,7 +1219,7 @@ class PopulationManager {
         
         this.updateWorldsFoodHierarchy();*/
         this.resetAgents(true);
-        console.log("made it 3")
+       // console.log("made it 3")
 
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
@@ -1250,7 +1250,7 @@ class PopulationManager {
         //     PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
         // ]);
         // this.preyConsumedData.currentGenData = 0;
-        console.log("made it 4")
+        //console.log("made it 4")
 
         if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
