@@ -1233,7 +1233,7 @@ class PopulationManager {
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
             this.worlds.forEach(world => {
-                world.produceRandomBoxWalls(2, params.CANVAS_SIZE / 8 + params.CANVAS_SIZE / 10, params.CANVAS_SIZE / 10);
+                world.produceRandomWalls(2, params.CANVAS_SIZE / 4, params.CANVAS_SIZE / 8);
             });
         }
         // console.log("Total agents", this.agentsAsList().length);
