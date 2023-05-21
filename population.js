@@ -405,6 +405,10 @@ class PopulationManager {
             params.GEN_TO_SAVE = parseInt(document.getElementById("gen_to_save").value);
         }
 
+        if (document.activeElement.id !== "gen_to_save_genome") {
+            params.GEN_TO_SAVE_GENOME = parseInt(document.getElementById("gen_to_save_genome").value);
+        }
+
         if (document.activeElement.id !== "db") {
             params.DB = document.getElementById("db").value;
         }
@@ -413,11 +417,20 @@ class PopulationManager {
             params.DB_COLLECTION = document.getElementById("db_collection").value;
         }
 
+        if (document.activeElement.id !== "genome_db") {
+            params.GENOME_DB = document.getElementById("genome_db").value;
+        }
+
+        if (document.activeElement.id !== "genome_db_collection") {
+            params.GENOME_DB_COLLECTION = document.getElementById("genome_db_collection").value;
+        }
+
         if (document.activeElement.id !== "sim_trial_num") {
             params.SIM_TRIAL_NUM = parseInt(document.getElementById("sim_trial_num").value);
         }
 
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
+        params.AUTO_SAVE_GENOME = document.getElementById("auto_save_genome").checked;
 
         //Cleans up all of the food/poison for the world
         // this.worlds.forEach((members, worldId) => {
@@ -1174,9 +1187,6 @@ class PopulationManager {
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
 
-
-        console.log(sumShared);
-        console.log(reprodFitMap);
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
             this.deathRoulette(reprodFitMap, sumShared);
@@ -1219,7 +1229,6 @@ class PopulationManager {
         
         this.updateWorldsFoodHierarchy();*/
         this.resetAgents(true);
-        console.log("made it 3")
 
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
@@ -1250,7 +1259,6 @@ class PopulationManager {
         //     PopulationManager.GEN_NUM, this.preyConsumedData.currentGenData
         // ]);
         // this.preyConsumedData.currentGenData = 0;
-        console.log("made it 4")
 
         if (params.AGENT_BITING && this.currentBiteHist != null) this.currentBiteHist.reset();
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
@@ -1271,7 +1279,19 @@ class PopulationManager {
         }
     };
 
+    loadFromGenomeList(data){
+        console.log("running genome loader...");
+        let genomes = data.genomes;
+        let agents = this.agentsAsList();
+        for(let i = 0; i < agents.length; i++){
+            agents[i].genome = genomes[i];
+        }
+        this.resetSim();
+        PopulationManager.GEN_NUM = data.generation;
+    }
+
     generationalDBUpdate(){
+        let rValue = false;
         if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
             params.SIM_CURR_TRIAL++;
 
@@ -1287,13 +1307,7 @@ class PopulationManager {
             
             //Sending data to data base
             if (params.SAVE_TO_DB) {
-                logData(data/*{ avgFitness: fitnessData, consumption: consumptionData, 
-                    avgEnergySpent: energySpentData, avgPredWinnerBonus: winnerBonusData,
-                    avgPercDead: percDeadData, preyHunted: preyHuntedCount,
-                    totalFoodConsumed: foodConsumptionCount, totalTicksOutOfBounds: foodConsumptionCount,
-                    totalTicksOutOfBounds: ticksOutOfBounds, totalTicksOutOfBoundsPrey: ticksOutOfBoundsPrey,
-                    totalTicksOutOfBoundsPredator: ticksOutOfBoundsPredator}*/, 
-                    params.DB, params.DB_COLLECTION);
+                logData(data, params.DB, params.DB_COLLECTION);
             }
 
             this.resetSim();
@@ -1309,10 +1323,14 @@ class PopulationManager {
                     downloadDataButton.setAttribute('style', "background-color: green; color:white;");
                 }
             }
-
-            return true;
+            rValue = true;
         }
-        return false;
+        if (params.GEN_TO_SAVE_GENOME <= PopulationManager.GEN_NUM && params.AUTO_SAVE_GENOME){
+            rValue = true;
+            saveGenomes();
+            console.log("auto saved genomes!!");
+        }
+        return rValue;
     }
 
 

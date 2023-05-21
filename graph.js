@@ -7,8 +7,14 @@ if (window.io) {
 
 socket.on("find", (data) => {
     console.log("processing query...");
-    if(data.length > 0) parseData(data);
-    else console.log("Empty Data...");
+    console.log(data);
+    if(data[data.length - 1].has_genomes){
+        console.log("yesssss!");
+        gameEngine.population.loadFromGenomeList(data[data.length - 1]);
+    }else{
+        if(data.length > 0) parseData(data);
+        else console.log("Empty Data...");
+    }
     console.log("finished query.");
 });
 
@@ -26,17 +32,26 @@ const downloadData = (e) => {
     console.log("Download successfully");
 }
 
-const downloadGenomes = (e) =>{
-    db = document.getElementById("genome_db").value;
-    db_collection = document.getElementById("genome_db_collection").value;
-
-    console.log(`db: ${db}\ncollection: ${db_collection}`);
+const downloadGenomes = () => {
+    console.log(`db: ${params.GENOME_DB}\ncollection: ${params.GENOME_DB_COLLECTION}`);
     socket.emit("find", 
     {
-        db: db, 
-        collection: db_collection
+        db: params.GENOME_DB, 
+        collection: params.GENOME_DB_COLLECTION,
+        has_genomes: true
     });
-    console.log("Download successfully");
+    console.log("downloaded genomes");
+}
+
+const saveGenomes = () => {
+    let genomes = gameEngine.population.agentsAsList().map(x => x.genome);
+    let saveInfo = {
+        has_genomes: true,
+        generation: PopulationManager.GEN_NUM,
+        date: Date()
+    };
+    console.log(genomes);
+    logData(genomes, params.GENOME_DB, params.GENOME_DB_COLLECTION, saveInfo);
 }
 
 const parseData = (data) => {
