@@ -1163,7 +1163,6 @@ class PopulationManager {
         this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
         //console.log(`Raw fitness: ${totalRawFitness}`);
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
-        console.log("made it 1");
         let reprodFitMap = new Map();
         let minShared = 0;
 

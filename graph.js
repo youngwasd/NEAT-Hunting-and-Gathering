@@ -7,7 +7,10 @@ if (window.io) {
 
 socket.on("find", (data) => {
     console.log("processing query...");
-    console.log(data);
+    if(data.length == 0) {
+        console.warn("Warning: data collection queried is empty")
+        return;//Prevent errors
+    }
     if(data[data.length - 1].has_genomes){
         console.log("yesssss!");
         gameEngine.population.loadFromGenomeList(data[data.length - 1]);
