@@ -173,8 +173,7 @@ class Agent {
             else if (this.foodHierarchyIndex == 0) predPrey = "prey";
             else predPrey = "predator";
             let winnerBonus = this.getWinnerBonus(predPrey);
-            console.log("winner bonus: " + winnerBonus)
-            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent 
                 + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
                 + params.FITNESS_WINNER_BONUS * winnerBonus;
         }

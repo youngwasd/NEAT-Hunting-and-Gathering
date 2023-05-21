@@ -5,7 +5,7 @@ const params = {
     DB_COLLECTION: "NEATtests",
     GEN_TO_SAVE: 40,
     GENOME_DB: "test",
-    GENOME_DB_COLLECTION: "NEATGenomeTests",
+    GENOME_DB_COLLECTION: "NEATGenomeTests1",
     AUTO_SAVE_GENOME: false,
     GEN_TO_SAVE_GENOME: 100,
     FOOD_OUTSIDE: false,
@@ -278,12 +278,19 @@ const execAsync = (fun) => {
       }, 0)
 };
 
-const logData = (data, dataBase, dbCollection) => {
+const logData = (data, dataBase, dbCollection, extraElements = false) => {
+    if(extraElements){
+        data = {
+            genomes: data,
+            ...extraElements
+        }
+    }
     let payload = {
         db: dataBase,
         collection: dbCollection,
         data: data
     }
+    
     console.log(payload);
 
     if(socket) {
@@ -291,3 +298,4 @@ const logData = (data, dataBase, dbCollection) => {
         console.log("inserted data to db");
     }
 }
+

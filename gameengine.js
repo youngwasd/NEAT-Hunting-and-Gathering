@@ -56,8 +56,11 @@ class GameEngine {
         document.getElementById("db_download_genome").addEventListener("click", ()=>{
             let downloadButton = document.getElementById("db_download_genome");
             downloadButton.innerHTML = "Download Genomes";
-            downloadButton.setAttribute('style', "background-color: green; color:white;");
-            downloadData();
+            downloadGenomes();
+        });
+
+        document.getElementById("db_save_genome").addEventListener("click", () => {
+            saveGenomes();
         });
     };
 
