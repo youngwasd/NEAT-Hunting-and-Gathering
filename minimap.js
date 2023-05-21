@@ -50,7 +50,7 @@ class Minimap {
             return;
         }
         this.ctx = ctx;
-        
+
         const getXandY = e => ({
             x: e.clientX - this.ctx.canvas.getBoundingClientRect().left,
             y: e.clientY - this.ctx.canvas.getBoundingClientRect().top
@@ -68,41 +68,41 @@ class Minimap {
 
     };
 
-    updateMousePos(mouse){
-        if (mouse){
+    updateMousePos(mouse) {
+        if (mouse) {
             let i = Math.floor(mouse.y / this.sizeOfAWorld) * this.worldPerCol;
             let j = Math.floor(mouse.x / this.sizeOfAWorld);
             return Math.round(i) + Math.round(j);
-            
+
         }
-        
+
         return 0;
-        
-         
+
+
     }
 
-    updateMainDisplay(worldDisplay){
+    updateMainDisplay(worldDisplay) {
         //"carousel-item active"
         this.game.population.worlds.forEach((world) => {
-            let doc = document.getElementById('worldCanvas'+world.worldId);
-            if (worldDisplay === world.worldId){
-                
-                
+            let doc = document.getElementById('worldCanvas' + world.worldId);
+            if (worldDisplay === world.worldId) {
+
+
                 doc.setAttribute('class', 'carousel-item active');
 
             }
-            else{
+            else {
                 doc.setAttribute('class', 'carousel-item');
             }
         });
     }
 
     update() {
-        if (this.mouse){
-            this.hoveringWorld = this.updateMousePos(this.mouse);   
-            
+        if (this.mouse) {
+            this.hoveringWorld = this.updateMousePos(this.mouse);
+
         }
-        if (this.click){
+        if (this.click) {
             this.selectedWorld = this.updateMousePos(this.click);
             this.updateMainDisplay(this.selectedWorld);
             //Resetting the click
@@ -231,7 +231,7 @@ class Minimap {
         let tmpStrokeStyle = ctx.strokeStyle;
         ctx.strokeStyle = color;
         let tmpLineWidth = ctx.lineWidth;
-        if (color != "black"){
+        if (color != "black") {
             ctx.lineWidth = 3;
         }
 
@@ -244,6 +244,36 @@ class Minimap {
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
+
+        ctx.strokeStyle = tmpStrokeStyle;
+
+        ctx.lineWidth = tmpLineWidth;
+    }
+
+    drawBorder(ctx, startX, startY, color = "black") {
+        let tmpStrokeStyle = ctx.strokeStyle;
+        ctx.strokeStyle = color;
+        let tmpLineWidth = ctx.lineWidth;
+        if (color != "black") {
+            ctx.lineWidth = 3;
+        }
+
+        let xStart = [0, 0, params.CANVAS_SIZE, 0];
+        let yStart = [0, params.CANVAS_SIZE, 0, 0];
+        let xEnd = [0, params.CANVAS_SIZE, params.CANVAS_SIZE, params.CANVAS_SIZE];
+        let yEnd = [params.CANVAS_SIZE, params.CANVAS_SIZE, params.CANVAS_SIZE, 0];
+
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath();
+            let [cx, cy] = this.convertCoordinate(xStart[i], yStart[i], startX, startY);
+            ctx.moveTo(cx, cy);
+            [cx, cy] = this.convertCoordinate(xEnd[i], yEnd[i], startX, startY);
+            ctx.lineTo(cx, cy);
+
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+        }
 
         ctx.strokeStyle = tmpStrokeStyle;
 
@@ -289,20 +319,22 @@ class Minimap {
                 ctx.fillText("World is not active", startX + (this.sizeOfAWorld + this.bufferRow) / 2, startY + (this.sizeOfAWorld + this.bufferRow) / 2);
             }
             ctx.textAlign = "left";
-            
+
+            world.walls.forEach((wall) => {
+                this.drawWall(ctx, wall, startX, startY, "black");
+
+            });
+
             let wallColor = "black";
-            if (worldDrew == this.hoveringWorld){
+            if (worldDrew == this.hoveringWorld) {
                 wallColor = "red";
             }
 
-            if (worldDrew == this.selectedWorld){
+            if (worldDrew == this.selectedWorld) {
                 wallColor = "green";
             }
-            
-            world.walls.forEach((wall) => {
-                this.drawWall(ctx, wall, startX, startY, wallColor);
-
-            });
+            this.drawBorder(ctx, startX, startY, wallColor);
+         
 
             world.poison.forEach((poison) => {
                 this.drawFood(ctx, poison, startX, startY, world);
@@ -356,7 +388,7 @@ const drawMinimap = (minimap = PopulationManager.MINIMAP, minimapElementID = 'mi
         minimap.startInput(canvas.getContext("2d"));
     } else {
         canvas = document.getElementById(minimapElementID);
-        if (!minimap.ctx){
+        if (!minimap.ctx) {
             minimap.startInput(canvas.getContext("2d"));
         }
     }
