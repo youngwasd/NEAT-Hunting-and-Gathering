@@ -408,7 +408,7 @@ class Agent {
 
     respawn(predator) {
         //Respawn near the predator
-        let spawnRadius = 300;
+        let spawnZone = 300;
         let buffer = 100;
         let rx = randomInt(2) * (-2) + 1;
         let ry = randomInt(2) * (-2) + 1;
@@ -427,9 +427,7 @@ class Agent {
             ry *= -1;
             this.y = ry * (randomDistance) + predator.y;
 
-        }
-
-        
+        }        
     }
 
     /**
