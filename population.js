@@ -207,6 +207,8 @@ class PopulationManager {
             params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
         }
 
+  
+
         //Update hunting mode
         params.HUNTING_MODE = document.getElementById("huntingMode").value;
         if (params.HUNTING_MODE === "deactivated") {
@@ -242,8 +244,8 @@ class PopulationManager {
             }
             
         }
-
         Genome.resetAll();
+       
         this.game.population = new PopulationManager(this.game);
 
     };
@@ -1234,6 +1236,8 @@ class PopulationManager {
                 agent.resetCounters();
             });
         }
+
+        
         
         this.updateWorldsFoodHierarchy();*/
         this.resetAgents(true);
@@ -1241,9 +1245,11 @@ class PopulationManager {
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
             this.worlds.forEach(world => {
-                world.produceRandomWalls(2, params.CANVAS_SIZE / 4, params.CANVAS_SIZE / 8);
+                world.produceRandomWalls(2, params.CANVAS_SIZE / 3, params.CANVAS_SIZE / 6);
             });
         }
+        this.resetAgents(true);
+       // console.log("made it 3")      
         // console.log("Total agents", this.agentsAsList().length);
 
         //Generates the generational histograms

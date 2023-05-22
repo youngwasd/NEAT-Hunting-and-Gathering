@@ -30,6 +30,12 @@ class Genome {
         Genome.INNOV_NUM = 0;
         Genome.DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
         Genome.DEFAULT_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * params.AGENT_VISION_RAYS + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        
+        if (params.PUSH_FHI_TO_ANN){
+            Genome.DEFAULT_INPUTS++; //Increase 1 more in neural inputs for food hierarchy index
+        }
+
+
         Genome.NODE_ID = Genome.DEFAULT_INPUTS + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
     };
 

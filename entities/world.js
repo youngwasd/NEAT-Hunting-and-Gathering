@@ -22,7 +22,7 @@ class World {
 
         //Add random box wall
         if (params.INNER_WALL) {
-            this.produceRandomWalls(2, params.CANVAS_SIZE / 4, params.CANVAS_SIZE / 8);
+            this.produceRandomWalls(2, params.CANVAS_SIZE / 3, params.CANVAS_SIZE / 6);
         }
         else {
             this.addBorderToWorld();
@@ -86,7 +86,7 @@ class World {
         return true;
     };
 
-    resetFood(){
+    resetFood() {
         this.food = [];
     }
 
@@ -212,35 +212,35 @@ class World {
             ],
             [
                 { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart },
-                { x: params.CANVAS_SIZE - spawningZoneStart , y: spawningZoneStart }
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart }
             ],
             [
                 { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
                 { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart }
             ],
             [
-                { x:spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
-                { x:spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart }
+                { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart },
+                { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart }
             ],
-            
+
         ];
 
         let spawningCoordinateEnd = [
             [
-                { x: spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
+                { x: spawningZoneStart, y: spawningZoneStart + spawningZoneWidth },
                 { x: spawningZoneStart + spawningZoneWidth, y: spawningZoneStart }
             ],
             [
-                { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart + spawningZoneWidth},
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: spawningZoneStart + spawningZoneWidth },
                 { x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: spawningZoneStart }
             ],
             [
-                { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
+                { x: params.CANVAS_SIZE - spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth },
                 { x: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth, y: params.CANVAS_SIZE - spawningZoneStart }
             ],
             [
-                { x:spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth},
-                { x:spawningZoneStart + spawningZoneWidth, y: params.CANVAS_SIZE - spawningZoneStart }
+                { x: spawningZoneStart, y: params.CANVAS_SIZE - spawningZoneStart - spawningZoneWidth },
+                { x: spawningZoneStart + spawningZoneWidth, y: params.CANVAS_SIZE - spawningZoneStart }
             ],
         ];
 
@@ -270,16 +270,16 @@ class World {
         this.isActive = false;
     }
 
-    checkWallColission(agent){
+    checkWallColission(agent) {
         let res = false;
         this.walls.forEach((wall) => {
-            if (wall.lineSegmentCircleCollide(agent.BC).length > 0){
+            if (wall.lineSegmentCircleCollide(agent.BC).length > 0) {
                 res = true;
                 return true;
             }
         });
         return res;
-        
+
     }
 
     //Update food hierarchy of all agents in this world
@@ -322,13 +322,13 @@ class World {
             //Spread the food hierarchy index accress the whole agent population
             if (params.HUNTING_MODE === "hierarchy_spectrum") {
                 agent.foodHierarchyIndex = foodHierarchy.index;
-               
+
                 foodHierarchy.index += foodHierarchy.step;
             }
             else if (params.HUNTING_MODE === "hierarchy") {
                 //Assign either predator or prey
                 if (agentAssigned >= this.agents.length / 2) {
-                    agent.foodHierarchyIndex = 50;  
+                    agent.foodHierarchyIndex = 50;
                 }
                 else {
                     agent.foodHierarchyIndex = 0;
@@ -348,25 +348,27 @@ class World {
             let buffer = 100;
             let randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
             agent.x = rx * (randomDistance) + prevX;
-            
 
             if (isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer) || (params.INNER_WALL && this.checkWallColission(agent))) {
                 rx *= -1;
                 agent.x = rx * (randomDistance) + prevX;
             }
 
+
+
             randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
             agent.y = ry * (randomDistance) + prevY;
-
-            if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , buffer) || (params.INNER_WALL && this.checkWallColission(agent))) {
+            if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y, buffer) || (params.INNER_WALL && this.checkWallColission(agent))) {
                 ry *= -1;
                 agent.y = ry * (randomDistance) + prevY;
+
             }
+
             // if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , buffer) || isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
             //     console.log(agent.x, agent.y, rx, ry);
 
             // }
-           
+
 
             prevX = agent.x;
             prevY = agent.y;
