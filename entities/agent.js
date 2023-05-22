@@ -825,7 +825,7 @@ class Agent {
                 let hasPeeking = params.BUSH_SIGHT_MODE == "transparent" || (params.BUSH_SIGHT_MODE == "prey_advantage" && this.foodHierarchyIndex == 0)
                     || (params.BUSH_SIGHT_MODE == "predator_advantage" && this.foodHierarchyIndex > 0);
                 let ignore = entity instanceof Food && hasPeeking && distance(eyes, entity) < entity.radius;
-                if (!ignore && (inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity !== this && entity.isActive) {
+                if (!ignore && (inRightHalf == entity.x >= eyes.x) && !entity.removeFromWorld && entity !== this && (entity.isActive || params.INACTIVE_PREY_TARGETABLE)) {
                     let newSpot = this.visionRayCollision(line, entity, eyes);
                     let newDist = distance(eyes, newSpot);
                     if (newDist < minDist) {
