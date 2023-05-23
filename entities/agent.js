@@ -173,7 +173,7 @@ class Agent {
             else if (this.foodHierarchyIndex == 0) predPrey = "prey";
             else predPrey = "predator";
             let winnerBonus = this.getWinnerBonus(predPrey);
-            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent 
+            return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent
                 + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
                 + params.FITNESS_WINNER_BONUS * winnerBonus;
         }
@@ -414,10 +414,10 @@ class Agent {
 
         let randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
         this.x = rx * (randomDistance) + predator.x;
- 
+
         if (isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
             rx *= -1;
-            this.x =  rx * (randomDistance) + predator.x;
+            this.x = rx * (randomDistance) + predator.x;
         }
 
         randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
@@ -426,7 +426,7 @@ class Agent {
             ry *= -1;
             this.y = ry * (randomDistance) + predator.y;
 
-        }        
+        }
     }
 
     /**
@@ -470,7 +470,6 @@ class Agent {
     /** Updates this Agent for the current tick */
     update() {
         this.totalTicks++;
-
         let oldPos = { x: this.x, y: this.y }; // note where we are before moving
 
         let spottedNeighbors = [];
@@ -482,12 +481,12 @@ class Agent {
          * if we have split species and don't split agent per world , then we only get entities in the world corresponding to our species id, otherwise all entities
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
-        let entities = 0;
+        let entities = [];
 
         if (!params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
             entities = this.game.population.getEntitiesInWorld(0, !params.AGENT_NEIGHBORS);
         }
-        else {
+        else if (this.worldId && this.game.population.worlds.get(this.worldId)) {
             entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         }
 
@@ -850,8 +849,6 @@ class Agent {
             input.push(distInput);
             input.push((hueOfMinDist) / 360);
             currAngle += angleBetw;
-
-
         }
     }
 

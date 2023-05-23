@@ -106,6 +106,10 @@ class PopulationManager {
         PopulationManager.MINIMAP = new Minimap(game);
         //Update the spec for minimap
         PopulationManager.MINIMAP.updateSpec(this.worlds.size);
+
+        // this.worlds.forEach((world) => {
+        //     console.log(world);
+        // } );
     };
 
     //Return NULL if no color is availble
@@ -207,7 +211,7 @@ class PopulationManager {
             params.GENOME_DEFAULT_K_VAL = parseFloat(document.getElementById("genome_default_k_val").value);
         }
 
-  
+
 
         //Update hunting mode
         params.HUNTING_MODE = document.getElementById("huntingMode").value;
@@ -227,7 +231,7 @@ class PopulationManager {
             document.getElementById("food_bush").checked = false;
             params.MAX_TICKS_TO_CONSUME = 1;
             document.getElementById("max_ticks_to_consume").value = 1;
-         
+
             document.getElementById("prey_speed").disabled = false;
             document.getElementById("predator_speed").disabled = false;
             params.PREY_MAX_SPEED = parseFloat(document.getElementById("prey_speed").value);
@@ -239,13 +243,13 @@ class PopulationManager {
             document.getElementById("push_fhi_to_ann").disabled = false;
             params.PUSH_FHI_TO_ANN = document.getElementById("push_fhi_to_ann").checked;
 
-            if (params.PUSH_FHI_TO_ANN){
+            if (params.PUSH_FHI_TO_ANN) {
                 Genome.DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index
             }
-            
+
         }
         Genome.resetAll();
-       
+
         this.game.population = new PopulationManager(this.game);
 
     };
@@ -559,10 +563,10 @@ class PopulationManager {
 
     };
 
-    resetAllWorldsFood(){
+    resetAllWorldsFood() {
         this.worlds.forEach((members, worldId) => {
             members.resetFood();
-        
+
         });
     }
 
@@ -615,9 +619,9 @@ class PopulationManager {
     spawnFood(worldId, poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length) {
         let maxFoodCount = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length;
         let currentCount = poison ? this.worlds.get(worldId).poison.length : this.worlds.get(worldId).food.length;
-        
+
         //Do not spawn food if current food is too much
-        if (maxFoodCount <= currentCount){
+        if (maxFoodCount <= currentCount) {
             return;
         }
 
@@ -626,7 +630,7 @@ class PopulationManager {
         let index = 0;
         let spawnSlot = [];
         let podLength = poison ? this.poisonPodLayout.length : this.foodPodLayout.length;
-        
+
         for (let i = 0; i < podLength; i++) {
             spawnSlot[i] = i;
         }
@@ -906,6 +910,10 @@ class PopulationManager {
 
     //Update food hierarchy of all agents in all world
     updateWorldsFoodHierarchy() {
+        //Hunting mode is turned off
+        if (params.HUNTING_MODE === "deactivated") {
+            return;
+        }
         this.worlds.forEach(world => {
             world.activate();
             world.updateFoodHierarchy();
@@ -986,7 +994,7 @@ class PopulationManager {
     resetCanvases() {
         const tmp = [];
         this.worlds.forEach((val) => {
-            tmp.push({canvas: val.canvas, id: val.worldId});
+            tmp.push({ canvas: val.canvas, id: val.worldId });
         });
         createSlideShow(tmp, 'canvas');
     };
@@ -1020,7 +1028,7 @@ class PopulationManager {
             );
             sumPercDead += agent.getPercentDead();
             sumEnergySpent += agent.caloriesSpent;
-            if(agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.getWinnerBonus("predator");
+            if (agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.getWinnerBonus("predator");
 
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
@@ -1056,10 +1064,10 @@ class PopulationManager {
         });
 
         //Add averages to agent tracker
-        this.agentTracker.addAvgPercDead(sumPercDead/params.NUM_AGENTS * 100);
-        this.agentTracker.addAvgEnergySpent(sumEnergySpent/params.NUM_AGENTS);
-        let predWinnerBonus = sumPredWinnerBonus/params.NUM_AGENTS;
-        if(!params.MIRROR_ROLES) predWinnerBonus *= 2;
+        this.agentTracker.addAvgPercDead(sumPercDead / params.NUM_AGENTS * 100);
+        this.agentTracker.addAvgEnergySpent(sumEnergySpent / params.NUM_AGENTS);
+        let predWinnerBonus = sumPredWinnerBonus / params.NUM_AGENTS;
+        if (!params.MIRROR_ROLES) predWinnerBonus *= 2;
         this.agentTracker.addAvgPredWinnerBonus(predWinnerBonus)
 
 
@@ -1087,7 +1095,7 @@ class PopulationManager {
                 },
                 "totalTicksOOBPreyLineChart", "lineChartOutputContainters",
             );
-                
+
             generateLineChart(
                 {
                     data: this.agentTracker.getAgentTrackerAttributesAsList('avgPredWinnerBonus'),
@@ -1126,7 +1134,7 @@ class PopulationManager {
             },
             "avgPercDeadLineChart", "lineChartOutputContainters",
         );
-     
+
 
         //Generates the data charts
         generateFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));//getAgentTrackerAttributesAsList("avgFitness"));
@@ -1240,7 +1248,6 @@ class PopulationManager {
         
         
         this.updateWorldsFoodHierarchy();*/
-        this.resetAgents(true);
 
         //Clear current walls and add random walls to the map. Will be different for each world
         if (params.INNER_WALL) {
@@ -1249,7 +1256,7 @@ class PopulationManager {
             });
         }
         this.resetAgents(true);
-       // console.log("made it 3")      
+        // console.log("made it 3")      
         // console.log("Total agents", this.agentsAsList().length);
 
         //Generates the generational histograms
@@ -1287,38 +1294,38 @@ class PopulationManager {
 
         //Runs database updates and checks to see if there is a  
         //trial end before incrementing the generation number
-        if(!this.generationalDBUpdate()){
+        if (!this.generationalDBUpdate()) {
             PopulationManager.GEN_NUM++;
             this.resetCanvases();
         }
     };
 
-    loadFromGenomeList(data){
+    loadFromGenomeList(data) {
         console.log("running genome loader...");
         let genomes = data.genomes;
         let agents = this.agentsAsList();
-        for(let i = 0; i < agents.length; i++){
+        for (let i = 0; i < agents.length; i++) {
             agents[i].genome = genomes[i];
         }
         this.resetSim();
         PopulationManager.GEN_NUM = data.generation;
     }
 
-    generationalDBUpdate(){
+    generationalDBUpdate() {
         let rValue = false;
         if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
-            
+
 
             let data = {};
             let consumptionData = this.foodTracker.getConsumptionData();
             consumptionData = consumptionData.slice(0, consumptionData.length - 1);
             data.consumption = consumptionData;
-            agentTrackerAttributesToCollect.forEach( (attribute) =>{
+            agentTrackerAttributesToCollect.forEach((attribute) => {
                 let newCollection = this.agentTracker.getAgentTrackerAttributesAsList(attribute);
                 newCollection = newCollection.slice(0, newCollection.length - 1);
                 data[attribute] = newCollection;
             });
-            
+
             //Sending data to data base
             if (params.SAVE_TO_DB) {
                 console.log(data);
@@ -1337,12 +1344,12 @@ class PopulationManager {
                     downloadDataButton.innerHTML = "Trials run complete, click here to download Data";
                     downloadDataButton.setAttribute('style', "background-color: green; color:white;");
                 }
-            }else{
+            } else {
                 params.SIM_CURR_TRIAL++;
             }
             rValue = true;
         }
-        if (params.GEN_TO_SAVE_GENOME <= PopulationManager.GEN_NUM && params.AUTO_SAVE_GENOME){
+        if (params.GEN_TO_SAVE_GENOME <= PopulationManager.GEN_NUM && params.AUTO_SAVE_GENOME) {
             rValue = true;
             saveGenomes();
             console.log("auto saved genomes!!");
