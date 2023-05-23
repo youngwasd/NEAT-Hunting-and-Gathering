@@ -1292,25 +1292,26 @@ class PopulationManager {
     generationalDBUpdate(){
         let rValue = false;
         if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
-            params.SIM_CURR_TRIAL++;
+            
 
             let data = {};
             let consumptionData = this.foodTracker.getConsumptionData();
             consumptionData = consumptionData.slice(0, consumptionData.length - 1);
             data.consumption = consumptionData;
             agentTrackerAttributesToCollect.forEach( (attribute) =>{
-                newCollection = this.agentTracker.getAgentTrackerAttributesAsList(attribute);
+                let newCollection = this.agentTracker.getAgentTrackerAttributesAsList(attribute);
                 newCollection = newCollection.slice(0, newCollection.length - 1);
                 data[attribute] = newCollection;
             });
             
             //Sending data to data base
             if (params.SAVE_TO_DB) {
+                console.log(data);
                 logData(data, params.DB, params.DB_COLLECTION);
             }
 
             this.resetSim();
-            if (params.SIM_TRIAL_NUM < params.SIM_CURR_TRIAL) {
+            if (params.SIM_TRIAL_NUM < params.SIM_CURR_TRIAL + 1) {
                 //Call pausing button
                 let pauseButton = document.getElementById('pause_sim');
                 if (pauseButton) {
@@ -1321,6 +1322,8 @@ class PopulationManager {
                     downloadDataButton.innerHTML = "Trials run complete, click here to download Data";
                     downloadDataButton.setAttribute('style', "background-color: green; color:white;");
                 }
+            }else{
+                params.SIM_CURR_TRIAL++;
             }
             rValue = true;
         }

@@ -295,6 +295,8 @@ const logData = (data, dataBase, dbCollection, extraElements = false) => {
     if(socket) {
         socket.emit("insert", payload);
         console.log("inserted data to db");
+    }else{
+        console.error("Insertion failed... no socket.io detected :'(");
     }
 }
 
