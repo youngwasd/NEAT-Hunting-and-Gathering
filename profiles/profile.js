@@ -29,7 +29,14 @@ const loadProfile = (profile) => {
             HTMLElement.value = attr.value;
         }
         if (HTMLElement.checked) {
-            HTMLElement.checked = attr.value;
+            if (attr.value){
+                HTMLElement.checked = attr.value;
+            }
+            
+            if (attr.checked){
+                HTMLElement.checked = attr.checked;
+            }
+            
         }
         attributesLoaded++;
         //console.log(key, value);
@@ -296,6 +303,11 @@ const SP_FitnessFunction_Generic = {
         HTMLElementID: 'FITNESS_WINNER_BONUS',
         value: 2,
     },
+
+    FOOD_BUSH: {
+        HTMLElementID: 'food_bush',
+        checked: true,
+    }
 };
 
 const SP_Fitness_Generic_Faster_Prey = {
