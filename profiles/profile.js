@@ -5,6 +5,9 @@ const loadProfile = (profile) => {
     document.getElementById("save_to_db").checked = true;
     params.SAVE_TO_DB = true;
 
+    document.getElementById("auto_save_genome").checked = true;
+    params.AUTO_SAVE_GENOME = true;
+
     let attributesLoaded = 0;
     let len = 0;
     for (let key in profile) {
@@ -53,11 +56,6 @@ const simulationProfile_numberOfAgents_25 = {
         value: "NEATWi23"
     },
 
-    NUM_AGENTS: {
-        HTMLElementID: 'num_agents',
-        value: 25,
-    },
-
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
         value: "TotalNumberOfAgents_100"
@@ -71,6 +69,31 @@ const simulationProfile_numberOfAgents_25 = {
     SIM_TRIAL_NUM: {
         HTMLElementID: 'sim_trial_num',
         value: 3,
+    },
+
+    GENOME_DB: {
+        HTMLElementID: 'genome_db',
+        value: "NEATWi23"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "TotalNumberOfAgents_100_Genome"
+    },
+
+    GEN_TO_SAVE_GENOME: {
+        HTMLElementID: 'gen_to_save_genome',
+        value: 200,
+    },
+
+    SIM_TRIAL_NUM: {
+        HTMLElementID: 'sim_trial_num',
+        value: 3,
+    },
+
+    NUM_AGENTS: {
+        HTMLElementID: 'num_agents',
+        value: 25,
     },
 
     //Has a custom additional function to run before adding to the profile
@@ -91,11 +114,6 @@ const SP_FitnessFunction_Specific = {
         value: "NEATSpr23"
     },
 
-    NUM_AGENTS: {
-        HTMLElementID: 'num_agents',
-        value: 50,
-    },
-
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
         value: "FitnessFunction_Specific"
@@ -105,10 +123,30 @@ const SP_FitnessFunction_Specific = {
         HTMLElementID: 'gen_to_save',
         value: 400,
     },
+    
+    GENOME_DB: {
+        HTMLElementID: 'genome_db',
+        value: "NEATSpr23"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Specific_Genome"
+    },
+
+    GEN_TO_SAVE_GENOME: {
+        HTMLElementID: 'gen_to_save_genome',
+        value: 400,
+    },
 
     SIM_TRIAL_NUM: {
         HTMLElementID: 'sim_trial_num',
         value: 3,
+    },
+
+    NUM_AGENTS: {
+        HTMLElementID: 'num_agents',
+        value: 50,
     },
 
     //Has a custom additional function to run before adding to the profile
@@ -174,11 +212,6 @@ const SP_FitnessFunction_Generic = {
         value: "NEATSpr23"
     },
 
-    NUM_AGENTS: {
-        HTMLElementID: 'num_agents',
-        value: 50,
-    },
-
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
         value: "FitnessFunction_Generic"
@@ -192,6 +225,26 @@ const SP_FitnessFunction_Generic = {
     SIM_TRIAL_NUM: {
         HTMLElementID: 'sim_trial_num',
         value: 3,
+    },
+
+    GENOME_DB: {
+        HTMLElementID: 'genome_db',
+        value: "NEATSpr23"
+    },
+
+    DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Generic_Genome"
+    },
+
+    GEN_TO_SAVE_GENOME: {
+        HTMLElementID: 'gen_to_save_genome',
+        value: 400,
+    },
+
+    NUM_AGENTS: {
+        HTMLElementID: 'num_agents',
+        value: 50,
     },
 
     //Has a custom additional function to run before adding to the profile
@@ -253,6 +306,11 @@ const SP_Fitness_Generic_Faster_Prey = {
         value: "FitnessFunction_Generic_FasterPrey"
     },
 
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Generic_FasterPrey_Genome"
+    },
+
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
         value: 5,
@@ -269,6 +327,10 @@ const SP_Fitness_Specific_Faster_Prey = {
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
         value: "FitnessFunction_Specific_FasterPrey"
+    },
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Specific_FasterPrey_Genome"
     },
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
@@ -289,6 +351,11 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_Off = {
         value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off"
     },
 
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_Genome"
+    },
+
     FOOD_BUSH: {
         HTMLElementID: 'food_bush',
         checked: false,
@@ -300,6 +367,11 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off = {
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
         value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_Genome"
     },
 
     FOOD_BUSH: {
