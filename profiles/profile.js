@@ -164,7 +164,7 @@ const SP_FitnessFunction_Specific = {
     FOOD_BUSH: {
         HTMLElementID: 'food_bush',
         checked: true,
-    }
+    },
 };
 
 
@@ -292,6 +292,16 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_Off = {
     FOOD_BUSH: {
         HTMLElementID: 'food_bush',
         checked: false,
+    },
+
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        checked: 1,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        checked: 1,
     }
 };
 
@@ -305,6 +315,16 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off = {
     FOOD_BUSH: {
         HTMLElementID: 'food_bush',
         checked: false,
+    },
+
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        checked: 1,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        checked: 1,
     }
 };
 
