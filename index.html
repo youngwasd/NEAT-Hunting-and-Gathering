@@ -172,7 +172,8 @@
         <input type="text" id="prey_speed" value="5"> Prey Max Speed
         <input type="text" id="predator_speed" value="5"> Predator Max Speed
         <br>
-        <input type="checkbox" id="inactive_prey_targetable" name="inactive_prey_targetable" checked="true"> Prey Is Targetable When Dead
+        <input type="checkbox" id="inactive_prey_targetable" name="inactive_prey_targetable" checked="true"> Prey Is
+        Targetable When Dead
         &emsp;
         <input type="checkbox" id="push_fhi_to_ann" checked="true"> Push Food Hierarchy Index to ANN
         <br>
@@ -252,11 +253,12 @@
     <div>
         <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
         <br>
-
-        <label for="pauseDrawing">
-            <input type="checkbox" id="pauseDrawing" name="pauseDrawing">
+        
+        <input type="checkbox" id="pauseDrawing" name="pauseDrawing">
+        <label for="pauseDrawing" id = "pauseDrawingLabel">
             Pause Drawing (To speed up the simulation)
         </label>
+        
         <br>
         <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation output
         data (Put 0 to disable)

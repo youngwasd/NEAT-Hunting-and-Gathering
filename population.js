@@ -276,6 +276,14 @@ class PopulationManager {
         params.DISPLAY_MINIMAP = document.getElementById("display_minimap").checked;
         params.BUSH_SIGHT_MODE = document.getElementById("bush_sight_mode");
 
+        if (params.PAUSE_DRAWING) {
+            //Update the generation count 
+            document.getElementById("pauseDrawingLabel").innerHTML = "Drawing paused. Current Gen: " + PopulationManager.GEN_NUM;
+        }
+        else{
+            document.getElementById("pauseDrawingLabel").innerHTML = "Pause Drawing (To speed up the simulation)";
+        }
+
         //Loading Profile
         if (document.getElementById("runByProfileMode").checked) {
             document.getElementById("profileOption").disabled = false;
