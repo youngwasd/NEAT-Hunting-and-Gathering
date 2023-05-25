@@ -278,7 +278,7 @@ class PopulationManager {
 
         if (params.PAUSE_DRAWING) {
             //Update the generation count 
-            document.getElementById("pauseDrawingLabel").innerHTML = "Drawing paused. Current Gen: " + PopulationManager.GEN_NUM;
+            document.getElementById("pauseDrawingLabel").innerHTML = "Drawing paused. Current Gen: " + PopulationManager.GEN_NUM + (params.SAVE_TO_DB?"; Current Trial: " + params.SIM_CURR_TRIAL:"");
         }
         else{
             document.getElementById("pauseDrawingLabel").innerHTML = "Pause Drawing (To speed up the simulation)";
