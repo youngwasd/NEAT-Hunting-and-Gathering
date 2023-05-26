@@ -259,7 +259,7 @@ const SP_FitnessFunction_Generic = {
         value: "NEATSpr23"
     },
 
-    DB_COLLECTION: {
+    GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
         value: "FitnessFunction_Generic_Genome"
     },
