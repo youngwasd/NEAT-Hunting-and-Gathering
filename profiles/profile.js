@@ -98,11 +98,6 @@ const simulationProfile_numberOfAgents_25 = {
         value: 200,
     },
 
-    SIM_TRIAL_NUM: {
-        HTMLElementID: 'sim_trial_num',
-        value: 3,
-    },
-
     NUM_AGENTS: {
         HTMLElementID: 'num_agents',
         value: 25,
@@ -153,7 +148,7 @@ const SP_FitnessFunction_Specific = {
 
     SIM_TRIAL_NUM: {
         HTMLElementID: 'sim_trial_num',
-        value: 3,
+        value: 1,
     },
 
     NUM_AGENTS: {
@@ -251,7 +246,7 @@ const SP_FitnessFunction_Generic = {
 
     SIM_TRIAL_NUM: {
         HTMLElementID: 'sim_trial_num',
-        value: 3,
+        value: 1,
     },
 
     GENOME_DB: {
