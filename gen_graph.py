@@ -1,3 +1,5 @@
+#run with: python gen_graph.py src dest
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
