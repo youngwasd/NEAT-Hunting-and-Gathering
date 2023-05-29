@@ -178,7 +178,7 @@ class Agent {
                 + params.FITNESS_WINNER_BONUS * winnerBonus;
         }
 
-
+        this.genome.rawFitness = 0;
         if (params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy")
             this.genome.rawFitness = predPreyFitnessFunct();
         this.genome.rawFitness += fitnessFunct();

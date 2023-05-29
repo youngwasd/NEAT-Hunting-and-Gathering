@@ -1316,6 +1316,10 @@ class PopulationManager {
 
     generationalDBUpdate() {
         let rValue = false;
+        if (params.GEN_TO_SAVE_GENOME <= PopulationManager.GEN_NUM && params.AUTO_SAVE_GENOME) {
+            saveGenomes();
+            console.log("auto saved genomes!!");
+        }
         if (params.SAVE_TO_DB && params.GEN_TO_SAVE <= PopulationManager.GEN_NUM && params.SIM_TRIAL_NUM >= params.SIM_CURR_TRIAL) {
 
 
@@ -1351,11 +1355,6 @@ class PopulationManager {
                 params.SIM_CURR_TRIAL++;
             }
             rValue = true;
-        }
-        if (params.GEN_TO_SAVE_GENOME <= PopulationManager.GEN_NUM && params.AUTO_SAVE_GENOME) {
-            rValue = true;
-            saveGenomes();
-            console.log("auto saved genomes!!");
         }
         return rValue;
     }

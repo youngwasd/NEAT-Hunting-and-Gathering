@@ -8,7 +8,8 @@ if (window.io) {
 socket.on("find", (data) => {
     console.log("processing query...");
     if(data.length == 0) {
-        console.warn("Warning: data collection queried is empty")
+        console.warn("Warning: data collection queried is empty");
+        console.warn(data);
         return;//Prevent errors
     }
     if(data[data.length - 1].has_genomes){
@@ -40,8 +41,7 @@ const downloadGenomes = () => {
     socket.emit("find", 
     {
         db: params.GENOME_DB, 
-        collection: params.GENOME_DB_COLLECTION,
-        has_genomes: true
+        collection: params.GENOME_DB_COLLECTION
     });
     console.log("downloaded genomes");
 }
