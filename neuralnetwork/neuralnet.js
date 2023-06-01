@@ -7,10 +7,8 @@ class NeuralNet {
         this.sortedNodes = NeuralNetUtil.topoSort(this.nodes, this.edges);
     };
 
-    processInput(input) {
+    processInput(input, output = []) {
         //console.log(input);
-
-        let wheels = [];
         let inputIndex = 0;
 
         this.sortedNodes.forEach(nodeId => {
@@ -27,17 +25,29 @@ class NeuralNet {
                         }
                     });
                 });
-                currNode.value = this.sigmoid(value);
+                if (!params.EVOLVE_K_AND_M){
+                    currNode.value = this.sigmoid(value);
+                }
+                else{
+                    currNode.value = this.sigmoid(value, currNode.kValue, currNode.mValue);
+                }
                 if (currNode.type === Genome.NODE_TYPES.output) {
-                    wheels.push(currNode.value);
+                    output.push(currNode.value);
                 }
             }
         });
 
-        return wheels;
+        return output;
     };
 
-    sigmoid(x) {
-        return 2 / (1 + Math.E ** -x) - 1;
+    //Sigmoid function
+    sigmoid(x, k = params.GENOME_DEFAULT_K_VAL, m = 0) {
+        // if ((PopulationManager.IS_LAST_TICK)){
+        //     console.log("k:", k, "m:", m, PopulationManager.GEN_NUM);
+        // }
+        //Name the parameters to easily adjust them
+        let l = 2;
+        let n = 1;
+        return l / (1 + Math.E ** (k * -(x - m))) - n;
     };
 };

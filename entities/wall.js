@@ -1,7 +1,7 @@
 /**
  * The main class for Wall and Wall behaviors
  * 
- * @author Toan Nguyen 
+ * @author Toan Nguyen and Gabe
  */
 class Wall {
 
@@ -21,13 +21,13 @@ class Wall {
         //yInt is the y-intercept
         this.yInt = yStart - this.slope * xStart;
         //length of the wall
-        this.len = Math.sqrt((yEnd - yStart) ** 2  + (xEnd - xStart) ** 2); //sqrt(x^2 + y^2)
+        this.len = Math.sqrt((yEnd - yStart) ** 2 + (xEnd - xStart) ** 2); //sqrt(x^2 + y^2)
 
 
         this.lineThickness = 1;
         this.strokeColor = "black";
         this.fillColor = "hsl(0, 0%, 0%)";
-        this.dataHue = 60;
+        this.dataHue = 30;
     };
 
     /**
@@ -50,22 +50,33 @@ class Wall {
         if (!x || !y) {
             return false;
         }
-        //Check vertical line
-        if (x == this.xStart && x === this.xEnd) {
-            return (y <= this.yEnd && y >= this.yStart);
+
+        //
+        let lowY = Math.min(this.yStart, this.yEnd);
+        let highY = Math.max(this.yStart, this.yEnd);
+        let lowX = Math.min(this.xStart, this.xEnd);
+        let highX = Math.max(this.xStart, this.xEnd);
+        if (y >= lowY && y <= highY && x >= lowX && x <= highX) {
+            return true;
         }
+        else return false;
 
-        //Checking to see if the Slope of Start -> Point = Slope of the line
-        let slopeSP = (y - this.yStart) / (x - this.xStart);
+        // //Check vertical line
+        // if (x == this.xStart && x === this.xEnd) {
+        //     return (y <= this.yEnd && y >= this.yStart);
+        // }
 
-        //Calculating length from start to Point
-        let lengthSP = Math.sqrt((y - this.yStart) ** 2  + (x - this.xStart) ** 2); 
-        //Length from point to end
-        let lengthPE = Math.sqrt((y - this.yEnd) ** 2  + (x - this.xEnd) ** 2); 
+        // //Checking to see if the Slope of Start -> Point = Slope of the line
+        // let slopeSP = (y - this.yStart) / (x - this.xStart);
 
-        //The point lies in the segment if the line from start to point have the same slope as the wall's
-            // and the length from start to points + length from point to end = lenght of the entire wall 
-        return (this.slope == slopeSP && lengthSP + lengthPE - this.len <= 0.001);
+        // //Calculating length from start to Point
+        // let lengthSP = Math.sqrt((y - this.yStart) ** 2 + (x - this.xStart) ** 2);
+        // //Length from point to end
+        // let lengthPE = Math.sqrt((y - this.yEnd) ** 2 + (x - this.xEnd) ** 2);
+
+        // //The point lies in the segment if the line from start to point have the same slope as the wall's
+        // // and the length from start to points + length from point to end = lenght of the entire wall 
+        // return (this.slope == slopeSP && lengthSP + lengthPE - this.len <= 0.001);
     }
 
     /**
@@ -85,6 +96,7 @@ class Wall {
                 else
                     return [];
             }
+
         }
 
         var a = 1 + this.slope * this.slope;
@@ -110,16 +122,16 @@ class Wall {
             let yRes = xRes * this.slope + this.yInt;
 
             if (this.pointLineSegmentCollide(xRes, yRes))
-                res.push({xRes, yRes});
+                res.push({ xRes, yRes });
 
             xRes = (-b + Math.sqrt(d)) / (2 * a);
             yRes = xRes * this.slope + this.yInt;
 
             if (this.pointLineSegmentCollide(xRes, yRes))
-                res.push({xRes, yRes});
+                res.push({ xRes, yRes });
 
             return res;
-    
+
         }
 
         return [];
@@ -130,7 +142,7 @@ class Wall {
      * @param {*} collisionHandlingFunction the function to be called when collision happened
      * @return the number of agents colliding with wall
      */
-    wallAgentCollisionHandling = (collisionHandlingFunction) =>{
+    wallAgentCollisionHandling = (collisionHandlingFunction) => {
         //Collect all agents entity
         let entities = this.game.population.getEntitiesInWorld(this.worldId, false, true);
 
@@ -149,28 +161,35 @@ class Wall {
     }
 
     update() {
-        this.wallAgentCollisionHandling((X) =>{
-            //Temporary kill agents if cross the wall & can be replaced with collision handling from agent
-            //X.removeFromWorld = true;
-            //console.log(X + " is dead, goodbye cruel world!");
+        this.wallAgentCollisionHandling((X) => {
             X.numberOfTickBumpingIntoWalls++;
-            console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
+            //console.log(X + " has bumped into walls " + X.numberOfTickBumpingIntoWalls +  " times");
+            X.deactivateAgent();
+            X.isActive = false;
         });
-
-
-
     };
 
     draw(ctx) {
+        if (params.DISPLAY_SAME_WORLD){
+            //this.game.population.worlds.get(0).value[1].ctx;
+            ctx = this.game.population.worlds.get(0).ctx;
+            let color = this.game.population.worlds.get(this.worldId).worldColor;
+            ctx.fillStyle = `hsl(${color}, 100%, 50%)`;
+            ctx.strokeStyle = `hsl(${color}, 100%, 50%)`;
+        }
+        else{
+            ctx.strokeStyle = this.strokeColor;
+            ctx.fillStyle = this.fillColor;
+        }
+
         ctx.lineWidth = this.lineThickness;
 
         //Draw the line
         ctx.beginPath();
         ctx.moveTo(this.xStart, this.yStart);
         ctx.lineTo(this.xEnd, this.yEnd);
-
-        ctx.strokeStyle = this.strokeColor;
-        ctx.fillStyle = this.fillColor;
+        ctx.closePath();
+        
 
         ctx.fill();
         ctx.stroke();

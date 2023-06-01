@@ -1,9 +1,10 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>TCSS 499 NEAT Simulation</title>
+    <script type="text/javascript" src="http://73.225.31.4:8888/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript" src="./util.js"></script>
     <script type="text/javascript" src="./data/genometracker.js"></script>
@@ -15,39 +16,54 @@
     <script type="text/javascript" src="./entities/food.js"></script>
     <script type="text/javascript" src="./entities/home.js"></script>
     <script type="text/javascript" src="./entities/wall.js"></script>
+    <script type="text/javascript" src="./profiles/profile.js"></script>
     <script type="text/javascript" src="./neuralnetwork/custommaptypes.js"></script>
     <script type="text/javascript" src="./neuralnetwork/neuralnetutil.js"></script>
     <script type="text/javascript" src="./neuralnetwork/neuralnet.js"></script>
-    <script type="text/javascript" src="./population.js"></script>
+    <script type="text/javascript" src="./neuralnetwork/genome.js"></script>
+    <script type="text/javascript" src="./histogram.js"></script>
+    <script type="text/javascript" src="./linechart.js"></script>
+    <script type="text/javascript" src="./entities/world.js"></script>
     <script type="text/javascript" src="./boundingcircle.js"></script>
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./datadisplay.js"></script>
     <script type="text/javascript" src="./timer.js"></script>
+    <script type="text/javascript" src="./minimap.js"></script>
+    <script type="text/javascript" src="./population.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
+    <script type="text/javascript" src="./graph.js"></script>
     <script type="text/javascript" src="./main.js"></script>
-    <script type="text/javascript" src="./neuralnetwork/genome.js"></script>
-<!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-<!-- JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
+
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
-    <div style="float: left; width: 850px" id="carouselCanvasIndicators" class="carousel carousel-dark" data-bs-ride="carousel">
+    <div style="float: left; width:1000; " id="carouselCanvasIndicators" class="carousel carousel-dark"
+        data-bs-ride="carousel">
         <div id="canvas-indicators" class="carousel-indicators">
         </div>
         <div style="padding-left: 0;
-        padding-right: 0;
+        padding-right: 0;  
         margin-left: auto;
         margin-right: auto;
         display: block;
-        width: 805px;" id="canvas-carousel" class="carousel-inner">
+        width: 1005px;" id="canvas-carousel" class="carousel-inner">
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
+            data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators"
+            data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
@@ -56,76 +72,150 @@
         <strong>DYNAMIC SIMULATION PARAMETERS</strong>
     </div>
     <div>
-        <input type="checkbox" id="split_species" checked="true"> Split Species
+        <input type="checkbox" id="split_species"> Split Species
     </div>
     <div>
-        <input type="checkbox" id="rand_default_weights"> Randomize Default Genome Weights (restart to take effect)
+        <input type="checkbox" id="rand_default_weights" checked="true"> Randomize Default Genome Weights (restart to
+        take effect)
     </div>
     <div>
-        <input type="checkbox" id="agent_neighbors"> Agent Neighbors
+        <input type="checkbox" id="agent_neighbors" checked="true"> Agent Neighbors
     </div>
     <div>
-        <input type="checkbox" id="dynamic_agent_sizing"> Agent Size Changes With Energy
+        <!--<input type="checkbox" id="dynamic_agent_sizing"> Agent Size Changes With Energy-->
     </div>
     <div>
-        <input type="checkbox" id="food_outside_circle"> Food and Poison Outside Outer Circle
+        <input type="checkbox" id="food_outside_circle"> Food Outside Outer Circle
     </div>
     <div>
-        <input type="checkbox" id="food_inside_circle"> Food and Poison Inside Inner Circle
+        <input type="checkbox" id="food_inside_circle"> Food Inside Inner Circle
     </div>
     <div>
-        <input type="checkbox" id="enforce_min_food"> Enforce Minimum Food
+        <input type="checkbox" id="enforce_min_food" checked="true"> Enforce Minimum Food
     </div>
-    <div>
+    <!--<div>
         <input type="checkbox" id="enforce_min_poison"> Enforce Minimum Poison
     </div>
     <div>
-        <input type="checkbox" id="rand_food_phases" checked="true"> Randomize Food and Poison Phase Times
+        <input type="checkbox" id="rand_food_phases"> Randomize Food and Poison Phase Times
     </div>
     <div>
         <input type="checkbox" id="rand_food_lifetime"> Randomize Food and Poison Lifetimes
     </div>
     <div>
-        <input type="checkbox" id="periodic_food_repop" checked="true"> Periodically Repopulate Food
-    </div>
-    <div>
-        <input type="checkbox" id="periodic_poison_repop" checked="true"> Periodically Repopulate Poison
-    </div>
-    <div>
         <input type="checkbox" id="free_range"> FREE RANGE MODE
-    </div>
+    </div>-->
     <div>
         <input type="checkbox" id="gen_stop"> End Generation When Food is Gone or Energy is Depleted
     </div>
     <div>
-        <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity vision otherwise)
+        <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity vision
+        otherwise)
     </div>
     <div>
-        <button type="button" id="restart_sim">Restart Simulation</button>
+        <input type="checkbox" id="evolveKandM" checked="true"> Evolve K and M
     </div>
     <div>
-        <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input field.
+        <button type="button" id="restart_sim" type="button">Restart Simulation</button>
+        &emsp;
+        <button type="button" id="pause_sim" type="button" style="background-color: green; color:white;"> Pause
+            Simulation</button>
+    </div>
+    <div>
+        <input type="checkbox" id="no_decaying" checked="true"> No decaying food
+        &emsp;
+        <input type="checkbox" id="randomizing_food_spawn_pattern" checked="true"> Randomize food spawning pattern
+        &emsp;
+        <label for="caloriesPerFood"> Calories reward per food: </label>
+        <input type="text" id="caloriesPerFood" value="50">
+
+        <div>
+            <input type="checkbox" id="moving_food"> Moving food
+
+            &emsp;
+
+            <label for="movingFoodPattern">Food moving pattern: </label>
+            <select name="movingFoodPattern" id="movingFoodPattern">
+                <option value="drunkenSailor">Drunken Sailor</option>
+                <option value="direct">Direct</option>
+            </select>
+
+            &emsp;
+            <label for="food_velocityX"> Velocity X: </label>
+            <input type="text" id="food_velocityX" value="1">
+
+            <label for="food_velocityY">Velocity Y: </label>
+            <input type="text" id="food_velocityY" value="1">
+
+        </div>
+
+    </div>
+    <div>
+        <input type="checkbox" id="inner_wall"> Inner Walls
+        &emsp;
+        <input type="checkbox" id="no_border"> No border (Restart to take effect)
+    </div>
+    <div>
+        <input type="checkbox" id="largeEnergyThresh"> Large Energy Threshold
+    </div>
+
+    <div>
+        <br>
+        <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
+        <select name="huntingMode" id="huntingMode">
+            <option value="deactivated">Deactivated</option>
+            <option selected="selected" value="hierarchy">Food Hierarchy Index</option>
+            <option value="hierarchy_spectrum">Food Hierarchy Index Spectrum (Multiple Prey/Predator levels)</option>
+            <option value="multipleGeneration">Multiple Generation</option>
+        </select>
+        <br>
+        <input type="text" id="prey_speed" value="5"> Prey Max Speed
+        <input type="text" id="predator_speed" value="5"> Predator Max Speed
+        <br>
+        <input type="checkbox" id="inactive_prey_targetable" name="inactive_prey_targetable" checked="true"> Prey Is
+        Targetable When Dead
+        &emsp;
+        <input type="checkbox" id="push_fhi_to_ann" checked="true"> Push Food Hierarchy Index to ANN
+        <br>
+        <br>
+    </div>
+
+
+
+    <div>
+        <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
+    </div>
+    <div>
+        <input type="checkbox" id="food_bush" checked="true"> Bush Food (Touch food otherwise)
+    </div>
+    <div>
+        <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs
+    </div>
+
+    <div>
+        <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input
+        field.
     </div>
     <div>
         <input type="text" id="num_agents" value="50"> Number of Agents in Simulation (restart to take effect)
     </div>
     <div>
-        <input type="text" id="agent_neighbor_count" value="5"> Neighbors Detected by Agents (restart to take effect)
+        <input type="text" id="agent_neighbor_count" value="1"> Neighbors Detected by Agents (restart to take effect)
     </div>
     <div>
         <input type="text" id="agent_vision_radius" value="400"> Agent Visual Radius (pixels)
     </div>
     <div>
-        <input type="text" id="generation_time" value="1000"> Generation Time (ticks)
+        <input type="text" id="generation_time" value="700"> Generation Time (ticks)
     </div>
     <div>
         <input type="text" id="compat_threshold" value="0.07"> Species Compatibility Threshold
     </div>
     <div>
-        <input type="text" id="food_agent_ratio" value="5"> Food to Agent Ratio
+        <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
     </div>
     <div>
-        <input type="text" id="poison_agent_ratio" value="1"> Poison to Agent Ratio
+        <input type="text" id="poison_agent_ratio" value="0"> Poison to Agent Ratio
     </div>
     <div>
         <input type="text" id="agent_vision_rays" value="13"> Vision Rays
@@ -133,16 +223,147 @@
     <div>
         <input type="text" id="agent_vision_angle" value="180"> Vision Cone Angle (degrees)
     </div>
+    <div>
+        <input type="text" id="genome_default_k_val" value="0.75"> Default K Value (Requires restart)
+    </div>
+    <div>
+        <input type="text" id="agent_per_world" value="2"> Agent per world (Put 0 to deactivate) &emsp;
+        <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world (Limit agent per world must be
+        on)
+    </div>
+    <div>
+        <input type="text" id="max_ticks_to_consume" value="50"> Number of Ticks to Consume
+    </div>
+    <div>
+        <input type="text" id="agent_max_speed" value="5"> Agent Max Speed
+    </div>
+    <div>
+        <input type="text" id="agent_diameter" value="15"> Agent Diameter
+    </div>
+    <div>
+        <input type="text" id="food_diameter" value="24"> Food Diameter
+    </div>
+    <div>
+        <input type="text" id="cooldown_to_regen" value="10"> Number of Ticks for Food to Begin Regen
+    </div>
+
     <br> <br>
     <strong>Debug Options</strong>
     <br>
     <div>
-        <input type="checkbox" id="draw_agent_vision_cone" checked="false"> Draw Vision Rays (only for cone vision)
+        <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
+        <br>
+        
+        <input type="checkbox" id="pauseDrawing" name="pauseDrawing">
+        <label for="pauseDrawing" id = "pauseDrawingLabel">
+            Pause Drawing (To speed up the simulation)
+        </label>
+        &emsp; 
+        <input type="checkbox" id="display_minimap" checked=true> Display minimap
+        <br>
+        <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation output
+        data (Put 0 to disable)
     </div>
+
     <div>
-        <br> </br><strong>Agent Fitness Function:</strong><br> </br> <input type="text" id="fitness_energy" value="1"> (Raw Energy) + <input type="text" id="fitness_calories" value="1"> (Calories Eaten) + <input type="text" id="fitness_bad_calories" value="-1"> (Poison Calories Eaten)
+        <input type="checkbox" id="runByProfileMode"> Enable run by profile mode
+        &emsp;
+        <select name="profileOption" id="profileOption">
+        </select>
+        &emsp;
+        <button type="button" id="loadProfile"> Load Profile </button>
+        <br>
+
+
     </div>
+
+    <br> <br>
+    <div>
+        <strong>Database Options</strong>
+        <br>
+        <label for="save_to_db"> Enable Saving: </label>
+        <input type="checkbox" id="save_to_db">
+        &emsp;
+        <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data </button>
+        <br>
+        <label for="db"> Database Name: </label>
+        <input type="text" id="db" value="test">
+
+        <label for="db_collection"> Collection Name: </label>
+        <input type="text" id="db_collection" value="NEATtests">
+
+        <br>
+        <label for="gen_to_save"> Generation to Save to DB: </label>
+        <input type="text" id="gen_to_save" value="40">
+
+        <br>
+        <label for="sim_trial_num"> Simulation Trials </label>
+        <input type="text" id="sim_trial_num" value=3>
+
+
+    </div>
+    <br>
+    </div>
+
+    <div>
+        <strong>Genome Database Options</strong>
+        <br>
+        <label for="genome_db"> Database Name: </label>
+        <input type="text" id="genome_db" value="test">
+        <label for="genome_db_collection"> Collection Name: </label>
+        <input type="text" id="genome_db_collection" value="NEATGenomeTests1">
+        <br>
+        <label for="gen_to_save_genome"> Generation to Auto-Save to DB: </label>
+        <input type="text" id="gen_to_save_genome" value="100">
+        <br>
+        <label for="auto_save_genome"> Enable Auto Saving: </label> <input type="checkbox" id="auto_save_genome"> &emsp;
+        <button type="button" id="db_save_genome" style="background-color: red; color:white;"> Save Genome </button>
+        <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome
+        </button>
+    </div>
+
+    </div>
+
+
+    <!-- Old fitness function -->
+    <div>
+        <br> </br><strong>Old Agent Fitness Function = </strong><br> </br>
+        <input type="text" id="FITNESS_HUNTING_PREY" value="0"> (Prey hunted) +
+        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
+        <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) +
+        <input type="text" id="fitness_calories" value="0"> (Calories Eaten) +
+        <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
+    </div>
+
+
+    <div>
+        <br> </br><strong>Agent Fitness Function = </strong><br> </br>
+        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="1"> Energy Efficiency (calories gained/calories spent)
+        +
+        <input type="text" id="FITNESS_PERCENT_DEAD" value="-1"> Percentage of Ticks Dead +
+        <input type="text" id="FITNESS_WINNER_BONUS" value="1"> Winner Bonus
+    </div>
+
+    <br> <br> <strong>Minimap: </strong><br> 
+    <div id="minimapContainters">
+
+    </div>
+
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
+        <div id="agentCurrentOutputContainers">
+
+        </div>
+        <div id="agentAvgOutputContainers">
+
+        </div>
+
+        <div id="lineChartOutputContainters">
+
+        </div>
+
+        <div id="barChartContainer">
+        </div>
+
         <div id="currentFitnessChartContainer">
             <div id="currentFitnessChart"></div>
         </div>
@@ -163,7 +384,13 @@
             <span class="visually-hidden">Next</span>
         </button>
         </div> -->
-        <div id="foodTimeChartContainer">
+
+
+        <div id="foodConsumptionChartContainer">
+            <canvas id="foodConsumptionChart"></canvas>
+        </div>
+        <!--
+            <div id="foodTimeChartContainer">
             <canvas id="foodTimeChart"></canvas>
         </div>
         <div id="connectionChartContainer">
@@ -171,9 +398,6 @@
         </div>
         <div id="nodeChartContainer">
             <canvas id="nodeChart"></canvas>
-        </div>
-        <div id="foodConsumptionChartContainer">
-            <canvas id="foodConsumptionChart"></canvas>
         </div>
         <div id="foodLifeStageChartContainer">
             <canvas id="foodLifeStageChart"></canvas>
@@ -184,8 +408,10 @@
         <div id="cycleChartContainer">
             <canvas id="cycleChart"></canvas>
         </div>
-        
+        -->
+
     </div>
 
 </body>
+
 </html>
