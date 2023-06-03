@@ -345,7 +345,7 @@ class World {
             //rx and ry can only be -1 or 1
             let rx = randomInt(2) * (-2) + 1;
             let ry = randomInt(2) * (-2) + 1;
-            let buffer = 100;
+            let buffer = 125;
             let randomDistance = randomInt(spawnZone * 2) - spawnZone + buffer;
             agent.x = rx * (randomDistance) + prevX;
 
@@ -364,7 +364,7 @@ class World {
 
             }
 
-            // if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , buffer) || isOutOfBound(agent.x, params.CANVAS_SIZE / 2, buffer)) {
+            // if (isOutOfBound(params.CANVAS_SIZE / 2, agent.y , 0) || isOutOfBound(agent.x, params.CANVAS_SIZE / 2, 0)) {
             //     console.log(agent.x, agent.y, rx, ry);
 
             // }
