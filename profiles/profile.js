@@ -213,7 +213,7 @@ const SP_FitnessFunction_Specific = {
 
     COOLDOWN_TO_REGEN: {
         HTMLElementID: 'cooldown_to_regen',
-        value: 10,
+        value: 100,
     },
 
     MAX_TICKS_TO_CONSUME: {
@@ -336,7 +336,7 @@ const SP_FitnessFunction_Generic = {
 
     COOLDOWN_TO_REGEN: {
         HTMLElementID: 'cooldown_to_regen',
-        value: 10,
+        value: 100,
     },
 
     MAX_TICKS_TO_CONSUME: {
@@ -615,7 +615,7 @@ const SP_Fitness_Specific_Faster_Prey_Low_Speed = {
 
     COOLDOWN_TO_REGEN: {
         HTMLElementID: 'cooldown_to_regen',
-        value: 10,
+        value: 100,
     },
 
     MAX_TICKS_TO_CONSUME: {
@@ -830,7 +830,7 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed = {
 
     COOLDOWN_TO_REGEN: {
         HTMLElementID: 'cooldown_to_regen',
-        value: 10,
+        value: 100,
     },
 
     MAX_TICKS_TO_CONSUME: {
@@ -863,7 +863,7 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off = {
 
     COOLDOWN_TO_REGEN: {
         HTMLElementID: 'cooldown_to_regen',
-        value: 10,
+        value: 100,
     },
 
     MAX_TICKS_TO_CONSUME: {
@@ -907,7 +907,7 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed = {
 
     COOLDOWN_TO_REGEN: {
         HTMLElementID: 'cooldown_to_regen',
-        value: 10,
+        value: 100,
     },
 
     MAX_TICKS_TO_CONSUME: {
@@ -940,7 +940,7 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off = {
 
     COOLDOWN_TO_REGEN: {
         HTMLElementID: 'cooldown_to_regen',
-        value: 10,
+        value: 100,
     },
 
     MAX_TICKS_TO_CONSUME: {

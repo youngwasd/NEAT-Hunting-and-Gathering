@@ -10,6 +10,38 @@ src = sys.argv[1]#'C:/Users/gaber/Documents/499RawData'
 dest = sys.argv[2]#'C:/Users/gaber/Documents/499DataCharts'
 #os.chdir(src)
 #print(os.listdir())
+bounds = {
+    'avgFitness': [0, 0],
+    'totalPreyHuntedCount': [0, 0],
+    'totalTicksOutOfBounds': [0, 0],
+    'avgEnergySpent': [0, 0],
+    'avgPercDead': [0, 0],
+    'totalFoodConsumptionCount': [0, 0],
+    'avgPredWinnerBonus': [0, 0]
+}
+
+def determineMax(curr):
+    folders = os.listdir(src + curr)
+    #print(folders)
+    for f in folders:
+        if '.' in f:
+            df = pd.read_csv(src + curr + '/' + f)
+            labels = updateBounds(f, df)
+        else:
+            determineMax(curr + '/' + f)
+
+def updateBounds(file, df):
+    fparts = file.split('_')
+    fMax = df.max().max()
+    fMin = df.min().min()
+    currMax = bounds[fparts[0]][1]
+    currMin = bounds[fparts[0]][0]
+    bounds[fparts[0]][1] = max(fMax, currMax)
+    bounds[fparts[0]][0] = min(fMin, currMin)
+
+def getBounds(file):
+    fparts = file.split('_')
+    return bounds[fparts[0]]
 
 def recurseFolders(curr):
     folders = os.listdir(src + curr)
@@ -21,7 +53,7 @@ def recurseFolders(curr):
         else:
             labels = getPlotLabels(f)
             print(labels)
-            createPlot(src + curr + '/' + f, dest + curr, labels[0], labels[1], labels[2])
+            createPlot(src + curr + '/' + f, dest + curr, labels[0], labels[1], labels[2], getBounds(f))
 
 def getPlotLabels(file):
     fparts = file.split('_')
@@ -76,7 +108,7 @@ def getYLabel(fparts):
         print('A title ID does not exist yet! Add ' + titleId + ' to the getTitle(titleId) method.', file=sys.stderr)
     return 'error :('
 
-def createPlot(csv_path, plotDest, title, x_label, y_label):
+def createPlot(csv_path, plotDest, title, x_label, y_label, bounds):
     df = pd.read_csv(csv_path)
 
     c_len = len(df.columns)
@@ -90,6 +122,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label):
     plt.ylabel(y_label)
     plt.title(title)
     plt.legend()
+    plt.ylim(top = bounds[1], bottom = bounds[0])
     #plt.show()
 
     fileName = title.replace(' ', '_')
@@ -99,4 +132,5 @@ def createPlot(csv_path, plotDest, title, x_label, y_label):
 if len(os.listdir(dest)) != 0:
     print('Please clear your destination directory and try again...', file = sys.stderr)
     exit(1)
+determineMax('')
 recurseFolders('')

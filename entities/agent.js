@@ -185,10 +185,10 @@ class Agent {
     };
 
     getWinnerBonus(predPrey = "both") {
-        if (predPrey = "prey") {
+        if (predPrey == "prey") {
             return this.concludingTickPrey / params.GEN_TICKS;
         }
-        else if (predPrey = "predator") {
+        else if (predPrey == "predator") {
             return 1 - (this.concludingTickPredator / params.GEN_TICKS);
         }
         else {
