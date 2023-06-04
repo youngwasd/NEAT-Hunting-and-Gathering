@@ -1028,7 +1028,7 @@ class PopulationManager {
             );
             sumPercDead += agent.getPercentDead();
             sumEnergySpent += agent.caloriesSpent;
-            if (agent.foodHierarchyIndex > 0) sumPredWinnerBonus += agent.getWinnerBonus("predator");
+            sumPredWinnerBonus += agent.getWinnerBonus("predator");
 
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
