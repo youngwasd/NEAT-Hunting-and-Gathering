@@ -719,8 +719,6 @@ class PopulationManager {
             }
             //Push the agents into a world
             if (params.AGENT_PER_WORLD === 0) {
-                // console.log(child.speciesId);
-                // console.log(this.worlds);
 
                 let world = this.worlds.get(params.SPLIT_SPECIES ? child.speciesId : 0);
                 //Create a new world when the world has not been created
@@ -854,7 +852,6 @@ class PopulationManager {
         PopulationManager.WORLD_CREATED = worldId;
         //Update the spec for minimap
         PopulationManager.MINIMAP.updateSpec(this.worlds.size);
-        //console.log("agent distributed", agentDistributed);
     }
 
     cleanUpWorlds() {
@@ -1177,13 +1174,11 @@ class PopulationManager {
             agent.assignFitness();
             totalRawFitness += agent.genome.rawFitness;
             //Sort average output data for the histograms into their buckets
-            //console.log(agent.totalOutputs[0], agent.totalOutputs[1] );
             avgLeftWheelOut[determineBucket(agent.totalOutputs[0] / totalGenTicks, -1, 1)]++;
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / totalGenTicks, -1, 1)]++;
             if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / totalGenTicks, -1, 1)]++;
         });
         this.agentTracker.addAvgFitness(totalRawFitness / PopulationManager.NUM_AGENTS);
-        //console.log(`Raw fitness: ${totalRawFitness}`);
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
         let reprodFitMap = new Map();
         let minShared = 0;
@@ -1259,8 +1254,6 @@ class PopulationManager {
             });
         }
         this.resetAgents(true);
-        // console.log("made it 3")      
-        // console.log("Total agents", this.agentsAsList().length);
 
         //Generates the generational histograms
         this.leftWheelHist.data.push(avgLeftWheelOut);
@@ -1305,13 +1298,14 @@ class PopulationManager {
 
     loadFromGenomeList(data) {
         console.log("running genome loader...");
+        console.log(data);
+        this.resetSim();
         let genomes = data.genomes;
         let agents = this.agentsAsList();
         for (let i = 0; i < agents.length; i++) {
             agents[i].genome = genomes[i];
         }
-        this.resetSim();
-        PopulationManager.GEN_NUM = data.generation;
+        PopulationManager.GEN_NUM = data.generation + 1;
     }
 
     generationalDBUpdate() {
@@ -1335,7 +1329,6 @@ class PopulationManager {
 
             //Sending data to data base
             if (params.SAVE_TO_DB) {
-                console.log(data);
                 logData(data, params.DB, params.DB_COLLECTION);
             }
 
