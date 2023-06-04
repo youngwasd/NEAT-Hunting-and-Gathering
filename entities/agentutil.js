@@ -8,7 +8,7 @@ class AgentInputUtil {
 
     static normalizeVisionDist = (distance) => Math.max(1 - distance / (params.CANVAS_SIZE * Math.sqrt(2)), 0);
 
-    static normalizeFoodHierarchyIndex = (index) => index / 100;
+    static normalizeFoodHierarchyIndex = (index) => index / 50;
     
     static relativeLeft = (heading, vectAngle) => (heading < vectAngle ? heading + (2 * Math.PI - vectAngle) : heading - vectAngle) * -1;
     
