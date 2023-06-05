@@ -1135,25 +1135,40 @@ class PopulationManager {
             "avgPercDeadLineChart", "lineChartOutputContainters",
         );
 
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('avgFitness'),
+                title: 'Average Fitness Per Generation'
+            },
+            "avgFitnessLineChart", "lineChartOutputContainters",
+        );
+
+        generateLineChart(
+            {
+                data: this.foodTracker.getConsumptionData(),
+                title: 'Total Calories Consumed Per Generation'
+            },
+            "avgCaloriesLineChart", "lineChartOutputContainters",
+        );
 
         //Generates the data charts
-        generateFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));//getAgentTrackerAttributesAsList("avgFitness"));
+        //generateFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));//getAgentTrackerAttributesAsList("avgFitness"));
         //generateAgeChart(this.agentTracker.getAgeData());
-        generateFoodConsumptionChart(this.foodTracker.getConsumptionData());
+        //generateFoodConsumptionChart(this.foodTracker.getConsumptionData());
         //generateFoodStageChart(this.foodTracker.getLifeStageData());
         //generateConnectionChart(this.genomeTracker.getConnectionData());
         //generateCycleChart(this.genomeTracker.getCycleData());
         //generateNodeChart(this.genomeTracker.getNodeData());
-        generateCurrentFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));
+        //generateCurrentFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));
 
-        generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesSuccessfulHuntCount'),
-            'speciesSuccessfulHuntCount', "Current Gen Successful hunt Percentage Per Specie", 'specieSuccessfulHuntCountChart');
+        //generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesSuccessfulHuntCount'),
+        //    'speciesSuccessfulHuntCount', "Current Gen Successful hunt Percentage Per Specie", 'specieSuccessfulHuntCountChart');
 
-        generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesFoodConsumptionCount'),
-            'speciesFoodConsumptionCount', "Current Gen Average Food Consumption Count Per Specie", 'speciesFoodConsumptionCountChart');
+        //generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesFoodConsumptionCount'),
+        //    'speciesFoodConsumptionCount', "Current Gen Average Food Consumption Count Per Specie", 'speciesFoodConsumptionCountChart');
 
-        generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesTotalTickOutOfBound'),
-            'speciesTotalTickOutOfBound', "Current Gen Average Ticks Out Of Bound Per Specie", 'speciesTotalTickOutOfBoundChart');
+        //generateSpecieAttributeBarChart(this.agentTracker.getCurrentGenAttriBute('speciesTotalTickOutOfBound'),
+        //    'speciesTotalTickOutOfBound', "Current Gen Average Ticks Out Of Bound Per Specie", 'speciesTotalTickOutOfBoundChart');
     }
 
     processGeneration() {
