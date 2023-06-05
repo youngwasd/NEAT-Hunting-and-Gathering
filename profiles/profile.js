@@ -198,12 +198,12 @@ const SP_FitnessFunction_Specific = {
 
     FITNESS_PERCENT_DEAD: {
         HTMLElementID: 'FITNESS_PERCENT_DEAD',
-        value: -1,
+        value: 0,
     },
 
     FITNESS_WINNER_BONUS: {
         HTMLElementID: 'FITNESS_WINNER_BONUS',
-        value: 1,
+        value: 0,
     },
 
     FOOD_BUSH: {
