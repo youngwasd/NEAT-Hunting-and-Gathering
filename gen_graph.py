@@ -110,14 +110,18 @@ def getYLabel(fparts):
 
 def createPlot(csv_path, plotDest, title, x_label, y_label, bounds):
     df = pd.read_csv(csv_path)
-
+    df.drop('Average', axis = 'columns', inplace = True)
+    df.dropna(axis=1, inplace = True)
+    df['Average'] = df.mean(numeric_only=True, axis=1)
+    print(df)
+    
     c_len = len(df.columns)
-    scatter = df.drop('Average', axis = 'columns') 
+    scatter = df#.drop('Average', axis = 'columns')
 
     for c in scatter.columns:
         plt.scatter(scatter.index.array, scatter[c],  4, label = c)
-    if 'Average' in df.columns:
-        plt.plot(df['Average'], linewidth = 2, label = 'Average', color = 'black')
+    plt.plot(df['Average'], linewidth = 2, label = 'Average', color = 'black')
+
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
@@ -128,7 +132,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds):
     fileName = title.replace(' ', '_')
     plt.savefig(plotDest + '/' + fileName +'.png')
     plt.clf()
-
+    
 if len(os.listdir(dest)) != 0:
     print('Please clear your destination directory and try again...', file = sys.stderr)
     exit(1)
