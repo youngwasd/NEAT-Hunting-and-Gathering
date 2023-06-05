@@ -6,6 +6,6 @@ class BoundingCircle {
     };
 
     collide(other) {
-        return distance(this.center, other.center) < this.radius + other.radius;
+        return distance(this.center, other.center) <= this.radius + other.radius;
     };
 };
