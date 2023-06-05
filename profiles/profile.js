@@ -123,6 +123,7 @@ const SP_FitnessFunction_Specific = {
 
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
+        //"FitnessFunction_Specific_2"
         value: "FitnessFunction_Specific_2"
     },
 
@@ -138,7 +139,8 @@ const SP_FitnessFunction_Specific = {
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_Genome_2"
+        //"FitnessFunction_Specific_Genome_2"
+        value:"FitnessFunction_Specific_Genome_2"
     },
 
     GEN_TO_SAVE_GENOME: {
@@ -398,11 +400,13 @@ const SP_Fitness_Specific_Faster_Prey = {
     ...SP_FitnessFunction_Specific,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_On"
+        //"FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_On"
+        value:"FasterPrey_FoodBush_On_PushFHI_On"
     },
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_On_Genome"
+        //"FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_On_Genome"
+        value:"FasterPrey_FoodBush_On_PushFHI_On_Genome"
     },
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
@@ -463,12 +467,12 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off = {
     ...SP_Fitness_Specific_Faster_Prey,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_PushFHI_On"
+        value:"FasterPrey_FoodBush_Off_PushFHI_On"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_PushFHI_On_Genome"
+        value:"FasterPrey_FoodBush_Off_PushFHI_On_Genome"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -496,12 +500,12 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off = {
     ...SP_Fitness_Specific_Faster_Prey,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_PushFHI_Off"
+        value:"FasterPrey_FoodBush_Off_PushFHI_Off"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_PushFHI_Off_Genome"
+        value:"FasterPrey_FoodBush_Off_PushFHI_Off_Genome"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -597,11 +601,11 @@ const SP_Fitness_Specific_Faster_Prey_Low_Speed = {
     ...SP_FitnessFunction_Specific,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_LowSpeed"
+        value:"FasterPrey_LowSpeed"
     },
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_Genome_LowSpeed"
+        value:"FasterPrey_Genome_LowSpeed"
     },
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
@@ -638,12 +642,12 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off_Low_Speed = {
     ...SP_Fitness_Specific_Faster_Prey,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_LowSpeed"
+        value:"FasterPrey_FoodBush_Off_LowSpeed"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_Genome_LowSpeed"
+        value:"FasterPrey_FoodBush_Off_Genome_LowSpeed"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -726,12 +730,12 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off_Low_Speed = {
     ...SP_Fitness_Specific_Faster_Prey,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_PushFHI_Off_LowSpeed"
+        value:"FasterPrey_FoodBush_Off_PushFHI_Off_LowSpeed"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_Off_PushFHI_Off_Genome_LowSpeed"
+        value:"FasterPrey_FoodBush_Off_PushFHI_Off_Genome_LowSpeed"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -812,11 +816,11 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed = {
     ...SP_FitnessFunction_Specific,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_Off_LowSpeed"
+        value:"FasterPrey_FoodBush_On_PushFHI_Off_LowSpeed"
     },
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_Genome_FoodBush_On_PushFHI_Off_LowSpeed"
+        value:"FasterPrey_Genome_FoodBush_On_PushFHI_Off_LowSpeed"
     },
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
@@ -853,12 +857,12 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off = {
     ...SP_Fitness_Specific_Faster_Prey,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_Off"
+        value:"FasterPrey_FoodBush_On_PushFHI_Off"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_Off_Genome"
+        value:"FasterPrey_FoodBush_On_PushFHI_Off_Genome"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -963,11 +967,11 @@ const SP_Fitness_Specific_Faster_Predator = {
     ...SP_FitnessFunction_Specific,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_On_PushFHI_On"
+        value:"FasterPredator_FoodBush_On_PushFHI_On"
     },
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_On_PushFHI_On_Genome"
+        value:"FasterPredator_FoodBush_On_PushFHI_On_Genome"
     },
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
@@ -1028,11 +1032,11 @@ const SP_Fitness_Specific_Faster_Predator_Low_Speed = {
     ...SP_FitnessFunction_Specific,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_LowSpeed"
+        value:"FasterPredator_LowSpeed"
     },
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_Genome_LowSpeed"
+        value:"FasterPredator_Genome_LowSpeed"
     },
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
@@ -1103,12 +1107,12 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off = {
     ...SP_Fitness_Specific_Faster_Predator,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_On_PushFHI_Off"
+        value:"FasterPredator_FoodBush_On_PushFHI_Off"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_On_PushFHI_Off_Genome"
+        value:"FasterPredator_FoodBush_On_PushFHI_Off_Genome"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -1136,11 +1140,11 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off_Low_Speed = {
     ...SP_FitnessFunction_Specific,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_On_PushFHI_Off_LowSpeed"
+        value:"FasterPredator_FoodBush_On_PushFHI_Off_LowSpeed"
     },
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_Genome_FoodBush_On_PushFHI_Off_LowSpeed"
+        value:"FasterPredator_Genome_FoodBush_On_PushFHI_Off_LowSpeed"
     },
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
@@ -1177,12 +1181,12 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off = {
     ...SP_Fitness_Specific_Faster_Predator,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_PushFHI_On"
+        value:"FasterPredator_FoodBush_Off_PushFHI_On"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_PushFHI_On_Genome"
+        value:"FasterPredator_FoodBush_Off_PushFHI_On_Genome"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -1210,12 +1214,12 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off_Low_Speed = {
     ...SP_Fitness_Specific_Faster_Predator,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_LowSpeed"
+        value:"FasterPredator_FoodBush_Off_LowSpeed"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_Genome_LowSpeed"
+        value:"FasterPredator_FoodBush_Off_Genome_LowSpeed"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -1253,12 +1257,12 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off = {
     ...SP_Fitness_Specific_Faster_Predator,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_PushFHI_Off"
+        value:"FasterPredator_FoodBush_Off_PushFHI_Off"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_PushFHI_Off_Genome"
+        value:"FasterPredator_FoodBush_Off_PushFHI_Off_Genome"
     },
 
     COOLDOWN_TO_REGEN: {
@@ -1286,12 +1290,12 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off_Low_Speed = {
     ...SP_Fitness_Specific_Faster_Predator,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_PushFHI_Off_LowSpeed"
+        value:"FasterPredator_FoodBush_Off_PushFHI_Off_LowSpeed"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_FasterPredator_FoodBush_Off_PushFHI_Off_Genome_LowSpeed"
+        value:"FasterPredator_FoodBush_Off_PushFHI_Off_Genome_LowSpeed"
     },
 
     COOLDOWN_TO_REGEN: {
