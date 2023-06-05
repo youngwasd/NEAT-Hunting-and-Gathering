@@ -124,7 +124,7 @@ const SP_FitnessFunction_Specific = {
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
         //"FitnessFunction_Specific_2"
-        value: "FitnessFunction_Specific_2"
+        value: "FitnessFunction_Specific_Default"
     },
 
     GEN_TO_SAVE: {
@@ -140,7 +140,7 @@ const SP_FitnessFunction_Specific = {
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
         //"FitnessFunction_Specific_Genome_2"
-        value:"FitnessFunction_Specific_Genome_2"
+        value:"FitnessFunction_Specific_Genome_Default"
     },
 
     GEN_TO_SAVE_GENOME: {
@@ -170,7 +170,7 @@ const SP_FitnessFunction_Specific = {
 
     FITNESS_HUNTING_PREY: {
         HTMLElementID: 'FITNESS_HUNTING_PREY',
-        value: 0,
+        value: 50,
     },
 
     FITNESS_OUT_OF_BOUND: {
@@ -205,7 +205,7 @@ const SP_FitnessFunction_Specific = {
 
     FITNESS_WINNER_BONUS: {
         HTMLElementID: 'FITNESS_WINNER_BONUS',
-        value: 100,
+        value: 50,
     },
 
     FOOD_BUSH: {
