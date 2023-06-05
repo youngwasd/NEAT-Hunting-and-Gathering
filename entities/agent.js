@@ -430,7 +430,7 @@ class Agent {
     }
 
     /**
-     * Check to see if the agent still has energy
+     * Check to see if the agent still has engetPercentDead()consergy
      * @returns True if the agent still have energy, false other wise
      */
     checkEnergy() {
@@ -445,7 +445,8 @@ class Agent {
     }
 
     getPercentDead() {
-        return (this.totalTicks - this.ticksAlive) / this.totalTicks;
+        let totalTicks = params.MIRROR_ROLES ? 2 * params.GEN_TICKS : params.GEN_TICKS;
+        return (totalTicks - this.ticksAlive) / totalTicks;
     }
 
     /**
@@ -656,7 +657,10 @@ class Agent {
                             this.energy += cals;
                             ++this.numberOfPreyHunted;
                             //Only count the first prey hunted incase there's multiple prey
-                            if (this.numberOfPreyHunted == 1) this.concludingTickPredator = this.game.population.tickCounter;
+                            if (this.numberOfPreyHunted == 1) {
+                                this.concludingTickPredator = this.game.population.tickCounter;
+                                this.ticksAlive += params.GEN_TICKS - this.game.population.tickCounter;
+                            }
 
                         }
                     }
