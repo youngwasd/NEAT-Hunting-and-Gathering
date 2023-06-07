@@ -239,6 +239,54 @@ const SP_FitnessFunction_Specific = {
     },
 };
 
+const SP_FitnessFunction_Specific_SlowSpeed = {
+    ...SP_FitnessFunction_Specific,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "FitnessFunction_Specific_Default_SlowSpeed"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value:"FitnessFunction_Specific_Genome_Default_SlowSpeed"
+    },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
+        value: 3.75,
+    },
+
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 3.75,
+    },
+};
+
+const SP_FitnessFunction_Specific_FasterSpeed = {
+    ...SP_FitnessFunction_Specific,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "FitnessFunction_Specific_Default_FasterSpeed"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value:"FitnessFunction_Specific_Genome_Default_FasterSpeed"
+    },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
+        value: 7.5,
+    },
+
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 7.5,
+    },
+};
+
 
 const SP_FitnessFunction_Generic = {
     DB: {
@@ -1332,6 +1380,8 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off_Low_Speed = {
 
 const profileList = {
     "Specified Fitness Function": SP_FitnessFunction_Specific,
+    "Specified Fitness Function (Slower (3.75) Max Speed)": SP_FitnessFunction_Specific_SlowSpeed,
+    "Specified Fitness Function (Faster (7.5) Max Speed)": SP_FitnessFunction_Specific_FasterSpeed,
 
     "Specified Fitness: Faster Prey, Food Bush On, Push FHI On": SP_Fitness_Specific_Faster_Prey,
     "Specified Fitness: Faster Prey (Slow Speed), Food Bush On, Push FHI On": SP_Fitness_Specific_Faster_Prey_Low_Speed,
