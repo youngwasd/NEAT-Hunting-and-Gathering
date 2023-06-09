@@ -409,7 +409,6 @@ const SP_FitnessFunction_Generic = {
         checked: true,
     },
 };
-
 const SP_Fitness_Generic_Faster_Prey = {
     ...SP_FitnessFunction_Generic,
 
@@ -430,6 +429,74 @@ const SP_Fitness_Generic_Faster_Prey = {
 
     PREDATOR_SPEED: {
         HTMLElementID: 'predator_speed',
+        value: 4,
+    },
+
+    FOOD_BUSH: {
+        HTMLElementID: 'food_bush',
+        checked: true,
+    },
+
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: true,
+    },
+};
+
+const SP_Fitness_Specific_2x_Bush = {
+    ...SP_FitnessFunction_Specific,
+
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "FitnessFunction_Specific_2x_Bush"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Specific_2x_Bush_Genome"
+    },
+
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'calories_per_food',
+        value: 25,
+    },
+
+    FOOD_PER_AGENT: {
+        HTMLElementID: 'food_agent_ratio',
+        value: 2,
+    },
+
+    FOOD_BUSH: {
+        HTMLElementID: 'food_bush',
+        checked: true,
+    },
+
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: true,
+    },
+};
+
+const SP_Fitness_Specific_4x_Bush = {
+    ...SP_FitnessFunction_Specific,
+
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "FitnessFunction_Specific_4x_Bush_attempt2"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "FitnessFunction_Specific_4x_Bush_attempt2_Genome"
+    },
+
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'calories_per_food',
+        value: 12.5,
+    },
+
+    FOOD_PER_AGENT: {
+        HTMLElementID: 'food_agent_ratio',
         value: 4,
     },
 
@@ -1409,7 +1476,8 @@ const profileList = {
     "Specified Fitness: Faster Predator, Food Bush Off, Push FHI Off": SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off,
     "Specified Fitness: Faster Predator (Slow Speed), Food Bush Off, Push FHI Off": SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off_Low_Speed,
 
-
+    "Specified Fitness: 2x Bush 1/2x calories per bush": SP_Fitness_Specific_2x_Bush,
+    "Specified Fitness: 4x Bush 1/4x calories per bush": SP_Fitness_Specific_4x_Bush,
 
 
     "Generalized Fitness Function": SP_FitnessFunction_Generic,

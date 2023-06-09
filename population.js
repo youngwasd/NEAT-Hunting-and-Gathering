@@ -358,7 +358,9 @@ class PopulationManager {
         if (document.activeElement.id !== "agent_neighbor_count") {
             params.AGENT_NEIGHBOR_COUNT = parseInt(document.getElementById("agent_neighbor_count").value);
         }
-
+        if (document.activeElement.id !== "calories_per_food") {
+            params.CALORIES_PER_FOOD = parseInt(document.getElementById("calories_per_food").value);
+        }
 
         if (document.activeElement.id !== "fitness_calories") {
             if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
