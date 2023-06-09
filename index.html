@@ -235,7 +235,7 @@
         <input type="text" id="max_ticks_to_consume" value="50"> Number of Ticks to Consume
     </div>
     <div>
-        <input type="text" id="cooldown_to_regen" value="200"> Number of Ticks for Bush Food to Begin Regen
+        <input type="text" id="cooldown_to_regen" value="100"> Number of Ticks for Bush Food to Begin Regen
     </div>
     <div>
         <input type="text" id="agent_max_speed" value="5"> Agent Max Speed
@@ -328,20 +328,20 @@
     <!-- Old fitness function -->
     <div>
         <br> </br><strong>Old Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_HUNTING_PREY" value="0"> (Prey hunted) +
+        <input type="text" id="FITNESS_HUNTING_PREY" value="50"> (Prey hunted) +
         <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
-        <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) +
-        <input type="text" id="fitness_calories" value="0"> (Calories Eaten) +
+        <input type="text" id="FITNESS_OUT_OF_BOUND" value="-2"> (Out of bound) +
+        <input type="text" id="fitness_calories" value="10"> (Calories Eaten) +
         <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
     </div>
 
 
     <div>
         <br> </br><strong>Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="1"> Energy Efficiency (calories gained/calories spent)
+        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="0"> Energy Efficiency (calories gained/calories spent)
         +
-        <input type="text" id="FITNESS_PERCENT_DEAD" value="-1"> Percentage of Ticks Dead +
-        <input type="text" id="FITNESS_WINNER_BONUS" value="1"> Winner Bonus
+        <input type="text" id="FITNESS_PERCENT_DEAD" value="0"> Percentage of Ticks Dead +
+        <input type="text" id="FITNESS_WINNER_BONUS" value="50"> Winner Bonus
     </div>
 
     <br> <br> <strong>Minimap: </strong><br> 

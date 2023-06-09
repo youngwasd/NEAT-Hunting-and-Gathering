@@ -1409,12 +1409,46 @@ const SP_Fitness_Specific_BushFood_On_PushFHI_Off = {
     },
 }
 
+const SP_Fitness_Specific_BushFood_Off_PushFHI_On = {
+    ...SP_FitnessFunction_Specific,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value:"FitnessFunction_Specific_Default_BushFood_Off_PushFHI_On"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value:"Specific_Default_FoodBush_Off_PushFHI_On_Genome"
+    },
+
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 1,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        value: 1,
+    },
+
+    FOOD_BUSH: {
+        HTMLElementID: 'food_bush',
+        checked: false,
+    },
+
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: true,
+    },
+}
+
 
 
 const profileList = {
     "Specified Fitness: Default Same Speed, Food Bush On, Push FHI On": SP_FitnessFunction_Specific,
     "Specified Fitness: Same Speed (Slower (3.75) Max Speed)": SP_FitnessFunction_Specific_SlowSpeed,
     "Specified Fitness: Same Speed (Faster (7.5) Max Speed)": SP_FitnessFunction_Specific_FasterSpeed,
+    "Specified Fitness: Default Same Speed, Food Bush Off, Push FHI On": SP_Fitness_Specific_BushFood_Off_PushFHI_On,
     "Specified Fitness: Default Same Speed, Food Bush On, Push FHI Off": SP_Fitness_Specific_BushFood_On_PushFHI_Off,
 
     "Specified Fitness: Faster Prey, Food Bush On, Push FHI On": SP_Fitness_Specific_Faster_Prey,
