@@ -1,13 +1,20 @@
-#run with: python gen_graph.py src dest
+#run with: python gen_graph.py 'src folder' 'destination folder'
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sys, os
 
+#Default folders to generate charts
+src = os.getcwd() + "/Charts/RawData"
+dest = os.getcwd() + "/Charts/Result"
 
-src = sys.argv[1]#'C:/Users/gaber/Documents/499RawData'
-dest = sys.argv[2]#'C:/Users/gaber/Documents/499DataCharts'
+#Support command line argument
+if (len(sys.argv) > 1):
+    if (sys.argv[1] is not None):
+        src = sys.argv[1]
+    if (sys.argv[2] is not None):
+        dest = sys.argv[2]
 #os.chdir(src)
 #print(os.listdir())
 bounds = {
