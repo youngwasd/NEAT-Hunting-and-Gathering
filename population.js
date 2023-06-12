@@ -271,7 +271,7 @@ class PopulationManager {
         params.MOVING_FOOD = document.getElementById("moving_food").checked;
         params.RANDOMIZE_FOOD_SPAWN_PATTERN = document.getElementById("randomizing_food_spawn_pattern").checked;
         params.PAUSE_DRAWING = document.getElementById("pauseDrawing").checked;
-        params.FOOD_BUSH = document.getElementById("food_bush").checked;
+        params.GRADUAL_CONSUMPTION = document.getElementById("GRADUAL_CONSUMPTION").checked;
         params.MIRROR_ROLES = document.getElementById("mirror_roles").checked;
         params.DISPLAY_MINIMAP = document.getElementById("display_minimap").checked;
         params.BUSH_SIGHT_MODE = document.getElementById("bush_sight_mode");
@@ -593,6 +593,9 @@ class PopulationManager {
     };
 
     getEntitiesInWorld(worldId, foodOnly = false, agentsOnly = false) {
+        if (!this.worlds){
+            return [];
+        }
         let members = this.worlds.get(worldId);
         if (!members)
             return [];

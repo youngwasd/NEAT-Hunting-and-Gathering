@@ -482,15 +482,16 @@ class Agent {
          * if we have split species and don't split agent per world , then we only get entities in the world corresponding to our species id, otherwise all entities
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
-        let entities = [];
+        let entities = this.game.population.getEntitiesInWorld(this.speciesId, !params.AGENT_NEIGHBORS);
 
         if (!params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
             entities = this.game.population.getEntitiesInWorld(0, !params.AGENT_NEIGHBORS);
         }
-        else if (this.worldId && this.game.population.worlds.get(this.worldId)) {
-            entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
+        else {
+            if (this.worldId && this.game.population.worlds.get(this.worldId)) {
+                entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
+            }
         }
-
         entities.forEach(entity => {
             let added = false;
             /** add all entities to our spotted neighbors that aren't ourselves, not dead, and are within our vision radius */
@@ -499,7 +500,7 @@ class Agent {
                 added = true;
             }
 
-            //Count dead agent as still alive
+            //Count dead agent in nearby neighbors list
             if (params.INACTIVE_PREY_TARGETABLE && !added) {
                 if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && entity instanceof Agent) {
                     spottedNeighbors.push(entity);
@@ -623,13 +624,14 @@ class Agent {
         /** If we are still alive, and we just bit loop through spotted food and eat those we are colliding with */
         if (this.isActive) {
             let foundFood = false;
-
+            //console.log(spottedNeighbors);
             spottedNeighbors.forEach(entity => {
                 if (entity instanceof Food && this.BC.collide(entity.BC) && !foundFood) {
 
                     if (params.HUNTING_MODE === "deactivated" || (predPreyMode && this.foodHierarchyIndex === 0)) {//Only the lowest prey get to eat normal food
                         if (this.biting || !params.AGENT_BITING) {
                             let consOut = entity.consume();
+
                             let cals = consOut.calories;
                             let completion = consOut.completion;
                             if (cals < 0) {

@@ -217,7 +217,7 @@ class Food {
     consume() {
         if(this.ticksToConsume >= 0) this.ticksToConsume--;
         this.lastTickBeingEaten = this.game.population.tickCounter;
-        if(params.FOOD_BUSH) return this.gradualConsume();
+        if(params.GRADUAL_CONSUMPTION) return this.gradualConsume();
         else return this.singleConsume();
     };
 

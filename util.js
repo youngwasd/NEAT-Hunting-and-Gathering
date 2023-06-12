@@ -69,7 +69,7 @@ const params = {
     PREDATOR_MAX_SPEED: 5,
     AGENT_DIAMETER: 15,
     FOOD_DIAMETER: 24,
-    FOOD_BUSH: true,
+    GRADUAL_CONSUMPTION: true,
     MIRROR_ROLES: true,
     BUSH_SIGHT_MODE: "solid",
     INACTIVE_PREY_TARGETABLE: true,

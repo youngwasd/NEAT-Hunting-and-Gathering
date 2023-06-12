@@ -208,8 +208,8 @@ const SP_FitnessFunction_Specific = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -379,8 +379,8 @@ const SP_FitnessFunction_Generic = {
         value: 2,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -432,8 +432,8 @@ const SP_Fitness_Generic_Faster_Prey = {
         value: 4,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -466,8 +466,8 @@ const SP_Fitness_Specific_2x_Bush = {
         value: 2,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -500,8 +500,8 @@ const SP_Fitness_Specific_4x_Bush = {
         value: 4,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -533,8 +533,8 @@ const SP_Fitness_Specific_Faster_Prey = {
         value: 4,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -567,8 +567,8 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_Off = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -600,8 +600,8 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -633,8 +633,8 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -667,8 +667,8 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_Off_PushFHI_Off = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -701,8 +701,8 @@ const SP_Fitness_Generic_Faster_Prey_Low_Speed = {
         value: 2,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -742,8 +742,8 @@ const SP_Fitness_Specific_Faster_Prey_Low_Speed = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -775,8 +775,8 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off_Low_Speed = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -819,8 +819,8 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_Off_Low_Speed = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -863,8 +863,8 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off_Low_Speed = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -906,8 +906,8 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_Off_PushFHI_Off_Low_Speed = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -957,8 +957,8 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -990,8 +990,8 @@ const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1034,8 +1034,8 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1067,8 +1067,8 @@ const SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1098,8 +1098,8 @@ const SP_Fitness_Specific_Faster_Predator = {
         value: 5,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1132,8 +1132,8 @@ const SP_Fitness_Generic_Faster_Predator = {
         value: 5,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1173,8 +1173,8 @@ const SP_Fitness_Specific_Faster_Predator_Low_Speed = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1207,8 +1207,8 @@ const SP_Fitness_Generic_Faster_Predator_Low_Speed = {
         value: 2.5,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1240,8 +1240,8 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1281,8 +1281,8 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off_Low_Speed = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1314,8 +1314,8 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -1347,8 +1347,8 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off_Low_Speed = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -1390,8 +1390,8 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -1423,8 +1423,8 @@ const SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off_Low_Speed = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
@@ -1465,8 +1465,8 @@ const SP_Fitness_Specific_BushFood_On_PushFHI_Off = {
         value: 50,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: true,
     },
 
@@ -1498,8 +1498,8 @@ const SP_Fitness_Specific_BushFood_Off_PushFHI_On = {
         value: 1,
     },
 
-    FOOD_BUSH: {
-        HTMLElementID: 'food_bush',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
