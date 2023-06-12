@@ -337,9 +337,6 @@ class PopulationManager {
             params.FOOD_AGENT_RATIO = parseInt(document.getElementById("food_agent_ratio").value);
         }
 
-        if (document.activeElement.id !== "poison_agent_ratio") {
-            params.POISON_AGENT_RATIO = parseInt(document.getElementById("poison_agent_ratio").value);
-        }
         if (document.activeElement.id !== "agent_vision_radius") {
             params.AGENT_VISION_RADIUS = parseFloat(document.getElementById("agent_vision_radius").value);
         }
