@@ -253,14 +253,11 @@ class PopulationManager {
         //Update the params
         //params.FREE_RANGE = document.getElementById("free_range").checked;
         params.AGENT_NEIGHBORS = document.getElementById("agent_neighbors").checked;
-        params.FOOD_OUTSIDE = document.getElementById("food_outside_circle").checked;
-        params.FOOD_INSIDE = document.getElementById("food_inside_circle").checked;
         params.ENFORCE_MIN_FOOD = document.getElementById("enforce_min_food").checked;
         //params.ENFORCE_MIN_POISON = document.getElementById("enforce_min_poison").checked;
         //params.RAND_FOOD_PHASES = document.getElementById("rand_food_phases").checked;
         //params.RAND_FOOD_LIFETIME = document.getElementById("rand_food_lifetime").checked;
         params.RAND_DEFAULT_WEIGHTS = document.getElementById("rand_default_weights").checked;
-        params.GEN_STOP = document.getElementById("gen_stop").checked;
         //params.DYNAMIC_AGENT_SIZING = document.getElementById("dynamic_agent_sizing").checked;
         params.AGENT_VISION_DRAW_CONE = document.getElementById("draw_agent_vision_cone").checked;
         params.NO_DECAYING_FOOD = document.getElementById("no_decaying").checked;
@@ -358,9 +355,7 @@ class PopulationManager {
         if (document.activeElement.id !== "agent_neighbor_count") {
             params.AGENT_NEIGHBOR_COUNT = parseInt(document.getElementById("agent_neighbor_count").value);
         }
-        if (document.activeElement.id !== "calories_per_food") {
-            params.CALORIES_PER_FOOD = parseInt(document.getElementById("calories_per_food").value);
-        }
+
 
         if (document.activeElement.id !== "fitness_calories") {
             if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
@@ -490,7 +485,7 @@ class PopulationManager {
             PopulationManager.IS_LAST_TICK = false;
         }
         //Check to see if the generation is over
-        if ((this.tickCounter >= params.GEN_TICKS && !params.GEN_STOP) || (params.GEN_STOP && (this.isAgentEnergyGone() || this.isFoodGone()))) {
+        if (this.tickCounter >= params.GEN_TICKS) {
             //When a new generation starts 
             params.EVOLVE_K_AND_M = document.getElementById("evolveKandM").checked; // Update the evolving k and m value
             //Reset counters

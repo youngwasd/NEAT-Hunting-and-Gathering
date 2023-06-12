@@ -85,12 +85,6 @@
         <!--<input type="checkbox" id="dynamic_agent_sizing"> Agent Size Changes With Energy-->
     </div>
     <div>
-        <input type="checkbox" id="food_outside_circle"> Food Outside Outer Circle
-    </div>
-    <div>
-        <input type="checkbox" id="food_inside_circle"> Food Inside Inner Circle
-    </div>
-    <div>
         <input type="checkbox" id="enforce_min_food" checked="true"> Enforce Minimum Food
     </div>
     <!--<div>
@@ -105,9 +99,6 @@
     <div>
         <input type="checkbox" id="free_range"> FREE RANGE MODE
     </div>-->
-    <div>
-        <input type="checkbox" id="gen_stop"> End Generation When Food is Gone or Energy is Depleted
-    </div>
     <div>
         <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity vision
         otherwise)
@@ -159,6 +150,8 @@
         <input type="checkbox" id="largeEnergyThresh"> Large Energy Threshold
     </div>
 
+
+
     <div>
         <br>
         <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
@@ -177,30 +170,64 @@
         &emsp;
         <input type="checkbox" id="push_fhi_to_ann" checked="true"> Push Food Hierarchy Index to ANN
         <br>
+    </div>
+
+
+
+
+    <div>
+        &emsp;
+        <div>
+            <input type="checkbox" id="GRADUAL_CONSUMPTION" checked="true"> Gradual Consumption
+        </div>
+
+        <div>
+            <input type="text" id="max_ticks_to_consume" value="50"> Number of Ticks to Consume
+        </div>
+        <div>
+            <input type="text" id="cooldown_to_regen" value="100"> Number of Ticks for Bush Food to Begin Regen
+        </div>
+
+        <br>
+
+        <div>
+            <input type="text" id="food_diameter" value="24"> Food Diameter
+        </div>
         <br>
     </div>
 
 
 
     <div>
-        <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
-    </div>
-    <div>
-        <input type="checkbox" id="GRADUAL_CONSUMPTION" checked="true"> Bush Food (Touch food otherwise)
-    </div>
-    <div>
-        <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs
+        <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs (restart to take
+        effect)
     </div>
 
     <div>
-        <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input
-        field.
+        <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
     </div>
     <div>
         <input type="text" id="num_agents" value="50"> Number of Agents in Simulation (restart to take effect)
     </div>
     <div>
         <input type="text" id="agent_neighbor_count" value="1"> Neighbors Detected by Agents (restart to take effect)
+    </div>
+    <div>
+        <input type="text" id="agent_per_world" value="2"> Agent per world (Put 0 to deactivate) &emsp;
+        <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world (Limit agent per world must be
+        on)
+
+        <div>
+            <input type="text" id="agent_max_speed" value="5"> Agent Default Max Speed
+        </div>
+
+        <div>
+            <input type="text" id="agent_diameter" value="15"> Agent Diameter
+        </div>
+    </div>
+    <div>
+        <br> </br><strong>NOTE TO USER:</strong> The following parameters take effect after clicking out of the input
+        field.
     </div>
     <div>
         <input type="text" id="agent_vision_radius" value="400"> Agent Visual Radius (pixels)
@@ -226,29 +253,7 @@
     <div>
         <input type="text" id="genome_default_k_val" value="0.75"> Default K Value (Requires restart)
     </div>
-    <div>
-        <input type="text" id="agent_per_world" value="2"> Agent per world (Put 0 to deactivate) &emsp;
-        <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world (Limit agent per world must be
-        on)
-    </div>
-    <div>
-        <input type="text" id="max_ticks_to_consume" value="50"> Number of Ticks to Consume
-    </div>
-    <div>
-        <input type="text" id="cooldown_to_regen" value="100"> Number of Ticks for Bush Food to Begin Regen
-    </div>
-    <div>
-        <input type="text" id="calories_per_food" value="50"> Calories Per Food
-    </div> 
-    <div>
-        <input type="text" id="agent_max_speed" value="5"> Agent Max Speed
-    </div>
-    <div>
-        <input type="text" id="agent_diameter" value="15"> Agent Diameter
-    </div>
-    <div>
-        <input type="text" id="food_diameter" value="24"> Food Diameter
-    </div>
+
 
     <br> <br>
     <strong>Debug Options</strong>
@@ -256,12 +261,12 @@
     <div>
         <input type="checkbox" id="draw_agent_vision_cone"> Draw Vision Rays (only for cone vision)
         <br>
-        
+
         <input type="checkbox" id="pauseDrawing" name="pauseDrawing">
-        <label for="pauseDrawing" id = "pauseDrawingLabel">
+        <label for="pauseDrawing" id="pauseDrawingLabel">
             Pause Drawing (To speed up the simulation)
         </label>
-        &emsp; 
+        &emsp;
         <input type="checkbox" id="display_minimap" checked=true> Display minimap
         <br>
         <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation output
@@ -347,7 +352,7 @@
         <input type="text" id="FITNESS_WINNER_BONUS" value="50"> Winner Bonus
     </div>
 
-    <br> <br> <strong>Minimap: </strong><br> 
+    <br> <br> <strong>Minimap: </strong><br>
     <div id="minimapContainters">
 
     </div>

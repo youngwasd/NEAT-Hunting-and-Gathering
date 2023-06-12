@@ -8,8 +8,6 @@ const params = {
     GENOME_DB_COLLECTION: "NEATGenomeTests1",
     AUTO_SAVE_GENOME: false,
     GEN_TO_SAVE_GENOME: 100,
-    FOOD_OUTSIDE: false,
-    FOOD_INSIDE: false,
     GEN_TICKS: 700,
     AGENT_NEIGHBORS: true,
     FOOD_AGENT_RATIO: 1,
@@ -32,7 +30,7 @@ const params = {
     FITNESS_PERCENT_DEAD: 0,
     FITNESS_ENERGY_EFFICIENCY: 0,
     FITNESS_WINNER_BONUS: 50,
-    GEN_STOP: false,
+
     NO_DECAYING_FOOD: true,
     CALORIES_PER_FOOD: 50,
     INNER_WALL: false,
