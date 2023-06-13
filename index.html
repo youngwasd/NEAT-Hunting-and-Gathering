@@ -68,10 +68,10 @@
         </button>
     </div>
 
-    <div style = "left:1050px; position: static;">
-        <div >
+    <div>
+        <div class="container" style="float:right">
             <div>
-                <strong>General Simulation Settings:</strong>
+                <h1><strong>General Simulation Settings:</strong></h1>
             </div>
             <div>
                 <input type="checkbox" id="split_species"> Split Species
@@ -132,9 +132,9 @@
             </div>
         </div>
 
-        <div>
+        <div class="container" style="float:right">
             <div>
-                <strong>Food Setting:</strong>
+                <h1><strong>Food Setting:</strong></h1>
             </div>
 
             <div>
@@ -202,10 +202,10 @@
             </div>
         </div>
         <!-- <div style="height: 100%; width: 100%; left: 1000px; position:relative;"> -->
-        <div>
+        <div class="container" style="float:right">
             <div>
                 <br>
-                <strong>Hunting Mode Setting:</strong>
+                <h1><strong>Hunting Mode Setting:</strong></h1>
             </div>
 
             <div>
@@ -236,10 +236,9 @@
             </div>
         </div>
 
-        <div>
+        <div class="container" style="float:left">
             <div>
-                <br>
-                <strong>Agent Setting:</strong>
+                <h1><strong>Agent Setting:</strong></h1>
             </div>
 
             <div>
@@ -290,11 +289,11 @@
             <div>
                 <input type="text" id="agent_vision_angle" value="180"> Vision Cone Angle (degrees)
             </div>
+            <br>
         </div>
 
-        <div>
-            <strong>Database Setting:</strong>
-            <br>
+        <div class="container" style="float:left">
+            <h1><strong>Database Setting:</strong></h1>
             <label for="save_to_db"> Enable Saving: </label>
             <input type="checkbox" id="save_to_db">
             &emsp;
@@ -320,7 +319,7 @@
         <br>
 
 
-        <div>
+        <div class="container" style="float:left">
             <strong>Genome Database Setting:</strong>
             <br>
             <label for="genome_db"> Database Name: </label>
@@ -337,35 +336,48 @@
             <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome
             </button>
         </div>
-
+        <br>
+        <br>
     </div>
 
 
-    <!-- Old fitness function -->
-    <div>
-        <br> </br><strong>Specific Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_HUNTING_PREY" value="50"> (Prey hunted) +
-        <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
-        <input type="text" id="FITNESS_OUT_OF_BOUND" value="-2"> (Out of bound) +
-        <input type="text" id="fitness_calories" value="10"> (Calories Eaten) +
-        <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
+
+    <div class="container" style="float:left">
+        <br>
+        <h1><strong>Fitness Function:</strong></h1>
+        <div>
+            <!-- Old fitness function -->
+            <h5><strong>Specific Agent Fitness Function = </strong></h5>
+            <input type="text" id="FITNESS_HUNTING_PREY" value="50"> (Prey hunted) +
+            <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
+            <input type="text" id="FITNESS_OUT_OF_BOUND" value="-2"> (Out of bound) +
+            <input type="text" id="fitness_calories" value="10"> (Calories Eaten) +
+            <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
+            <br> </br>
+        </div>
+
+
+        <div>
+            <h5><strong>Generalized Agent Fitness Function = </strong></h5>
+            <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="0"> Energy Efficiency (calories gained/calories
+            spent)
+            +
+            <input type="text" id="FITNESS_PERCENT_DEAD" value="0"> Percentage of Ticks Dead +
+            <input type="text" id="FITNESS_WINNER_BONUS" value="50"> Winner Bonus
+            <br> </br>
+        </div>
     </div>
 
+    <div id="minimapContainters" class="container" style="float:left">
+        <br> <br>
+        <h1><strong>Minimap: </strong><br></h1>
 
-    <div>
-        <br> </br><strong>Generalized Agent Fitness Function = </strong><br> </br>
-        <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="0"> Energy Efficiency (calories gained/calories spent)
-        +
-        <input type="text" id="FITNESS_PERCENT_DEAD" value="0"> Percentage of Ticks Dead +
-        <input type="text" id="FITNESS_WINNER_BONUS" value="50"> Winner Bonus
-    </div>
 
-    <br> <br> <strong>Minimap: </strong><br>
-    <div id="minimapContainters">
 
     </div>
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
+        <h1><strong>Charts: </strong><br></h1>
         <div id="agentCurrentOutputContainers">
 
         </div>
