@@ -68,8 +68,8 @@
         </button>
     </div>
 
-    <div>
-        <div class="container" style="float:right">
+    <div style="display:flex; flex-grow:row wrap; width: 500px">
+        <div class="container" style="float:right;">
             <div>
                 <h1><strong>General Simulation Settings:</strong></h1>
             </div>
@@ -143,14 +143,16 @@
                 </div>
                 <input type="checkbox" id="no_decaying" checked="true"> No decaying food
                 &emsp;
+                <br>
+
                 <input type="checkbox" id="randomizing_food_spawn_pattern" checked="true"> Randomize food spawning
                 pattern
                 &emsp;
-                <br> </br>
-                <label for="caloriesPerFood"> Calories reward per food: </label>
 
+                <label for="caloriesPerFood"> Calories reward per food: </label>
                 <input type="text" id="caloriesPerFood" value="50">
-                &emsp;
+                <br>
+                <br>
                 <div>
                     <input type="checkbox" id="moving_food"> Moving food
                     &emsp;
@@ -161,14 +163,13 @@
                     </select>
 
                     &emsp;
-                    <label for="food_velocityX"> Velocity X: </label>
+                    <br><label for="food_velocityX"> Velocity X: </label>
                     <input type="text" id="food_velocityX" value="1">
 
-                    <label for="food_velocityY">Velocity Y: </label>
+                    <br><label for="food_velocityY">Velocity Y: </label>
                     <input type="text" id="food_velocityY" value="1">
-
                 </div>
-
+                <br>
             </div>
             <div>
                 <input type="checkbox" id="inner_wall"> Inner Walls
@@ -178,24 +179,28 @@
             <div>
                 <input type="checkbox" id="largeEnergyThresh"> Large Energy Threshold
             </div>
+            <br>
             <div>
-                <input type="text" id="food_diameter" value="24"> Food Diameter
+                Food Diameter: <input type="text" id="food_diameter" value="24"> <br>
             </div>
 
             <div>
-                <input type="text" id="food_agent_ratio" value="1"> Food to Agent Ratio
+                Food to Agent Ratio:<input type="text" id="food_agent_ratio" value="1"> <br>
             </div>
             <div>
                 &emsp;
                 <div>
                     <input type="checkbox" id="GRADUAL_CONSUMPTION" checked="true"> Gradual Consumption
+
+                    <input type="checkbox" id="GRADUAL_CONSUMPTION_RESPAWN" checked="true"> Food respawn when fully consumed
                 </div>
 
                 <div>
-                    <input type="text" id="max_ticks_to_consume" value="50"> Number of Ticks to Consume
+                    Number of Ticks to Consume: <input type="text" id="max_ticks_to_consume" value="50"> <br>
                 </div>
                 <div>
-                    <input type="text" id="cooldown_to_regen" value="100"> Number of Ticks for Bush Food to Begin Regen
+                    Number of Ticks for Bush Food to Begin Regen: <input type="text" id="cooldown_to_regen" value="100">
+                    <br>
                 </div>
 
                 <br>
@@ -218,13 +223,12 @@
                     <option value="multipleGeneration">Multiple Generation</option>
                 </select>
                 <br>
-                <input type="text" id="prey_speed" value="5"> Prey Max Speed
-                <input type="text" id="predator_speed" value="5"> Predator Max Speed
-                <br>
+                Prey Max Speed: <input type="text" id="prey_speed" value="5"> <br>
+                Predator Max Speed: <input type="text" id="predator_speed" value="5"> <br>
+
                 <input type="checkbox" id="inactive_prey_targetable" name="inactive_prey_targetable" checked="true">
-                Prey Is
-                Targetable When Dead
-                &emsp;
+                Prey Is Targetable When Dead
+                <br>
                 <input type="checkbox" id="push_fhi_to_ann" checked="true"> Push Food Hierarchy Index to ANN
                 <br>
             </div>
@@ -249,47 +253,49 @@
                 <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity
                 vision
                 otherwise)
-            </div>
-
-            <div>
                 <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
             </div>
+
             <div>
-                <input type="text" id="num_agents" value="50"> Total number of agents in Simulation (restart to take
-                effect)
+
+
+                <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world
             </div>
             <div>
-                <input type="text" id="agent_neighbor_count" value="1"> Neighbors Detected by Agents (restart to take
-                effect)
-            </div>
-            <div>
-                <input type="text" id="agent_per_world" value="2"> Agent per world (Put 0 to deactivate) &emsp;
-                <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world (Limit agent per world
-                must be
-                on)
-
-                <div>
-                    <input type="text" id="agent_max_speed" value="5"> Agent Default Max Speed
-                </div>
-
-                <div>
-                    <input type="text" id="agent_diameter" value="15"> Agent Diameter
-                </div>
-            </div>
-
-            <div>
-                <input type="text" id="agent_vision_radius" value="400"> Agent Visual Radius (pixels)
-            </div>
-
-
-
-            <div>
-                <input type="text" id="agent_vision_rays" value="13"> Vision Rays
-            </div>
-            <div>
-                <input type="text" id="agent_vision_angle" value="180"> Vision Cone Angle (degrees)
+                Total number of agents in Simulation (Requires Restart): <input type="text" id="num_agents" value="50">
             </div>
             <br>
+            <div>
+                Neighbors Detected by Agents (Requires Restart): <input type="text" id="agent_neighbor_count" value="1">
+            </div>
+            <br>
+            <div>
+                Agent per world (Put 0 to deactivate): <input type="text" id="agent_per_world" value="2"> <br>
+
+                <br>
+                <div>
+                    Agent Default Max Speed: <input type="text" id="agent_max_speed" value="5">
+                </div>
+
+                <div>
+                    Agent Diameter: <input type="text" id="agent_diameter" value="15">
+                </div>
+            </div>
+
+            <div>
+                Agent Visual Radius (pixels): <input type="text" id="agent_vision_radius" value="400">
+            </div>
+
+
+
+            <div>
+                Vision Rays: <input type="text" id="agent_vision_rays" value="13">
+            </div>
+
+            <div>
+                Vision Cone Angle (degrees): <input type="text" id="agent_vision_angle" value="180">
+            </div>
+
         </div>
 
         <div class="container" style="float:left">
@@ -313,31 +319,25 @@
             <br>
             <label for="sim_trial_num"> Simulation Trials </label>
             <input type="text" id="sim_trial_num" value=3>
-
-
-        </div>
-        <br>
-
-
-        <div class="container" style="float:left">
-            <strong>Genome Database Setting:</strong>
             <br>
-            <label for="genome_db"> Database Name: </label>
+
+            <h1><strong>Genome Database Setting:</strong></h1>
+            <input type="checkbox" id="auto_save_genome"> <label for="auto_save_genome"> Genome Enable Auto Saving </label>
+            <label for="genome_db"> Genome Database Name: </label>
             <input type="text" id="genome_db" value="test">
-            <label for="genome_db_collection"> Collection Name: </label>
+            <label for="genome_db_collection"> Genome Collection Name: </label>
             <input type="text" id="genome_db_collection" value="NEATGenomeTests1">
             <br>
-            <label for="gen_to_save_genome"> Generation to Auto-Save to DB: </label>
+            <label for="gen_to_save_genome"> Genome Generation to Auto-Save to DB: </label>
             <input type="text" id="gen_to_save_genome" value="100">
             <br>
-            <label for="auto_save_genome"> Enable Auto Saving: </label> <input type="checkbox" id="auto_save_genome">
-            &emsp;
+            <br>
             <button type="button" id="db_save_genome" style="background-color: red; color:white;"> Save Genome </button>
+            &emsp;
             <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome
             </button>
         </div>
-        <br>
-        <br>
+
     </div>
 
 
@@ -376,7 +376,7 @@
 
     </div>
 
-    <div id="charts" style="float: left; width: 50%; margin-top: 75px;">
+    <div id="charts" style="float: left; width: 50%; margin-top: 75px; float:left" class="container">
         <h1><strong>Charts: </strong><br></h1>
         <div id="agentCurrentOutputContainers">
 

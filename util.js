@@ -68,10 +68,12 @@ const params = {
     AGENT_DIAMETER: 15,
     FOOD_DIAMETER: 24,
     GRADUAL_CONSUMPTION: true,
+    GRADUAL_CONSUMPTION_RESPAWN: true,
     MIRROR_ROLES: true,
     BUSH_SIGHT_MODE: "solid",
     INACTIVE_PREY_TARGETABLE: true,
     PUSH_FHI_TO_ANN: true,
+
 };
 
 const agentTrackerAttributesToCollect = [

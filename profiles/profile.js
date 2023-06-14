@@ -118,7 +118,7 @@ const simulationProfile_numberOfAgents_25 = {
 const SP_FitnessFunction_Specific = {
     DB: {
         HTMLElementID: 'db',
-        value: "NEATSpr23"
+        value: "NEAT_Thesis_23_TN"
     },
 
     DB_COLLECTION: {
@@ -134,7 +134,7 @@ const SP_FitnessFunction_Specific = {
 
     GENOME_DB: {
         HTMLElementID: 'genome_db',
-        value: "NEATSpr23"
+        value: "NEAT_Thesis_23_TN",
     },
 
     GENOME_DB_COLLECTION: {
@@ -291,7 +291,7 @@ const SP_FitnessFunction_Specific_FasterSpeed = {
 const SP_FitnessFunction_Generic = {
     DB: {
         HTMLElementID: 'db',
-        value: "NEATSpr23"
+        value: "NEAT_Thesis_23_TN",
     },
 
     DB_COLLECTION: {
@@ -311,7 +311,7 @@ const SP_FitnessFunction_Generic = {
 
     GENOME_DB: {
         HTMLElementID: 'genome_db',
-        value: "NEATSpr23"
+        value: "NEAT_Thesis_23_TN",
     },
 
     GENOME_DB_COLLECTION: {

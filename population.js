@@ -1008,6 +1008,7 @@ class PopulationManager {
         let sumPredWinnerBonus = 0;
         let totalOOB_Prey = 0;
         let totalOOB_Predator = 0;
+        let huntingMode = params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum";
         this.agentsAsList().forEach((agent) => {
             let OOBData = specieOOBData.get(agent.speciesId);
             specieOOBData.set(agent.speciesId,
@@ -1027,6 +1028,12 @@ class PopulationManager {
             sumEnergySpent += agent.caloriesSpent;
             sumPredWinnerBonus += agent.getWinnerBonus("predator");
 
+            //Collecting calories consume info
+            if (huntingMode && agent.foodHierarchyIndex === 0){
+                this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.numberOfTickOutOfBounds_Prey);
+            }
+
+            //Collecting out of bound info
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
         });

@@ -215,7 +215,7 @@ class Food {
      * @returns "{calories, consumption completion fraction}"
     */
     consume() {
-        if (this.ticksToConsume >= 0) this.ticksToConsume--;
+        if (this.ticksToConsume > 0) this.ticksToConsume--;
         this.lastTickBeingEaten = this.game.population.tickCounter;
         if (params.GRADUAL_CONSUMPTION) return this.gradualConsume();
         else return this.singleConsume();
@@ -239,10 +239,12 @@ class Food {
     }
 
     gradualConsume() {
-        if (this.ticksToConsume >= 0) {
+        if (this.ticksToConsume > 0) {
             let cals = this.getCalories() / params.MAX_TICKS_TO_CONSUME;
             this.foodTracker.addCalories(cals);
             return { calories: cals, completion: this.getConsumptionCompletion() };
+        } else if (params.GRADUAL_CONSUMPTION_RESPAWN){
+            this.removeFromWorld = true;
         }
         return { calories: 0, completion: this.getConsumptionCompletion() };
     }
