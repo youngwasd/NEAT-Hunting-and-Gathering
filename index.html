@@ -45,8 +45,12 @@
 
 <body>
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
-    <div style="float: left; width:1000; " id="carouselCanvasIndicators" class="carousel carousel-dark"
+
+    <div style="float: left; width:100% " id="carouselCanvasIndicators" class="carousel carousel-dark"
         data-bs-ride="carousel">
+        <div>
+            <h1><strong>Main Display:</strong></h1>
+        </div>
         <div id="canvas-indicators" class="carousel-indicators">
         </div>
         <div style="padding-left: 0;
@@ -56,23 +60,40 @@
         display: block;
         width: 1005px;" id="canvas-carousel" class="carousel-inner">
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators" style="width:50%"
             data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators"
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators" style="width:50%"
             data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-
-    <div style="display:flex; flex-grow:row wrap; width: 500px">
-        <div class="container" style="float:right;">
+    <br>
+    <div style="display:flex; flex-grow:row wrap; width: fit-content; height: fit-content;">
+        <div class="container" style="float:right; width: fit-content; border: 1px solid black">
             <div>
                 <h1><strong>General Simulation Settings:</strong></h1>
             </div>
+            <div>
+                Generation Time (ticks): <input type="text" id="generation_time" value="700">
+            </div>
+
+            <div>
+                Species Compatibility Threshold: <input type="text" id="compat_threshold" value="0.07">
+            </div>
+
+            <div>
+                Default K Value (Requires restart): <input type="text" id="genome_default_k_val" value="0.75">
+            </div>
+
+            <div>
+                Tick to update current generation output data: <input type="text" id="tickToUpdateCurrentGenOutputData"
+                    value="0">
+            </div>
+
             <div>
                 <input type="checkbox" id="split_species"> Split Species
             </div>
@@ -82,16 +103,6 @@
                 to
                 take effect)
             </div>
-            <div>
-                <input type="text" id="generation_time" value="700"> Generation Time (ticks)
-            </div>
-            <div>
-                <input type="text" id="compat_threshold" value="0.07"> Species Compatibility Threshold
-            </div>
-            <div>
-                <input type="text" id="genome_default_k_val" value="0.75"> Default K Value (Requires restart)
-            </div>
-
             <div>
                 <input type="checkbox" id="evolveKandM" checked="true"> Evolve K and M
             </div>
@@ -106,33 +117,28 @@
                 </label>
                 &emsp;
                 <input type="checkbox" id="display_minimap" checked=true> Display minimap
-                <br>
-                <input type="text" id="tickToUpdateCurrentGenOutputData" value="0"> Tick to update current generation
-                output
-                data (Put 0 to disable)
+
             </div>
-            <br>
+
             <div>
 
                 <input type="checkbox" id="runByProfileMode"> Enable run by profile mode
-                &emsp;
+                <br>
                 <select name="profileOption" id="profileOption">
                 </select>
-                &emsp;
+                <br>
+                <br>
                 <button type="button" id="loadProfile"> Load Profile </button>
-
-            </div>
-            <br>
-            <div>
+                &emsp;
                 <button type="button" id="restart_sim" type="button">Restart Simulation</button>
                 &emsp;
                 <button type="button" id="pause_sim" type="button" style="background-color: green; color:white;"> Pause
                     Simulation</button>
-                <br> </br>
+
             </div>
         </div>
 
-        <div class="container" style="float:right">
+        <div class="container" style="float:right; border: 1px solid black; width: fit-content;">
             <div>
                 <h1><strong>Food Setting:</strong></h1>
             </div>
@@ -147,7 +153,7 @@
 
                 <input type="checkbox" id="randomizing_food_spawn_pattern" checked="true"> Randomize food spawning
                 pattern
-                &emsp;
+                <br>
 
                 <label for="caloriesPerFood"> Calories reward per food: </label>
                 <input type="text" id="caloriesPerFood" value="50">
@@ -192,7 +198,8 @@
                 <div>
                     <input type="checkbox" id="GRADUAL_CONSUMPTION" checked="true"> Gradual Consumption
 
-                    <input type="checkbox" id="GRADUAL_CONSUMPTION_RESPAWN" checked="true"> Food respawn when fully consumed
+                    <input type="checkbox" id="GRADUAL_CONSUMPTION_RESPAWN" checked="true"> Food respawn when fully
+                    consumed
                 </div>
 
                 <div>
@@ -207,7 +214,7 @@
             </div>
         </div>
         <!-- <div style="height: 100%; width: 100%; left: 1000px; position:relative;"> -->
-        <div class="container" style="float:right">
+        <div class="container" style="float:right; border: 1px solid black; width: fit-content;">
             <div>
                 <br>
                 <h1><strong>Hunting Mode Setting:</strong></h1>
@@ -240,7 +247,7 @@
             </div>
         </div>
 
-        <div class="container" style="float:left">
+        <div class="container" style="float:left; border: 1px solid black; width: fit-content;">
             <div>
                 <h1><strong>Agent Setting:</strong></h1>
             </div>
@@ -253,26 +260,21 @@
                 <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity
                 vision
                 otherwise)
+                <br>
                 <input type="checkbox" id="agent_biting"> Agent biting required (Requires Restart)
             </div>
-
             <div>
-
-
                 <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world
             </div>
             <div>
                 Total number of agents in Simulation (Requires Restart): <input type="text" id="num_agents" value="50">
             </div>
-            <br>
             <div>
                 Neighbors Detected by Agents (Requires Restart): <input type="text" id="agent_neighbor_count" value="1">
             </div>
-            <br>
+
             <div>
                 Agent per world (Put 0 to deactivate): <input type="text" id="agent_per_world" value="2"> <br>
-
-                <br>
                 <div>
                     Agent Default Max Speed: <input type="text" id="agent_max_speed" value="5">
                 </div>
@@ -286,8 +288,6 @@
                 Agent Visual Radius (pixels): <input type="text" id="agent_vision_radius" value="400">
             </div>
 
-
-
             <div>
                 Vision Rays: <input type="text" id="agent_vision_rays" value="13">
             </div>
@@ -298,51 +298,50 @@
 
         </div>
 
-        <div class="container" style="float:left">
+        <div class="container" style="float:left; border: 1px solid black; width: fit-content;">
             <h1><strong>Database Setting:</strong></h1>
             <label for="save_to_db"> Enable Saving: </label>
             <input type="checkbox" id="save_to_db">
-            &emsp;
-            <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data
-            </button>
             <br>
             <label for="db"> Database Name: </label>
             <input type="text" id="db" value="test">
-
+            <br>
             <label for="db_collection"> Collection Name: </label>
             <input type="text" id="db_collection" value="NEATtests">
 
             <br>
             <label for="gen_to_save"> Generation to Save to DB: </label>
             <input type="text" id="gen_to_save" value="40">
-
             <br>
             <label for="sim_trial_num"> Simulation Trials </label>
             <input type="text" id="sim_trial_num" value=3>
             <br>
+            <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data
+            </button>
 
             <h1><strong>Genome Database Setting:</strong></h1>
-            <input type="checkbox" id="auto_save_genome"> <label for="auto_save_genome"> Genome Enable Auto Saving </label>
+            Genome Enable Saving: <input type="checkbox" id="auto_save_genome"> 
+            <br>
+            <label for="auto_save_genome"> 
+            </label>
             <label for="genome_db"> Genome Database Name: </label>
             <input type="text" id="genome_db" value="test">
+            <br>
             <label for="genome_db_collection"> Genome Collection Name: </label>
             <input type="text" id="genome_db_collection" value="NEATGenomeTests1">
             <br>
             <label for="gen_to_save_genome"> Genome Generation to Auto-Save to DB: </label>
             <input type="text" id="gen_to_save_genome" value="100">
             <br>
-            <br>
             <button type="button" id="db_save_genome" style="background-color: red; color:white;"> Save Genome </button>
-            &emsp;
+            <br>
             <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome
             </button>
         </div>
 
     </div>
 
-
-
-    <div class="container" style="float:left">
+    <div style="     border: 1px solid black">
         <br>
         <h1><strong>Fitness Function:</strong></h1>
         <div>
@@ -368,12 +367,9 @@
         </div>
     </div>
 
-    <div id="minimapContainters" class="container" style="float:left">
+    <div id="minimapContainters">
         <br> <br>
         <h1><strong>Minimap: </strong><br></h1>
-
-
-
     </div>
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px; float:left" class="container">
