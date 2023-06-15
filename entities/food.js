@@ -240,7 +240,7 @@ class Food {
 
     gradualConsume() {
         if (this.ticksToConsume > 0) {
-            let cals = this.getCalories() / params.MAX_TICKS_TO_CONSUME;
+            let cals = (this.getCalories() * 1.0) / params.MAX_TICKS_TO_CONSUME;
             this.foodTracker.addCalories(cals);
             return { calories: cals, completion: this.getConsumptionCompletion() };
         } else if (params.GRADUAL_CONSUMPTION_RESPAWN){
@@ -252,12 +252,12 @@ class Food {
     getCalories() {
         if (this.phase >= this.lifecycle_phases.dead) return 0;
         return this.isPoison ?
-            Math.abs(this.phase_properties[this.phase].calories) * -1
-            : this.phase_properties[this.phase].calories;
+            Math.abs(this.phase_properties[this.phase].calories) * -1.0
+            : this.phase_properties[this.phase].calories * 1.0;
     }
 
     getConsumptionCompletion() {
-        return (params.MAX_TICKS_TO_CONSUME - this.ticksToConsume) / params.MAX_TICKS_TO_CONSUME;
+        return (params.MAX_TICKS_TO_CONSUME - this.ticksToConsume * 1.0) / params.MAX_TICKS_TO_CONSUME;
     }
 
     /** Processes a reproduction operation on this food */
