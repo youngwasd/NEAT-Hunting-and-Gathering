@@ -631,7 +631,6 @@ class Agent {
                     if (params.HUNTING_MODE === "deactivated" || (predPreyMode && this.foodHierarchyIndex === 0)) {//Only the lowest prey get to eat normal food
                         if (this.biting || !params.AGENT_BITING) {
                             let consOut = entity.consume();
-
                             let cals = consOut.calories;
                             let completion = consOut.completion;
                             if (cals < 0) {

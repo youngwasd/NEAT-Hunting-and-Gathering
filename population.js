@@ -101,6 +101,11 @@ class PopulationManager {
             currentGenData: 0,
         }
 
+        this.preyCaloriesEatenData = {
+            chart: new Linechart(20, 50, 700, 400, [], "Calories Eaten By Prey Per Generations Chart", "Generations", "Times consumed"),
+            currentGenData: 0,
+        }
+
         this.rolesMirrored = false;
 
         PopulationManager.MINIMAP = new Minimap(game);
@@ -1042,7 +1047,7 @@ class PopulationManager {
 
             //Collecting calories consume info
             if (huntingMode && agent.foodHierarchyIndex === 0){
-                this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.numberOfTickOutOfBounds_Prey);
+                this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
             }
 
             //Collecting out of bound info
@@ -1095,6 +1100,10 @@ class PopulationManager {
         if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
             this.preyConsumedData.chart.addEntry(this.agentTracker.getCurrentGenAttriBute('totalPreyHuntedCount'));
             generateLineChart({ chart: this.preyConsumedData.chart }, "preyHuntedLineChart", "lineChartOutputContainters");
+
+            console.log(this.agentTracker.getCurrentGenAttriBute('totalCaloriesConsumedAsPrey'));
+            this.preyCaloriesEatenData.chart.addEntry(this.agentTracker.getCurrentGenAttriBute('totalCaloriesConsumedAsPrey'));
+            generateLineChart({ chart: this.preyCaloriesEatenData.chart }, "caloriesPreyEatenLineChart", "lineChartOutputContainters");
 
             generateLineChart(
                 {
@@ -1165,7 +1174,7 @@ class PopulationManager {
                 title: 'Total Calories Consumed Per Generation'
             },
             "avgCaloriesLineChart", "lineChartOutputContainters",
-        );
+        );      
 
         //Generates the data charts
         //generateFitnessChart(this.agentTracker.getAgentTrackerAttributesAsList("speciesFitness"));//getAgentTrackerAttributesAsList("avgFitness"));

@@ -45,39 +45,40 @@
 
 <body>
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
-
-    <div style="float: left; width:50% " id="carouselCanvasIndicators" class="carousel carousel-dark"
-        data-bs-ride="carousel">
-        <div>
-            <h1><strong>Main Display:</strong></h1>
-        </div>
-        <div id="canvas-indicators" class="carousel-indicators" >
-        </div>
-        <div style="padding-left: 0;
+    <div style="display:flex; flex-wrap: wrap;">
+        <div style="float:left; width:49%;" id="carouselCanvasIndicators" class="carousel carousel-dark"
+            data-bs-ride="carousel">
+            <div>
+                <h1><strong>Main Display:</strong></h1>
+            </div>
+            <div id="canvas-indicators" class="carousel-indicators">
+            </div>
+            <div style="padding-left: 0;
         padding-right: 0;  
         margin-left: auto;
         margin-right: auto;
         display: block;
-        width: 1005px; " id="canvas-carousel" class="carousel-inner"> 
+        width: 1005px; " id="canvas-carousel" class="carousel-inner">
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
+                style="float:left;" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators"
+                style="float:right; " data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
-            style="float:left;" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators"
-            style="float:right; " data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
 
-    <div id="minimapContainters" style="width: 50%; float:right">
-        <h1><strong>Minimap: </strong><br></h1>
+        <div class="container" id="minimapContainters" style="width:1010px; float:right;">
+            <h1><strong>Minimap: </strong><br></h1>
+        </div>
     </div>
     <br>
-    <div style="display:flex; flex-grow:row wrap; width: 100%; ">
-        <div class="container" style="float:right; width: fit-content; border: 1px solid black">
+    <div style="display:flex; flex-wrap:wrap; width: fit-content">
+        <div class="container" style="width: fit-content; border: 1px solid black">
             <div>
                 <h1><strong>General Simulation Settings:</strong></h1>
             </div>
@@ -142,7 +143,7 @@
             </div>
         </div>
 
-        <div class="container" style="float:right; border: 1px solid black; width: fit-content;">
+        <div class="container" style="border: 1px solid black; width: fit-content;">
             <div>
                 <h1><strong>Food Setting:</strong></h1>
             </div>
@@ -218,7 +219,7 @@
             </div>
         </div>
         <!-- <div style="height: 100%; width: 100%; left: 1000px; position:relative;"> -->
-        <div class="container" style="float:right; border: 1px solid black; width: fit-content;">
+        <div class="container" style="border: 1px solid black; width: fit-content;">
             <div>
                 <br>
                 <h1><strong>Hunting Mode Setting:</strong></h1>
@@ -251,7 +252,7 @@
             </div>
         </div>
 
-        <div class="container" style="float:left; border: 1px solid black; width: fit-content;">
+        <div class="container" style="border: 1px solid black; width: fit-content;">
             <div>
                 <h1><strong>Agent Setting:</strong></h1>
             </div>
@@ -302,13 +303,13 @@
 
         </div>
 
-        <div class="container" style="float:left; border: 1px solid black; width: fit-content;">
+        <div class="container" style="border: 1px solid black; width: fit-content; height:max-content">
             <h1><strong>Database Setting:</strong></h1>
             <label for="save_to_db"> Enable Saving: </label>
             <input type="checkbox" id="save_to_db">
             <br>
             <label for="db"> Database Name: </label>
-            <input type="text" id="db" value="test">
+            <input type="text" id="db" value="testDB">
             <br>
             <label for="db_collection"> Collection Name: </label>
             <input type="text" id="db_collection" value="NEATtests">
@@ -322,7 +323,6 @@
             <br>
             <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data
             </button>
-
             <h1><strong>Genome Database Setting:</strong></h1>
             Genome Enable Saving: <input type="checkbox" id="auto_save_genome">
             <br>
@@ -341,35 +341,36 @@
             <br>
             <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome
             </button>
+            <br></br>
         </div>
+        <div class="container" style="border: 1px solid black; width: fit-content;">
+            <br>
+            <h1><strong>Fitness Function:</strong></h1>
+            <div>
+                <!-- Old fitness function -->
+                <h5><strong>Specific Agent Fitness Function = </strong></h5>
+                <input type="text" id="FITNESS_HUNTING_PREY" value="50"> (Prey hunted) +
+                <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
+                <input type="text" id="FITNESS_OUT_OF_BOUND" value="-2"> (Out of bound) +
+                <input type="text" id="fitness_calories" value="10"> (Calories Eaten) +
+                <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
+                <br> </br>
+            </div>
 
+
+            <div>
+                <h5><strong>Generalized Agent Fitness Function = </strong></h5>
+                <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="0"> Energy Efficiency (calories gained/calories
+                spent)
+                +
+                <input type="text" id="FITNESS_PERCENT_DEAD" value="0"> Percentage of Ticks Dead +
+                <input type="text" id="FITNESS_WINNER_BONUS" value="50"> Winner Bonus
+                <br> </br>
+            </div>
+        </div>
     </div>
 
-    <div style="     border: 1px solid black">
-        <br>
-        <h1><strong>Fitness Function:</strong></h1>
-        <div>
-            <!-- Old fitness function -->
-            <h5><strong>Specific Agent Fitness Function = </strong></h5>
-            <input type="text" id="FITNESS_HUNTING_PREY" value="50"> (Prey hunted) +
-            <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
-            <input type="text" id="FITNESS_OUT_OF_BOUND" value="-2"> (Out of bound) +
-            <input type="text" id="fitness_calories" value="10"> (Calories Eaten) +
-            <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
-            <br> </br>
-        </div>
 
-
-        <div>
-            <h5><strong>Generalized Agent Fitness Function = </strong></h5>
-            <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="0"> Energy Efficiency (calories gained/calories
-            spent)
-            +
-            <input type="text" id="FITNESS_PERCENT_DEAD" value="0"> Percentage of Ticks Dead +
-            <input type="text" id="FITNESS_WINNER_BONUS" value="50"> Winner Bonus
-            <br> </br>
-        </div>
-    </div>
 
 
 

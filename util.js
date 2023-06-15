@@ -1,7 +1,7 @@
 /** Global Parameters Object */
 const params = {
     CANVAS_SIZE: 1000,
-    DB: "test",
+    DB: "testDB",
     DB_COLLECTION: "NEATtests",
     GEN_TO_SAVE: 40,
     GENOME_DB: "test",
@@ -79,7 +79,7 @@ const params = {
 const agentTrackerAttributesToCollect = [
     "avgFitness", "avgEnergySpent", "avgPercDead", "avgPredWinnerBonus",
     "totalPreyHuntedCount", "totalFoodConsumptionCount", "totalTicksOutOfBounds",
-    "totalTicksOutOfBounds_Prey", "totalTicksOutOfBounds_Predator"
+    "totalTicksOutOfBounds_Prey", "totalTicksOutOfBounds_Predator", "totalCaloriesConsumedAsPrey"
 ];
 
 const getMedian = (arr) => {
