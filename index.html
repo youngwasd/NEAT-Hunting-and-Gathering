@@ -46,33 +46,37 @@
 <body>
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
 
-    <div style="float: left; width:100% " id="carouselCanvasIndicators" class="carousel carousel-dark"
+    <div style="float: left; width:50% " id="carouselCanvasIndicators" class="carousel carousel-dark"
         data-bs-ride="carousel">
         <div>
             <h1><strong>Main Display:</strong></h1>
         </div>
-        <div id="canvas-indicators" class="carousel-indicators">
+        <div id="canvas-indicators" class="carousel-indicators" >
         </div>
         <div style="padding-left: 0;
         padding-right: 0;  
         margin-left: auto;
         margin-right: auto;
         display: block;
-        width: 1005px;" id="canvas-carousel" class="carousel-inner">
+        width: 1005px; " id="canvas-carousel" class="carousel-inner"> 
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators" style="width:50%"
-            data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCanvasIndicators"
+            style="float:left;" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators" style="width:50%"
-            data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselCanvasIndicators"
+            style="float:right; " data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
+
+    <div id="minimapContainters" style="width: 50%; float:right">
+        <h1><strong>Minimap: </strong><br></h1>
+    </div>
     <br>
-    <div style="display:flex; flex-grow:row wrap; width: fit-content; height: fit-content;">
+    <div style="display:flex; flex-grow:row wrap; width: 100%; ">
         <div class="container" style="float:right; width: fit-content; border: 1px solid black">
             <div>
                 <h1><strong>General Simulation Settings:</strong></h1>
@@ -320,9 +324,9 @@
             </button>
 
             <h1><strong>Genome Database Setting:</strong></h1>
-            Genome Enable Saving: <input type="checkbox" id="auto_save_genome"> 
+            Genome Enable Saving: <input type="checkbox" id="auto_save_genome">
             <br>
-            <label for="auto_save_genome"> 
+            <label for="auto_save_genome">
             </label>
             <label for="genome_db"> Genome Database Name: </label>
             <input type="text" id="genome_db" value="test">
@@ -367,10 +371,7 @@
         </div>
     </div>
 
-    <div id="minimapContainters">
-        <br> <br>
-        <h1><strong>Minimap: </strong><br></h1>
-    </div>
+
 
     <div id="charts" style="float: left; width: 50%; margin-top: 75px; float:left" class="container">
         <h1><strong>Charts: </strong><br></h1>
