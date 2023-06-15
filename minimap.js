@@ -311,7 +311,7 @@ class Minimap {
             ctx.fillStyle = "blue";
             ctx.font = Math.round(this.sizeOfAWorld / 10) + "px sans-serif";
 
-            ctx.fillText(world.worldId, startX, startY + this.sizeOfAWorld + this.bufferRow);
+            ctx.fillText(world.worldId, startX + 2, startY + this.sizeOfAWorld + this.bufferRow - 8);
 
             if (!world.isActive) {
                 ctx.font = Math.round(this.sizeOfAWorld / 25) + "px sans-serif";
