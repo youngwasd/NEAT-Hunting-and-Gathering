@@ -82,19 +82,8 @@ class Minimap {
     }
 
     updateMainDisplay(worldDisplay) {
-        //"carousel-item active"
-        this.game.population.worlds.forEach((world) => {
-            let doc = document.getElementById('worldCanvas' + world.worldId);
-            if (worldDisplay === world.worldId) {
-
-
-                doc.setAttribute('class', 'carousel-item active');
-
-            }
-            else {
-                doc.setAttribute('class', 'carousel-item');
-            }
-        });
+        document.getElementById(`carousel-button-slide-${worldDisplay}`).click();
+        PopulationManager.CURRENT_WORLD_DISPLAY = worldDisplay;
     }
 
     update() {

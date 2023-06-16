@@ -62,6 +62,18 @@ class GameEngine {
         document.getElementById("db_save_genome").addEventListener("click", () => {
             saveGenomes();
         });
+
+        document.getElementById("main-canvas-back").addEventListener("click", () => {
+            PopulationManager.CURRENT_WORLD_DISPLAY--;
+            if (PopulationManager.CURRENT_WORLD_DISPLAY < 0){
+                PopulationManager.CURRENT_WORLD_DISPLAY = this.population.worlds.size - 1;
+            }
+        });
+
+        document.getElementById("main-canvas-next").addEventListener("click", () => {
+            PopulationManager.CURRENT_WORLD_DISPLAY++;
+            PopulationManager.CURRENT_WORLD_DISPLAY %= this.population.worlds.size;
+        });
     };
 
     start() {

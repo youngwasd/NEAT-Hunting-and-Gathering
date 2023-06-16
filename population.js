@@ -13,6 +13,7 @@ class PopulationManager {
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
     static WORLD_COLOR_POOL = [];
     static MINIMAP;
+    static CURRENT_WORLD_DISPLAY = 0;
 
     static IS_LAST_TICK = false;//Use for debugging purposes; to determine whether the current population is at its last tick
 
@@ -461,17 +462,6 @@ class PopulationManager {
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         params.AUTO_SAVE_GENOME = document.getElementById("auto_save_genome").checked;
 
-        //Cleans up all of the food/poison for the world
-        // this.worlds.forEach((members, worldId) => {
-        //     members.cleanupFood(false); //cleanup food
-        //     members.cleanupFood(true); //cleanup poison
-        //     if (params.ENFORCE_MIN_FOOD && members.food.length < params.FOOD_AGENT_RATIO * members.agents.length) {
-        //         this.spawnFood(worldId, false, params.FOOD_AGENT_RATIO * members.agents.length - members.food.length);
-        //     }
-        //     if (params.ENFORCE_MIN_POISON && members.poison.length < params.POISON_AGENT_RATIO * members.agents.length) {
-        //         this.spawnFood(worldId, true, params.POISON_AGENT_RATIO * members.agents.length - members.poison.length);
-        //     }
-        // });
         this.checkFoodLevels();
 
         if (params.TICK_TO_UPDATE_CURRENT_GEN_DATA !== 0 && this.tickCounter % params.TICK_TO_UPDATE_CURRENT_GEN_DATA == 0) {

@@ -222,6 +222,11 @@ const createSlideShow = (array, id) => {
 
     array.forEach((elem, i) => {
         const indButton = document.createElement('button');
+
+        indButton.setAttribute(
+            'id',
+            `carousel-button-slide-${i}`
+        );
         indButton.setAttribute('type', 'button');
         indButton.setAttribute(
             'data-bs-target',
@@ -231,6 +236,7 @@ const createSlideShow = (array, id) => {
         if (i == activeSlide) {
             indButton.setAttribute('class', 'active');
             indButton.setAttribute('aria-current', 'true');
+            PopulationManager.CURRENT_WORLD_DISPLAY = i;
         }
         indButton.setAttribute('style', 'background-color: black');
         indButton.setAttribute('aria-current', 'true');
@@ -247,6 +253,7 @@ const createSlideShow = (array, id) => {
             'class',
             `carousel-item${count == activeSlide ? ' active' : ''}`
         );
+        
         div.setAttribute('data-bs-interval', '999999999');
         div.setAttribute('id', `worldCanvas${elem.id}`);
         div.appendChild(elem.canvas);
