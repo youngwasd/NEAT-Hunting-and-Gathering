@@ -49,7 +49,7 @@ const loadProfile = (profile) => {
 
     if (attributesLoaded === len) {
         console.log("All attributes loaded successfully");
-        params.SIM_CURR_TRIAL = 0;
+        params.SIM_CURR_TRIAL = 1;
         gameEngine.population.resetSim();
 
     }
@@ -80,7 +80,7 @@ const simulationProfile_numberOfAgents_25 = {
 
     SIM_TRIAL_NUM: {
         HTMLElementID: 'sim_trial_num',
-        value: 0,
+        value: 5,
     },
 
     GENOME_DB: {
@@ -115,7 +115,7 @@ const simulationProfile_numberOfAgents_25 = {
     }
 };
 
-const SP_FitnessFunction_Specific = {
+const ControlProfile_GradualConsumption_Off_FHI_Off = {
     DB: {
         HTMLElementID: 'db',
         value: "NEAT_Thesis_23_TN"
@@ -123,8 +123,7 @@ const SP_FitnessFunction_Specific = {
 
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        //"FitnessFunction_Specific_2"
-        value: "FitnessFunction_Specific_Default"
+        value: "Control_GradualConsumption_Off_FHI_Off"
     },
 
     GEN_TO_SAVE: {
@@ -139,8 +138,7 @@ const SP_FitnessFunction_Specific = {
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        //"FitnessFunction_Specific_Genome_2"
-        value:"FitnessFunction_Specific_Genome_Default"
+        value: "Control_GradualConsumption_Off_FHI_Off_Genome"
     },
 
     GEN_TO_SAVE_GENOME: {
@@ -150,7 +148,7 @@ const SP_FitnessFunction_Specific = {
 
     SIM_TRIAL_NUM: {
         HTMLElementID: 'sim_trial_num',
-        value: 0,
+        value: 5,
     },
 
     NUM_AGENTS: {
@@ -213,23 +211,8 @@ const SP_FitnessFunction_Specific = {
         checked: true,
     },
 
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 100,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
     MIRROR_ROLES: {
         HTMLElementID: 'mirror_roles',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
         checked: true,
     },
 
@@ -237,146 +220,56 @@ const SP_FitnessFunction_Specific = {
         HTMLElementID: 'inactive_prey_targetable',
         checked: true,
     },
-};
 
-const SP_FitnessFunction_Specific_SlowSpeed = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_Default_SlowSpeed"
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 1,
     },
 
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FitnessFunction_Specific_Genome_Default_SlowSpeed"
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        value: 1,
     },
 
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 3.75,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 3.75,
-    },
-};
-
-const SP_FitnessFunction_Specific_FasterSpeed = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_Default_FasterSpeed"
-    },
-
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FitnessFunction_Specific_Genome_Default_FasterSpeed"
-    },
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 7.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 7.5,
-    },
-};
-
-
-const SP_FitnessFunction_Generic = {
-    DB: {
-        HTMLElementID: 'db',
-        value: "NEAT_Thesis_23_TN",
-    },
-
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic"
-    },
-
-    GEN_TO_SAVE: {
-        HTMLElementID: 'gen_to_save',
-        value: 400,
-    },
-
-    SIM_TRIAL_NUM: {
-        HTMLElementID: 'sim_trial_num',
-        value: 0,
-    },
-
-    GENOME_DB: {
-        HTMLElementID: 'genome_db',
-        value: "NEAT_Thesis_23_TN",
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_Genome"
-    },
-
-    GEN_TO_SAVE_GENOME: {
-        HTMLElementID: 'gen_to_save_genome',
-        value: 400,
-    },
-
-    NUM_AGENTS: {
-        HTMLElementID: 'num_agents',
-        value: 50,
-    },
-
-    //Has a custom additional function to run before adding to the profile
-    AGENT_PER_WORLD: {
-        HTMLElementID: 'agent_per_world',
-        value: 2,
-        additionalFunction:
-            () => {
-                document.getElementById("restart_sim").click();
-            },
-    },
-
-    FITNESS_HUNTING_PREY: {
-        HTMLElementID: 'FITNESS_HUNTING_PREY',
-        value: 0,
-    },
-
-    FITNESS_OUT_OF_BOUND: {
-        HTMLElementID: 'FITNESS_OUT_OF_BOUND',
-        value: -2,
-    },
-
-    FITNESS_CALORIES: {
-        HTMLElementID: 'fitness_calories',
-        value: 0,
-    },
-
-    SPLIT_SPECIES: {
-        HTMLElementID: 'split_species',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
         checked: false,
     },
 
-    AGENT_NEIGHBORS: {
-        HTMLElementID: 'agent_neighbors',
-        checked: true,
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: false,
+    },
+};
+
+const RoleAwareness_GradualConsumption_Off_FHI_On = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "RoleAwareness_GradualConsumption_Off_FHI_On"
     },
 
-    FITNESS_ENERGY_EFFICIENCY: {
-        HTMLElementID: 'FITNESS_ENERGY_EFFICIENCY',
-        value: 5,
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "RoleAwareness_GradualConsumption_Off_FHI_On_Genome"
     },
 
-    FITNESS_PERCENT_DEAD: {
-        HTMLElementID: 'FITNESS_PERCENT_DEAD',
-        value: -1,
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: false,
+    },
+};
+
+const RoleAwareness_GradualConsumption_On_FHI_Off = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "RoleAwareness_GradualConsumption_On_FHI_Off"
     },
 
-    FITNESS_WINNER_BONUS: {
-        HTMLElementID: 'FITNESS_WINNER_BONUS',
-        value: 2,
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "RoleAwareness_GradualConsumption_On_FHI_Off_Genome"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -394,42 +287,22 @@ const SP_FitnessFunction_Generic = {
         value: 50,
     },
 
-    MIRROR_ROLES: {
-        HTMLElementID: 'mirror_roles',
-        checked: true,
-    },
-
     PUSH_FHI_TO_ANN: {
         HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-
-    INACTIVE_PREY_TARGETABLE: {
-        HTMLElementID: 'inactive_prey_targetable',
-        checked: true,
+        checked: false,
     },
 };
-const SP_Fitness_Generic_Faster_Prey = {
-    ...SP_FitnessFunction_Generic,
 
+const RoleAwareness_GradualConsumption_On_FHI_On = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_On_PushFHI_On"
+        value: "RoleAwareness_GradualConsumption_On_FHI_On"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_On_PushFHI_On_Genome"
-    },
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 4,
+        value: "RoleAwareness_GradualConsumption_On_FHI_On_Genome"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -437,33 +310,65 @@ const SP_Fitness_Generic_Faster_Prey = {
         checked: true,
     },
 
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 100,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        value: 50,
+    },
+
     PUSH_FHI_TO_ANN: {
         HTMLElementID: 'push_fhi_to_ann',
         checked: true,
     },
 };
 
-const SP_Fitness_Specific_2x_Bush = {
-    ...SP_FitnessFunction_Specific,
-
+const GradualConsumption_On_TicksConsume_25 = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_2x_Bush"
+        value: "GradualConsumption_On_TicksConsume_25"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_2x_Bush_Genome"
+        value: "GradualConsumption_On_TicksConsume_25_Genome"
     },
 
-    CALORIES_PER_FOOD: {
-        HTMLElementID: 'calories_per_food',
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
+        checked: true,
+    },
+
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 100,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
         value: 25,
     },
 
-    FOOD_PER_AGENT: {
-        HTMLElementID: 'food_agent_ratio',
-        value: 2,
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: false,
+    },
+};
+
+const GradualConsumption_On_TicksConsume_100 = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "GradualConsumption_On_TicksConsume_100"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "GradualConsumption_On_TicksConsume_100_Genome"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -471,33 +376,32 @@ const SP_Fitness_Specific_2x_Bush = {
         checked: true,
     },
 
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 100,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        value: 100,
+    },
+
     PUSH_FHI_TO_ANN: {
         HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
+        checked: false,
     },
 };
 
-const SP_Fitness_Specific_4x_Bush = {
-    ...SP_FitnessFunction_Specific,
-
+const GradualConsumption_On_TicksConsume_150 = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Specific_4x_Bush_attempt2"
+        value: "GradualConsumption_On_TicksConsume_150"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Specific_4x_Bush_attempt2_Genome"
-    },
-
-    CALORIES_PER_FOOD: {
-        HTMLElementID: 'calories_per_food',
-        value: 12.5,
-    },
-
-    FOOD_PER_AGENT: {
-        HTMLElementID: 'food_agent_ratio',
-        value: 4,
+        value: "GradualConsumption_On_TicksConsume_150_Genome"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -505,24 +409,83 @@ const SP_Fitness_Specific_4x_Bush = {
         checked: true,
     },
 
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 100,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        value: 150,
+    },
+
     PUSH_FHI_TO_ANN: {
         HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
+        checked: false,
     },
 };
 
-const SP_Fitness_Specific_Faster_Prey = {
-    ...SP_FitnessFunction_Specific,
+const SpeedAdvantage_FasterPrey_125_Percent_Faster = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        //"FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_On"
-        value:"FasterPrey_FoodBush_On_PushFHI_On"
+        value: "SpeedAdvantage_FasterPrey_125_Percent_Faster"
     },
+
+
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        //"FitnessFunction_Specific_FasterPrey_FoodBush_On_PushFHI_On_Genome"
-        value:"FasterPrey_FoodBush_On_PushFHI_On_Genome"
+        value: "SpeedAdvantage_FasterPrey_125_Percent_Faster_Genome"
     },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
+        value: 6.25,
+    },
+
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 5,
+    },
+};
+
+const SpeedAdvantage_FasterPrey_150_Percent_Faster = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "SpeedAdvantage_FasterPrey_150_Percent_Faster"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "SpeedAdvantage_FasterPrey_150_Percent_Faster_Genome"
+    },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
+        value: 7.5,
+    },
+
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 5,
+    },
+};
+
+const SpeedAdvantage_FasterPredator_125_Percent_Faster = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "SpeedAdvantage_FasterPredator_125_Percent_Faster"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "SpeedAdvantage_FasterPredator_125_Percent_Faster_Genome"
+    },
+
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
         value: 5,
@@ -530,1049 +493,195 @@ const SP_Fitness_Specific_Faster_Prey = {
 
     PREDATOR_SPEED: {
         HTMLElementID: 'predator_speed',
-        value: 4,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
+        value: 6.25,
     },
 };
 
-const SP_Fitness_Generic_Faster_Prey_BushFood_Off = {
-    ...SP_Fitness_Generic_Faster_Prey,
-
+const SpeedAdvantage_FasterPredator_150_Percent_Faster = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_PushFHI_On"
+        value: "SpeedAdvantage_FasterPredator_150_Percent_Faster"
     },
+
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_PushFHI_On_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Prey_BushFood_Off = {
-    ...SP_Fitness_Specific_Faster_Prey,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPrey_FoodBush_Off_PushFHI_On"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPrey_FoodBush_Off_PushFHI_On_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off = {
-    ...SP_Fitness_Specific_Faster_Prey,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPrey_FoodBush_Off_PushFHI_Off"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPrey_FoodBush_Off_PushFHI_Off_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-};
-
-const SP_Fitness_Generic_Faster_Prey_BushFood_Off_PushFHI_Off = {
-    ...SP_Fitness_Generic_Faster_Prey,
-
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_PushFHI_Off"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_PushFHI_Off_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-};
-
-const SP_Fitness_Generic_Faster_Prey_Low_Speed = {
-    ...SP_FitnessFunction_Generic,
-
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_Genome_LowSpeed"
+        value: "SpeedAdvantage_FasterPredator_150_Percent_Faster_Genome"
     },
 
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Prey_Low_Speed = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPrey_LowSpeed"
-    },
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPrey_Genome_LowSpeed"
-    },
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 100,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Prey_BushFood_Off_Low_Speed = {
-    ...SP_Fitness_Specific_Faster_Prey,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPrey_FoodBush_Off_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPrey_FoodBush_Off_Genome_LowSpeed"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-};
-
-const SP_Fitness_Generic_Faster_Prey_BushFood_Off_Low_Speed = {
-    ...SP_Fitness_Generic_Faster_Prey,
-
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_Genome_LowSpeed"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off_Low_Speed = {
-    ...SP_Fitness_Specific_Faster_Prey,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPrey_FoodBush_Off_PushFHI_Off_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPrey_FoodBush_Off_PushFHI_Off_Genome_LowSpeed"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-};
-
-const SP_Fitness_Generic_Faster_Prey_BushFood_Off_PushFHI_Off_Low_Speed = {
-    ...SP_Fitness_Generic_Faster_Prey,
-
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_PushFHI_Off_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_Off_PushFHI_Off_Genome_Speed"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPrey_FoodBush_On_PushFHI_Off_LowSpeed"
-    },
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPrey_Genome_FoodBush_On_PushFHI_Off_LowSpeed"
-    },
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 100,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off = {
-    ...SP_Fitness_Specific_Faster_Prey,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPrey_FoodBush_On_PushFHI_Off"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPrey_FoodBush_On_PushFHI_Off_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 100,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-}
-
-const SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed = {
-    ...SP_FitnessFunction_Generic,
-
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_On_PushFHI_Off_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_On_PushFHI_Off_Genome_LowSpeed"
-    },
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2.5,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2,
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 100,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off = {
-    ...SP_FitnessFunction_Generic,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_On_PushFHI_Off"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPrey_FoodBush_On_PushFHI_Off_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 100,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-}
-
-const SP_Fitness_Specific_Faster_Predator = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPredator_FoodBush_On_PushFHI_On"
-    },
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_FoodBush_On_PushFHI_On_Genome"
-    },
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 4,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
         value: 5,
     },
 
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 7.5,
     },
 };
-
-const SP_Fitness_Generic_Faster_Predator = {
-    ...SP_FitnessFunction_Generic,
-
+const OverallSpeed_25_Percent = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPredator_FoodBush_On_PushFHI_On"
+        value: "OverallSpeed_25_Percent"
     },
+
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPredator_FoodBush_On_PushFHI_On_Genome"
+        value: "OverallSpeed_25_Percent_Genome"
     },
 
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
-        value: 4,
+        value: 1,
     },
 
     PREDATOR_SPEED: {
         HTMLElementID: 'predator_speed',
-        value: 5,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
+        value: 1,
     },
 };
-
-const SP_Fitness_Specific_Faster_Predator_Low_Speed = {
-    ...SP_FitnessFunction_Specific,
+const OverallSpeed_50_Percent = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value:"FasterPredator_LowSpeed"
+        value: "OverallSpeed_50_Percent"
     },
+
+
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_Genome_LowSpeed"
+        value: "OverallSpeed_50_Percent_Genome"
     },
+
     PREY_SPEED: {
         HTMLElementID: 'prey_speed',
-        value: 2,
+        value: 2.5,
     },
 
     PREDATOR_SPEED: {
         HTMLElementID: 'predator_speed',
         value: 2.5,
     },
+};
 
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
+const OverallSpeed_75_Percent = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "OverallSpeed_75_Percent"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "OverallSpeed_75_Percent_Genome"
+    },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
+        value: 3.75,
+    },
+
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 3.75,
+    },
+};
+
+const OverallSpeed_150_Percent = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "OverallSpeed_150_Percent"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "OverallSpeed_150_Percent_Genome"
+    },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
+        value: 7.5,
+    },
+
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 7.5,
+    },
+};
+
+const OverallSpeed_200_Percent = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "OverallSpeed_200_Percent"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "OverallSpeed_200_Percent_Genome"
+    },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
         value: 10,
     },
 
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Generic_Faster_Predator_Low_Speed = {
-    ...SP_FitnessFunction_Generic,
-
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "FitnessFunction_Generic_FasterPredator_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "FitnessFunction_Generic_FasterPredator_Genome_LowSpeed"
-    },
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2,
-    },
-
     PREDATOR_SPEED: {
         HTMLElementID: 'predator_speed',
-        value: 2.5,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off = {
-    ...SP_Fitness_Specific_Faster_Predator,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPredator_FoodBush_On_PushFHI_Off"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_FoodBush_On_PushFHI_Off_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
         value: 10,
     },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-}
-
-const SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off_Low_Speed = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPredator_FoodBush_On_PushFHI_Off_LowSpeed"
-    },
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_Genome_FoodBush_On_PushFHI_Off_LowSpeed"
-    },
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2.5,
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 10,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
 };
-
-const SP_Fitness_Specific_Faster_Predator_BushFood_Off = {
-    ...SP_Fitness_Specific_Faster_Predator,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPredator_FoodBush_Off_PushFHI_On"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_FoodBush_Off_PushFHI_On_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Predator_BushFood_Off_Low_Speed = {
-    ...SP_Fitness_Specific_Faster_Predator,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPredator_FoodBush_Off_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_FoodBush_Off_Genome_LowSpeed"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2.5,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off = {
-    ...SP_Fitness_Specific_Faster_Predator,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPredator_FoodBush_Off_PushFHI_Off"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_FoodBush_Off_PushFHI_Off_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-};
-
-const SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off_Low_Speed = {
-    ...SP_Fitness_Specific_Faster_Predator,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FasterPredator_FoodBush_Off_PushFHI_Off_LowSpeed"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"FasterPredator_FoodBush_Off_PushFHI_Off_Genome_LowSpeed"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-    PREY_SPEED: {
-        HTMLElementID: 'prey_speed',
-        value: 2,
-    },
-
-    PREDATOR_SPEED: {
-        HTMLElementID: 'predator_speed',
-        value: 2.5,
-    },
-};
-
-const SP_Fitness_Specific_BushFood_On_PushFHI_Off = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FitnessFunction_Specific_Default_BushFood_On_PushFHI_Off"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"Specific_Default_FoodBush_On_PushFHI_Off_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 100,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 50,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
-}
-
-const SP_Fitness_Specific_BushFood_Off_PushFHI_On = {
-    ...SP_FitnessFunction_Specific,
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value:"FitnessFunction_Specific_Default_BushFood_Off_PushFHI_On"
-    },
-
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value:"Specific_Default_FoodBush_Off_PushFHI_On_Genome"
-    },
-
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
-
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
-
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
-
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: true,
-    },
-}
-
 
 
 const profileList = {
-    "Specified Fitness: Default Same Speed, Food Bush On, Push FHI On": SP_FitnessFunction_Specific,
-    "Specified Fitness: Same Speed (Slower (3.75) Max Speed)": SP_FitnessFunction_Specific_SlowSpeed,
-    "Specified Fitness: Same Speed (Faster (7.5) Max Speed)": SP_FitnessFunction_Specific_FasterSpeed,
-    "Specified Fitness: Default Same Speed, Food Bush Off, Push FHI On": SP_Fitness_Specific_BushFood_Off_PushFHI_On,
-    "Specified Fitness: Default Same Speed, Food Bush On, Push FHI Off": SP_Fitness_Specific_BushFood_On_PushFHI_Off,
+    "Control Profile: Default Same Speed, Gradual Consumption Off, Push FHI Off": ControlProfile_GradualConsumption_Off_FHI_Off,
+    "Padding_1": "1", //For spacing display in the html element
 
-    "Specified Fitness: Faster Prey, Food Bush On, Push FHI On": SP_Fitness_Specific_Faster_Prey,
-    "Specified Fitness: Faster Prey (Slow Speed), Food Bush On, Push FHI On": SP_Fitness_Specific_Faster_Prey_Low_Speed,
+    "Role Awareness: Gradual Consumption Off, Push FHI On": RoleAwareness_GradualConsumption_Off_FHI_On,
+    "Role Awareness: Gradual Consumption On, Push FHI Off": RoleAwareness_GradualConsumption_On_FHI_Off,
+    "Role Awareness: Gradual Consumption On, Push FHI On": RoleAwareness_GradualConsumption_On_FHI_On,
+    "Padding_2": "2",
 
-    "Specified Fitness: Faster Prey, Food Bush On, Push FHI Off": SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off,
-    "Specified Fitness: Faster Prey (Slow Speed), Food Bush On, Push FHI Off": SP_Fitness_Specific_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed,
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 50%": GradualConsumption_On_TicksConsume_25,
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 200%": GradualConsumption_On_TicksConsume_100,
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 300%": GradualConsumption_On_TicksConsume_150,
+    "Padding_3": "3",
 
-    "Specified Fitness: Faster Prey, Food Bush Off, Push FHI On": SP_Fitness_Specific_Faster_Prey_BushFood_Off,
-    "Specified Fitness: Faster Prey (Slow Speed), Food Bush Off, Push FHI On": SP_Fitness_Specific_Faster_Prey_BushFood_Off_Low_Speed,
+    "Speed Advantage: Prey Faster 125%": SpeedAdvantage_FasterPrey_125_Percent_Faster,
+    "Speed Advantage: Prey Faster 150%": SpeedAdvantage_FasterPrey_150_Percent_Faster,
+    "Speed Advantage: Predator Faster 125%": SpeedAdvantage_FasterPredator_125_Percent_Faster,
+    "Speed Advantage: Predator Faster 150%": SpeedAdvantage_FasterPredator_150_Percent_Faster,
+    "Padding_4": "4",
 
-    "Specified Fitness: Faster Prey, Food Bush Off, Push FHI Off": SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off,
-    "Specified Fitness: Faster Prey (Slow Speed), Food Bush Off, Push FHI Off": SP_Fitness_Specific_Faster_Prey_BushFood_Off_PushFHI_Off_Low_Speed,
-
-    "Specified Fitness: Faster Predator, Food Bush On, Push FHI On": SP_Fitness_Specific_Faster_Predator,
-    "Specified Fitness: Faster Predator (Slow Speed), Food Bush On, Push FHI On": SP_Fitness_Specific_Faster_Predator_Low_Speed,
-
-    "Specified Fitness: Faster Predator, Food Bush On, Push FHI Off": SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off,
-    "Specified Fitness: Faster Predator (Slow Speed), Food Bush On, Push FHI Off": SP_Fitness_Specific_Faster_Predator_BushFood_On_PushFHI_Off_Low_Speed,
-
-
-    "Specified Fitness: Faster Predator, Food Bush Off, Push FHI On": SP_Fitness_Specific_Faster_Predator_BushFood_Off,
-    "Specified Fitness: Faster Predator (Slow Speed), Food Bush Off, Push FHI On": SP_Fitness_Specific_Faster_Predator_BushFood_Off_Low_Speed,
-
-
-    "Specified Fitness: Faster Predator, Food Bush Off, Push FHI Off": SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off,
-    "Specified Fitness: Faster Predator (Slow Speed), Food Bush Off, Push FHI Off": SP_Fitness_Specific_Faster_Predator_BushFood_Off_PushFHI_Off_Low_Speed,
-
-    "Specified Fitness: 2x Bush 1/2x calories per bush": SP_Fitness_Specific_2x_Bush,
-    "Specified Fitness: 4x Bush 1/4x calories per bush": SP_Fitness_Specific_4x_Bush,
-
-
-    "Generalized Fitness Function": SP_FitnessFunction_Generic,
-
-    "Generalized Fitness: Faster Prey, Food Bush On, Push FHI On": SP_Fitness_Generic_Faster_Prey,
-    "Generalized Fitness: Faster Prey (Slow Speed), Food Bush On, Push FHI On": SP_Fitness_Generic_Faster_Prey_Low_Speed,
-
-    "Generalized Fitness: Faster Prey, Food Bush On, Push FHI Off": SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off,
-    "Generalized Fitness: Faster Prey (Slow Speed), Food Bush On, Push FHI Off": SP_Fitness_Generic_Faster_Prey_BushFood_On_PushFHI_Off_Low_Speed,
-
-    "Generalized Fitness: Faster Prey, Food Bush Off, , Push FHI On": SP_Fitness_Generic_Faster_Prey_BushFood_Off,
-    "Generalized Fitness: Faster Prey (Slow Speed), Food Bush Off, , Push FHI On": SP_Fitness_Generic_Faster_Prey_BushFood_Off_Low_Speed,
-
-    "Generalized Fitness: Faster Prey, Food Bush Off, Push FHI Off": SP_Fitness_Generic_Faster_Prey_BushFood_Off_PushFHI_Off,
-    "Generalized Fitness: Faster Prey (Slow Speed), Food Bush Off, Push FHI Off": SP_Fitness_Generic_Faster_Prey_BushFood_Off_PushFHI_Off_Low_Speed,
-
-    "Generalized Fitness: Faster Predator, Food Bush On, Push FHI On": SP_Fitness_Generic_Faster_Predator,
-
+    "Overall Speed: 25% Original Speed": OverallSpeed_25_Percent,
+    "Overall Speed: 50% Original Speed": OverallSpeed_50_Percent,
+    "Overall Speed: 75% Original Speed": OverallSpeed_75_Percent,
+    "Overall Speed: 200% Original Speed": OverallSpeed_200_Percent,
+    "Padding_5": "5",
 };
 
 const initProfiles = () => {
     select = document.getElementById('profileOption');
 
     for (let profileName in profileList) {
-        let opt = document.createElement('option');
-        opt.value = profileName;
-        opt.innerHTML = profileName;
-        select.appendChild(opt);
+        let opt = document.createElement("option");
+        if (profileName.match("^Padding")) {
+            opt.value = "";
+            opt.style = "font-size: 5pt;";
+            opt.disabled = true;
+            select.appendChild(opt);
+        }
+        else {
+            opt.value = profileName;
+            opt.innerHTML = profileName;
+            select.appendChild(opt);
+        }
     }
 };
