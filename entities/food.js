@@ -432,7 +432,7 @@ class Food {
 
         if (this.game.population.tickCounter - this.lastTickBeingEaten >= params.COOLDOWN_TO_REGEN
             && this.ticksToConsume < params.MAX_TICKS_TO_CONSUME)
-            this.ticksToConsume++;
+            this.ticksToConsume = params.MAX_TICKS_TO_CONSUME;
 
         if (!this.removeFromWorld) {
             this.updateBoundingCircle(); // update our bounding circle to reflect our state
