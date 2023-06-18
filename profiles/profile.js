@@ -264,12 +264,12 @@ const RoleAwareness_GradualConsumption_On_FHI_Off = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_Off"
+        value: "RoleAwareness_GradualConsumption_On_FHI_Off_2"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_Off_Genome"
+        value: "RoleAwareness_GradualConsumption_On_FHI_Off_Genome_2"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -297,12 +297,12 @@ const RoleAwareness_GradualConsumption_On_FHI_On = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_On"
+        value: "RoleAwareness_GradualConsumption_On_FHI_On_2"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_On_Genome"
+        value: "RoleAwareness_GradualConsumption_On_FHI_On_Genome_2"
     },
 
     GRADUAL_CONSUMPTION: {
