@@ -264,12 +264,12 @@ const RoleAwareness_GradualConsumption_On_FHI_Off = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_Off_2"
+        value: "RoleAwareness_GradualConsumption_On_FHI_Off_3"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_Off_Genome_2"
+        value: "RoleAwareness_GradualConsumption_On_FHI_Off_Genome_3"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -285,6 +285,11 @@ const RoleAwareness_GradualConsumption_On_FHI_Off = {
     MAX_TICKS_TO_CONSUME: {
         HTMLElementID: 'max_ticks_to_consume',
         value: 50,
+    },
+
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'caloriesPerFood',
+        value: 250,
     },
 
     PUSH_FHI_TO_ANN: {
@@ -297,12 +302,12 @@ const RoleAwareness_GradualConsumption_On_FHI_On = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_On_2"
+        value: "RoleAwareness_GradualConsumption_On_FHI_On_3"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "RoleAwareness_GradualConsumption_On_FHI_On_Genome_2"
+        value: "RoleAwareness_GradualConsumption_On_FHI_On_Genome_3"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -320,9 +325,52 @@ const RoleAwareness_GradualConsumption_On_FHI_On = {
         value: 50,
     },
 
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'caloriesPerFood',
+        value: 250,
+    },
+
     PUSH_FHI_TO_ANN: {
         HTMLElementID: 'push_fhi_to_ann',
         checked: true,
+    },
+};
+
+const GradualConsumption_TicksConsume1 = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "GradualConsumption_Ticks_Consume_1"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "GradualConsumption_Ticks_Consume_1_Genome"
+    },
+
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
+        checked: true,
+    },
+
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 100,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        value: 1,
+    },
+
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'caloriesPerFood',
+        value: 10,
+    },
+
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: false,
     },
 };
 
@@ -330,12 +378,12 @@ const GradualConsumption_TicksConsume25 = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "GradualConsumption_TicksConsume25"
+        value: "GradualConsumption_Ticks_Consume_25"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "GradualConsumption_TicksConsume25_Genome"
+        value: "GradualConsumption_TicksConsume_25_Genome"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -353,6 +401,49 @@ const GradualConsumption_TicksConsume25 = {
         value: 25,
     },
 
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'caloriesPerFood',
+        value: 250,
+    },
+
+    PUSH_FHI_TO_ANN: {
+        HTMLElementID: 'push_fhi_to_ann',
+        checked: false,
+    },
+};
+
+const GradualConsumption_TicksConsume50 = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "GradualConsumption_Ticks_Consume_50"
+    },
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "GradualConsumption_TicksConsume_50_Genome"
+    },
+
+    GRADUAL_CONSUMPTION: {
+        HTMLElementID: 'GRADUAL_CONSUMPTION',
+        checked: true,
+    },
+
+    COOLDOWN_TO_REGEN: {
+        HTMLElementID: 'cooldown_to_regen',
+        value: 100,
+    },
+
+    MAX_TICKS_TO_CONSUME: {
+        HTMLElementID: 'max_ticks_to_consume',
+        value: 50,
+    },
+
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'caloriesPerFood',
+        value: 500,
+    },
+
     PUSH_FHI_TO_ANN: {
         HTMLElementID: 'push_fhi_to_ann',
         checked: false,
@@ -363,12 +454,12 @@ const GradualConsumption_TicksConsume100 = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "GradualConsumption_TicksConsume100"
+        value: "GradualConsumption_TicksConsume_100"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "GradualConsumption_TicksConsume100_Genome"
+        value: "GradualConsumption_TicksConsume_100_Genome"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -386,6 +477,11 @@ const GradualConsumption_TicksConsume100 = {
         value: 100,
     },
 
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'caloriesPerFood',
+        value: 1000,
+    },
+
     PUSH_FHI_TO_ANN: {
         HTMLElementID: 'push_fhi_to_ann',
         checked: false,
@@ -396,12 +492,12 @@ const GradualConsumption_TicksConsume150 = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "GradualConsumption_TicksConsume150"
+        value: "GradualConsumption_TicksConsume_150"
     },
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "GradualConsumption_TicksConsume150_Genome"
+        value: "GradualConsumption_TicksConsume_150_Genome"
     },
 
     GRADUAL_CONSUMPTION: {
@@ -417,6 +513,11 @@ const GradualConsumption_TicksConsume150 = {
     MAX_TICKS_TO_CONSUME: {
         HTMLElementID: 'max_ticks_to_consume',
         value: 150,
+    },
+
+    CALORIES_PER_FOOD: {
+        HTMLElementID: 'caloriesPerFood',
+        value: 1500,
     },
 
     PUSH_FHI_TO_ANN: {
@@ -661,7 +762,9 @@ const profileList = {
     "Overall Speed: 200% Original Speed": OverallSpeed_200_Percent,
     "Padding_5": "5",
 
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 1 (Instant)": GradualConsumption_TicksConsume1,
     "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 50%": GradualConsumption_TicksConsume25,
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 100%": GradualConsumption_TicksConsume50,
     "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 200%": GradualConsumption_TicksConsume100,
     "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 300%": GradualConsumption_TicksConsume150,
     "Padding_3": "3",
