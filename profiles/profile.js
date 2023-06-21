@@ -649,11 +649,6 @@ const profileList = {
     "Role Awareness: Gradual Consumption On, Push FHI On": RoleAwareness_GradualConsumption_On_FHI_On,
     "Padding_2": "2",
 
-    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 50%": GradualConsumption_TicksConsume25,
-    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 200%": GradualConsumption_TicksConsume100,
-    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 300%": GradualConsumption_TicksConsume150,
-    "Padding_3": "3",
-
     "Speed Advantage: Prey Faster 125%": SpeedAdvantage_FasterPrey_125_Percent_Faster,
     "Speed Advantage: Prey Faster 150%": SpeedAdvantage_FasterPrey_150_Percent_Faster,
     "Speed Advantage: Predator Faster 125%": SpeedAdvantage_FasterPredator_125_Percent_Faster,
@@ -665,6 +660,11 @@ const profileList = {
     "Overall Speed: 75% Original Speed": OverallSpeed_75_Percent,
     "Overall Speed: 200% Original Speed": OverallSpeed_200_Percent,
     "Padding_5": "5",
+
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 50%": GradualConsumption_TicksConsume25,
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 200%": GradualConsumption_TicksConsume100,
+    "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 300%": GradualConsumption_TicksConsume150,
+    "Padding_3": "3",
 };
 
 const initProfiles = () => {

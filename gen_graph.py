@@ -9,6 +9,9 @@ import sys, os
 src = os.getcwd() + "/Charts/RawData"
 dest = os.getcwd() + "/Charts/Result"
 
+#python gen_graph.py 'src folder' 'destination folder'
+
+
 #Support command line argument
 if (len(sys.argv) > 1):
     if (sys.argv[1] is not None):
@@ -24,7 +27,8 @@ bounds = {
     'avgEnergySpent': [0, 0],
     'avgPercDead': [0, 0],
     'totalFoodConsumptionCount': [0, 0],
-    'avgPredWinnerBonus': [0, 0]
+    'avgPredWinnerBonus': [0, 0],
+    'totalCaloriesConsumedAsPrey': [0, 0],
 }
 
 def determineMax(curr):
@@ -41,8 +45,14 @@ def updateBounds(file, df):
     fparts = file.split('_')
     fMax = df.max().max()
     fMin = df.min().min()
+
+    if (fparts[0] == 'totalPreyHuntedCount'):
+        fMax = min(50, fMax)
+        #print(fparts, 'Fmax ', fMax, 'Fmin ', fMin)
+
     currMax = bounds[fparts[0]][1]
     currMin = bounds[fparts[0]][0]
+   
     bounds[fparts[0]][1] = max(fMax, currMax)
     bounds[fparts[0]][0] = min(fMin, currMin)
 
@@ -59,8 +69,10 @@ def recurseFolders(curr):
             recurseFolders(curr + '/' + f)
         else:
             labels = getPlotLabels(f)
-            print(labels)
-            createPlot(src + curr + '/' + f, dest + curr, labels[0], labels[1], labels[2], getBounds(f))
+            #print(labels)
+            
+            profileName = curr.replace('/', '_')
+            createPlot(src + curr + '/' + f, dest + curr, labels[0], labels[1], labels[2], getBounds(f), profileName)
 
 def getPlotLabels(file):
     fparts = file.split('_')
@@ -91,6 +103,8 @@ def getTitle(fparts):
         return 'Total Food Consumed by Prey Per Generation'
     elif titleId == 'avgPredWinnerBonus':
         return 'Average Predator Winner Bonus Per Generation'
+    elif titleId == 'totalCaloriesConsumedAsPrey':
+        return 'Total Calories Prey Consumed Per Generation'
     else:
         print('A title ID does not exist yet! Add ' + titleId + ' to the getTitle(titleId) method.', file=sys.stderr)
     return 'error :('
@@ -111,11 +125,13 @@ def getYLabel(fparts):
         return 'Total Food Consumed by Prey'
     elif titleId == 'avgPredWinnerBonus':
         return 'Average Predator Winner Bonus'
+    elif titleId == 'totalCaloriesConsumedAsPrey':
+        return 'Total Calories Prey Consumed'
     else:
         print('A title ID does not exist yet! Add ' + titleId + ' to the getTitle(titleId) method.', file=sys.stderr)
     return 'error :('
 
-def createPlot(csv_path, plotDest, title, x_label, y_label, bounds):
+def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName = ''):
     df = pd.read_csv(csv_path)
     df.drop('Average', axis = 'columns', inplace = True)
     df.dropna(axis=1, inplace = True)
@@ -123,7 +139,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds):
     print(df)
     
     c_len = len(df.columns)
-    scatter = df#.drop('Average', axis = 'columns')
+    scatter = df.drop('Average', axis = 'columns')
 
     for c in scatter.columns:
         plt.scatter(scatter.index.array, scatter[c],  4, label = c)
@@ -137,7 +153,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds):
     #plt.show()
 
     fileName = title.replace(' ', '_')
-    plt.savefig(plotDest + '/' + fileName +'.png')
+    plt.savefig(plotDest + '/' + fileName + profileName + '.png')
     plt.clf()
     
 if len(os.listdir(dest)) != 0:
