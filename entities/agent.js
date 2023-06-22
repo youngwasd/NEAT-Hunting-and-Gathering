@@ -482,16 +482,16 @@ class Agent {
          * if we have split species and don't split agent per world , then we only get entities in the world corresponding to our species id, otherwise all entities
          * are guaranteed to be in world 0. If AGENT_NEIGHBORS is off, then we only retrieve food
          */
-        let entities = this.game.population.getEntitiesInWorld(this.speciesId, !params.AGENT_NEIGHBORS);
+        let entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
 
         if (!params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
             entities = this.game.population.getEntitiesInWorld(0, !params.AGENT_NEIGHBORS);
         }
-        else {
-            if (this.worldId && this.game.population.worlds.get(this.worldId)) {
-                entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
-            }
-        }
+        // else {
+        //     if (this.worldId && this.game.population.worlds.get(this.worldId)) {
+        //         entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
+        //     }
+        // }
         entities.forEach(entity => {
             let added = false;
             /** add all entities to our spotted neighbors that aren't ourselves, not dead, and are within our vision radius */
