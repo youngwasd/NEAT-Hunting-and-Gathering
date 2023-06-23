@@ -136,14 +136,27 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     df.drop('Average', axis = 'columns', inplace = True)
     df.dropna(axis=1, inplace = True)
     df['Average'] = df.mean(numeric_only=True, axis=1)
-    print(df)
-    
+
     c_len = len(df.columns)
     scatter = df.drop('Average', axis = 'columns')
 
+    df['StandardDeviation'] = df.std(axis = 1, ddof = 0)
+    
+    SDAbove = []
+    SDBelow = []
+
+    for mean, sd in zip(df['Average'] , df['StandardDeviation']):
+        SDAbove.append(mean + sd)
+        SDBelow.append(mean - sd)
+
     for c in scatter.columns:
-        plt.scatter(scatter.index.array, scatter[c],  4, label = c)
+        #plt.scatter(scatter.index.array, scatter[c],  4, label = c)
+        plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
+
     plt.plot(df['Average'], linewidth = 2, label = 'Average', color = 'black')
+    #plt.plot(df['StandardDeviation'], linewidth = 1, ls = '--', label = 'Standard Deviation', color = 'red')
+    plt.plot(SDAbove, linewidth = 1.5, ls = ':', label = '+SD', color = 'red')
+    plt.plot(SDBelow, linewidth = 1.5, ls = ':', label = '-SD', color = 'blue')
 
     plt.xlabel(x_label)
     plt.ylabel(y_label)
@@ -155,6 +168,8 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     fileName = title.replace(' ', '_')
     plt.savefig(plotDest + '/' + fileName + profileName + '.png')
     plt.clf()
+
+    print(title)# to show progress
     
 if len(os.listdir(dest)) != 0:
     print('Please clear your destination directory and try again...', file = sys.stderr)
