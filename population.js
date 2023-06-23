@@ -1043,6 +1043,8 @@ class PopulationManager {
             //Collecting out of bound info
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
+
+            this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
         });
 
         //Log the data into agent Tracker
@@ -1071,7 +1073,7 @@ class PopulationManager {
             entry['speciesSuccessfulHuntCount'] = data / PopulationManager.SPECIES_MEMBERS.get(speciesId).length;
             this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry);
 
-            this.agentTracker.addToAttribute('totalPreyHuntedCount', data);
+     
         });
 
         //Add averages to agent tracker
@@ -1079,10 +1081,7 @@ class PopulationManager {
         this.agentTracker.addAvgEnergySpent(sumEnergySpent / params.NUM_AGENTS);
         let predWinnerBonus = sumPredWinnerBonus / params.NUM_AGENTS;
         if (!params.MIRROR_ROLES) predWinnerBonus *= 2;
-        this.agentTracker.addAvgPredWinnerBonus(predWinnerBonus)
-
-
-
+        this.agentTracker.addAvgPredWinnerBonus(predWinnerBonus);
     }
 
     displayDataChart() {

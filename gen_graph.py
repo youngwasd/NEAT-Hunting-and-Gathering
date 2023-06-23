@@ -6,7 +6,7 @@ import pandas as pd
 import sys, os
 
 #Default folders to generate charts
-src = os.getcwd() + "/Charts/RawData"
+src = os.getcwd() + "/Charts/RawData_Input"
 dest = os.getcwd() + "/Charts/Result"
 
 #python gen_graph.py 'src folder' 'destination folder'
@@ -58,7 +58,10 @@ def updateBounds(file, df):
 
 def getBounds(file):
     fparts = file.split('_')
-    return bounds[fparts[0]]
+    res = bounds.get(fparts[0])
+    if (res == None):
+        return [0,0]
+    return res
 
 def recurseFolders(curr):
     folders = os.listdir(src + curr)
@@ -140,23 +143,34 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     c_len = len(df.columns)
     scatter = df.drop('Average', axis = 'columns')
 
-    df['StandardDeviation'] = df.std(axis = 1, ddof = 0)
+    for c in scatter.columns:
+        #plt.scatter(scatter.index.array, scatter[c],  4, label = c)
+        #plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
+        if (c_len > 10):
+            plt.scatter(scatter.index.array, scatter[c],  4, alpha = 0.3)
+        else: 
+            plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
+
+    plt.plot(df['Average'], linewidth = 1.5, label = 'Average', color = 'black')
     
+    #Only draw SD for role awareness profile
+    #if ('_RoleAwareness' in profileName):
+        # SDAbove = []
+        # SDBelow = []
+        # df['StandardDeviation'] = df.std(axis = 1, ddof = 0)
+        # for mean, sd in zip(df['Average'] , df['StandardDeviation']):
+        #     SDAbove.append(mean + sd)
+        #     SDBelow.append(mean - sd)
     SDAbove = []
     SDBelow = []
-
+    df['StandardDeviation'] = df.std(axis = 1, ddof = 0)
     for mean, sd in zip(df['Average'] , df['StandardDeviation']):
         SDAbove.append(mean + sd)
         SDBelow.append(mean - sd)
 
-    for c in scatter.columns:
-        #plt.scatter(scatter.index.array, scatter[c],  4, label = c)
-        plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
-
-    plt.plot(df['Average'], linewidth = 2, label = 'Average', color = 'black')
     #plt.plot(df['StandardDeviation'], linewidth = 1, ls = '--', label = 'Standard Deviation', color = 'red')
-    plt.plot(SDAbove, linewidth = 1.5, ls = ':', label = '+SD', color = 'red')
-    plt.plot(SDBelow, linewidth = 1.5, ls = ':', label = '-SD', color = 'blue')
+    plt.plot(SDAbove, linewidth = 1.2, ls = '-', label = '+SD', color = 'red', alpha = 0.6)
+    plt.plot(SDBelow, linewidth = 1.2, ls = '-', label = '-SD', color = 'blue', alpha = 0.6)
 
     plt.xlabel(x_label)
     plt.ylabel(y_label)
@@ -169,7 +183,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     plt.savefig(plotDest + '/' + fileName + profileName + '.png')
     plt.clf()
 
-    print(title)# to show progress
+    print(profileName + " : " + title)# to show progress
     
 if len(os.listdir(dest)) != 0:
     print('Please clear your destination directory and try again...', file = sys.stderr)

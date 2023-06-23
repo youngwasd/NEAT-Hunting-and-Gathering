@@ -70,13 +70,14 @@ const parseData = (data) => {
 
 const download = (filename, text) => {
     if(!text) {console.log(text); return;}
-    console.log("should work now...");
+    
     let pom = document.createElement('a');
     downloader++;
     pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     pom.setAttribute('download', filename);
     pom.click();
     pom.remove();
+    pom = null;
     console.log("Downloading: " + filename);
 }
 

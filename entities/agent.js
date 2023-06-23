@@ -487,6 +487,9 @@ class Agent {
         if (!params.SPLIT_SPECIES && params.AGENT_PER_WORLD === 0) {
             entities = this.game.population.getEntitiesInWorld(0, !params.AGENT_NEIGHBORS);
         }
+
+        //console.log(entities);
+        //params.SIM_PAUSE = true;
         // else {
         //     if (this.worldId && this.game.population.worlds.get(this.worldId)) {
         //         entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
@@ -656,7 +659,12 @@ class Agent {
                         if (this.biting || !params.AGENT_BITING) {
                             let cals = entity.consume(this);
                             this.energy += cals;
-                            ++this.numberOfPreyHunted;
+                            if (params.HUNTING_MODE === "hierarchy"){
+                                this.numberOfPreyHunted = 1;
+                            }
+                            else{
+                                ++this.numberOfPreyHunted;
+                            }
                             //Only count the first prey hunted incase there's multiple prey
                             if (this.numberOfPreyHunted == 1) {
                                 this.concludingTickPredator = this.game.population.tickCounter;
