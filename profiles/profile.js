@@ -662,13 +662,13 @@ const OverallSpeed_25_Percent = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "OverallSpeed_25_Percent"
+        value: "OverallSpeed_25_Percent_1"
     },
 
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "OverallSpeed_25_Percent_Genome"
+        value: "OverallSpeed_25_Percent_1_Genome"
     },
 
     PREY_SPEED: {
@@ -685,13 +685,13 @@ const OverallSpeed_50_Percent = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "OverallSpeed_50_Percent"
+        value: "OverallSpeed_50_Percent_1"
     },
 
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "OverallSpeed_50_Percent_Genome"
+        value: "OverallSpeed_50_Percent_2_Genome"
     },
 
     PREY_SPEED: {
@@ -777,6 +777,30 @@ const OverallSpeed_200_Percent = {
     },
 };
 
+const OverallSpeed_250_Percent = {
+    ...ControlProfile_GradualConsumption_Off_FHI_Off,
+    DB_COLLECTION: {
+        HTMLElementID: 'db_collection',
+        value: "OverallSpeed_250_Percent"
+    },
+
+
+    GENOME_DB_COLLECTION: {
+        HTMLElementID: 'genome_db_collection',
+        value: "OverallSpeed_250_Percent_Genome"
+    },
+
+    PREY_SPEED: {
+        HTMLElementID: 'prey_speed',
+        value: 12.5,
+    },
+
+    PREDATOR_SPEED: {
+        HTMLElementID: 'predator_speed',
+        value: 12.5,
+    },
+};
+
 
 const profileList = {
     "Control Profile: Default Same Speed, Gradual Consumption Off, Push FHI Off": ControlProfile_GradualConsumption_Off_FHI_Off,
@@ -797,6 +821,7 @@ const profileList = {
     "Overall Speed: 50% Original Speed": OverallSpeed_50_Percent,
     "Overall Speed: 75% Original Speed": OverallSpeed_75_Percent,
     "Overall Speed: 200% Original Speed": OverallSpeed_200_Percent,
+    "Overall Speed: 250% Original Speed": OverallSpeed_250_Percent,
     "Padding_5": "5",
 
     "Gradual Consumption, Proportional Reward Per Tick: Number of Ticks to fully consume 1 (Instant)": GradualConsumption_TicksConsume1,

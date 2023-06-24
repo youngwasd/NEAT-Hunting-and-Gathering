@@ -58,9 +58,17 @@ const saveGenomes = () => {
 }
 
 const parseData = (data) => {
-    agentTrackerAttributesToCollect.forEach(attr =>{
-        download(attr + '_' + db + "_" + db_collection + ".csv", serializeData(data, attr, true));
-    });
+    // agentTrackerAttributesToCollect.forEach(attr =>{
+    //     download(attr + '_' + db + "_" + db_collection + ".csv", serializeData(data, attr, true));
+    // });
+
+    //Only download these for conveniency
+    download("totalCaloriesConsumedAsPrey_" + db + "_" + db_collection + ".csv", serializeData(data, "totalCaloriesConsumedAsPrey", true));
+    download("totalFoodConsumptionCount_" + db + "-" + db_collection + ".csv", serializeData(data, "totalFoodConsumptionCount", true));
+    download("totalPreyHuntedCount_" + db + "-" + db_collection + ".csv", serializeData(data, "totalPreyHuntedCount", true));
+    download("totalTicksOutOfBounds_" + db + "-" + db_collection + ".csv", serializeData(data, "totalTicksOutOfBounds", true));
+    
+
     // download("AvgRawFitness-" + db + "-" + db_collection + ".csv", serializeData(data, "avgFitness", true));
     // download("Consumption-" + db + "-" + db_collection + ".csv", serializeData(data, "consumption", true));
     // download("PercDead-" + db + "-" + db_collection + ".csv", serializeData(data, "avgPercDead", true));

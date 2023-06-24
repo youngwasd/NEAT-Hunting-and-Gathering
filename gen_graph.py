@@ -146,7 +146,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     for c in scatter.columns:
         #plt.scatter(scatter.index.array, scatter[c],  4, label = c)
         #plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
-        if (c_len > 10):
+        if (c_len - 1 > 10):
             plt.scatter(scatter.index.array, scatter[c],  4, alpha = 0.3)
         else: 
             plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
