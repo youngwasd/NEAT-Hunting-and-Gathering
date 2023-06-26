@@ -45,20 +45,16 @@
 
 <body>
     <!-- <canvas id="gameWorld" width="800" height="800" style="background: white; border: 1px solid black" tabindex="0"></canvas> -->
-    <div style="display:flex; flex-wrap: wrap;">
-        <div style="float:left; width:49%;" id="carouselCanvasIndicators" class="carousel carousel-dark"
-            data-bs-ride="carousel">
+    <div style="display:flex; flex-wrap: inherit;">
+        <div id="carouselCanvasIndicators" class="carousel carousel-dark" style="margin: auto;" data-bs-ride="carousel">
             <div>
                 <h1><strong>Main Display:</strong></h1>
             </div>
             <div id="canvas-indicators" class="carousel-indicators">
             </div>
-            <div style="padding-left: 0;
-        padding-right: 0;  
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-        width: 1005px; " id="canvas-carousel" class="carousel-inner">
+            <div style="
+            display: flex;
+            width: 1005px; " id="canvas-carousel" class="carousel-inner">
             </div>
             <button id="main-canvas-back" class="carousel-control-prev" type="button"
                 data-bs-target="#carouselCanvasIndicators" style="float:left;" data-bs-slide="prev">
@@ -72,13 +68,16 @@
             </button>
         </div>
 
-        <div class="container" id="minimapContainters" style="width:1010px; float:right;">
-            <h1><strong>Minimap: </strong><br></h1>
+        <div class="container" id="minimapContainters" style="margin: auto;">
+            <div>
+                <h1><strong>Minimap: </strong><br></h1>
+            </div>
         </div>
     </div>
     <br>
-    <div style="display:flex; flex-wrap:wrap; width: fit-content">
-        <div class="container" style="width: fit-content; border: 1px solid black">
+
+    <div style="display:flex; flex-wrap:wrap; width: fit-content; ">
+        <div class="container" style="width: fit-content; border: 2px solid black">
             <div>
                 <h1><strong>General Simulation Settings:</strong></h1>
             </div>
@@ -137,7 +136,8 @@
                 &emsp;
                 <button type="button" id="restart_sim" type="button">Restart Simulation</button>
                 &emsp;
-                <button type="button" id="pause_sim" type="button" style="background-color: green; color:white;"> Pause
+                <button type="button" id="pause_sim" type="button" style="background-color: green; color:white;">
+                    Pause
                     Simulation</button>
 
             </div>
@@ -145,7 +145,51 @@
             <br>
         </div>
 
-        <div class="container" style="border: 1px solid black; width: fit-content;">
+        <div class="container" style="border: 2px solid black; width: fit-content;">
+            <h1><strong>Database Setting:</strong></h1>
+            <label for="save_to_db"> Enable Saving: </label>
+            <input type="checkbox" id="save_to_db">
+            <br>
+            <label for="db"> Database Name: </label>
+            <input type="text" id="db" value="testDB">
+            <br>
+            <label for="db_collection"> Collection Name: </label>
+            <input type="text" id="db_collection" value="NEATtests">
+
+            <br>
+            <label for="gen_to_save"> Generation to Save to DB: </label>
+            <input type="text" id="gen_to_save" value="40">
+            <br>
+            <label for="sim_trial_num"> Simulation Trials </label>
+            <input type="text" id="sim_trial_num" value=3>
+            <br>
+            <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data
+            </button>
+            <h1><strong>Genome Database Setting:</strong></h1>
+            Genome Enable Saving: <input type="checkbox" id="auto_save_genome">
+            <br>
+            <label for="auto_save_genome">
+            </label>
+            <label for="genome_db"> Genome Database Name: </label>
+            <input type="text" id="genome_db" value="test">
+            <br>
+            <label for="genome_db_collection"> Genome Collection Name: </label>
+            <input type="text" id="genome_db_collection" value="NEATGenomeTests1">
+            <br>
+            <label for="gen_to_save_genome"> Genome Generation to Auto-Save to DB: </label>
+            <input type="text" id="gen_to_save_genome" value="100">
+            <br>
+            <button type="button" id="db_save_genome" style="background-color: red; color:white;"> Save Genome
+            </button>
+            <br>
+            <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download
+                Genome
+            </button>
+            <br></br>
+        </div>
+    </div>
+    <div style="display:flex; flex-wrap:inehrit; width: fit-content;    ">
+        <div class="container" style="border: 2px solid black; width: fit-content;">
             <div>
                 <h1><strong>Food Setting:</strong></h1>
             </div>
@@ -213,48 +257,18 @@
                     Number of Ticks to Fully Consume: <input type="text" id="max_ticks_to_consume" value="50"> <br>
                 </div>
                 <div>
-                    Number of Ticks for Food to reset overlapping counters: <input type="text" id="cooldown_to_regen" value="100">
+                    Number of Ticks for Food to reset overlapping counters: <input type="text" id="cooldown_to_regen"
+                        value="100">
                     <br>
                 </div>
 
                 <br>
             </div>
         </div>
-        <!-- <div style="height: 100%; width: 100%; left: 1000px; position:relative;"> -->
-        <div class="container" style="border: 1px solid black; width: fit-content;">
-            <div>
-                <br>
-                <h1><strong>Hunting Mode Setting:</strong></h1>
-            </div>
 
-            <div>
-                <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
-                <select name="huntingMode" id="huntingMode">
-                    <option value="deactivated">Deactivated</option>
-                    <option selected="selected" value="hierarchy">Food Hierarchy Index</option>
-                    <option value="hierarchy_spectrum">Food Hierarchy Index Spectrum (Multiple Prey/Predator levels)
-                    </option>
-                    <option value="multipleGeneration">Multiple Generation</option>
-                </select>
-                <br>
-                Prey Max Speed: <input type="text" id="prey_speed" value="5"> <br>
-                Predator Max Speed: <input type="text" id="predator_speed" value="5"> <br>
 
-                <input type="checkbox" id="inactive_prey_targetable" name="inactive_prey_targetable" checked="true">
-                Prey Is Targetable When Dead
-                <br>
-                <input type="checkbox" id="push_fhi_to_ann" checked="true"> Push Food Hierarchy Index to ANN
-                <br>
-            </div>
 
-            <div>
-                <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs (restart to
-                take
-                effect)
-            </div>
-        </div>
-
-        <div class="container" style="border: 1px solid black; width: fit-content;">
+        <div class="container" style="border: 2px solid black; width: fit-content;">
             <div>
                 <h1><strong>Agent Setting:</strong></h1>
             </div>
@@ -302,50 +316,47 @@
             <div>
                 Vision Cone Angle (degrees): <input type="text" id="agent_vision_angle" value="180">
             </div>
-
+            <br>
         </div>
 
-        <div class="container" style="border: 1px solid black; width: fit-content; height:max-content">
-            <h1><strong>Database Setting:</strong></h1>
-            <label for="save_to_db"> Enable Saving: </label>
-            <input type="checkbox" id="save_to_db">
-            <br>
-            <label for="db"> Database Name: </label>
-            <input type="text" id="db" value="testDB">
-            <br>
-            <label for="db_collection"> Collection Name: </label>
-            <input type="text" id="db_collection" value="NEATtests">
 
-            <br>
-            <label for="gen_to_save"> Generation to Save to DB: </label>
-            <input type="text" id="gen_to_save" value="40">
-            <br>
-            <label for="sim_trial_num"> Simulation Trials </label>
-            <input type="text" id="sim_trial_num" value=3>
-            <br>
-            <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data
-            </button>
-            <h1><strong>Genome Database Setting:</strong></h1>
-            Genome Enable Saving: <input type="checkbox" id="auto_save_genome">
-            <br>
-            <label for="auto_save_genome">
-            </label>
-            <label for="genome_db"> Genome Database Name: </label>
-            <input type="text" id="genome_db" value="test">
-            <br>
-            <label for="genome_db_collection"> Genome Collection Name: </label>
-            <input type="text" id="genome_db_collection" value="NEATGenomeTests1">
-            <br>
-            <label for="gen_to_save_genome"> Genome Generation to Auto-Save to DB: </label>
-            <input type="text" id="gen_to_save_genome" value="100">
-            <br>
-            <button type="button" id="db_save_genome" style="background-color: red; color:white;"> Save Genome </button>
-            <br>
-            <button type="button" id="db_download_genome" style="background-color: red; color:white;"> Download Genome
-            </button>
-            <br></br>
+    </div>
+
+    <div style="display:flex; flex-wrap:inherit; width: fit-content; margin:auto;">
+        <div class="container" style="border: 2px solid black; width: fit-content;">
+            <div>
+                <br>
+                <h1><strong>Hunting Mode Setting:</strong></h1>
+            </div>
+
+            <div>
+                <label for="huntingMode"> Hunting Mode (Restart to take effect) </label>
+                <select name="huntingMode" id="huntingMode">
+                    <option value="deactivated">Deactivated</option>
+                    <option selected="selected" value="hierarchy">Food Hierarchy Index</option>
+                    <option value="hierarchy_spectrum">Food Hierarchy Index Spectrum (Multiple Prey/Predator levels)
+                    </option>
+                    <option value="multipleGeneration">Multiple Generation</option>
+                </select>
+                <br>
+                Prey Max Speed: <input type="text" id="prey_speed" value="5"> <br>
+                Predator Max Speed: <input type="text" id="predator_speed" value="5"> <br>
+
+                <input type="checkbox" id="inactive_prey_targetable" name="inactive_prey_targetable" checked="true">
+                Prey Is Targetable When Dead
+                <br>
+                <input type="checkbox" id="push_fhi_to_ann" checked="true"> Push Food Hierarchy Index to ANN
+                <br>
+            </div>
+
+            <div>
+                <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs (restart
+                to
+                take
+                effect)
+            </div>
         </div>
-        <div class="container" style="border: 1px solid black; width: fit-content;">
+        <div class="container" style="border: 2px solid black; width: fit-content;">
             <br>
             <h1><strong>Fitness Function:</strong></h1>
             <div>
@@ -362,7 +373,8 @@
 
             <div>
                 <h5><strong>Generalized Agent Fitness Function = </strong></h5>
-                <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="0"> Energy Efficiency (calories gained/calories
+                <input type="text" id="FITNESS_ENERGY_EFFICIENCY" value="0"> Energy Efficiency (calories
+                gained/calories
                 spent)
                 +
                 <input type="text" id="FITNESS_PERCENT_DEAD" value="0"> Percentage of Ticks Dead +
@@ -372,11 +384,7 @@
         </div>
     </div>
 
-
-
-
-
-    <div id="charts" style="float: left; width: 50%; margin-top: 75px; float:left" class="container">
+    <div id="charts" style="flex-wrap:wrap;" class="container">
         <h1><strong>Charts: </strong><br></h1>
         <div id="agentCurrentOutputContainers">
 

@@ -369,7 +369,10 @@ class Minimap {
  * @param {*} width The width of the element
  * @param {*} height The height of the element
  */
-const drawMinimap = (minimap = PopulationManager.MINIMAP, minimapElementID = 'minimap', container = 'minimapContainters', style = '', width = 1000, height = 1000) => {
+const drawMinimap = (minimap = PopulationManager.MINIMAP, minimapElementID = 'minimap', container = 'minimapContainters', 
+        style = 'border: 1px solid black;',
+        width = 1000, height = 1000,
+    ) => {
     let canvas = document.createElement('canvas');
 
     if (!document.getElementById(minimapElementID)) {
