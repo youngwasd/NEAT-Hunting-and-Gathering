@@ -152,13 +152,8 @@ def getYLabel(fparts):
 
 def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName = ''):
     df = pd.read_csv(csv_path)
-    print("Before", df)
     df.drop('Average', axis = 'columns', inplace = True)
     df.dropna(axis=1, inplace = True)
-
-    #After formating
-    print("After format", df)
-   
     #scatter = df.drop('Average', axis = 'columns')
     c_len = len(df.columns)
     for c in df.columns:
