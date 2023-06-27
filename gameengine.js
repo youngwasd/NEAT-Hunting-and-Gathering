@@ -25,7 +25,7 @@ class GameEngine {
     };
 
     startInput() {
-        document.getElementById("restart_sim").addEventListener("click", () => { this.population.resetSim(); });
+        document.getElementById("restart_sim").addEventListener("click", () => { params.SIM_CURR_TRIAL = 1;this.population.resetSim(); });
 
         //Pausing listener
         document.getElementById("pause_sim").addEventListener("click", () => {

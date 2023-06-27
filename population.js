@@ -191,8 +191,6 @@ class PopulationManager {
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
         PopulationManager.CURRENT_GEN_DATA_GATHERING_SLOT = 0;
 
-        params.SIM_CURR_TRIAL = 1;
-
         //Reset generational histograms
         this.leftWheelHist = new Histogram(20, 5, "Average Left Wheel Output Per Generation");
 
@@ -1363,7 +1361,7 @@ class PopulationManager {
             }
 
             this.resetSim();
-            if (params.SIM_TRIAL_NUM < params.SIM_CURR_TRIAL + 1) {
+            if (params.SIM_TRIAL_NUM <= params.SIM_CURR_TRIAL) {
                 //Call pausing button
                 let pauseButton = document.getElementById('pause_sim');
                 if (pauseButton) {

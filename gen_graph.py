@@ -8,6 +8,7 @@ import sys, os
 #Default folders to generate charts
 src = os.getcwd() + "/Charts/RawData_Input"
 dest = os.getcwd() + "/Charts/Result"
+processedData = os.getcwd() + "/Charts/Process_Data"
 
 #python gen_graph.py 'src folder' 'destination folder'
 
@@ -36,13 +37,28 @@ def determineMax(curr):
     #print(folders)
     for f in folders:
         if '.' in f:
-            df = pd.read_csv(src + curr + '/' + f)
-            labels = updateBounds(f, df)
+           
+            labels = updateValueBounds(f, src + curr + '/' + f )
         else:
             determineMax(curr + '/' + f)
 
-def updateBounds(file, df):
+def updateValueBounds(file, filepath):
     fparts = file.split('_')
+    df = pd.read_csv(filepath)
+    #Remove the average column 
+    df.drop('Average', axis = 'columns', inplace = True)
+
+    #Format the data correctly by removing NaN values
+    df = df.dropna(axis='columns')
+    #Recalculate the average value corresponding to the existing data
+    df['Average'] = df.mean(numeric_only=True, axis=1)
+
+    # for c in df.columns:
+    #     print(len(df[c]), STANDARD_ROW_NUM)
+    #     if (len(df[c]) != STANDARD_ROW_NUM):
+    #         print(len(df[c]), STANDARD_ROW_NUM)
+    #         df.drop(c, axis = 'columns')
+
     fMax = df.max().max()
     fMin = df.min().min()
 
@@ -136,22 +152,22 @@ def getYLabel(fparts):
 
 def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName = ''):
     df = pd.read_csv(csv_path)
+    print("Before", df)
     df.drop('Average', axis = 'columns', inplace = True)
     df.dropna(axis=1, inplace = True)
-    df['Average'] = df.mean(numeric_only=True, axis=1)
 
+    #After formating
+    print("After format", df)
+   
+    #scatter = df.drop('Average', axis = 'columns')
     c_len = len(df.columns)
-    scatter = df.drop('Average', axis = 'columns')
-
-    for c in scatter.columns:
-        #plt.scatter(scatter.index.array, scatter[c],  4, label = c)
-        #plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
+    for c in df.columns:
         if (c_len - 1 > 10):
-            plt.scatter(scatter.index.array, scatter[c],  4, alpha = 0.3)
+            plt.scatter(df.index.array, df[c],  4, alpha = 0.3)
         else: 
-            plt.scatter(scatter.index.array, scatter[c],  4, label = c, alpha = 0.3)
-
-    plt.plot(df['Average'], linewidth = 1.5, label = 'Average', color = 'black')
+            plt.scatter(df.index.array, df[c],  4, label = c, alpha = 0.3)
+    df['Average'] = df.mean(numeric_only=True, axis=1)
+    plt.plot(df['Average'], linewidth = 1.8, label = 'Average', color = 'black')
     
     #Only draw SD for role awareness profile
     #if ('_RoleAwareness' in profileName):
