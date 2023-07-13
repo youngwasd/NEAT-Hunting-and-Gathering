@@ -1,4 +1,4 @@
-#run with: python gen_graph.py 'src folder' 'destination folder'
+#Format to run with command line: python gen_graph.py 'src folder' 'destination folder'
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,10 +8,8 @@ import sys, os
 #Default folders to generate charts
 src = os.getcwd() + "/Charts/RawData_Input"
 dest = os.getcwd() + "/Charts/Result"
-processedData = os.getcwd() + "/Charts/Process_Data"
 
-#python gen_graph.py 'src folder' 'destination folder'
-
+STANDARD_TRIALS_NUM = 100
 
 #Support command line argument
 if (len(sys.argv) > 1):
@@ -37,7 +35,6 @@ def determineMax(curr):
     #print(folders)
     for f in folders:
         if '.' in f:
-           
             labels = updateValueBounds(f, src + curr + '/' + f )
         else:
             determineMax(curr + '/' + f)
@@ -47,24 +44,25 @@ def updateValueBounds(file, filepath):
     df = pd.read_csv(filepath)
     #Remove the average column 
     df.drop('Average', axis = 'columns', inplace = True)
+     #Format the data correctly by removing NaN values
+    df.dropna(axis=1, inplace = True)
+       
+    cnum = 0
+    for c in df.columns:
+        if (cnum >= STANDARD_TRIALS_NUM):
+            df.drop(c, axis = 'columns', inplace = True)
+        else:
+            cnum += 1
 
-    #Format the data correctly by removing NaN values
-    df = df.dropna(axis='columns')
     #Recalculate the average value corresponding to the existing data
     df['Average'] = df.mean(numeric_only=True, axis=1)
-
-    # for c in df.columns:
-    #     print(len(df[c]), STANDARD_ROW_NUM)
-    #     if (len(df[c]) != STANDARD_ROW_NUM):
-    #         print(len(df[c]), STANDARD_ROW_NUM)
-    #         df.drop(c, axis = 'columns')
 
     fMax = df.max().max()
     fMin = df.min().min()
 
-    if (fparts[0] == 'totalPreyHuntedCount'):
-        fMax = min(50, fMax)
-        #print(fparts, 'Fmax ', fMax, 'Fmin ', fMin)
+    # if (fparts[0] == 'totalPreyHuntedCount'):
+    #     fMax = min(50, fMax)
+    #     #print(fparts, 'Fmax ', fMax, 'Fmin ', fMin)
 
     currMax = bounds[fparts[0]][1]
     currMin = bounds[fparts[0]][0]
@@ -154,24 +152,24 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     df = pd.read_csv(csv_path)
     df.drop('Average', axis = 'columns', inplace = True)
     df.dropna(axis=1, inplace = True)
+
+    cnum = 0
+    for c in df.columns:
+        if (cnum >= STANDARD_TRIALS_NUM):
+            df.drop(c, axis = 'columns', inplace = True)
+        else:
+            cnum += 1
+
     #scatter = df.drop('Average', axis = 'columns')
     c_len = len(df.columns)
     for c in df.columns:
         if (c_len - 1 > 10):
-            plt.scatter(df.index.array, df[c],  4, alpha = 0.3)
+            plt.scatter(df.index.array, df[c],  4, alpha = 0.1)
         else: 
-            plt.scatter(df.index.array, df[c],  4, label = c, alpha = 0.3)
+            plt.scatter(df.index.array, df[c],  4, label = c, alpha = 0.1)
     df['Average'] = df.mean(numeric_only=True, axis=1)
     plt.plot(df['Average'], linewidth = 1.8, label = 'Average', color = 'black')
     
-    #Only draw SD for role awareness profile
-    #if ('_RoleAwareness' in profileName):
-        # SDAbove = []
-        # SDBelow = []
-        # df['StandardDeviation'] = df.std(axis = 1, ddof = 0)
-        # for mean, sd in zip(df['Average'] , df['StandardDeviation']):
-        #     SDAbove.append(mean + sd)
-        #     SDBelow.append(mean - sd)
     SDAbove = []
     SDBelow = []
     df['StandardDeviation'] = df.std(axis = 1, ddof = 0)
@@ -180,8 +178,8 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
         SDBelow.append(mean - sd)
 
     #plt.plot(df['StandardDeviation'], linewidth = 1, ls = '--', label = 'Standard Deviation', color = 'red')
-    plt.plot(SDAbove, linewidth = 1.2, ls = '-', label = '+SD', color = 'red', alpha = 0.6)
-    plt.plot(SDBelow, linewidth = 1.2, ls = '-', label = '-SD', color = 'blue', alpha = 0.6)
+    plt.plot(SDAbove, linewidth = 1.2, ls = '-', label = '+SD', color = 'red', alpha = 0.8)
+    plt.plot(SDBelow, linewidth = 1.2, ls = '-', label = '-SD', color = 'blue', alpha = 0.8)
 
     plt.xlabel(x_label)
     plt.ylabel(y_label)
@@ -194,7 +192,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     plt.savefig(plotDest + '/' + fileName + profileName + '.png')
     plt.clf()
 
-    print(profileName + " : " + title)# to show progress
+    print(profileName.replace('_',' ') + " : " + title + " with " + str(len(df.columns) - 2) + " columns")# to show progress
     
 if len(os.listdir(dest)) != 0:
     print('Please clear your destination directory and try again...', file = sys.stderr)

@@ -567,13 +567,13 @@ const SpeedAdvantage_FasterPrey_125_Percent_Faster = {
     ...ControlProfile_GradualConsumption_Off_FHI_Off,
     DB_COLLECTION: {
         HTMLElementID: 'db_collection',
-        value: "SpeedAdvantage_FasterPrey_125_Percent_Faster"
+        value: "SpeedAdvantage_FasterPrey_125_Percent_Faster_2"
     },
 
 
     GENOME_DB_COLLECTION: {
         HTMLElementID: 'genome_db_collection',
-        value: "SpeedAdvantage_FasterPrey_125_Percent_Faster_Genome"
+        value: "SpeedAdvantage_FasterPrey_125_Percent_Faster_Genome_2"
     },
 
     PREY_SPEED: {
