@@ -38,7 +38,7 @@ class PopulationManager {
         // List of worlds for a species
         this.predSpeciesWorldList = new Map();
         this.preySpeciesWorldList = new Map();
-        // testing agian 123 123
+        // testing agian
         this.resetWorldColorPool();
 
         //Check for splitting agents (probably distribution of agents for each world)
