@@ -1,21 +1,23 @@
 class PopulationManager {
 
-    static SPECIES_ID = 0;
+// seems as if both prey and predatory are all under "species" so we can split them by adding specific species and build on that
+
+    static SPECIES_ID = 0; // prob move to predPrey
     static GEN_NUM = 0;
     static SPECIES_CREATED = 0;
     static WORLD_CREATED = 0;
     static SPECIES_COLORS = new Map();
     static SPECIES_SENSOR_COLORS = new Map();
-    static SPECIES_MEMBERS = new Map();
+    static SPECIES_MEMBERS = new Map(); // prob move to predPrey
     static COLORS_USED = new Set();
     static SENSOR_COLORS_USED = new Set();
-    static NUM_AGENTS = params.NUM_AGENTS;
+    static NUM_AGENTS = params.NUM_AGENTS; // num agents per world ig
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
     static WORLD_COLOR_POOL = [];
     static MINIMAP;
     static CURRENT_WORLD_DISPLAY = 0;
 
-    static IS_LAST_TICK = false;//Use for debugging purposes; to determine whether the current population is at its last tick
+    static IS_LAST_TICK = false; // Use for debugging purposes; to determine whether the current population is at its last tick
 
     constructor(game) {
         this.game = game;
@@ -33,35 +35,44 @@ class PopulationManager {
         this.worlds = new Map();
         this.createFoodPodLayout();
 
-        this.specieWorldList = new Map();//List of worlds for a specie
+        // List of worlds for a species
+        this.predSpeciesWorldList = new Map();
+        this.preySpeciesWorldList = new Map();
+
         this.resetWorldColorPool();
 
-        //Check for splitting agents
+        //Check for splitting agents (probably distribution of agents for each world)
         if (params.AGENT_PER_WORLD === 0) {
             let world = this.initNewWorld(PopulationManager.SPECIES_ID);
-            world.speciesList.add(0);
+            world.preySpeciesList.add(0);
+            world.predSpeciesList.add(0);
             this.spawnAgents(PopulationManager.SPECIES_ID);
-            this.specieWorldList.set(PopulationManager.SPECIES_ID, [0]);
+
+            this.predSpeciesWorldList.set(PopulationManager.SPECIES_ID, [0]);
+            this.preySpeciesWorldList.set(PopulationManager.SPECIES_ID, [0]);
+            
             this.spawnFood(PopulationManager.SPECIES_ID, false);
             this.spawnFood(PopulationManager.SPECIES_ID, true);
 
             this.resetCanvases();
         }
         else {
-            //Split the original specie into multiple worlds
-            PopulationManager.SPECIES_MEMBERS.set(PopulationManager.SPECIES_ID, []);
+            // Split the original species into multiple worlds
+            predPrey.PREDLIST.set(PopulationManager.SPECIES_ID, []);
+            predPrey.PREYLIST.set(PopulationManager.SPECIES_ID, []);
             PopulationManager.SPECIES_CREATED++;
-            this.specieWorldList.set(PopulationManager.SPECIES_ID, []);
+            this.predSpeciesWorldList.set(PopulationManager.SPECIES_ID, []);
+            this.preySpeciesWorldList.set(PopulationManager.SPECIES_ID, []);
             let numberOfAgentToSpawned = PopulationManager.NUM_AGENTS;
             let worldSpawned = 0;
 
-            //Distribute the agents to the world
+            // Distribute the agents to the world
             while (numberOfAgentToSpawned > 0) {
                 let agentNum = Math.min(numberOfAgentToSpawned, params.AGENT_PER_WORLD);
                 let world = this.initNewWorld(worldSpawned);
 
-                //Add to the list of species the world contains
-                world.speciesList.add(0);//The first species
+                // Add to the list of species the world contains
+                world.speciesList.add(0); // The first species
 
                 this.spawnAgents(worldSpawned, agentNum);
                 this.specieWorldList.get(PopulationManager.SPECIES_ID).push(worldSpawned);
@@ -69,7 +80,7 @@ class PopulationManager {
                 this.spawnFood(worldSpawned, false);
                 this.spawnFood(worldSpawned, true);
 
-                //console.log(world.agents);
+                // console.log(world.agents);
                 numberOfAgentToSpawned -= agentNum;
                 worldSpawned++;
             }
@@ -119,6 +130,7 @@ class PopulationManager {
     };
 
     //Return NULL if no color is availble
+    // (CAN IGNORE)
     static getNextAvailableWorldColor() {
         if (PopulationManager.WORLD_COLOR_POOL.length <= 0)
             return null;
@@ -127,6 +139,7 @@ class PopulationManager {
         return res;
     }
 
+    // (CAN IGNORE)
     resetWorldColorPool() {
         PopulationManager.WORLD_COLOR_POOL = [];
 
@@ -137,7 +150,7 @@ class PopulationManager {
         PopulationManager.WORLD_COLOR_POOL = shuffleArray(PopulationManager.WORLD_COLOR_POOL);
     }
 
-
+    // food stuff (CAN IGNORE)
     createFoodPodLayout() { // all worlds will share the same food / poison pod layout. this will ensure clean merging and splitting
         let foodPods = [];
         let poisonPods = [];
@@ -154,8 +167,7 @@ class PopulationManager {
         this.poisonPodLayout = poisonPods;
     };
 
-
-    //Replenish the food and poison relative to the Food Pod
+    //Replenish the food and poison relative to the Food Pod (CAN IGNORE)
     redistributeFoodAndPoison() {
         let foodIndex = 0;
         let poisonIndex = 0;
@@ -177,6 +189,7 @@ class PopulationManager {
         });
     };
 
+    // reset simulation (CAN IGNORE)
     resetSim() {
         console.log("restarting sim...");
         params.AGENT_VISION_IS_CONE = document.getElementById("agent_vision_is_cone").checked;
@@ -255,8 +268,12 @@ class PopulationManager {
 
     };
 
+    // mostly just updating HTML stuff or updating based on HTML info (CAN IGNORE)
     update() {
         //Update the params
+
+        // info about html page (these refer to the settings)
+
         //params.FREE_RANGE = document.getElementById("free_range").checked;
         params.AGENT_NEIGHBORS = document.getElementById("agent_neighbors").checked;
         params.ENFORCE_MIN_FOOD = document.getElementById("enforce_min_food").checked;
@@ -376,6 +393,7 @@ class PopulationManager {
             if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
                 params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
         }
+
         if (document.activeElement.id !== "FITNESS_HUNTING_PREY") {
             params.FITNESS_HUNTING_PREY = parseFloat(document.getElementById("FITNESS_HUNTING_PREY").value);
         }
@@ -391,6 +409,7 @@ class PopulationManager {
         if (document.activeElement.id !== "fitness_potential_cal") {
             params.FITNESS_POTENTIAL_CALORIES = parseFloat(document.getElementById("fitness_potential_cal").value);
         }
+
         if (document.activeElement.id !== "FITNESS_ENERGY_EFFICIENCY") {
             params.FITNESS_ENERGY_EFFICIENCY = parseFloat(document.getElementById("FITNESS_ENERGY_EFFICIENCY").value);
         }
@@ -507,7 +526,7 @@ class PopulationManager {
             } else {
                 this.processGeneration(this.agentsAsList());
             }
-            this.rolesMirrored = !this.rolesMirrored;
+            this.rolesMirrored = !this.rolesMirrored; // flipping roles for pred prey
 
             if (document.activeElement.id !== "generation_time") {
                 params.GEN_TICKS = parseInt(document.getElementById("generation_time").value);
@@ -545,6 +564,7 @@ class PopulationManager {
         });
     }
 
+    // (CAN IGNORE)
     isFoodGone() {
 
         let food = this.foodAsList(false).concat(this.foodAsList(true));
@@ -567,6 +587,7 @@ class PopulationManager {
 
     };
 
+    // (CAN IGNORE)
     resetAllWorldsFood() {
         this.worlds.forEach((members, worldId) => {
             members.resetFood();
@@ -574,6 +595,7 @@ class PopulationManager {
         });
     }
 
+    // (CAN IGNORE)
     checkFoodLevels() { // periodic food/poison repopulation function
         this.worlds.forEach((members, worldId) => {
             members.cleanupFood(true);
@@ -616,13 +638,14 @@ class PopulationManager {
 
         for (let i = 0; i < numberOfAgentsSpawn; i++) { // add agents
             let agent = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2);
-            agent.speciesId = PopulationManager.SPECIES_ID;
+           // agent.speciesId = PopulationManager.SPECIES_ID; (ASSIGN WHEN ROLE GIVEN)
             agent.worldId = worldId;
             PopulationManager.SPECIES_MEMBERS.get(PopulationManager.SPECIES_ID).push(agent);
             this.worlds.get(worldId).agents.push(agent);
         }
     };
 
+    // (CAN IGNORE)
     spawnFood(worldId, poison = false, count = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length) {
         let maxFoodCount = (poison ? params.POISON_AGENT_RATIO : params.FOOD_AGENT_RATIO) * this.worlds.get(worldId).agents.length;
         let currentCount = poison ? this.worlds.get(worldId).poison.length : this.worlds.get(worldId).food.length;
@@ -657,6 +680,7 @@ class PopulationManager {
         this.registerSeedlings(worldId, seedlings);
     };
 
+    // (CAN IGNORE)
     registerSeedlings(worldId, seedlings) {
         seedlings.forEach(seedling => {
             seedling.worldId = worldId;
@@ -741,6 +765,7 @@ class PopulationManager {
         PopulationManager.MINIMAP.updateSpec(this.worlds.size);
     };
 
+    // (CAN IGNORE)
     countDeads(worldId = undefined) {
         if (worldId != undefined) {
             return this.worlds.get(worldId).countDeads();
@@ -754,6 +779,7 @@ class PopulationManager {
         return count;
     };
 
+    // (CAN IGNORE)
     countAlives(worldId = undefined) {
         if (worldId != undefined) {
             return this.worlds.get(worldId).countAlives();
@@ -767,7 +793,7 @@ class PopulationManager {
         return count;
     };
 
-
+    // (CAN IGNORE)
     agentsAsList() {
         let agents = [];
         this.worlds.forEach(members => {
@@ -776,6 +802,7 @@ class PopulationManager {
         return agents;
     };
 
+    // (CAN IGNORE)
     foodAsList(poison = false) {
         let food = [];
         this.worlds.forEach(members => {
@@ -788,6 +815,8 @@ class PopulationManager {
     /**
      * Distribute agents to their world
      * ONLY WORLD WITH LIMITNG AGENT PER WORLD OPTION
+     * 
+     * likely going to change to count for prey/pred pops
      */
     distributeAgents() {
         //EXIT IF NOT IN AGENT PER WORLD MODE
@@ -902,6 +931,7 @@ class PopulationManager {
 
     }
 
+    // (CAN IGNORE)
     initNewWorld(worldId) {
         let world = new World(this.game, worldId);
         this.worlds.set(worldId, world);
@@ -913,6 +943,7 @@ class PopulationManager {
     };
 
     //Update food hierarchy of all agents in all world
+    // (CAN IGNORE)
     updateWorldsFoodHierarchy() {
         //Hunting mode is turned off
         if (params.HUNTING_MODE === "deactivated") {
@@ -924,6 +955,7 @@ class PopulationManager {
         });
     }
 
+    // (CAN IGNORE)
     createWorldCanvas(worldId) {
         let canvas = document.createElement("canvas");
         canvas.id = `${worldId}`;
@@ -933,14 +965,17 @@ class PopulationManager {
         return canvas;
     };
 
+    // (CAN IGNORE)
     activateWorld(worldId) {
         this.worlds.get(worldId).activate();
     }
 
+    // (CAN IGNORE)
     deactivateWorld(worldId) {
         this.worlds.get(worldId).deactivate();
     }
 
+    // (CAN IGNORE)
     removeWorld(worldId) {
         //Replenish the world color pool
         PopulationManager.WORLD_COLOR_POOL.push(this.worlds.get(worldId).worldColor);
@@ -949,6 +984,7 @@ class PopulationManager {
         this.worlds.delete(worldId);
     };
 
+    // (CAN IGNORE)
     mergeWorlds() {
         let allAgents = this.agentsAsList();
         let allFood = this.foodAsList();
@@ -966,6 +1002,7 @@ class PopulationManager {
         this.resetWorldColorPool();
     };
 
+    // (CAN IGNORE)
     splitWorlds() {
         let allAgents = this.agentsAsList();
         let allFood = this.foodAsList();
@@ -994,7 +1031,7 @@ class PopulationManager {
         this.resetWorldColorPool();
     };
 
-
+    // (CAN IGNORE)
     resetCanvases() {
         const tmp = [];
         this.worlds.forEach((val) => {
@@ -1084,6 +1121,7 @@ class PopulationManager {
         this.agentTracker.addAvgPredWinnerBonus(predWinnerBonus);
     }
 
+    // likely have to change in future to work with 2 pops (CAN IGNORE)
     displayDataChart() {
         //Generate the line chart for prey hunting 
         if (params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") {
@@ -1381,6 +1419,7 @@ class PopulationManager {
     }
 
 
+    // killing an agent if there is an imbalance
     deathRoulette(reprodFitMap, sumShared) {
         let rouletteOrder = [...reprodFitMap.keys()].sort();
         let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
@@ -1419,7 +1458,8 @@ class PopulationManager {
             }
         }
     }
-
+    
+    // reproducing agent
     crossover(reprodFitMap, sumShared) {
         // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
         let children = [];
@@ -1447,8 +1487,6 @@ class PopulationManager {
             let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
             children.push(child);
         }
-
         this.registerChildAgents(children);
     }
-
 };

@@ -16,7 +16,11 @@ class World {
         this.walls = [];
         this.home.worldId = worldId;
         this.display.worldId = worldId;
-        this.speciesList = new Set();//Keep track of the list of species the world contains
+
+        //Keep track of the list of species the world contains
+        this.preySpeciesList = new Set(); 
+        this.predSpeciesList = new Set();
+        
         //Just for testing
         this.worldColor = PopulationManager.getNextAvailableWorldColor();
 
