@@ -72,10 +72,13 @@ class PopulationManager {
                 let world = this.initNewWorld(worldSpawned);
 
                 // Add to the list of species the world contains
-                world.speciesList.add(0); // The first species
+                // The first species
+                world.preySpeciesList.add(0);
+                world.predSpeciesList.add(0);
 
                 this.spawnAgents(worldSpawned, agentNum);
-                this.specieWorldList.get(PopulationManager.SPECIES_ID).push(worldSpawned);
+                this.predSpeciesWorldList.get(PopulationManager.SPECIES_ID).push(worldSpawned);
+                this.preySpeciesWorldList.get(PopulationManager.SPECIES_ID).push(worldSpawned);
 
                 this.spawnFood(worldSpawned, false);
                 this.spawnFood(worldSpawned, true);
@@ -118,6 +121,7 @@ class PopulationManager {
             currentGenData: 0,
         }
 
+        // might be removed later
         this.rolesMirrored = false;
 
         PopulationManager.MINIMAP = new Minimap(game);
@@ -198,7 +202,8 @@ class PopulationManager {
         PopulationManager.SPECIES_CREATED = 0;
         PopulationManager.SPECIES_COLORS = new Map();
         PopulationManager.SPECIES_SENSOR_COLORS = new Map();
-        PopulationManager.SPECIES_MEMBERS = new Map();
+        predPrey.PREDLIST = new Map();
+        predPrey.PREYLIST = new Map();
         PopulationManager.COLORS_USED = new Set();
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
@@ -630,18 +635,31 @@ class PopulationManager {
     };
 
     spawnAgents(worldId, numberOfAgentsSpawn = PopulationManager.NUM_AGENTS) {
-        //Creating a new specie
+        //Creating a new species
         if (params.AGENT_PER_WORLD == 0) {
-            PopulationManager.SPECIES_MEMBERS.set(PopulationManager.SPECIES_ID, []);
+
+            predPrey.PREDLIST.set(PopulationManager.SPECIES_ID, []);
+            predPrey.PREYLIST.set(PopulationManager.SPECIES_ID, []);
+
             PopulationManager.SPECIES_CREATED++;
         }
 
         for (let i = 0; i < numberOfAgentsSpawn; i++) { // add agents
-            let agent = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2);
-           // agent.speciesId = PopulationManager.SPECIES_ID; (ASSIGN WHEN ROLE GIVEN)
-            agent.worldId = worldId;
-            PopulationManager.SPECIES_MEMBERS.get(PopulationManager.SPECIES_ID).push(agent);
-            this.worlds.get(worldId).agents.push(agent);
+            let predAgent = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2);
+            let preyAgent = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2);
+
+            // agent.speciesId = PopulationManager.SPECIES_ID; (ASSIGN WHEN ROLE GIVEN)
+            predAgent.speciesId = PopulationManager.SPECIES_ID;
+            preyAgent.speciesId = PopulationManager.SPECIES_ID;
+
+            preyAgent.worldId = worldId;
+            predAgent.worldId = worldId;
+
+            predPrey.PREDLIST.get(PopulationManager.SPECIES_ID).push(predAgent);
+            predPrey.PREYLIST.get(PopulationManager.SPECIES_ID).push(preyAgent);
+
+            this.worlds.get(worldId).agents.push(predAgent);
+            this.worlds.get(worldId).agents.push(preyAgent);
         }
     };
 
@@ -694,7 +712,14 @@ class PopulationManager {
 
     registerChildAgents(children) {
         let repMap = new Map();
-        PopulationManager.SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
+        let preyMap = new Map();
+
+        predPrey.PREYLIST.forEach((speciesList, speciesId) => {
+            // choose a rep for each species
+            repMap.set(speciesId, speciesList[0]);
+        });
+
+        predPrey.PREDLIST.forEach((speciesList, speciesId) => {
             // choose a rep for each species
             repMap.set(speciesId, speciesList[0]);
         });
