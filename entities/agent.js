@@ -78,6 +78,8 @@ class Agent {
         this.speciesId = null;
         this.worldId = null;
 
+        this.predator = false;
+
         this.foodHierarchyIndex = 0;//Index to see whether it is predator or prey, higher means predator
         this.isActive = true;//Whether the agent is still active and has been consumed or not
         this.caloriesReward = 50;

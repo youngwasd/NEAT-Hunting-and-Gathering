@@ -12,6 +12,8 @@ class PopulationManager {
     static COLORS_USED = new Set();
     static SENSOR_COLORS_USED = new Set();
     static NUM_AGENTS = params.NUM_AGENTS; // num agents per world ig
+    static NUM_PREY = 25;
+    static NUM_PRED = 25;
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
     static WORLD_COLOR_POOL = [];
     static MINIMAP;
@@ -710,16 +712,10 @@ class PopulationManager {
         });
     };
 
-    registerChildAgents(children) {
+    registerChildAgents(children, speciesMap) {
         let repMap = new Map();
-        let preyMap = new Map();
 
-        predPrey.PREYLIST.forEach((speciesList, speciesId) => {
-            // choose a rep for each species
-            repMap.set(speciesId, speciesList[0]);
-        });
-
-        predPrey.PREDLIST.forEach((speciesList, speciesId) => {
+        speciesMap.forEach((speciesList, speciesId) => {
             // choose a rep for each species
             repMap.set(speciesId, speciesList[0]);
         });
@@ -732,14 +728,14 @@ class PopulationManager {
                 if (!matchFound && Genome.similarity(rep.genome, child.genome) <= params.COMPAT_THRESH) { // species matched
                     matchFound = true;
                     child.speciesId = speciesId;
-                    PopulationManager.SPECIES_MEMBERS.get(speciesId).push(child);
+                    speciesMap.get(speciesId).push(child);
                 }
             });
 
             if (!matchFound) { // no compatible, creating a new species
                 PopulationManager.SPECIES_CREATED++;
                 child.speciesId = ++PopulationManager.SPECIES_ID;
-                PopulationManager.SPECIES_MEMBERS.set(child.speciesId, []);
+                speciesMap.set(child.speciesId, []);
                 let newColor = randomInt(361);
                 while (PopulationManager.COLORS_USED.has(newColor)) {
                     newColor = randomInt(361);
@@ -752,7 +748,7 @@ class PopulationManager {
                 }
                 PopulationManager.SENSOR_COLORS_USED.add(newSensorColor);
                 PopulationManager.SPECIES_SENSOR_COLORS.set(child.speciesId, newSensorColor);
-                PopulationManager.SPECIES_MEMBERS.get(child.speciesId).push(child);
+                speciesMap.get(child.speciesId).push(child);
                 repMap.set(child.speciesId, child); // child becomes representative for next children
                 compatOrder = [...repMap.keys()].sort(); // resort the compatibility ordering
 
@@ -810,11 +806,17 @@ class PopulationManager {
             return this.worlds.get(worldId).countAlives();
         }
 
-        let count = 0;
+        let count = [];
+        let predCount = 0;
+        let preyCount = 0;
         this.worlds.forEach(world => {
-            count += world.countAlives();
+            predCount += world.countPredAlives();
+            preyCount += world.countPreyAlives();
         });
 
+        count[0] = predCount;
+        count[1] = preyCount;
+        
         return count;
     };
 
@@ -1443,7 +1445,6 @@ class PopulationManager {
         return rValue;
     }
 
-
     // killing an agent if there is an imbalance
     deathRoulette(reprodFitMap, sumShared) {
         let rouletteOrder = [...reprodFitMap.keys()].sort();
@@ -1487,10 +1488,17 @@ class PopulationManager {
     // reproducing agent
     crossover(reprodFitMap, sumShared) {
         // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
-        let children = [];
         let alives = this.countAlives(); // if free range mode kills off everybody, we produce at least 1 new agent
+        let predDead = NUM_PRED - alives[0];
+        let preyDead = NUM_PREY - alives[1];
+        this.replacement(reprodFitMap, sumShared, predDead, predPrey.PREDLIST);
+        this.replacement(reprodFitMap, sumShared, preyDead, predPrey.PREYLIST);
+    }
+
+    replacement(reprodFitMap, sumShared, count, speciesMap) {
+        let children = [];
         let rouletteOrder = [...reprodFitMap.keys()].sort();
-        for (let i = 0; i < PopulationManager.NUM_AGENTS - alives; i++) {
+        for (let i = 0; i < count; i++) {
             let rouletteResult = randomFloat(sumShared);
             let rouletteIndex = 0;
             let accumulator = 0;
@@ -1501,7 +1509,7 @@ class PopulationManager {
                 accumulator += reprodFitMap.get(nextSpecies);
                 if (accumulator >= rouletteResult) {
                     flag = true;
-                    let possibleParents = PopulationManager.SPECIES_MEMBERS.get(nextSpecies);
+                    let possibleParents = speciesMap.get(nextSpecies);
                     parent1 = possibleParents[randomInt(possibleParents.length)];
                     parent2 = possibleParents[randomInt(possibleParents.length)];
                 }

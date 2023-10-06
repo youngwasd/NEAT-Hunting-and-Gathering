@@ -135,6 +135,26 @@ class World {
         return count;
     };
 
+    countPreyAlives() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (!agent.removeFromWorld && !agent.predator) {
+                count++;
+            }
+        });
+        return count;
+    };
+
+    countPredAlives() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (!agent.removeFromWorld && agent.predator) {
+                count++;
+            }
+        });
+        return count;
+    };
+
     foodAsList(poison = false) {
         return poison ? this.poison : this.food;
     };
