@@ -1,7 +1,7 @@
 class PopulationManager {
 
 // seems as if both prey and predatory are all under "species" so we can split them by adding specific species and build on that
-
+ 
     static SPECIES_ID = 0; // prob move to predPrey
     static GEN_NUM = 0;
     static SPECIES_CREATED = 0;
@@ -18,6 +18,8 @@ class PopulationManager {
     static WORLD_COLOR_POOL = [];
     static MINIMAP;
     static CURRENT_WORLD_DISPLAY = 0;
+    static PREDLIST = new Map();
+    static PREYLIST = new Map();
 
     static IS_LAST_TICK = false; // Use for debugging purposes; to determine whether the current population is at its last tick
 
@@ -60,8 +62,8 @@ class PopulationManager {
         }
         else {
             // Split the original species into multiple worlds
-            predPrey.PREDLIST.set(PopulationManager.SPECIES_ID, []);
-            predPrey.PREYLIST.set(PopulationManager.SPECIES_ID, []);
+            PopulationManager.PREDLIST.set(PopulationManager.SPECIES_ID, []);
+            PopulationManager.PREYLIST.set(PopulationManager.SPECIES_ID, []);
             PopulationManager.SPECIES_CREATED++;
             this.predSpeciesWorldList.set(PopulationManager.SPECIES_ID, []);
             this.preySpeciesWorldList.set(PopulationManager.SPECIES_ID, []);
@@ -135,7 +137,7 @@ class PopulationManager {
         // } );
     };
 
-    //Return NULL if no color is availble
+    // Return NULL if no color is availble
     // (CAN IGNORE)
     static getNextAvailableWorldColor() {
         if (PopulationManager.WORLD_COLOR_POOL.length <= 0)
@@ -204,8 +206,8 @@ class PopulationManager {
         PopulationManager.SPECIES_CREATED = 0;
         PopulationManager.SPECIES_COLORS = new Map();
         PopulationManager.SPECIES_SENSOR_COLORS = new Map();
-        predPrey.PREDLIST = new Map();
-        predPrey.PREYLIST = new Map();
+        PopulationManager.PREDLIST = new Map();
+        PopulationManager.PREYLIST = new Map();
         PopulationManager.COLORS_USED = new Set();
         PopulationManager.SENSOR_COLORS_USED = new Set();
         PopulationManager.NUM_AGENTS = params.NUM_AGENTS;
@@ -640,8 +642,8 @@ class PopulationManager {
         //Creating a new species
         if (params.AGENT_PER_WORLD == 0) {
 
-            predPrey.PREDLIST.set(PopulationManager.SPECIES_ID, []);
-            predPrey.PREYLIST.set(PopulationManager.SPECIES_ID, []);
+            PopulationManager.PREDLIST.set(PopulationManager.SPECIES_ID, []);
+            PopulationManager.PREYLIST.set(PopulationManager.SPECIES_ID, []);
 
             PopulationManager.SPECIES_CREATED++;
         }
@@ -657,8 +659,8 @@ class PopulationManager {
             preyAgent.worldId = worldId;
             predAgent.worldId = worldId;
 
-            predPrey.PREDLIST.get(PopulationManager.SPECIES_ID).push(predAgent);
-            predPrey.PREYLIST.get(PopulationManager.SPECIES_ID).push(preyAgent);
+            PopulationManager.PREDLIST.get(PopulationManager.SPECIES_ID).push(predAgent);
+            PopulationManager.PREYLIST.get(PopulationManager.SPECIES_ID).push(preyAgent);
 
             this.worlds.get(worldId).agents.push(predAgent);
             this.worlds.get(worldId).agents.push(preyAgent);
@@ -1115,7 +1117,7 @@ class PopulationManager {
         specieOOBData.forEach((data, speciesId) => {
             let entry = {};
             entry['speciesId'] = speciesId;
-            entry['speciesTotalTickOutOfBound'] = data / PopulationManager.SPECIES_MEMBERS.get(speciesId).length * 100;
+            entry['speciesTotalTickOutOfBound'] = data / PopulationManager.PREYLIST.get(speciesId).length * 100;
             this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
 
             this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
@@ -1125,7 +1127,7 @@ class PopulationManager {
         specieFoodEatenData.forEach((data, speciesId) => {
             let entry = {};
             entry['speciesId'] = speciesId;
-            entry['speciesFoodConsumptionCount'] = data / PopulationManager.SPECIES_MEMBERS.get(speciesId).length;
+            entry['speciesFoodConsumptionCount'] = data / PopulationManager.PREYLIST.get(speciesId).length;
             this.agentTracker.addSpeciesAttribute('speciesFoodConsumptionCount', entry);
 
             this.agentTracker.addToAttribute('totalFoodConsumptionCount', data);
@@ -1134,7 +1136,7 @@ class PopulationManager {
         speciePreyHuntedData.forEach((data, speciesId) => {
             let entry = {};
             entry['speciesId'] = speciesId;
-            entry['speciesSuccessfulHuntCount'] = data / PopulationManager.SPECIES_MEMBERS.get(speciesId).length;
+            entry['speciesSuccessfulHuntCount'] = data / PopulationManager.PREYLIST.get(speciesId).length;
             this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry);
 
      
@@ -1491,8 +1493,8 @@ class PopulationManager {
         let alives = this.countAlives(); // if free range mode kills off everybody, we produce at least 1 new agent
         let predDead = NUM_PRED - alives[0];
         let preyDead = NUM_PREY - alives[1];
-        this.replacement(reprodFitMap, sumShared, predDead, predPrey.PREDLIST);
-        this.replacement(reprodFitMap, sumShared, preyDead, predPrey.PREYLIST);
+        this.replacement(reprodFitMap, sumShared, predDead, PopulationManager.PREDLIST);
+        this.replacement(reprodFitMap, sumShared, preyDead, PopulationManager.PREYLIST);
     }
 
     replacement(reprodFitMap, sumShared, count, speciesMap) {

@@ -138,7 +138,7 @@ class World {
     countPreyAlives() {
         let count = 0;
         this.agents.forEach(agent => {
-            if (!agent.removeFromWorld && !agent.predator) {
+            if (!agent.removeFromWorld && agent.foodHierarchyIndex == 0) {
                 count++;
             }
         });
@@ -148,7 +148,7 @@ class World {
     countPredAlives() {
         let count = 0;
         this.agents.forEach(agent => {
-            if (!agent.removeFromWorld && agent.predator) {
+            if (!agent.removeFromWorld && agent.foodHierarchyIndex != 0) {
                 count++;
             }
         });

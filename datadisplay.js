@@ -30,9 +30,9 @@ class DataDisplay {
 
             let i = 0, j = 0;
             let text = "";
-            let speciesPerLine = Math.sqrt(world.speciesList.size);
+            let speciesPerLine = Math.sqrt(world.preySpeciesList.size);
 
-            world.speciesList.forEach(specie => {
+            world.preySpeciesList.forEach(specie => {
                 if (text !== "") {
                     text += ", ";
                 }
