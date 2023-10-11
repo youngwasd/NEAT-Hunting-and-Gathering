@@ -16,7 +16,8 @@ class World {
         this.walls = [];
         this.home.worldId = worldId;
         this.display.worldId = worldId;
-        this.speciesList = new Set();//Keep track of the list of species the world contains
+        this.preySpeciesList = new Set();//Keep track of the list of species the world contains
+        this.predatorSpeciesList = new Set();
         //Just for testing
         this.worldColor = PopulationManager.getNextAvailableWorldColor();
 
@@ -37,9 +38,9 @@ class World {
             return;
         }
         let counter = 0;
-        for (let i = 0; i < this.food.length; i++) {
-            if (!this.food[i].removeFromWorld) {
-                this.food[i].update();
+        for (const element of this.food) {
+            if (!element.removeFromWorld) {
+                element.update();
                 counter++;
             }
         }
@@ -47,14 +48,14 @@ class World {
         // if (counter > 2){
         //     console.log(this.worldId + " this world has more food " + this.food.length + " active " + counter);
         // }
-        for (let i = 0; i < this.poison.length; i++) {
-            if (!this.poison[i].removeFromWorld) {
-                this.poison[i].update();
+        for (const element of this.poison) {
+            if (!element.removeFromWorld) {
+                element.update();
             }
         }
-        for (let i = 0; i < this.agents.length; i++) {
-            if (!this.agents[i].removeFromWorld) {
-                this.agents[i].update();
+        for (const element of this.agents) {
+            if (!element.removeFromWorld) {
+                element.update();
             }
         }
 
@@ -69,8 +70,8 @@ class World {
     }
 
     isFoodGone() {
-        for (let i = 0; i < this.food.length; i++) {
-            if (!this.food[i].removeFromWorld) {
+        for (const element of this.food) {
+            if (!element.removeFromWorld) {
                 return false;
             }
         }
@@ -78,8 +79,8 @@ class World {
     };
 
     isAgentEnergyGone() {
-        for (let i = 0; i < this.agents.length; i++) {
-            if (this.agents[i].energy > Agent.DEATH_ENERGY_THRESH) {
+        for (const element of this.agents) {
+            if (element.energy > Agent.DEATH_ENERGY_THRESH) {
                 return false;
             }
         }
@@ -125,6 +126,26 @@ class World {
         let count = 0;
         this.agents.forEach(agent => {
             if (!agent.removeFromWorld) {
+                count++;
+            }
+        });
+        return count;
+    };
+
+    countPreyAlive() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (!agent.removeFromWorld && agent.foodHierarchyIndex == 0) {
+                count++;
+            }
+        });
+        return count;
+    };
+
+    countPredatorsAlive() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (!agent.removeFromWorld && agent.foodHierarchyIndex > 0) {
                 count++;
             }
         });
