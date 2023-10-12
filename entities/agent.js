@@ -771,6 +771,13 @@ class Agent {
     }
 
     coneVision(input) {
+        const predatorVision = this.foodHierarchyIndex > 0;
+
+        // can have binocular recieve less data (10% of the data as it gets from periph) and opposite for mono
+        // then using predatorvision to check if its a predator or not
+        // then after implement how monocular is not good with distance
+        // predator is binocular, prey is monocular
+
         const rays = params.AGENT_VISION_RAYS - 1;
         const angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
         const angleBetw = angle / rays;
@@ -827,7 +834,7 @@ class Agent {
                     let wallDist = distance(eyes, colVals);
                     if (wallDist < minDist && (inRightHalf === colVals.x >= eyes.x)) {
                         minDist = wallDist;
-                        hueOfMinDist = wall.getDataHue();//tempory value to change
+                        hueOfMinDist = wall.getDataHue(); // temporary value to change
                         closestPoint = colVals;
                     }
                 }
