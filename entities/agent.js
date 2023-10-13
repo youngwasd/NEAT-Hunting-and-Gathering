@@ -315,6 +315,8 @@ class Agent {
         return this.x >= 0 && this.x < params.CANVAS_SIZE && this.y >= 0 && this.y < params.CANVAS_SIZE;
     };
 
+
+    // add a parameter to check for pred or prey
     getEyePos() {
         return { x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading), y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading) };
     }
@@ -776,15 +778,26 @@ class Agent {
         // can have binocular recieve less data (10% of the data as it gets from periph) and opposite for mono
         // then using predatorvision to check if its a predator or not
         // then after implement how monocular is not good with distance
-        // predator is binocular, prey is monocular
+        // predator is binocular, prey is monocular (both will have 2 eyes, pred will have closer eyes, prey will be more spread apart)
+        // maybe disable distance in our vision rays
+        // predator vision have overlap so they can tell distance, prey do not
+        // some rays can determine distance some cannot
+        
+        // a setting 1 eye change fov for each
+        // first work (change total rays and fov)
+        // turn on or off distance for certain rays
+        // setting to adjust center or outer rays
 
-        let rays = 0;
-        let angle = 0;
-        let angleBetw = 0;
+        let rays;
+        let angle;
+        let angleBetw;
 
         if (predatorVision) {
-            rays = Math.floor((params.AGENT_VISION_RAYS - 1) / 2);
+            const centerRays = Math.floor((params.AGENT_VISION_RAYS - 1) / 10);
+            const outerRays = (params.AGENT_VISION_RAYS - 1) - centerRays;
+
             angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+            rays = centerRays + outerRays;
             angleBetw = angle / rays;
         } else {
             rays = params.AGENT_VISION_RAYS - 1;
