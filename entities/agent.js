@@ -778,10 +778,20 @@ class Agent {
         // then after implement how monocular is not good with distance
         // predator is binocular, prey is monocular
 
-        const rays = params.AGENT_VISION_RAYS - 1;
-        const angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
-        const angleBetw = angle / rays;
+        let rays = 0;
+        let angle = 0;
+        let angleBetw = 0;
 
+        if (predatorVision) {
+            rays = Math.floor((params.AGENT_VISION_RAYS - 1) / 2);
+            angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+            angleBetw = angle / rays;
+        } else {
+            rays = params.AGENT_VISION_RAYS - 1;
+            angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+            angleBetw = angle / rays;
+        }
+        
         let currAngle = this.heading - angle / 2;
 
         let eyes = this.getEyePos();
