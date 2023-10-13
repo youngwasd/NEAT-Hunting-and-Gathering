@@ -99,6 +99,10 @@
             </div>
 
             <div>
+                <input type="checkbox" id="coevolution"> Coevolution
+            </div>
+
+            <div>
                 <input type="checkbox" id="split_species"> Split Species
             </div>
             <div>
@@ -288,7 +292,26 @@
                 <input type="checkbox" id="displayOnTheSameWorld"> Display all on the first world
             </div>
             <div>
-                Total number of agents in Simulation (Requires Restart): <input type="text" id="num_agents" value="50">
+                <label for="num_prey">Number of prey in Simulation (Requires Restart):</label>
+                <select name="num_prey" id="num_prey">
+                    <option value="24">24</option>
+                    <option value="48">48</option>
+                    <option value="72">72</option>
+                    <option value="96">96</option>
+                    <option value="120">120</option>
+                </select>
+            </div>
+            <div>
+                <label for="predator_ratio">Ratio of prey to predator (Requires Restart):</label>
+                <select name="predator_ratio" id="predator_ratio">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                </select>
             </div>
             <div>
                 Neighbors Detected by Agents (Requires Restart): <input type="text" id="agent_neighbor_count" value="1">
