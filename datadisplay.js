@@ -30,9 +30,9 @@ class DataDisplay {
 
             let i = 0, j = 0;
             let text = "";
-            let speciesPerLine = Math.sqrt(world.speciesList.size);
+            let speciesPerLine = Math.sqrt(world.preySpeciesList.size);
 
-            world.speciesList.forEach(specie => {
+            world.preySpeciesList.forEach(specie => {
                 if (text !== "") {
                     text += ", ";
                 }
@@ -78,7 +78,7 @@ class DataDisplay {
 
 
         ctx.textAlign = "right";
-        ctx.strokeText(`Living Species: ${PopulationManager.SPECIES_MEMBERS.size}`, params.CANVAS_SIZE - 10, 30);
+        ctx.strokeText(`Living Species: ${PopulationManager.PREY_SPECIES_MEMBERS.size}`, params.CANVAS_SIZE - 10, 30);
         ctx.strokeText(`Total Species: ${PopulationManager.SPECIES_CREATED}`, params.CANVAS_SIZE - 10, 60);
         ctx.strokeText(`Total Active World: ${this.game.population.worlds.size}`, params.CANVAS_SIZE - 10, 90);
 
