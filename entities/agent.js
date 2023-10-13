@@ -232,9 +232,9 @@ class Agent {
      * @param {*} sortedEntities this method assumes the entities are sorted by distance
      */
     getShortestDistToFood(sortedEntities) {
-        for (let i = 0; i < sortedEntities.length; i++) {
-            if (sortedEntities[i] instanceof Food && sortedEntities[i].phase < sortedEntities[i].lifecycle_phases.dead) {
-                return { cals: sortedEntities[i].getCalories(), dist: distance(this.BC.center, sortedEntities[i].BC.center) };
+        for (const element of sortedEntities) {
+            if (element instanceof Food && element.phase < element.lifecycle_phases.dead) {
+                return { cals: element.getCalories(), dist: distance(this.BC.center, element.BC.center) };
             }
         }
         return { cals: 0, dist: Infinity };
@@ -439,9 +439,7 @@ class Agent {
                 return false;
             }
         }
-        if (this.energy <= Agent.DEATH_ENERGY_THRESH)
-            return true;
-        return false;
+        return this.energy <= Agent.DEATH_ENERGY_THRESH;
     }
 
     getPercentDead() {
@@ -947,9 +945,9 @@ class Agent {
     drawVCol(ctx) {
         ctx.strokeStyle = "Red";
         ctx.linewidth = 2;
-        for (let i = 0; i < this.visCol.length; i++) {
+        for (const element of this.visCol) {
             ctx.beginPath();
-            ctx.arc(this.visCol[i].x, this.visCol[i].y, 3, 0, 2 * Math.PI);
+            ctx.arc(element.x, element.y, 3, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.closePath();
         }
@@ -957,10 +955,10 @@ class Agent {
     drawVFinal(ctx) {
         let eyes = this.getEyePos();
         ctx.linewidth = 2;
-        for (let i = 0; i < this.spotted.length; i++) {
-            ctx.strokeStyle = `hsl(${this.spotted[i].hue}, 100%, 50%)`;
-            let angle = this.spotted[i].angle;
-            let dist = this.spotted[i].dist == Infinity ? 9999 : this.spotted[i].dist;
+        for (const element of this.spotted) {
+            ctx.strokeStyle = `hsl(${element.hue}, 100%, 50%)`;
+            let angle = element.angle;
+            let dist = element.dist == Infinity ? 9999 : element.dist;
             ctx.beginPath();
             ctx.moveTo(eyes.x, eyes.y);
             ctx.lineTo(eyes.x + (Math.cos(angle)) * dist, eyes.y + (Math.sin(angle)) * dist);
