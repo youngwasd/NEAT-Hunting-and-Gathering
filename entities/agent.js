@@ -791,15 +791,13 @@ class Agent {
         let angleBetw;
 
         if (predatorVision) {
-            const centerRays = Math.floor((params.AGENT_VISION_RAYS - 1) / 10);
-            const outerRays = (params.AGENT_VISION_RAYS - 1) - centerRays;
-
-            angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
-            rays = centerRays + outerRays;
+            angle = params.PREDATOR_VISION_ANGLE * Math.PI / 180;
+            rays = params.AGENT_VISION_RAYS - 1;
+            console.log("predator total " + rays);
             angleBetw = angle / rays;
         } else {
             rays = params.AGENT_VISION_RAYS - 1;
-            angle = params.AGENT_VISION_ANGLE * Math.PI / 180;
+            angle = params.PREY_VISION_ANGLE * Math.PI / 180;
             angleBetw = angle / rays;
         }
         

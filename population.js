@@ -12,12 +12,11 @@ class PopulationManager {
     static COLORS_USED = new Set();
     static SENSOR_COLORS_USED = new Set();
     static NUM_PREY = params.num_prey;
-    static NUM_PREDATOR = params.num_prey/params.predator_ratio;
+    static NUM_PREDATOR = params.num_prey / params.predator_ratio;
     static CURRENT_GEN_DATA_GATHERING_SLOT = 0;
     static WORLD_COLOR_POOL = [];
     static MINIMAP;
     static CURRENT_WORLD_DISPLAY = 0;
-
 
     static IS_LAST_TICK = false; //Use for debugging purposes; to determine whether the current population is at its last tick
 
@@ -47,8 +46,6 @@ class PopulationManager {
 
         // Original behavior with a single population
         if (!params.coevolution) {
-
-
             //Check for splitting agents
             if (params.AGENT_PER_WORLD === 0) {
                 let world = this.initNewWorld(PopulationManager.PREY_SPECIES_ID);
@@ -89,13 +86,9 @@ class PopulationManager {
                 PopulationManager.WORLD_CREATED = worldSpawned;
                 this.resetCanvases();
             }
-
-
         }
-
         // coevolution behavior with predator and prey in their own unique populations
         else {
-    
             //Check for splitting agents
             if (params.AGENT_PER_WORLD === 0) {
                 let world = this.initNewWorld(PopulationManager.PREY_SPECIES_ID);
@@ -140,14 +133,7 @@ class PopulationManager {
                 PopulationManager.WORLD_CREATED = worldSpawned;
                 this.resetCanvases();
             }
-    
-    
-
-    
         }
-
-
-
         this.updateWorldsFoodHierarchy();
     
         this.currentLeftWheelHist = new Histogram(20, 5, "Current Generation Left Wheel Output Chart");
@@ -439,8 +425,12 @@ class PopulationManager {
             params.AGENT_VISION_RAYS = parseFloat(document.getElementById("agent_vision_rays").value);
         }
 
-        if (document.activeElement.id !== "agent_vision_angle") {
-            params.AGENT_VISION_ANGLE = parseFloat(document.getElementById("agent_vision_angle").value);
+        if (document.activeElement.id !== "prey_vision_angle") {
+            params.PREY_VISION_ANGLE = parseFloat(document.getElementById("prey_vision_angle").value);
+        }
+
+        if (document.activeElement.id !== "predator_vision_angle") {
+            params.PREDATOR_VISION_ANGLE = parseFloat(document.getElementById("predator_vision_angle").value);
         }
 
         if (document.activeElement.id !== "compat_threshold") {
