@@ -15,7 +15,9 @@ const params = {
     COMPAT_THRESH: 0.07,
     ENFORCE_MIN_FOOD: true,
     ENFORCE_MIN_POISON: false,
-    AGENT_VISION_RADIUS: 500,
+    AGENT_VISION_RADIUS : 500,
+    // PREY_VISION_RADIUS: 500, // original was AGENT_VISION_RADIUS : 500,
+    // PREDATOR_VISION_RADIUS: 500, // was not here originally (this stuff breaks the code)
     RAND_FOOD_PHASES: false,
     RAND_FOOD_LIFETIME: false,
     FREE_RANGE: false,
@@ -39,6 +41,8 @@ const params = {
     DYNAMIC_AGENT_SIZING: false,
     AGENT_VISION_RAYS: 13,
     AGENT_VISION_ANGLE: 180,
+    // PREY_VISION_ANGLE: 180, // original was AGENT_VISION_ANGLE: 180,
+    // PREDATOR_VISION_ANGLE: 180, // was not here originally
     AGENT_VISION_IS_CONE: true,
     AGENT_VISION_DRAW_CONE: false,
     MAX_TICKS_TO_CONSUME: 50,

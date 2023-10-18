@@ -417,8 +417,12 @@ class PopulationManager {
             params.FOOD_AGENT_RATIO = parseInt(document.getElementById("food_agent_ratio").value);
         }
 
-        if (document.activeElement.id !== "agent_vision_radius") {
-            params.AGENT_VISION_RADIUS = parseFloat(document.getElementById("agent_vision_radius").value);
+        if (document.activeElement.id !== "prey_vision_radius") {
+            params.PREY_VISION_RADIUS = parseFloat(document.getElementById("prey_vision_radius").value);
+        }
+
+        if (document.activeElement.id !== "predator_vision_radius") {
+            params.PREDATOR_VISION_RADIUS = parseFloat(document.getElementById("predator_vision_radius").value);
         }
 
         if (document.activeElement.id !== "agent_vision_rays") {

@@ -497,8 +497,11 @@ class Agent {
         // }
         entities.forEach(entity => {
             let added = false;
+
+            let visionRadius = this.foodHierarchyIndex > 0 ? params.PREDATOR_VISION_RADIUS : params.PREY_VISION_RADIUS;
+
             /** add all entities to our spotted neighbors that aren't ourselves, not dead, and are within our vision radius */
-            if (entity !== this && !entity.removeFromWorld && entity.isActive && distance(entity.BC.center, this.BC.center) <= params.AGENT_VISION_RADIUS) {
+            if (entity !== this && !entity.removeFromWorld && entity.isActive && distance(entity.BC.center, this.BC.center) <= visionRadius) {
                 spottedNeighbors.push(entity);
                 added = true;
             }
@@ -771,8 +774,6 @@ class Agent {
     }
 
     coneVision(input) {
-        const predatorVision = this.foodHierarchyIndex > 0;
-
         // can have binocular recieve less data (10% of the data as it gets from periph) and opposite for mono
         // then using predatorvision to check if its a predator or not
         // then after implement how monocular is not good with distance
@@ -786,14 +787,15 @@ class Agent {
         // turn on or off distance for certain rays
         // setting to adjust center or outer rays
 
-        let rays;
-        let angle;
-        let angleBetw;
+        // separate vision between agents (radius, angle, rays?) DONE
+
+        const predatorVision = this.foodHierarchyIndex > 0;
+
+        let rays, angle, angleBetw;
 
         if (predatorVision) {
             angle = params.PREDATOR_VISION_ANGLE * Math.PI / 180;
             rays = params.AGENT_VISION_RAYS - 1;
-            console.log("predator total " + rays);
             angleBetw = angle / rays;
         } else {
             rays = params.AGENT_VISION_RAYS - 1;
