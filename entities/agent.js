@@ -152,6 +152,10 @@ class Agent {
                 totalRawFitness += huntingFitness();
             }
             if (params.AGENT_BITING) totalRawFitness += this.biteTicks;
+            // TODO: fix NaN fitness possibility
+            if(isNaN(totalRawFitness)) {
+                totalRawFitness = 0
+            }
             return totalRawFitness;
         };
 
