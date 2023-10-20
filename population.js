@@ -1217,6 +1217,7 @@ class PopulationManager {
         specieOOBData.forEach((data, speciesId) => {
             let entry = {};
             entry['speciesId'] = speciesId;
+            console.log("prey species members: " + PopulationManager.PREY_SPECIES_MEMBERS)
             entry['speciesTotalTickOutOfBound'] = data / PopulationManager.PREY_SPECIES_MEMBERS.get(speciesId).length * 100;
             this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
 
@@ -1469,12 +1470,16 @@ class PopulationManager {
         PopulationManager.PREDATOR_SPECIES_MEMBERS = new Map();
         this.agentsAsList().forEach(agent => { // fill species members map with surviving parents and children
             if (PopulationManager.PREY_SPECIES_MEMBERS.get(agent.speciesId) === undefined) {
-                PopulationManager.PREY_SPECIES_MEMBERS.set(agent.speciesId, []);
+                if (!params.coevolution || agent.foodHierarchyIndex == 0) {
+                    PopulationManager.PREY_SPECIES_MEMBERS.set(agent.speciesId, []);
+                }
             }
             if (PopulationManager.PREDATOR_SPECIES_MEMBERS.get(agent.speciesId) === undefined) {
-                PopulationManager.PREDATOR_SPECIES_MEMBERS.set(agent.speciesId, []);
+                if (params.coevolution && agent.foodHierarchyIndex > 0) {
+                    PopulationManager.PREDATOR_SPECIES_MEMBERS.set(agent.speciesId, []);
+                }
             }
-            if(agent.foodHierarchyIndex > 0 && params.coevolution) {
+            if (agent.foodHierarchyIndex > 0 && params.coevolution) {
                 PopulationManager.PREDATOR_SPECIES_MEMBERS.get(agent.speciesId).push(agent);
             } else {
                 PopulationManager.PREY_SPECIES_MEMBERS.get(agent.speciesId).push(agent);
