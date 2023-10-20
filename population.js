@@ -39,13 +39,13 @@ class PopulationManager {
         this.createFoodPodLayout();
 
         this.preySpeciesWorldList = new Map(); // List of worlds for species
-        if (params.coevolution) {
+        if (params.COEVOLUTION) {
             this.predatorSpeciesWorldList = new Map();
         }
         this.resetWorldColorPool();
 
         // Original behavior with a single population
-        if (!params.coevolution) {
+        if (!params.COEVOLUTION) {
             //Check for splitting agents
             if (params.AGENT_PER_WORLD === 0) {
                 let world = this.initNewWorld(PopulationManager.PREY_SPECIES_ID);
@@ -56,8 +56,7 @@ class PopulationManager {
                 this.spawnFood(PopulationManager.PREY_SPECIES_ID, true);
     
                 this.resetCanvases();
-            }
-            else {
+            } else {
                 //Split the original specie into multiple worlds
                 PopulationManager.PREY_SPECIES_MEMBERS.set(PopulationManager.PREY_SPECIES_ID, []);
                 PopulationManager.SPECIES_CREATED++;
@@ -86,9 +85,7 @@ class PopulationManager {
                 PopulationManager.WORLD_CREATED = worldSpawned;
                 this.resetCanvases();
             }
-        }
-        // coevolution behavior with predator and prey in their own unique populations
-        else {
+        } else { // coevolution behavior with predator and prey in their own unique populations
             //Check for splitting agents
             if (params.AGENT_PER_WORLD === 0) {
                 let world = this.initNewWorld(PopulationManager.PREY_SPECIES_ID);
@@ -99,8 +96,7 @@ class PopulationManager {
                 this.spawnFood(PopulationManager.PREY_SPECIES_ID, true);
     
                 this.resetCanvases();
-            }
-            else {
+            } else {
                 //Split the original specie into multiple worlds
                 PopulationManager.PREY_SPECIES_MEMBERS.set(PopulationManager.PREY_SPECIES_ID, []);
                 PopulationManager.PREDATOR_SPECIES_MEMBERS.set(PopulationManager.PREDATOR_SPECIES_ID, []);
@@ -134,6 +130,7 @@ class PopulationManager {
                 this.resetCanvases();
             }
         }
+
         this.updateWorldsFoodHierarchy();
     
         this.currentLeftWheelHist = new Histogram(20, 5, "Current Generation Left Wheel Output Chart");
@@ -164,7 +161,7 @@ class PopulationManager {
             currentGenData: 0,
         }
 
-                    this.rolesMirrored = false;
+        this.rolesMirrored = false;
 
         PopulationManager.MINIMAP = new Minimap(game);
         //Update the spec for minimap
@@ -537,7 +534,7 @@ class PopulationManager {
 
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         params.AUTO_SAVE_GENOME = document.getElementById("auto_save_genome").checked;
-        params.coevolution = document.getElementById("coevolution").checked
+        params.COEVOLUTION = document.getElementById("coevolution").checked;
 
         this.checkFoodLevels();
 
@@ -692,7 +689,7 @@ class PopulationManager {
         }
 
         // TODO: modify this to accept the correct ratio of pred/prey and set food hierarchy
-        if(params.coevolution) {
+        if (params.coevolution) {
             numberOfAgentsToSpawn -= 1; // choose one of the agents to be a predator if coevolution selected
             let predator = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2)
             predator.speciesId = PopulationManager.PREDATOR_SPECIES_ID;
