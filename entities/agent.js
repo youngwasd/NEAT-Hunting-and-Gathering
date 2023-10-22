@@ -795,10 +795,10 @@ class Agent {
 
         if (predatorVision) {
             angle = params.PREDATOR_VISION_ANGLE * Math.PI / 180;
-            rays = params.AGENT_VISION_RAYS - 1;
+            rays = params.PREDATOR_VISION_RAYS - 1;
             angleBetw = angle / rays;
         } else {
-            rays = params.AGENT_VISION_RAYS - 1;
+            rays = params.PREY_VISION_RAYS - 1;
             angle = params.PREY_VISION_ANGLE * Math.PI / 180;
             angleBetw = angle / rays;
         }

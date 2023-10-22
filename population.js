@@ -1,5 +1,4 @@
 class PopulationManager {
-
     static PREY_SPECIES_ID = 0;
     static PREDATOR_SPECIES_ID = 0;
     static GEN_NUM = 0;
@@ -17,7 +16,6 @@ class PopulationManager {
     static WORLD_COLOR_POOL = [];
     static MINIMAP;
     static CURRENT_WORLD_DISPLAY = 0;
-
     static IS_LAST_TICK = false; //Use for debugging purposes; to determine whether the current population is at its last tick
 
     //TODO: a parameter to check for old behavior and switch between them
@@ -304,7 +302,7 @@ class PopulationManager {
             params.PUSH_FHI_TO_ANN = document.getElementById("push_fhi_to_ann").checked;
 
             if (params.PUSH_FHI_TO_ANN) {
-                Genome.DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index
+                Genome.DEFAULT_INPUTS = 2 * params.PREY_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index (changed to prey_vision_rays)
             }
 
         }
@@ -422,8 +420,12 @@ class PopulationManager {
             params.PREDATOR_VISION_RADIUS = parseFloat(document.getElementById("predator_vision_radius").value);
         }
 
-        if (document.activeElement.id !== "agent_vision_rays") {
-            params.AGENT_VISION_RAYS = parseFloat(document.getElementById("agent_vision_rays").value);
+        if (document.activeElement.id !== "prey_vision_rays") {
+            params.PREY_VISION_RAYS = parseFloat(document.getElementById("prey_vision_rays").value);
+        }
+
+        if (document.activeElement.id !== "predator_vision_rays") {
+            params.PREDATOR_VISION_RAYS = parseFloat(document.getElementById("predator_vision_rays").value);
         }
 
         if (document.activeElement.id !== "prey_vision_angle") {
@@ -861,7 +863,6 @@ class PopulationManager {
         return aliveCount;
     };
 
-
     agentsAsList() {
         let agents = [];
         this.worlds.forEach(members => {
@@ -1088,7 +1089,6 @@ class PopulationManager {
         this.resetCanvases();
         this.resetWorldColorPool();
     };
-
 
     resetCanvases() {
         const tmp = [];
@@ -1475,7 +1475,6 @@ class PopulationManager {
         return rValue;
     }
 
-
     deathRoulette(reprodFitMap, sumShared) {
         let rouletteOrder = [...reprodFitMap.keys()].sort();
         let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
@@ -1552,5 +1551,4 @@ class PopulationManager {
         }
         this.registerChildAgents(children, speciesMap);
     }
-
 };

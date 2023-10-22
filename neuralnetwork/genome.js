@@ -1,6 +1,6 @@
 class Genome {
 
-    static DEFAULT_INPUTS = 2 * params.AGENT_VISION_RAYS + 2;//+2 is for bias and hunger
+    static DEFAULT_INPUTS = 2 * params.PREY_VISION_RAYS + 2; //+2 is for bias and hunger (changed to prey_vision_rays)
 
     static DEFAULT_HIDDENS = 0;
 
@@ -29,7 +29,7 @@ class Genome {
         Genome.NODE_ID_MAP = new Map();
         Genome.INNOV_NUM = 0;
         Genome.DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
-        Genome.DEFAULT_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * params.AGENT_VISION_RAYS + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        Genome.DEFAULT_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * params.PREY_VISION_RAYS + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2; // changed agent_vision_rays to prey_vision_rays
         
         if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") && params.PUSH_FHI_TO_ANN) {
             Genome.DEFAULT_INPUTS++; //Increase 1 more in neural inputs for food hierarchy index
