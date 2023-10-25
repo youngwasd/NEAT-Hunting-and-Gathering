@@ -318,7 +318,21 @@ class Agent {
 
     // add a parameter to check for pred or prey
     getEyePos() {
-        return { x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading), y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading) };
+        if (params.BINOCULAR_VISION) {
+            // add code for 2 eyes
+            const distanceBtEyes = params.EYE_DISTANCE;
+
+            const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                             y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+
+            const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                              y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+
+            return {leftEye, rightEye};
+        } else {
+            return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+        }
     }
 
     /**
