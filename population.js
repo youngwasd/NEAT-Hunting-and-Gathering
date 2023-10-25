@@ -146,7 +146,7 @@ class PopulationManager {
     
         }
 
-
+        
 
         this.updateWorldsFoodHierarchy();
     
@@ -950,7 +950,6 @@ class PopulationManager {
             }
         }
         if (!params.coevolution) {
-            console.log(params.coevolution)
         preySpeciesAllocationList.forEach((agentContainer) => {
             // Resetting the species by world list
             let speciesId = agentContainer[0].speciesId;
@@ -981,7 +980,6 @@ class PopulationManager {
             ++worldId;
         });
         } else {
-            console.log(params.coevolution)
             console.log(preySpeciesAllocationList)
             preySpeciesAllocationList.forEach((agentContainer) => {
                 // Resetting the species by world list
@@ -996,7 +994,6 @@ class PopulationManager {
                     if (!this.worlds.get(worldId) || this.worlds.get(worldId).agents.length >= params.predator_ratio) {
                         ++worldId;
                         let world = this.initNewWorld(worldId);
-                        console.log(worldId)
                         let predator = predatorSpeciesAllocationList[0][worldId]
                         this.preySpeciesWorldList.get(speciesId).push(worldId);
                         this.predatorSpeciesWorldList.get(speciesId).push(worldId);
@@ -1389,7 +1386,6 @@ class PopulationManager {
             });
             console.log("prey species list length: " + speciesList.length)
             minShared = Math.min(minShared, sumRaws / speciesList.length);
-            console.log(minShared)
             reprodFitMap.set(speciesId, sumRaws / speciesList.length);
         });
         //Determines the avg fitness for each species after adding the abs val minimum negative fitness? - gabe
@@ -1397,9 +1393,10 @@ class PopulationManager {
         let predSumShared = 0;
         //Build the fitness chart for the species
         reprodFitMap.forEach((fitness, speciesId) => {
+            console.log(speciesId)
             const newFit = fitness + minShared * -1 + 10;
             reprodFitMap.set(speciesId, newFit);
-
+            console.log(sumShared)
             sumShared += reprodFitMap.get(speciesId);
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
@@ -1407,8 +1404,8 @@ class PopulationManager {
         if(params.coevolution) {
             minShared = 0;
             console.log("coevolution read correctly inside processgeneration")
-        //Determine average raw fitness for each species
-        PopulationManager.PREDATOR_SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
+            //Determine average raw fitness for each species
+            PopulationManager.PREDATOR_SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
             //sum raw fitness for all members of this species
             let sumRaws = 0;
 
@@ -1429,14 +1426,11 @@ class PopulationManager {
         console.log(predReprodFitMap)
         //Build the fitness chart for the species
         predReprodFitMap.forEach((fitness, speciesId) => {
-            console.log(speciesId)
+            // console.log(speciesId)
             const newFit = fitness + minShared * -1 + 10;
             predReprodFitMap.set(speciesId, newFit);
-            // TODO: WHY IS THIS NAN SOMETIMES?
-            if (!isNaN(predReprodFitMap.get(speciesId))) {
             predSumShared += predReprodFitMap.get(speciesId);
-            }
-            console.log(predSumShared)
+            // console.log(predSumShared)
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
         console.log("not broken after predreprodmap")
@@ -1470,9 +1464,9 @@ class PopulationManager {
         PopulationManager.PREDATOR_SPECIES_MEMBERS = new Map();
         this.agentsAsList().forEach(agent => { // fill species members map with surviving parents and children
             if (PopulationManager.PREY_SPECIES_MEMBERS.get(agent.speciesId) === undefined) {
-                if (!params.coevolution || agent.foodHierarchyIndex == 0) {
+
                     PopulationManager.PREY_SPECIES_MEMBERS.set(agent.speciesId, []);
-                }
+
             }
             if (PopulationManager.PREDATOR_SPECIES_MEMBERS.get(agent.speciesId) === undefined) {
                 if (params.coevolution && agent.foodHierarchyIndex > 0) {
@@ -1623,6 +1617,7 @@ class PopulationManager {
         for (let i = 0; i < ascendingFitSpecies.length; i++) {
             deathFitMap.set(ascendingFitSpecies[i], reprodFitMap.get(ascendingFitSpecies[ascendingFitSpecies.length - i - 1]));
         }
+        console.log("sumshared in deathroulette for " + hierarchy + " is " + sumShared)
 
         let dead = hierarchy == 0 ? PopulationManager.NUM_PREY - this.countAlives()[0] : PopulationManager.NUM_PREDATOR - this.countAlives()[1]
         let numAgents = this.agentsAsList().length;

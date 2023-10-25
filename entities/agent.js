@@ -135,6 +135,7 @@ class Agent {
                 //console.log("fitness from potential calories: " + (0.5 * fitnessFromCalDist + 0.5 * this.maxEatingCompletion * fitnessFromCalDist));
                 //console.log("Closest I got to eating was: " + this.maxEatingCompletion);
             }*/
+            // TODO: potentially remove as it's hard to explain in paper/unused
             let fitnessFromPotCal = 0;
             if (this.closestFood.cals > 0) {
                 let fitnessFromCalDist = 2 / (1 + Math.E ** (this.closestFood.dist / 50));
@@ -156,27 +157,30 @@ class Agent {
             return totalRawFitness;
         };
 
-        const fitnessToCornerFunct = () => {
-            let distFromLeft = Math.abs(this.BC.radius - this.x);
-            let distFromTop = Math.abs(this.BC.radius - this.y);
-            let distFromRight = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.x);
-            let distFromBottom = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.y);
-            let dist = Math.min(distFromBottom, distFromLeft, distFromRight, distFromTop);
-            let rawFitness = 100 / (dist + this.speed + 0.5);
-            console.log("fitness from moving to wall: " + rawFitness);
-            rawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
-            return rawFitness;
-        }
+        //TODO: confirm this isn't used and delete if not
+        // const fitnessToCornerFunct = () => {
+        //     let distFromLeft = Math.abs(this.BC.radius - this.x);
+        //     let distFromTop = Math.abs(this.BC.radius - this.y);
+        //     let distFromRight = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.x);
+        //     let distFromBottom = Math.abs((params.CANVAS_SIZE - this.BC.radius) - this.y);
+        //     let dist = Math.min(distFromBottom, distFromLeft, distFromRight, distFromTop);
+        //     let rawFitness = 100 / (dist + this.speed + 0.5);
+        //     console.log("fitness from moving to wall: " + rawFitness);
+        //     rawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
+        //     return rawFitness;
+        // }
 
+        // Dead/alive reward vs running out of bounds early being more punishment
         const predPreyFitnessFunct = () => {
             let predPrey;
             if (params.MIRROR_ROLES) predPrey = "both";
             else if (this.foodHierarchyIndex == 0) predPrey = "prey";
             else predPrey = "predator";
+            // Rewards prey for surviving longer and predator for eating early
             let winnerBonus = this.getWinnerBonus(predPrey);
             return params.FITNESS_ENERGY_EFFICIENCY * this.caloriesEaten / this.caloriesSpent
                 + params.FITNESS_PERCENT_DEAD * this.getPercentDead()
-                + params.FITNESS_WINNER_BONUS * winnerBonus;
+                // + params.FITNESS_WINNER_BONUS * winnerBonus;
         }
 
         this.genome.rawFitness = 0;
