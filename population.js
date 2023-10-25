@@ -1023,9 +1023,9 @@ class PopulationManager {
 
     cleanUpWorlds() {
         let extincts = [];
-        this.worlds.forEach((members, worldId) => {
-            members.cleanupAgents();
-            if (members.agents.length === 0 || members.countAlives() == 0) {
+        this.worlds.forEach((world, worldId) => {
+            world.cleanupAgents();
+            if (world.agents.length === 0 || world.countAlives() == 0) {
                 extincts.push(worldId);
             }
         });
@@ -1169,6 +1169,7 @@ class PopulationManager {
     /**
      * Collect data during the run and put them into agent trackers
      */
+    // TODO: allow this to track predator too
     processRawData() {
         let specieOOBData = new Map();
         let specieFoodEatenData = new Map();
@@ -1180,10 +1181,12 @@ class PopulationManager {
         let totalOOB_Predator = 0;
         let huntingMode = params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum";
         this.agentsAsList().forEach((agent) => {
+            if (!params.coevolution || agent.foodHierarchyIndex==0) {
             let OOBData = specieOOBData.get(agent.speciesId);
             specieOOBData.set(agent.speciesId,
                 (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
             );
+            
 
             let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
             specieFoodEatenData.set(agent.speciesId,
@@ -1208,10 +1211,12 @@ class PopulationManager {
             this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
 
             this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
+        }
         });
 
         //Log the data into agent Tracker
         specieOOBData.forEach((data, speciesId) => {
+            console.log(specieOOBData)
             let entry = {};
             entry['speciesId'] = speciesId;
             console.log("prey species members: " + PopulationManager.PREY_SPECIES_MEMBERS)
@@ -1409,7 +1414,6 @@ class PopulationManager {
             //sum raw fitness for all members of this species
             let sumRaws = 0;
 
-            //TODO: why is fitness NaN sometimes???
             speciesList.forEach(member => {
                 if (!isNaN(member.genome.rawFitness)) {
                 sumRaws += member.genome.rawFitness;
@@ -1463,16 +1467,11 @@ class PopulationManager {
         PopulationManager.PREY_SPECIES_MEMBERS = new Map();
         PopulationManager.PREDATOR_SPECIES_MEMBERS = new Map();
         this.agentsAsList().forEach(agent => { // fill species members map with surviving parents and children
-            if (PopulationManager.PREY_SPECIES_MEMBERS.get(agent.speciesId) === undefined) {
-
+            if (PopulationManager.PREY_SPECIES_MEMBERS.get(agent.speciesId) === undefined && (!params.coevolution || agent.foodHierarchyIndex == 0)) {
                     PopulationManager.PREY_SPECIES_MEMBERS.set(agent.speciesId, []);
-
-            }
-            if (PopulationManager.PREDATOR_SPECIES_MEMBERS.get(agent.speciesId) === undefined) {
-                if (params.coevolution && agent.foodHierarchyIndex > 0) {
+            } else if (PopulationManager.PREDATOR_SPECIES_MEMBERS.get(agent.speciesId) === undefined && params.coevolution && agent.foodHierarchyIndex > 0) {
                     PopulationManager.PREDATOR_SPECIES_MEMBERS.set(agent.speciesId, []);
-                }
-            }
+            } 
             if (agent.foodHierarchyIndex > 0 && params.coevolution) {
                 PopulationManager.PREDATOR_SPECIES_MEMBERS.get(agent.speciesId).push(agent);
             } else {
@@ -1622,6 +1621,7 @@ class PopulationManager {
         let dead = hierarchy == 0 ? PopulationManager.NUM_PREY - this.countAlives()[0] : PopulationManager.NUM_PREDATOR - this.countAlives()[1]
         let numAgents = this.agentsAsList().length;
         for (let i = 0; i < Math.ceil(numAgents / 2) - dead; i++) { // death roulette -> kill the ceiling to ensure agent list is always even
+
             let killed = false;
             while (!killed) { // keep rolling the roulette wheel until someone dies
                 console.log(sumShared)
