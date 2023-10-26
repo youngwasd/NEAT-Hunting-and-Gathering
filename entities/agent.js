@@ -319,14 +319,14 @@ class Agent {
     // add a parameter to check for pred or prey
     getEyePos() {
         if (params.BINOCULAR_VISION) {
-            // add code for 2 eyes
             const distanceBtEyes = params.EYE_DISTANCE;
 
-            const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
-                             y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+            // might need to adjust these 2
+            const leftEye = {x: this.BC.center.x + (this.diameter + distanceBtEyes) / 2 * Math.cos(this.heading),
+                             y: this.BC.center.y + (this.diameter + distanceBtEyes) / 2 * Math.sin(this.heading)};
 
-            const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
-                              y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+            const rightEye = {x: this.BC.center.x + (this.diameter + distanceBtEyes) / 2 * Math.cos(this.heading),
+                              y: this.BC.center.y + (this.diameter + distanceBtEyes) / 2 * Math.sin(this.heading)};
 
             return {leftEye, rightEye};
         } else {
@@ -747,6 +747,8 @@ class Agent {
      * @returns 
      */
     visionRayCollision(line, entity, eyes) {
+        // have to adjust for 1 or 2 eyes
+
         var circle = entity.BC;
         var slope = line.slope;
 
@@ -788,21 +790,6 @@ class Agent {
     }
 
     coneVision(input) {
-        // can have binocular recieve less data (10% of the data as it gets from periph) and opposite for mono
-        // then using predatorvision to check if its a predator or not
-        // then after implement how monocular is not good with distance
-        // predator is binocular, prey is monocular (both will have 2 eyes, pred will have closer eyes, prey will be more spread apart)
-        // maybe disable distance in our vision rays
-        // predator vision have overlap so they can tell distance, prey do not
-        // some rays can determine distance some cannot
-        
-        // a setting 1 eye change fov for each
-        // first work (change total rays and fov)
-        // turn on or off distance for certain rays
-        // setting to adjust center or outer rays
-
-        // separate vision between agents (radius, angle, rays?) DONE
-
         const predatorVision = this.foodHierarchyIndex > 0;
 
         let rays, angle, angleBetw;
@@ -819,7 +806,16 @@ class Agent {
         
         let currAngle = this.heading - angle / 2;
 
-        let eyes = this.getEyePos();
+        let eyes;
+        
+        if (params.BINOCULAR_VISION) {
+            eyes[0] = this.getEyePos().leftEye;
+            eyes[1] = this.getEyePos().rightEye;
+        } else {
+            eyes[0] = this.getEyePos();
+        }
+
+        // need to adjust for 1 or 2 eyes (will likely break if not fixed first)
 
         this.spotted = [];
         this.visCol = [];
@@ -996,16 +992,29 @@ class Agent {
             ctx.closePath();
         }
     }
+
     drawVFinal(ctx) {
-        let eyes = this.getEyePos();
+        let eyes;
+
+        if (params.BINOCULAR_VISION) {
+            eyes[0] = this.getEyePos().leftEye;
+            eyes[1] = this.getEyePos().rightEye;
+        } else {
+            eyes[0] = this.getEyePos();
+        }
+
         ctx.linewidth = 2;
         for (const element of this.spotted) {
             ctx.strokeStyle = `hsl(${element.hue}, 100%, 50%)`;
             let angle = element.angle;
             let dist = element.dist == Infinity ? 9999 : element.dist;
             ctx.beginPath();
-            ctx.moveTo(eyes.x, eyes.y);
-            ctx.lineTo(eyes.x + (Math.cos(angle)) * dist, eyes.y + (Math.sin(angle)) * dist);
+            if (params.BINOCULAR_VISION) {
+                // something similar to the else but with 2 eyes 
+            } else {
+                ctx.moveTo(eyes[0].x, eyes[0].y);
+                ctx.lineTo(eyes[0].x + (Math.cos(angle)) * dist, eyes[0].y + (Math.sin(angle)) * dist);
+            }
             ctx.stroke();
             ctx.closePath();
         }
