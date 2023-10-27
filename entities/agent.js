@@ -116,7 +116,8 @@ class Agent {
          * @returns this Agent's fitness
          */
         const fitnessFunct = () => {
-            let totalRawFitness = this.caloriesEaten * params.FITNESS_CALORIES;
+            // TODO: temp added a large fitness to account for negative outside bounds
+            let totalRawFitness = this.caloriesEaten * params.FITNESS_CALORIES + 700;
 
             /** Rewards the agent based on how close they were to getting calories 
              * It rewards a fraction of what they would've gotten from eating the food depending on how close they were to consumption

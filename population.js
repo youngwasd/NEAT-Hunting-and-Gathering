@@ -1061,6 +1061,19 @@ class PopulationManager {
                 PopulationManager.SPECIES_COLORS.delete(speciesId);
             }
         });
+
+        PopulationManager.PREDATOR_SPECIES_MEMBERS.forEach((specie, speciesId) => {
+            for (let i = specie.length - 1; i >= 0; --i) {
+                let agent = specie[i];
+                if (agent.removeFromWorld) {
+                    specie.splice(i, 1);
+                }
+            }
+            if (specie.length == 0) {
+                PopulationManager.PREDATOR_SPECIES_MEMBERS.delete(speciesId);
+                PopulationManager.SPECIES_COLORS.delete(speciesId);
+            }
+        });
         //}
 
     }
@@ -1607,6 +1620,47 @@ class PopulationManager {
         return rValue;
     }
 
+
+
+    deathRoulette2(speciesMap) {
+        let totalFitness;
+        let speciesFitnessMap = new Map();
+        let rouletteWheel = [];
+        speciesMap.forEach((speciesList, speciesId) => {
+            let speciesFitness;
+            // Sum raw fitness for all members of this species
+            speciesList.forEach(member => {
+                speciesFitness += member.genome.rawFitness;
+                rouletteWheel.push(speciesId);
+
+            });
+            // Maps speciesId to the species average fitness
+            speciesFitnessMap.set(speciesId, Math.floor(speciesFitness / speciesList.length))
+            totalFitness += speciesFitness;
+        });
+        rouletteWheel.sort((s1, s2) => speciesFitnessMap.get(s1) - speciesFitnessMap.get(s2))
+
+        let rouletteResult = randomFloat(totalFitness)
+        for(let i = rouletteWheel.length; i > 0; i--) {
+            rouletteResult -= speciesFitnessMap.get(rouletteWheel[i])
+            if (rouletteResult < 0) {
+                // Removes the element in the opposite position of the list when the roulette is rolled
+                // Very good performing fitnesses lead to a higher likelihood of lower performers to be rolled
+                // Very poor performers result in a lower chance for the high performers to be rolled
+                // Not necessarily ideal but it's a work in progress
+                // TODO: consider replacing this functionality
+                for(const element in speciesMap.get(rouletteWheel[rouletteWheel.length-i])) {
+                    if(!element.removeFromWorld) {
+                        element.removeFromWorld = true;
+                        break;
+                    }
+                }
+                // currently exits after 1 'kill', can adjust a counter to only break at certain count
+                break;
+            }
+        }
+        
+    }
 
     //TODO: rewrite this so that it stops breaking everything
     deathRoulette(reprodFitMap, sumShared, speciesMap, hierarchy) {
