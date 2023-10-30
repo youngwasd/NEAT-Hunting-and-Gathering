@@ -412,9 +412,29 @@ class PopulationManager {
             params.FOOD_AGENT_RATIO = parseInt(document.getElementById("food_agent_ratio").value);
         }
 
-        if (document.activeElement.id !== "eye_distance") {
-            params.EYE_DISTANCE = parseInt(document.getElementById("eye_distance").value);
+        params.PREY_BINOCULAR_VISION = document.getElementById("prey_binocular_vision").checked;
+        params.PREDATOR_BINOCULAR_VISION = document.getElementById("predator_binocular_vision").checked;
+
+        if (params.PREY_BINOCULAR_VISION) {
+            document.getElementById("prey_eye_distance").disabled = false;
+
+            if (document.activeElement.id !== "prey_eye_distance") {
+                params.PREY_EYE_DISTANCE = parseInt(document.getElementById("prey_eye_distance").value);
+            }
+        } else {
+            document.getElementById("prey_eye_distance").disabled = true;
         }
+
+        if (params.PREDATOR_BINOCULAR_VISION) {
+            document.getElementById("predator_eye_distance").disabled = false;
+
+            if (document.activeElement.id !== "predator_eye_distance") {
+                params.PREDATOR_EYE_DISTANCE = parseInt(document.getElementById("predator_eye_distance").value);
+            }
+        } else {
+            document.getElementById("predator_eye_distance").disabled = true;
+        }
+
 
         if (document.activeElement.id !== "prey_vision_radius") {
             params.PREY_VISION_RADIUS = parseFloat(document.getElementById("prey_vision_radius").value);
@@ -541,7 +561,6 @@ class PopulationManager {
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         params.AUTO_SAVE_GENOME = document.getElementById("auto_save_genome").checked;
         params.COEVOLUTION = document.getElementById("coevolution").checked;
-        params.BINOCULAR_VISION = document.getElementById("binocular_vision").checked;
 
         this.checkFoodLevels();
 

@@ -315,23 +315,37 @@ class Agent {
         return this.x >= 0 && this.x < params.CANVAS_SIZE && this.y >= 0 && this.y < params.CANVAS_SIZE;
     };
 
-
     // add a parameter to check for pred or prey
     getEyePos() {
-        if (params.BINOCULAR_VISION) {
-            const distanceBtEyes = params.EYE_DISTANCE;
+        const distanceBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
+        const eyeAngle = Math.atan(distanceBtEyes / (this.diameter + 1));
 
-            // might need to adjust these 2
-            const leftEye = {x: this.BC.center.x + (this.diameter + distanceBtEyes) / 2 * Math.cos(this.heading),
-                             y: this.BC.center.y + (this.diameter + distanceBtEyes) / 2 * Math.sin(this.heading)};
-
-            const rightEye = {x: this.BC.center.x + (this.diameter + distanceBtEyes) / 2 * Math.cos(this.heading),
-                              y: this.BC.center.y + (this.diameter + distanceBtEyes) / 2 * Math.sin(this.heading)};
-
-            return {leftEye, rightEye};
+        if (this.foodHierarchyIndex > 0) {
+            if (params.PREDATOR_BINOCULAR_VISION) {
+                const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
+                                 y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
+    
+                const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
+                                  y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
+    
+                return {leftEye, rightEye};
+            } else {
+                return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                        y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+            }
         } else {
-            return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
-                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+            if (params.PREY_BINOCULAR_VISION) {    
+                const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
+                                 y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
+    
+                const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
+                                  y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
+    
+                return {leftEye, rightEye};
+            } else {
+                return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                        y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+            }
         }
     }
 
@@ -535,7 +549,31 @@ class Agent {
         this.closestFood = this.getShortestDistToFood(spottedNeighbors);
 
         if (params.AGENT_VISION_IS_CONE) {
-            this.coneVision(input);
+            const eyes = [];
+
+            if (this.foodHierarchyIndex > 0) {
+                if (params.PREDATOR_BINOCULAR_VISION) {
+                    eyes[0] = this.getEyePos().leftEye;
+                    eyes[1] = this.getEyePos().rightEye;
+    
+                    this.coneVision(input, eyes[0]);
+                    this.coneVision(input, eyes[1]);
+                } else {
+                    eyes[0] = this.getEyePos();
+                    this.coneVision(input, eyes[0]);
+                }
+            } else {
+                if (params.PREY_BINOCULAR_VISION) {
+                    eyes[0] = this.getEyePos().leftEye;
+                    eyes[1] = this.getEyePos().rightEye;
+    
+                    this.coneVision(input, eyes[0]);
+                    this.coneVision(input, eyes[1]);
+                } else {
+                    eyes[0] = this.getEyePos();
+                    this.coneVision(input, eyes[0]);
+                }
+            }
         } else {
 
             // add input for the neighbors we have spotted, up to AGENT_NEIGHBOR_COUNT
@@ -747,8 +785,6 @@ class Agent {
      * @returns 
      */
     visionRayCollision(line, entity, eyes) {
-        // have to adjust for 1 or 2 eyes
-
         var circle = entity.BC;
         var slope = line.slope;
 
@@ -789,7 +825,7 @@ class Agent {
         return intersect;
     }
 
-    coneVision(input) {
+    coneVision(input, eyes) {
         const predatorVision = this.foodHierarchyIndex > 0;
 
         let rays, angle, angleBetw;
@@ -805,17 +841,6 @@ class Agent {
         }
         
         let currAngle = this.heading - angle / 2;
-
-        let eyes;
-        
-        if (params.BINOCULAR_VISION) {
-            eyes[0] = this.getEyePos().leftEye;
-            eyes[1] = this.getEyePos().rightEye;
-        } else {
-            eyes[0] = this.getEyePos();
-        }
-
-        // need to adjust for 1 or 2 eyes (will likely break if not fixed first)
 
         this.spotted = [];
         this.visCol = [];
@@ -910,6 +935,7 @@ class Agent {
         ctx.fillText(text, x, y);
         ctx.textAlign = "left";
     }
+    
     /**
      * Draws this agent on its world canvas
      * 
@@ -950,11 +976,39 @@ class Agent {
 
         ctx.beginPath();
         ctx.lineWidth = this.biting ? 10 : 2;//width for pointer line is thicker if biting
-        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
-        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
+        const distanceBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
+        const eyeAngle = Math.atan(distanceBtEyes / (this.diameter + 1));
+
+        if (this.foodHierarchyIndex > 0) {
+            if (params.PREDATOR_BINOCULAR_VISION) {
+                // left eye
+                ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - eyeAngle));
+                ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading - eyeAngle));
+    
+                // right eye
+                ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
+                ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
+            } else {
+                ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
+                ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
+            }
+        } else {
+            if (params.PREY_BINOCULAR_VISION) {
+                // left eye
+                ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - eyeAngle));
+                ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading - eyeAngle));
+    
+                // right eye
+                ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
+                ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
+            } else {
+                ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
+                ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
+            }
+        }
         ctx.stroke();
         ctx.closePath();
-
+        
         ctx.setLineDash([]);
 
         //Display World ID
@@ -975,7 +1029,29 @@ class Agent {
         ctx.lineWidth = 2;
         //Draw cone vision
         if (params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && Array.isArray(this.spotted)) {
-            this.drawVFinal(ctx);
+            const eyes = [];
+            if (this.foodHierarchyIndex > 0) {
+                if (params.PREDATOR_BINOCULAR_VISION) {
+                    eyes[0] = this.getEyePos().leftEye;
+                    eyes[1] = this.getEyePos().rightEye;
+                    this.drawVFinal(ctx, eyes[0]);
+                    this.drawVFinal(ctx, eyes[1]);
+                } else {
+                    eyes[0] = this.getEyePos();
+                    this.drawVFinal(ctx, eyes[0]);
+                }
+            } else {
+                if (params.PREY_BINOCULAR_VISION) {
+                    eyes[0] = this.getEyePos().leftEye;
+                    eyes[1] = this.getEyePos().rightEye;
+                    this.drawVFinal(ctx, eyes[0]);
+                    this.drawVFinal(ctx, eyes[1]);
+                } else {
+                    eyes[0] = this.getEyePos();
+                    this.drawVFinal(ctx, eyes[0]);
+                }
+            }
+            
             this.drawVCol(ctx);
         } else if (!Array.isArray(this.spotted)) {
             console.error("this.spotted is not an array...");
@@ -993,28 +1069,15 @@ class Agent {
         }
     }
 
-    drawVFinal(ctx) {
-        let eyes;
-
-        if (params.BINOCULAR_VISION) {
-            eyes[0] = this.getEyePos().leftEye;
-            eyes[1] = this.getEyePos().rightEye;
-        } else {
-            eyes[0] = this.getEyePos();
-        }
-
+    drawVFinal(ctx, eyes) {
         ctx.linewidth = 2;
         for (const element of this.spotted) {
             ctx.strokeStyle = `hsl(${element.hue}, 100%, 50%)`;
             let angle = element.angle;
             let dist = element.dist == Infinity ? 9999 : element.dist;
             ctx.beginPath();
-            if (params.BINOCULAR_VISION) {
-                // something similar to the else but with 2 eyes 
-            } else {
-                ctx.moveTo(eyes[0].x, eyes[0].y);
-                ctx.lineTo(eyes[0].x + (Math.cos(angle)) * dist, eyes[0].y + (Math.sin(angle)) * dist);
-            }
+            ctx.moveTo(eyes.x, eyes.y);
+            ctx.lineTo(eyes.x + (Math.cos(angle)) * dist, eyes.y + (Math.sin(angle)) * dist);
             ctx.stroke();
             ctx.closePath();
         }
