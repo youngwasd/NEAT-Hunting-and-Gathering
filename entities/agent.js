@@ -142,10 +142,10 @@ class Agent {
                 fitnessFromPotCal = this.closestFood.cals * (this.maxEatingCompletion * .5 + fitnessFromCalDist * .5);
                 totalRawFitness += params.FITNESS_POTENTIAL_CALORIES * fitnessFromPotCal;
             }
+
             /**
              * decrease fitness depend on number of ticks agent spend out of bound
              */
-
             totalRawFitness += params.FITNESS_OUT_OF_BOUND * this.numberOfTickOutOfBounds;
             totalRawFitness += params.FITNESS_BUMPING_INTO_WALL * this.numberOfTickBumpingIntoWalls;
 
@@ -262,7 +262,6 @@ class Agent {
                 //this.biteTicks--;
             }
         }
-
     }
 
     /** Updates this Agent's origin (initial position) to its current position in the sim */
@@ -932,7 +931,10 @@ class Agent {
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
             let distInput = AgentInputUtil.normalizeVisionDist(minDist);
-            input.push(distInput);
+            // if () {
+                 // input.push(distInput);
+            // }
+
             input.push((hueOfMinDist) / 360);
             currAngle += angleBetw;
         }
