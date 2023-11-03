@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>NEAT Hunting and Fogaring Simulation</title>
+    <title>NEAT Hunting and Foraging Simulation</title>
     <script type="text/javascript" src="http://73.225.31.4:8888/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript" src="./util.js"></script>
@@ -99,7 +99,7 @@
             </div>
 
             <div>
-                <input type="checkbox" id="coevolution"> Coevolution
+                <input type="checkbox" id="coevolution" checked="true"> Coevolution
             </div>
 
             <div>
@@ -401,7 +401,7 @@
             </div>
 
             <div>
-                <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs (restart
+                <input type="checkbox" id="mirror_roles"> Mirrored Prey-Predator Roles Runs (restart
                 to
                 take
                 effect)
@@ -413,10 +413,10 @@
             <div>
                 <!-- Old fitness function -->
                 <h5><strong>Specific Agent Fitness Function = </strong></h5>
-                <input type="text" id="FITNESS_HUNTING_PREY" value="50"> (Prey hunted) +
+                <input type="text" id="FITNESS_HUNTING_PREY" value="500"> (Prey hunted) +
                 <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
-                <input type="text" id="FITNESS_OUT_OF_BOUND" value="-2"> (Out of bound) +
-                <input type="text" id="fitness_calories" value="10"> (Calories Eaten) +
+                <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) +
+                <input type="text" id="fitness_calories" value="25"> (Calories Eaten) +
                 <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
                 <br> </br>
             </div>
