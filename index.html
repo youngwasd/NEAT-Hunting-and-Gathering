@@ -282,6 +282,24 @@
             </div>
 
             <div>
+                <input type="checkbox" id="prey_binocular_vision"> Enable Binocular Vision for Prey
+            </div>
+
+            <div>
+                <input type="checkbox" id="predator_binocular_vision"> Enable Binocular Vision for Predators
+            </div>
+
+            <div>
+                Distance Between Prey Eyes (in pixels, maximum is about 100 or it will not go any further): <input
+                    type="text" id="prey_eye_distance" value="10">
+            </div>
+
+            <div>
+                Distance Between Predator Eyes (in pixels, maximum is about 100 or it will not go any further): <input
+                    type="text" id="predator_eye_distance" value="10">
+            </div>
+
+            <div>
                 <input type="checkbox" id="agent_vision_is_cone" checked="true"> Cone Vision for Agents (Proximity
                 vision
                 otherwise)
@@ -329,15 +347,27 @@
             </div>
 
             <div>
-                Agent Visual Radius (pixels): <input type="text" id="agent_vision_radius" value="400">
+                Prey Visual Radius (pixels): <input type="text" id="prey_vision_radius" value="400">
             </div>
 
             <div>
-                Vision Rays: <input type="text" id="agent_vision_rays" value="13">
+                Predator Visual Radius (pixels): <input type="text" id="predator_vision_radius" value="400">
             </div>
 
             <div>
-                Vision Cone Angle (degrees): <input type="text" id="agent_vision_angle" value="180">
+                Prey Vision Rays (Requires Restart): <input type="text" id="prey_vision_rays" value="13">
+            </div>
+
+            <div>
+                Predator Vision Rays (Requires Restart): <input type="text" id="predator_vision_rays" value="13">
+            </div>
+
+            <div>
+                Prey Vision Cone Angle (degrees): <input type="text" id="prey_vision_angle" value="180">
+            </div>
+
+            <div>
+                Predator Vision Cone Angle (degrees): <input type="text" id="predator_vision_angle" value="180">
             </div>
             <br>
         </div>
