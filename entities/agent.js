@@ -35,7 +35,6 @@ class Agent {
     ]
 
     /**
-     * 
      * @param {*} game the game engine
      * @param {*} x the starting centered x position
      * @param {*} y the starting centered y position
@@ -227,6 +226,7 @@ class Agent {
     getDisplayHue() {
         return PopulationManager.SPECIES_COLORS.get(this.speciesId);
     };
+    
     /**
      * Finds the shortest distance from this agent to a source of food (only food.js atm)
      * @param {*} sortedEntities this method assumes the entities are sorted by distance
@@ -828,17 +828,21 @@ class Agent {
     coneVision(input, eyes) {
         const predatorVision = this.foodHierarchyIndex > 0;
 
-        let rays, angle, angleBetw;
+        const rays = predatorVision ? params.PREDATOR_VISION_RAYS - 1 : params.PREY_VISION_RAYS - 1;
+        const angle = predatorVision ? params.PREDATOR_VISION_ANGLE * Math.PI / 180 : params.PREY_VISION_ANGLE * Math.PI / 180;
+        const angleBetw = angle / rays;
 
-        if (predatorVision) {
-            angle = params.PREDATOR_VISION_ANGLE * Math.PI / 180;
-            rays = params.PREDATOR_VISION_RAYS - 1;
-            angleBetw = angle / rays;
-        } else {
-            rays = params.PREY_VISION_RAYS - 1;
-            angle = params.PREY_VISION_ANGLE * Math.PI / 180;
-            angleBetw = angle / rays;
-        }
+        // let rays, angle, angleBetw;
+
+        // if (predatorVision) {
+        //     angle = params.PREDATOR_VISION_ANGLE * Math.PI / 180;
+        //     rays = params.PREDATOR_VISION_RAYS - 1;
+        //     angleBetw = angle / rays;
+        // } else {
+        //     rays = params.PREY_VISION_RAYS - 1;
+        //     angle = params.PREY_VISION_ANGLE * Math.PI / 180;
+        //     angleBetw = angle / rays;
+        // }
         
         let currAngle = this.heading - angle / 2;
 

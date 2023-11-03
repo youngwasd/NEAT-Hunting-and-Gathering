@@ -1,6 +1,6 @@
 class Genome {
 
-    static DEFAULT_INPUTS = 2 * params.PREY_VISION_RAYS + 2; //+2 is for bias and hunger (changed to prey_vision_rays)
+    static DEFAULT_INPUTS = 2 * params.PREY_VISION_RAYS + 2; //+2 is for bias and hunger (changed to prey_vision_rays) predator rays has to be >= prey rays
 
     static DEFAULT_HIDDENS = 0;
 
