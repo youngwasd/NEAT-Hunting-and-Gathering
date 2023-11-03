@@ -44,7 +44,7 @@ class PopulationManager {
         this.resetWorldColorPool();
 
         // Original behavior with a single population
-        if (!params.COEVOLUTION) {
+        if (!params.coevolution) {
             //Check for splitting agents
             if (params.AGENT_PER_WORLD === 0) {
                 let world = this.initNewWorld(PopulationManager.PREY_SPECIES_ID);
@@ -103,6 +103,7 @@ class PopulationManager {
                 this.preySpeciesWorldList.set(PopulationManager.PREY_SPECIES_ID, []);
                 this.predatorSpeciesWorldList.set(PopulationManager.PREDATOR_SPECIES_ID, []);
                 let numberOfAgentToSpawn = PopulationManager.NUM_PREY;
+                console.log(PopulationManager.NUM_PREY + "prey to spawn is this")
                 let worldSpawned = 0;
     
                 //Distribute the agents to the world
@@ -565,7 +566,7 @@ class PopulationManager {
 
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         params.AUTO_SAVE_GENOME = document.getElementById("auto_save_genome").checked;
-        params.COEVOLUTION = document.getElementById("coevolution").checked;
+        params.coevolution = document.getElementById("coevolution").checked;
 
         this.checkFoodLevels();
 
