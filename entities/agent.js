@@ -320,7 +320,6 @@ class Agent {
         return this.x >= 0 && this.x < params.CANVAS_SIZE && this.y >= 0 && this.y < params.CANVAS_SIZE;
     };
 
-    // add a parameter to check for pred or prey
     getEyePos() {
         const distanceBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
         const eyeAngle = Math.atan(distanceBtEyes / (this.diameter + 1));
@@ -556,27 +555,66 @@ class Agent {
         if (params.AGENT_VISION_IS_CONE) {
             const eyes = [];
 
+        // rayDiff == 1 left eye
+        // rayDiff == 2 right eye
+        // rayDiff == 3 both eyes
+
+        // angleDiff == 1 left eye
+        // angleDiff == 2 right eye
+        // angleDiff == 3 both eyes
+
+
             if (this.foodHierarchyIndex > 0) {
                 if (params.PREDATOR_BINOCULAR_VISION) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-    
-                    this.coneVision(input, eyes[0]);
-                    this.coneVision(input, eyes[1]);
+
+                    if (params.PREDATOR_BOTH_RAYS) { // same num rays for both pred eyes
+                        if (params.PREDATOR_BOTH_ANGLE) { // same angle for both pred eyes
+                            this.coneVision(input, eyes[0], 3, 3);
+                            this.coneVision(input, eyes[1], 3, 3);
+                        } else { // diff angle for each pred eye
+                            this.coneVision(input, eyes[0], 3, 1);
+                            this.coneVision(input, eyes[1], 3, 2);
+                        }
+                    } else { // diff num rays for each pred eye
+                        if (params.PREDATOR_BOTH_ANGLE) { // same angle for both pred eyes
+                            this.coneVision(input, eyes[0], 1, 3);
+                            this.coneVision(input, eyes[1], 2, 3);
+                        } else { // diff angle for each pred eye
+                            this.coneVision(input, eyes[0], 1, 1);
+                            this.coneVision(input, eyes[1], 2, 2);
+                        }
+                    }
                 } else {
                     eyes[0] = this.getEyePos();
-                    this.coneVision(input, eyes[0]);
+                    this.coneVision(input, eyes[0], 3, 3);
                 }
             } else {
                 if (params.PREY_BINOCULAR_VISION) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-    
-                    this.coneVision(input, eyes[0]);
-                    this.coneVision(input, eyes[1]);
+
+                    if (params.PREY_BOTH_RAYS) { // same num rays for both prey eyes
+                        if (params.PREY_BOTH_ANGLE) { // same angle for both prey eyes
+                            this.coneVision(input, eyes[0], 3, 3);
+                            this.coneVision(input, eyes[1], 3, 3);
+                        } else { // diff angle for each prey eye
+                            this.coneVision(input, eyes[0], 3, 1);
+                            this.coneVision(input, eyes[1], 3, 2);
+                        }
+                    } else { // diff num rays for each prey eye
+                        if (params.PREY_BOTH_ANGLE) { // same angle for both prey eyes
+                            this.coneVision(input, eyes[0], 1, 3);
+                            this.coneVision(input, eyes[1], 2, 3);
+                        } else { // diff angle for each prey eye
+                            this.coneVision(input, eyes[0], 1, 1);
+                            this.coneVision(input, eyes[1], 2, 2);
+                        }
+                    }
                 } else {
                     eyes[0] = this.getEyePos();
-                    this.coneVision(input, eyes[0]);
+                    this.coneVision(input, eyes[0], 3, 3);
                 }
             }
         } else {
@@ -830,24 +868,41 @@ class Agent {
         return intersect;
     }
 
-    coneVision(input, eyes) {
+    // for both prey and pred the right eye value changes both left and right eye IDK WHY :( (prob neural net not having enough genomes or smth need help)
+    coneVision(input, eyes, rayDiff, angleDiff) {
         const predatorVision = this.foodHierarchyIndex > 0;
 
-        const rays = predatorVision ? params.PREDATOR_VISION_RAYS - 1 : params.PREY_VISION_RAYS - 1;
-        const angle = predatorVision ? params.PREDATOR_VISION_ANGLE * Math.PI / 180 : params.PREY_VISION_ANGLE * Math.PI / 180;
+        // rayDiff == 1 left eye
+        // rayDiff == 2 right eye
+        // rayDiff == 3 both eyes
+
+        let rays;
+        if (rayDiff == 1) {
+            rays = predatorVision ? params.PREDATOR_LEFT_RAYS - 1 : params.PREY_LEFT_RAYS - 1;          
+            //console.log("left eye rays: " + rays);
+        } else if (rayDiff == 2) {
+            rays = predatorVision ? params.PREDATOR_RIGHT_RAYS - 1 : params.PREY_RIGHT_RAYS - 1;
+            //console.log("right eye rays: " + rays);
+        } else if (rayDiff == 3) {
+            rays = predatorVision ? params.PREDATOR_VISION_RAYS - 1 : params.PREY_VISION_RAYS - 1;
+        }
+
+        // angleDiff == 1 left eye
+        // angleDiff == 2 right eye
+        // angleDiff == 3 both eyes
+
+        let angle;
+        if (angleDiff == 1) {
+            angle = predatorVision ? params.PREDATOR_LEFT_ANGLE * Math.PI / 180 : params.PREY_LEFT_ANGLE * Math.PI / 180;
+            //console.log("left eye angle: " + angle);
+        } else if (angleDiff == 2) {
+            angle = predatorVision ? params.PREDATOR_RIGHT_ANGLE * Math.PI / 180 : params.PREY_RIGHT_ANGLE * Math.PI / 180;
+            //console.log("right eye angle: " + angle);
+        } else if (angleDiff == 3) {
+            angle = predatorVision ? params.PREDATOR_VISION_ANGLE * Math.PI / 180 : params.PREY_VISION_ANGLE * Math.PI / 180;
+        }
+
         const angleBetw = angle / rays;
-
-        // let rays, angle, angleBetw;
-
-        // if (predatorVision) {
-        //     angle = params.PREDATOR_VISION_ANGLE * Math.PI / 180;
-        //     rays = params.PREDATOR_VISION_RAYS - 1;
-        //     angleBetw = angle / rays;
-        // } else {
-        //     rays = params.PREY_VISION_RAYS - 1;
-        //     angle = params.PREY_VISION_ANGLE * Math.PI / 180;
-        //     angleBetw = angle / rays;
-        // }
         
         let currAngle = this.heading - angle / 2;
 
@@ -932,7 +987,7 @@ class Agent {
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
             let distInput = AgentInputUtil.normalizeVisionDist(minDist);
             // if () {
-                 // input.push(distInput);
+                input.push(distInput);
             // }
 
             input.push((hueOfMinDist) / 360);

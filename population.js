@@ -416,27 +416,122 @@ class PopulationManager {
 
         params.PREY_BINOCULAR_VISION = document.getElementById("prey_binocular_vision").checked;
         params.PREDATOR_BINOCULAR_VISION = document.getElementById("predator_binocular_vision").checked;
+        params.PREY_BOTH_RAYS = document.getElementById("prey_both_rays").checked;
+        params.PREDATOR_BOTH_RAYS = document.getElementById("predator_both_rays").checked;
+        params.PREY_BOTH_ANGLE = document.getElementById("prey_both_angle").checked;
+        params.PREDATOR_BOTH_ANGLE = document.getElementById("predator_both_angle").checked;
 
         if (params.PREY_BINOCULAR_VISION) {
             document.getElementById("prey_eye_distance").disabled = false;
+            document.getElementById("prey_both_rays").disabled = false;
+            document.getElementById("prey_both_angle").disabled = false;
+            document.getElementById("prey_left_rays").disabled = true;
+            document.getElementById("prey_right_rays").disabled = true;
+            document.getElementById("prey_left_angle").disabled = true;
+            document.getElementById("prey_right_angle").disabled = true;
 
             if (document.activeElement.id !== "prey_eye_distance") {
                 params.PREY_EYE_DISTANCE = parseInt(document.getElementById("prey_eye_distance").value);
             }
+
+            if (params.PREY_BOTH_RAYS) {
+                document.getElementById("prey_vision_rays").disabled = false;
+                document.getElementById("prey_left_rays").disabled = true;
+                document.getElementById("prey_right_rays").disabled = true;
+            } else {
+                document.getElementById("prey_vision_rays").disabled = true;
+                document.getElementById("prey_left_rays").disabled = false;
+                document.getElementById("prey_right_rays").disabled = false;
+                if (document.activeElement.id !== "prey_left_rays") {
+                    params.PREY_LEFT_RAYS = parseInt(document.getElementById("prey_left_rays").value);
+                }
+                if (document.activeElement.id !== "prey_right_rays") {
+                    params.PREY_RIGHT_RAYS = parseInt(document.getElementById("prey_right_rays").value);
+                }
+            }
+
+            if (params.PREY_BOTH_ANGLE) {
+                document.getElementById("prey_vision_angle").disabled = false;
+                document.getElementById("prey_left_angle").disabled = true;
+                document.getElementById("prey_right_angle").disabled = true;
+            } else {
+                document.getElementById("prey_vision_angle").disabled = true;
+                document.getElementById("prey_left_angle").disabled = false;
+                document.getElementById("prey_right_angle").disabled = false;
+                if (document.activeElement.id !== "prey_left_angle") {
+                    params.PREY_LEFT_ANGLE = parseInt(document.getElementById("prey_left_angle").value);
+                }
+                if (document.activeElement.id !== "prey_right_angle") {
+                    params.PREY_RIGHT_ANGLE = parseInt(document.getElementById("prey_right_angle").value);
+                }
+            }
         } else {
             document.getElementById("prey_eye_distance").disabled = true;
+            document.getElementById("prey_vision_rays").disabled = false;
+            document.getElementById("prey_vision_angle").disabled = false;
+            document.getElementById("prey_both_angle").disabled = true;
+            document.getElementById("prey_both_rays").disabled = true;
+            document.getElementById("prey_left_rays").disabled = true;
+            document.getElementById("prey_right_rays").disabled = true;
+            document.getElementById("prey_left_angle").disabled = true;
+            document.getElementById("prey_right_angle").disabled = true;
         }
 
         if (params.PREDATOR_BINOCULAR_VISION) {
             document.getElementById("predator_eye_distance").disabled = false;
+            document.getElementById("predator_both_rays").disabled = false;
+            document.getElementById("predator_both_angle").disabled = false;
+            document.getElementById("predator_left_rays").disabled = true;
+            document.getElementById("predator_right_rays").disabled = true;
+            document.getElementById("predator_left_angle").disabled = true;
+            document.getElementById("predator_right_angle").disabled = true;
 
             if (document.activeElement.id !== "predator_eye_distance") {
                 params.PREDATOR_EYE_DISTANCE = parseInt(document.getElementById("predator_eye_distance").value);
             }
+
+            if (params.PREDATOR_BOTH_RAYS) {
+                document.getElementById("predator_vision_rays").disabled = false;
+                document.getElementById("predator_left_rays").disabled = true;
+                document.getElementById("predator_right_rays").disabled = true;
+            } else {
+                document.getElementById("predator_vision_rays").disabled = true;
+                document.getElementById("predator_left_rays").disabled = false;
+                document.getElementById("predator_right_rays").disabled = false;
+                if (document.activeElement.id !== "predator_left_rays") {
+                    params.PREDATOR_LEFT_RAYS = parseInt(document.getElementById("predator_left_rays").value);
+                }
+                if (document.activeElement.id !== "predator_right_rays") {
+                    params.PREDATOR_RIGHT_RAYS = parseInt(document.getElementById("predator_right_rays").value);
+                }
+            }
+
+            if (params.PREDATOR_BOTH_ANGLE) {
+                document.getElementById("predator_vision_angle").disabled = false;
+                document.getElementById("predator_left_angle").disabled = true;
+                document.getElementById("predator_right_angle").disabled = true;
+            } else {
+                document.getElementById("predator_vision_angle").disabled = true;
+                document.getElementById("predator_left_angle").disabled = false;
+                document.getElementById("predator_right_angle").disabled = false;
+                if (document.activeElement.id !== "predator_left_angle") {
+                    params.PREDATOR_LEFT_ANGLE = parseInt(document.getElementById("predator_left_angle").value);
+                }
+                if (document.activeElement.id !== "predator_right_angle") {
+                    params.PREDATOR_RIGHT_ANGLE = parseInt(document.getElementById("predator_right_angle").value);
+                }
+            }
         } else {
             document.getElementById("predator_eye_distance").disabled = true;
+            document.getElementById("predator_vision_rays").disabled = false;
+            document.getElementById("predator_vision_angle").disabled = false;
+            document.getElementById("predator_both_rays").disabled = true;
+            document.getElementById("predator_both_angle").disabled = true;
+            document.getElementById("predator_left_rays").disabled = true;
+            document.getElementById("predator_right_rays").disabled = true;
+            document.getElementById("predator_left_angle").disabled = true;
+            document.getElementById("predator_right_angle").disabled = true;
         }
-
 
         if (document.activeElement.id !== "prey_vision_radius") {
             params.PREY_VISION_RADIUS = parseFloat(document.getElementById("prey_vision_radius").value);
@@ -1639,7 +1734,6 @@ class PopulationManager {
         return rValue;
     }
 
-
     deathRoulette2(speciesMap) {
         let totalFitness;
         let speciesFitnessMap = new Map();
@@ -1723,7 +1817,6 @@ class PopulationManager {
             }
         }
     }
-
 
     crossover(reprodFitMap, sumShared, predReprodFitMap, predSumShared) {
         // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
