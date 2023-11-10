@@ -40,13 +40,13 @@ class Agent {
      * @param {*} y the starting centered y position
      * @param {*} genome the Agent's genome (defaults to undefined if Agent is not an offspring of parent Agents)
      */
-    constructor(game, x, y, genome = undefined) {
-        Object.assign(this, { game, x, y });
+    constructor(game, x, y, genome = undefined, foodHierarchyIndex = 0) {
+        Object.assign(this, { game, x, y, foodHierarchyIndex });
         this.strokeColor = "black"; // the color of the Agent's circular outlining
         this.leftWheel = 0; // the "power" supplied to the Agent's left wheel (falls in the range -1 to 1 inclusive)
         this.rightWheel = 0; // the "power" supplied to the Agent's right wheel (falls in the range -1 to 1 inclusive)
         this.heading = randomInt(361) * Math.PI / 180; // the angle at which an Agent is traveling (fall between 0 to 2pi exclusive)
-        this.genome = (genome === undefined) ? new Genome() : genome; // create a new Genome if none is supplied, otherwise perform an assignment
+        this.genome = (genome === undefined) ? new Genome(undefined, this.foodHierarchyIndex) : genome; // create a new Genome if none is supplied, otherwise perform an assignment
         this.neuralNet = new NeuralNet(this.genome); // create a new neural network corresponding to the previously assigned Genome
         this.activateAgent(); // set the Agent's energy to the statically defined start energy
         this.updateDiameter(); // how wide the agent's circle is drawn
@@ -77,7 +77,6 @@ class Agent {
         this.speciesId = null;
         this.worldId = null;
 
-        this.foodHierarchyIndex = 0;//Index to see whether it is predator or prey, higher means predator
         this.isActive = true;//Whether the agent is still active and has been consumed or not
         this.caloriesReward = 50;
         this.numberOfPreyHunted = 0;
@@ -563,6 +562,8 @@ class Agent {
         // angleDiff == 2 right eye
         // angleDiff == 3 both eyes
 
+            this.spotted = [];
+            this.visCol = [];
 
             if (this.foodHierarchyIndex > 0) {
                 if (params.PREDATOR_BINOCULAR_VISION) {
@@ -637,17 +638,26 @@ class Agent {
 
             if ((params.HUNTING_MODE === "hierarchy_spectrum" || params.HUNTING_MODE === "hierarchy") && params.PUSH_FHI_TO_ANN) {
                 //Add food hierarchy index to agents neural input
-                for (let i = input.length; i < Genome.DEFAULT_INPUTS - 2; i++) { // fill all unused input nodes with 0's
-                    input.push(0);
+                if (this.foodHierarchyIndex > 0) {
+                    for (let i = input.length; i < Genome.DEFAULT_PREDATOR_INPUTS - 2; i++) { // fill all unused input nodes with 0's
+                        input.push(0);
+                    }
+                } else {
+                    for (let i = input.length; i < Genome.DEFAULT_PREY_INPUTS - 2; i++) { // fill all unused input nodes with 0's
+                        input.push(0);
+                    }
+                }
+            } else {
+                if (this.foodHierarchyIndex > 0) {
+                    for (let i = input.length; i < Genome.DEFAULT_PREDATOR_INPUTS - 1; i++) { // fill all unused input nodes with 0's
+                        input.push(0);
+                    }
+                } else {
+                    for (let i = input.length; i < Genome.DEFAULT_PREY_INPUTS - 1; i++) { // fill all unused input nodes with 0's
+                        input.push(0);
+                    }
                 }
             }
-            else {
-                for (let i = input.length; i < Genome.DEFAULT_INPUTS - 1; i++) { // fill all unused input nodes with 0's
-                    input.push(0);
-                }
-            }
-
-
         }
 
         let normEnergy = this.energy / Agent.START_ENERGY;
@@ -803,6 +813,7 @@ class Agent {
         }
 
         if (this.isActive) this.ticksAlive++;
+        //console.log(input.length);
     };
 
     /** Updates this Agent's diameter in alignment with the DYNAMIC_AGENT_SIZING sim parameter */
@@ -874,7 +885,7 @@ class Agent {
 
         // rayDiff == 1 left eye
         // rayDiff == 2 right eye
-        // rayDiff == 3 both eyes
+        // rayDiff == 3 both eyes / monocular
 
         let rays;
         if (rayDiff == 1) {
@@ -889,7 +900,7 @@ class Agent {
 
         // angleDiff == 1 left eye
         // angleDiff == 2 right eye
-        // angleDiff == 3 both eyes
+        // angleDiff == 3 both eyes / monocular
 
         let angle;
         if (angleDiff == 1) {
@@ -906,8 +917,8 @@ class Agent {
         
         let currAngle = this.heading - angle / 2;
 
-        this.spotted = [];
-        this.visCol = [];
+        // this.spotted = [];
+        // this.visCol = [];
 
         let entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         let walls = [];
@@ -980,12 +991,13 @@ class Agent {
                 }
             });
             if (closestPoint != null) this.visCol.push(closestPoint);
-            let spotVals = { dist: minDist, angle: currAngle, hue: hueOfMinDist };
+            let spotVals = { dist: minDist, angle: currAngle, hue: hueOfMinDist, eyes: eyes };
             this.spotted.push(spotVals);
 
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
             let distInput = AgentInputUtil.normalizeVisionDist(minDist);
+
             // if () {
                 input.push(distInput);
             // }
@@ -1101,24 +1113,19 @@ class Agent {
                 if (params.PREDATOR_BINOCULAR_VISION) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-                    this.drawVFinal(ctx, eyes[0]);
-                    this.drawVFinal(ctx, eyes[1]);
                 } else {
                     eyes[0] = this.getEyePos();
-                    this.drawVFinal(ctx, eyes[0]);
                 }
             } else {
                 if (params.PREY_BINOCULAR_VISION) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-                    this.drawVFinal(ctx, eyes[0]);
-                    this.drawVFinal(ctx, eyes[1]);
                 } else {
                     eyes[0] = this.getEyePos();
-                    this.drawVFinal(ctx, eyes[0]);
                 }
             }
-            
+
+            this.drawVFinal(ctx);
             this.drawVCol(ctx);
         } else if (!Array.isArray(this.spotted)) {
             console.error("this.spotted is not an array...");
@@ -1136,15 +1143,15 @@ class Agent {
         }
     }
 
-    drawVFinal(ctx, eyes) {
+    drawVFinal(ctx) {
         ctx.linewidth = 2;
         for (const element of this.spotted) {
-            ctx.strokeStyle = `hsl(${element.hue}, 100%, 50%)`;
+            ctx.strokeStyle = `hsla(${element.hue}, 100%, 50%, 20%)`;
             let angle = element.angle;
             let dist = element.dist == Infinity ? 9999 : element.dist;
             ctx.beginPath();
-            ctx.moveTo(eyes.x, eyes.y);
-            ctx.lineTo(eyes.x + (Math.cos(angle)) * dist, eyes.y + (Math.sin(angle)) * dist);
+            ctx.moveTo(element.eyes.x, element.eyes.y);
+            ctx.lineTo(element.eyes.x + (Math.cos(angle)) * dist, element.eyes.y + (Math.sin(angle)) * dist);
             ctx.stroke();
             ctx.closePath();
         }

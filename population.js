@@ -236,6 +236,16 @@ class PopulationManager {
     resetSim() {
         console.log("restarting sim...");
         params.AGENT_VISION_IS_CONE = document.getElementById("agent_vision_is_cone").checked;
+        params.PREY_BOTH_RAYS = document.getElementById("prey_both_rays").checked;
+        params.PREDATOR_BOTH_RAYS = document.getElementById("predator_both_rays").checked;
+        params.PREY_BINOCULAR_VISION = document.getElementById("prey_binocular_vision").checked;
+        params.PREDATOR_BINOCULAR_VISION = document.getElementById("predator_binocular_vision").checked;
+        params.PREY_LEFT_RAYS = parseInt(document.getElementById("prey_left_rays").value);
+        params.PREY_RIGHT_RAYS = parseInt(document.getElementById("prey_right_rays").value);
+        params.PREDATOR_LEFT_RAYS = parseInt(document.getElementById("predator_left_rays").value);
+        params.PREDATOR_RIGHT_RAYS = parseInt(document.getElementById("predator_right_rays").value);
+        params.PREY_VISION_RAYS = parseFloat(document.getElementById("prey_vision_rays").value);
+        params.PREDATOR_VISION_RAYS = parseFloat(document.getElementById("predator_vision_rays").value);
         PopulationManager.PREY_SPECIES_ID = 0;
         PopulationManager.PREDATOR_SPECIES_ID = 0;
         PopulationManager.GEN_NUM = 0;
@@ -302,16 +312,9 @@ class PopulationManager {
 
             document.getElementById("push_fhi_to_ann").disabled = false;
             params.PUSH_FHI_TO_ANN = document.getElementById("push_fhi_to_ann").checked;
-
-            if (params.PUSH_FHI_TO_ANN) {
-                Genome.DEFAULT_INPUTS = 2 * params.PREY_VISION_RAYS + 3;//Increase 1 more in neural inputs for food hierarchy index (changed to prey_vision_rays)
-            }
-
         }
         Genome.resetAll();
-
         this.game.population = new PopulationManager(this.game);
-
     };
 
     update() {
@@ -414,10 +417,7 @@ class PopulationManager {
             params.FOOD_AGENT_RATIO = parseInt(document.getElementById("food_agent_ratio").value);
         }
 
-        params.PREY_BINOCULAR_VISION = document.getElementById("prey_binocular_vision").checked;
-        params.PREDATOR_BINOCULAR_VISION = document.getElementById("predator_binocular_vision").checked;
-        params.PREY_BOTH_RAYS = document.getElementById("prey_both_rays").checked;
-        params.PREDATOR_BOTH_RAYS = document.getElementById("predator_both_rays").checked;
+        
         params.PREY_BOTH_ANGLE = document.getElementById("prey_both_angle").checked;
         params.PREDATOR_BOTH_ANGLE = document.getElementById("predator_both_angle").checked;
 
@@ -442,12 +442,7 @@ class PopulationManager {
                 document.getElementById("prey_vision_rays").disabled = true;
                 document.getElementById("prey_left_rays").disabled = false;
                 document.getElementById("prey_right_rays").disabled = false;
-                if (document.activeElement.id !== "prey_left_rays") {
-                    params.PREY_LEFT_RAYS = parseInt(document.getElementById("prey_left_rays").value);
-                }
-                if (document.activeElement.id !== "prey_right_rays") {
-                    params.PREY_RIGHT_RAYS = parseInt(document.getElementById("prey_right_rays").value);
-                }
+                
             }
 
             if (params.PREY_BOTH_ANGLE) {
@@ -498,12 +493,6 @@ class PopulationManager {
                 document.getElementById("predator_vision_rays").disabled = true;
                 document.getElementById("predator_left_rays").disabled = false;
                 document.getElementById("predator_right_rays").disabled = false;
-                if (document.activeElement.id !== "predator_left_rays") {
-                    params.PREDATOR_LEFT_RAYS = parseInt(document.getElementById("predator_left_rays").value);
-                }
-                if (document.activeElement.id !== "predator_right_rays") {
-                    params.PREDATOR_RIGHT_RAYS = parseInt(document.getElementById("predator_right_rays").value);
-                }
             }
 
             if (params.PREDATOR_BOTH_ANGLE) {
@@ -539,14 +528,6 @@ class PopulationManager {
 
         if (document.activeElement.id !== "predator_vision_radius") {
             params.PREDATOR_VISION_RADIUS = parseFloat(document.getElementById("predator_vision_radius").value);
-        }
-
-        if (document.activeElement.id !== "prey_vision_rays") {
-            params.PREY_VISION_RAYS = parseFloat(document.getElementById("prey_vision_rays").value);
-        }
-
-        if (document.activeElement.id !== "predator_vision_rays") {
-            params.PREDATOR_VISION_RAYS = parseFloat(document.getElementById("predator_vision_rays").value);
         }
 
         if (document.activeElement.id !== "prey_vision_angle") {
@@ -817,10 +798,10 @@ class PopulationManager {
 
 
         if(params.coevolution) {
-            let predator = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2)
+            let predator = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, undefined, 1);
             predator.speciesId = PopulationManager.PREDATOR_SPECIES_ID;
             predator.worldId = worldId;
-            predator.foodHierarchyIndex = 1; // outright set the agent to be a predator
+           // predator.foodHierarchyIndex = 1; // outright set the agent to be a predator
             PopulationManager.PREDATOR_SPECIES_MEMBERS.get(PopulationManager.PREDATOR_SPECIES_ID).push(predator)
             this.worlds.get(worldId).agents.push(predator);
         }
@@ -830,9 +811,9 @@ class PopulationManager {
             agent.worldId = worldId;
             PopulationManager.PREY_SPECIES_MEMBERS.get(PopulationManager.PREY_SPECIES_ID).push(agent);
             this.worlds.get(worldId).agents.push(agent);
-            if(params.coevolution) { // if coevolution selected, set these agents to be prey
-                agent.foodHierarchyIndex = 0;
-            }
+            // if(params.coevolution) { // if coevolution selected, set these agents to be prey
+            //     agent.foodHierarchyIndex = 0;
+            // }
         }
     };
 
@@ -1850,10 +1831,10 @@ class PopulationManager {
             }
             let childGenome = Genome.crossover(parent1.genome, parent2.genome);
             childGenome.mutate();
-            let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
-            if(params.coevolution) {
-                child.foodHierarchyIndex = hierarchy;
-            }
+            let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome, hierarchy);
+            // if(params.coevolution) {
+            //     child.foodHierarchyIndex = hierarchy;
+            // }
             children.push(child);
         }
         this.registerChildAgents(children, speciesMap, hierarchy);
