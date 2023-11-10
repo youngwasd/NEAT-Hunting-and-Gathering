@@ -998,9 +998,10 @@ class Agent {
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
             let distInput = AgentInputUtil.normalizeVisionDist(minDist);
 
-            // if () {
+            
+            if (params.DISTANCE_SENSORS) {
                 input.push(distInput);
-            // }
+            }
 
             input.push((hueOfMinDist) / 360);
             currAngle += angleBetw;

@@ -51,7 +51,6 @@ class Genome {
         Genome.INNOV_NUM = 0;
         Genome.PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS : params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS;
         Genome.PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? 2 * params.PREDATOR_VISION_RAYS : params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS;
-        console.log(Genome.PREDATOR_TOTAL_RAYS);
         Genome.DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
 
         if (params.PREY_BINOCULAR_VISION) {
