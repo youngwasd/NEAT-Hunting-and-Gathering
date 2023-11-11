@@ -997,8 +997,6 @@ class Agent {
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
             let distInput = AgentInputUtil.normalizeVisionDist(minDist);
-
-            
             if (params.DISTANCE_SENSORS) {
                 input.push(distInput);
             }
