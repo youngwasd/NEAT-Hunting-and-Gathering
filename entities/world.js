@@ -122,6 +122,26 @@ class World {
         return count;
     };
 
+    countPreyDead() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (agent.removeFromWorld && agent.foodHierarchyIndex == 0) {
+                count++;
+            }
+        });
+        return count;
+    };
+
+    countPredatorsDead() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (agent.removeFromWorld && agent.foodHierarchyIndex > 0) {
+                count++;
+            }
+        });
+        return count;
+    };
+
     countAlives() {
         let count = 0;
         this.agents.forEach(agent => {

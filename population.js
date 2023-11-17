@@ -103,7 +103,6 @@ class PopulationManager {
                 this.preySpeciesWorldList.set(PopulationManager.PREY_SPECIES_ID, []);
                 this.predatorSpeciesWorldList.set(PopulationManager.PREDATOR_SPECIES_ID, []);
                 let numberOfAgentToSpawn = PopulationManager.NUM_PREY;
-                console.log(PopulationManager.NUM_PREY + "prey to spawn is this")
                 let worldSpawned = 0;
     
                 //Distribute the agents to the world
@@ -866,17 +865,25 @@ class PopulationManager {
         PopulationManager.MINIMAP.updateSpec(this.worlds.size);
     };
 
+    // Return a tuple of
+    // TODO: check if this breaks old behavior at some point
     countDeads(worldId = undefined) {
         if (worldId != undefined) {
             return this.worlds.get(worldId).countDeads();
         }
 
-        let count = 0;
+        let deadCount = [];
+        let preyDead = 0;
+        let predatorsDead = 0;
         this.worlds.forEach(world => {
-            count += world.countDeads();
+            preyDead += world.countPreyDead();
+            predatorsDead += world.countPredatorsDead();
         });
 
-        return count;
+        deadCount[0] = preyDead;
+        deadCount[1] = predatorsDead;
+        
+        return deadCount;
     };
 
     // Return a tuple of 
@@ -1000,7 +1007,6 @@ class PopulationManager {
             ++worldId;
         });
         } else {
-            console.log(preySpeciesAllocationList)
             preySpeciesAllocationList.forEach((agentContainer) => {
                 // Resetting the species by world list
                 let speciesId = agentContainer[0].speciesId;
@@ -1418,10 +1424,8 @@ class PopulationManager {
             //sum raw fitness for all members of this species
             let sumRaws = 0;
             speciesList.forEach(member => {
-                console.log("raw fitness for prey: " + member.genome.rawFitness)
                 sumRaws += member.genome.rawFitness;
             });
-            console.log("prey species list length: " + speciesList.length)
             minShared = Math.min(minShared, sumRaws / speciesList.length);
             reprodFitMap.set(speciesId, sumRaws / speciesList.length);
         });
@@ -1430,17 +1434,14 @@ class PopulationManager {
         let predSumShared = 0;
         //Build the fitness chart for the species
         reprodFitMap.forEach((fitness, speciesId) => {
-            console.log(speciesId)
             const newFit = fitness + minShared * -1 + 10;
             reprodFitMap.set(speciesId, newFit);
-            console.log(sumShared)
             sumShared += reprodFitMap.get(speciesId);
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
 
         if(params.coevolution) {
             minShared = 0;
-            console.log("coevolution read correctly inside processgeneration")
             //Determine average raw fitness for each species
             PopulationManager.PREDATOR_SPECIES_MEMBERS.forEach((speciesList, speciesId) => {
             //sum raw fitness for all members of this species
@@ -1451,15 +1452,12 @@ class PopulationManager {
                 sumRaws += member.genome.rawFitness;
                 }
             });
-            console.log(sumRaws)
             minShared = Math.min(minShared, sumRaws / speciesList.length);
             predReprodFitMap.set(speciesId, sumRaws / speciesList.length);
         });
 
-        console.log("not broken after fitness function for ")
         //Determines the avg fitness for each species after adding the abs val minimum negative fitness? - gabe
 
-        console.log(predReprodFitMap)
         //Build the fitness chart for the species
         predReprodFitMap.forEach((fitness, speciesId) => {
             // console.log(speciesId)
@@ -1469,21 +1467,19 @@ class PopulationManager {
             // console.log(predSumShared)
             this.agentTracker.addSpeciesFitness({ speciesId, fitness: fitness });
         });
-        console.log("not broken after predreprodmap")
         }
 
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
-            this.deathRoulette(reprodFitMap, sumShared, PopulationManager.PREY_SPECIES_MEMBERS, 0);
-            console.log("prey death roulette completed")
+            // this.deathRoulette(reprodFitMap, sumShared, PopulationManager.PREY_SPECIES_MEMBERS, 0);
+            this.deathRoulette2(PopulationManager.PREY_SPECIES_MEMBERS);
             if(params.coevolution) {
-                this.deathRoulette(predReprodFitMap, predSumShared, PopulationManager.PREDATOR_SPECIES_MEMBERS, 1);
-                console.log("predator death roulette completed")
+                // this.deathRoulette(predReprodFitMap, predSumShared, PopulationManager.PREDATOR_SPECIES_MEMBERS, 1);
+                this.deathRoulette2(PopulationManager.PREDATOR_SPECIES_MEMBERS, 1);
             }
-            this.crossover(reprodFitMap, sumShared, predReprodFitMap, predSumShared);
+            // this.crossover(reprodFitMap, sumShared, predReprodFitMap, predSumShared);
         }
 
-        console.log("crossover and death roulette complete")
 
         //Clean up some of the dead worlds and balence agents count
         this.cleanUpWorlds();
@@ -1491,7 +1487,6 @@ class PopulationManager {
             this.distributeAgents();
         }
 
-        console.log("distribute agents complete")
         //Replenish food or poison
         this.checkFoodLevels();
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
@@ -1513,7 +1508,6 @@ class PopulationManager {
             remainingSensorColors.add(PopulationManager.SPECIES_SENSOR_COLORS.get(agent.speciesId));
         });
 
-        console.log("redistributing members complete")
         PopulationManager.COLORS_USED = new Set([...PopulationManager.COLORS_USED].filter(color => remainingColors.has(color)));
         PopulationManager.SENSOR_COLORS_USED = new Set([...PopulationManager.SENSOR_COLORS_USED].filter(color => remainingSensorColors.has(color)));
 
@@ -1640,47 +1634,111 @@ class PopulationManager {
     }
 
 
-    deathRoulette2(speciesMap) {
+    // Not currently using total fitness
+    deathRoulette2(speciesMap, hierarchy = 0) {
+        console.log("testing alternate deathroulette")
         let totalFitness;
         let speciesFitnessMap = new Map();
         let rouletteWheel = [];
+        let speciesCount = 0;
         speciesMap.forEach((speciesList, speciesId) => {
             let speciesFitness;
             // Sum raw fitness for all members of this species
             speciesList.forEach(member => {
                 speciesFitness += member.genome.rawFitness;
-                rouletteWheel.push(speciesId);
+                if(!rouletteWheel.includes(speciesId)) {
+                    rouletteWheel.push(speciesId);
+                    speciesCount++;
+                }
 
             });
             // Maps speciesId to the species average fitness
             speciesFitnessMap.set(speciesId, Math.floor(speciesFitness / speciesList.length))
             totalFitness += speciesFitness;
         });
-        rouletteWheel.sort((s1, s2) => speciesFitnessMap.get(s1) - speciesFitnessMap.get(s2))
 
-        let rouletteResult = randomFloat(totalFitness)
-        for(let i = rouletteWheel.length; i > 0; i--) {
-            rouletteResult -= speciesFitnessMap.get(rouletteWheel[i])
-            if (rouletteResult < 0) {
-                // Removes the element in the opposite position of the list when the roulette is rolled
-                // Very good performing fitnesses lead to a higher likelihood of lower performers to be rolled
-                // Very poor performers result in a lower chance for the high performers to be rolled
-                // Not necessarily ideal but it's a work in progress
-                // TODO: consider replacing this functionality
-                for(const element in speciesMap.get(rouletteWheel[rouletteWheel.length-i])) {
-                    if(!element.removeFromWorld) {
-                        element.removeFromWorld = true;
+        // sorts the list from lowest fitness to greatest fitness
+        rouletteWheel.sort((s1, s2) => speciesFitnessMap.get(s1) - speciesFitnessMap.get(s2))
+        console.log(rouletteWheel)
+        let adjustment = 10; // TODO: add a html parameter
+        let rouletteSum = 0;
+
+        // Adds a total sum based on the number of species that we can use to weigh the fitnesses
+        console.log(speciesMap)
+        for(let i = 0; i < rouletteWheel.length; i++) {
+            rouletteSum += (i+1) + adjustment;
+        }
+        let count = 1; // TODO: change this to a param on html
+        let children = [];
+        let parent1, parent2;
+        let rouletteResult;
+
+        for(let i = 0; i < count; i++) {
+            rouletteResult = randomFloat(rouletteSum);
+
+    
+            for(let i = 0; i < rouletteWheel.length; i++) {
+                rouletteResult -= (i+1) + adjustment;
+                if(rouletteResult < 0) {
+                    console.log(i + " is the index of the one to reproduce")
+                    let possibleParents = speciesMap.get(rouletteWheel[i]);
+                    parent1 = possibleParents[randomInt(possibleParents.length)];
+                    parent2 = possibleParents[randomInt(possibleParents.length)];
+                    break;
+                }
+            }
+            console.log(rouletteResult + " is the roulette result")
+            console.log(rouletteWheel + " is the roulette wheel")
+            let childGenome = Genome.crossover(parent1.genome, parent2.genome);
+            childGenome.mutate();
+            let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
+            if(params.coevolution) {
+                child.foodHierarchyIndex = hierarchy;
+            }
+            children.push(child);
+        }
+        let deathSet = new Set();
+
+        // reverses the list so best fitness have lowest weight on the wheel
+        rouletteWheel.reverse()
+
+        // TODO: refactor this for species tracking rather than agent tracking
+        while(count != 0) {
+            rouletteResult = randomFloat(rouletteSum)
+            for(let i = 0; i < rouletteWheel.length; i++) {
+                rouletteResult -= (i+1) + adjustment
+                // console.log(rouletteResult + " roulette result after adjustment")
+                if (rouletteResult < 0) {
+                    if (!deathSet.has(i)) {
+                        deathSet.add(i);
+                        count--;
+                    }
+                    break;
+                }
+            }
+        }
+
+        for (const element of deathSet) {
+            console.log(rouletteWheel[element])
+            console.log(speciesMap)
+                for (const member of speciesMap.get(rouletteWheel[element])) {
+                    if (!member.removeFromWorld) {
+                        member.removeFromWorld = true;
                         break;
                     }
                 }
-                // currently exits after 1 'kill', can adjust a counter to only break at certain count
-                break;
-            }
         }
         
+        
+        this.registerChildAgents(children, speciesMap, hierarchy);
     }
+        
 
-    //TODO: rewrite this so that it stops breaking everything
+
+        
+    
+
+    // Deprecated
     deathRoulette(reprodFitMap, sumShared, speciesMap, hierarchy) {
         let rouletteOrder = [...reprodFitMap.keys()].sort();
         let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
@@ -1688,7 +1746,7 @@ class PopulationManager {
         for (let i = 0; i < ascendingFitSpecies.length; i++) {
             deathFitMap.set(ascendingFitSpecies[i], reprodFitMap.get(ascendingFitSpecies[ascendingFitSpecies.length - i - 1]));
         }
-        console.log("sumshared in deathroulette for " + hierarchy + " is " + sumShared)
+        // console.log("sumshared in deathroulette for " + hierarchy + " is " + sumShared)
 
         let dead = hierarchy == 0 ? PopulationManager.NUM_PREY - this.countAlives()[0] : PopulationManager.NUM_PREDATOR - this.countAlives()[1]
         let numAgents = this.agentsAsList().length;
@@ -1696,7 +1754,7 @@ class PopulationManager {
 
             let killed = false;
             while (!killed) { // keep rolling the roulette wheel until someone dies
-                console.log(sumShared)
+                // console.log(sumShared)
                 let rouletteResult = randomFloat(sumShared);
                 let rouletteIndex = 0;
                 let accumulator = 0;
