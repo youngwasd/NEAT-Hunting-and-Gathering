@@ -879,7 +879,6 @@ class Agent {
         return intersect;
     }
 
-    // for both prey and pred the right eye value changes both left and right eye IDK WHY :( (prob neural net not having enough genomes or smth need help)
     coneVision(input, eyes, rayDiff, angleDiff) {
         const predatorVision = this.foodHierarchyIndex > 0;
 
@@ -997,7 +996,11 @@ class Agent {
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
             let distInput = AgentInputUtil.normalizeVisionDist(minDist);
-            if (params.DISTANCE_SENSORS) {
+            
+            // if is predator and has distance enabled
+            if (predatorVision && params.PREDATOR_DISTANCE_SENSORS) {
+                input.push(distInput);
+            } else if (!predatorVision && params.PREY_DISTANCE_SENSORS) { // if is prey and has distance enabled
                 input.push(distInput);
             }
 
