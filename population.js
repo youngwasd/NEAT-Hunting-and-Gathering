@@ -238,8 +238,10 @@ class PopulationManager {
         params.AGENT_VISION_IS_CONE = document.getElementById("agent_vision_is_cone").checked;
         params.PREY_BOTH_RAYS = document.getElementById("prey_both_rays").checked;
         params.PREDATOR_BOTH_RAYS = document.getElementById("predator_both_rays").checked;
-        params.PREY_BINOCULAR_VISION = document.getElementById("prey_binocular_vision").checked;
-        params.PREDATOR_BINOCULAR_VISION = document.getElementById("predator_binocular_vision").checked;
+        //params.PREY_BINOCULAR_VISION = document.getElementById("prey_binocular_vision").checked;
+        //params.PREDATOR_BINOCULAR_VISION = document.getElementById("predator_binocular_vision").checked;
+        params.PREY_NUM_EYES = parseInt(document.getElementById("prey_num_eyes").value);
+        params.PREDATOR_NUM_EYES = parseInt(document.getElementById("predator_num_eyes").value);
         params.PREY_LEFT_RAYS = parseInt(document.getElementById("prey_left_rays").value);
         params.PREY_RIGHT_RAYS = parseInt(document.getElementById("prey_right_rays").value);
         params.PREDATOR_LEFT_RAYS = parseInt(document.getElementById("predator_left_rays").value);
@@ -423,44 +425,54 @@ class PopulationManager {
         params.PREY_BOTH_ANGLE = document.getElementById("prey_both_angle").checked;
         params.PREDATOR_BOTH_ANGLE = document.getElementById("predator_both_angle").checked;
 
-        if (params.PREY_BINOCULAR_VISION) {
+        if (params.PREY_NUM_EYES > 1) {
             document.getElementById("prey_eye_distance").disabled = false;
-            document.getElementById("prey_both_rays").disabled = false;
-            document.getElementById("prey_both_angle").disabled = false;
-            document.getElementById("prey_left_rays").disabled = true;
-            document.getElementById("prey_right_rays").disabled = true;
-            document.getElementById("prey_left_angle").disabled = true;
-            document.getElementById("prey_right_angle").disabled = true;
 
             if (document.activeElement.id !== "prey_eye_distance") {
                 params.PREY_EYE_DISTANCE = parseInt(document.getElementById("prey_eye_distance").value);
             }
 
-            if (params.PREY_BOTH_RAYS) {
-                document.getElementById("prey_vision_rays").disabled = false;
+            if (params.PREY_NUM_EYES == 2) {
+                document.getElementById("prey_both_rays").disabled = false;
+                document.getElementById("prey_both_angle").disabled = false;
                 document.getElementById("prey_left_rays").disabled = true;
                 document.getElementById("prey_right_rays").disabled = true;
-            } else {
-                document.getElementById("prey_vision_rays").disabled = true;
-                document.getElementById("prey_left_rays").disabled = false;
-                document.getElementById("prey_right_rays").disabled = false;
-                
-            }
-
-            if (params.PREY_BOTH_ANGLE) {
+                document.getElementById("prey_left_angle").disabled = true;
+                document.getElementById("prey_right_angle").disabled = true;
+    
+                if (params.PREY_BOTH_RAYS) {
+                    document.getElementById("prey_vision_rays").disabled = false;
+                    document.getElementById("prey_left_rays").disabled = true;
+                    document.getElementById("prey_right_rays").disabled = true;
+                } else {
+                    document.getElementById("prey_vision_rays").disabled = true;
+                    document.getElementById("prey_left_rays").disabled = false;
+                    document.getElementById("prey_right_rays").disabled = false;
+                    
+                }
+    
+                if (params.PREY_BOTH_ANGLE) {
+                    document.getElementById("prey_vision_angle").disabled = false;
+                    document.getElementById("prey_left_angle").disabled = true;
+                    document.getElementById("prey_right_angle").disabled = true;
+                } else {
+                    document.getElementById("prey_vision_angle").disabled = true;
+                    document.getElementById("prey_left_angle").disabled = false;
+                    document.getElementById("prey_right_angle").disabled = false;
+                    if (document.activeElement.id !== "prey_left_angle") {
+                        params.PREY_LEFT_ANGLE = parseInt(document.getElementById("prey_left_angle").value);
+                    }
+                    if (document.activeElement.id !== "prey_right_angle") {
+                        params.PREY_RIGHT_ANGLE = parseInt(document.getElementById("prey_right_angle").value);
+                    }
+                }
+            } else if (params.PREY_NUM_EYES > 2) {
+                document.getElementById("prey_vision_rays").disabled = false;
                 document.getElementById("prey_vision_angle").disabled = false;
                 document.getElementById("prey_left_angle").disabled = true;
                 document.getElementById("prey_right_angle").disabled = true;
-            } else {
-                document.getElementById("prey_vision_angle").disabled = true;
-                document.getElementById("prey_left_angle").disabled = false;
-                document.getElementById("prey_right_angle").disabled = false;
-                if (document.activeElement.id !== "prey_left_angle") {
-                    params.PREY_LEFT_ANGLE = parseInt(document.getElementById("prey_left_angle").value);
-                }
-                if (document.activeElement.id !== "prey_right_angle") {
-                    params.PREY_RIGHT_ANGLE = parseInt(document.getElementById("prey_right_angle").value);
-                }
+                document.getElementById("prey_both_angle").disabled = true;
+                document.getElementById("prey_both_rays").disabled = true;
             }
         } else {
             document.getElementById("prey_eye_distance").disabled = true;
@@ -474,43 +486,53 @@ class PopulationManager {
             document.getElementById("prey_right_angle").disabled = true;
         }
 
-        if (params.PREDATOR_BINOCULAR_VISION) {
+        if (params.PREDATOR_NUM_EYES > 1) {
             document.getElementById("predator_eye_distance").disabled = false;
-            document.getElementById("predator_both_rays").disabled = false;
-            document.getElementById("predator_both_angle").disabled = false;
-            document.getElementById("predator_left_rays").disabled = true;
-            document.getElementById("predator_right_rays").disabled = true;
-            document.getElementById("predator_left_angle").disabled = true;
-            document.getElementById("predator_right_angle").disabled = true;
 
             if (document.activeElement.id !== "predator_eye_distance") {
                 params.PREDATOR_EYE_DISTANCE = parseInt(document.getElementById("predator_eye_distance").value);
             }
 
-            if (params.PREDATOR_BOTH_RAYS) {
-                document.getElementById("predator_vision_rays").disabled = false;
+            if (params.PREDATOR_NUM_EYES == 2) {
+                document.getElementById("predator_both_rays").disabled = false;
+                document.getElementById("predator_both_angle").disabled = false;
                 document.getElementById("predator_left_rays").disabled = true;
                 document.getElementById("predator_right_rays").disabled = true;
-            } else {
-                document.getElementById("predator_vision_rays").disabled = true;
-                document.getElementById("predator_left_rays").disabled = false;
-                document.getElementById("predator_right_rays").disabled = false;
-            }
+                document.getElementById("predator_left_angle").disabled = true;
+                document.getElementById("predator_right_angle").disabled = true;
 
-            if (params.PREDATOR_BOTH_ANGLE) {
+                if (params.PREDATOR_BOTH_RAYS) {
+                    document.getElementById("predator_vision_rays").disabled = false;
+                    document.getElementById("predator_left_rays").disabled = true;
+                    document.getElementById("predator_right_rays").disabled = true;
+                } else {
+                    document.getElementById("predator_vision_rays").disabled = true;
+                    document.getElementById("predator_left_rays").disabled = false;
+                    document.getElementById("predator_right_rays").disabled = false;
+                }
+    
+                if (params.PREDATOR_BOTH_ANGLE) {
+                    document.getElementById("predator_vision_angle").disabled = false;
+                    document.getElementById("predator_left_angle").disabled = true;
+                    document.getElementById("predator_right_angle").disabled = true;
+                } else {
+                    document.getElementById("predator_vision_angle").disabled = true;
+                    document.getElementById("predator_left_angle").disabled = false;
+                    document.getElementById("predator_right_angle").disabled = false;
+                    if (document.activeElement.id !== "predator_left_angle") {
+                        params.PREDATOR_LEFT_ANGLE = parseInt(document.getElementById("predator_left_angle").value);
+                    }
+                    if (document.activeElement.id !== "predator_right_angle") {
+                        params.PREDATOR_RIGHT_ANGLE = parseInt(document.getElementById("predator_right_angle").value);
+                    }
+                }
+            } else if (params.PREDATOR_NUM_EYES > 2) {
+                document.getElementById("predator_vision_rays").disabled = false;
                 document.getElementById("predator_vision_angle").disabled = false;
                 document.getElementById("predator_left_angle").disabled = true;
                 document.getElementById("predator_right_angle").disabled = true;
-            } else {
-                document.getElementById("predator_vision_angle").disabled = true;
-                document.getElementById("predator_left_angle").disabled = false;
-                document.getElementById("predator_right_angle").disabled = false;
-                if (document.activeElement.id !== "predator_left_angle") {
-                    params.PREDATOR_LEFT_ANGLE = parseInt(document.getElementById("predator_left_angle").value);
-                }
-                if (document.activeElement.id !== "predator_right_angle") {
-                    params.PREDATOR_RIGHT_ANGLE = parseInt(document.getElementById("predator_right_angle").value);
-                }
+                document.getElementById("predator_left_rays").disabled = true;
+                document.getElementById("predator_right_rays").disabled = true;
             }
         } else {
             document.getElementById("predator_eye_distance").disabled = true;

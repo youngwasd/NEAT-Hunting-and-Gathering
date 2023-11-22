@@ -323,8 +323,36 @@ class Agent {
         const distanceBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
         const eyeAngle = Math.atan(distanceBtEyes / (this.diameter + 1));
 
+        // if (this.foodHierarchyIndex > 0) {
+        //     if (params.PREDATOR_BINOCULAR_VISION) {
+        //         const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
+        //                          y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
+    
+        //         const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
+        //                           y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
+    
+        //         return {leftEye, rightEye};
+        //     } else {
+        //         return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+        //                 y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+        //     }
+        // } else {
+        //     if (params.PREY_BINOCULAR_VISION) {    
+        //         const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
+        //                          y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
+    
+        //         const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
+        //                           y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
+    
+        //         return {leftEye, rightEye};
+        //     } else {
+        //         return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+        //                 y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+        //     }
+        // }
+
         if (this.foodHierarchyIndex > 0) {
-            if (params.PREDATOR_BINOCULAR_VISION) {
+            if (params.PREDATOR_NUM_EYES == 2) {
                 const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
                                  y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
     
@@ -332,12 +360,22 @@ class Agent {
                                   y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
     
                 return {leftEye, rightEye};
-            } else {
+            } else if (params.PREDATOR_NUM_EYES > 2) {
+
+                // need to fix this
+                const eyes = [];
+                for (let i = 0; i < params.PREDATOR_NUM_EYES; i++) {
+                    eyes[i] = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                               y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+                }
+
+                return eyes;
+            } else { // if num eyes = 1
                 return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
                         y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
             }
         } else {
-            if (params.PREY_BINOCULAR_VISION) {    
+            if (params.PREY_NUM_EYES == 2) {    
                 const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
                                  y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
     
@@ -345,7 +383,17 @@ class Agent {
                                   y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
     
                 return {leftEye, rightEye};
-            } else {
+            } else if (params.PREY_NUM_EYES > 2) {
+
+                // need to fix this
+                const eyes = [];
+                for (let i = 0; i < params.PREY_NUM_EYES; i++) {
+                    eyes[i] = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                               y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+                }
+                
+                return eyes;
+            } else { // if eyes = 1
                 return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
                         y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
             }
@@ -565,8 +613,63 @@ class Agent {
             this.spotted = [];
             this.visCol = [];
 
+            // if (this.foodHierarchyIndex > 0) {
+            //     if (params.PREDATOR_BINOCULAR_VISION) {
+            //         eyes[0] = this.getEyePos().leftEye;
+            //         eyes[1] = this.getEyePos().rightEye;
+
+            //         if (params.PREDATOR_BOTH_RAYS) { // same num rays for both pred eyes
+            //             if (params.PREDATOR_BOTH_ANGLE) { // same angle for both pred eyes
+            //                 this.coneVision(input, eyes[0], 3, 3);
+            //                 this.coneVision(input, eyes[1], 3, 3);
+            //             } else { // diff angle for each pred eye
+            //                 this.coneVision(input, eyes[0], 3, 1);
+            //                 this.coneVision(input, eyes[1], 3, 2);
+            //             }
+            //         } else { // diff num rays for each pred eye
+            //             if (params.PREDATOR_BOTH_ANGLE) { // same angle for both pred eyes
+            //                 this.coneVision(input, eyes[0], 1, 3);
+            //                 this.coneVision(input, eyes[1], 2, 3);
+            //             } else { // diff angle for each pred eye
+            //                 this.coneVision(input, eyes[0], 1, 1);
+            //                 this.coneVision(input, eyes[1], 2, 2);
+            //             }
+            //         }
+            //     } else {
+            //         eyes[0] = this.getEyePos();
+            //         this.coneVision(input, eyes[0], 3, 3);
+            //     }
+            // } else {
+            //     if (params.PREY_BINOCULAR_VISION) {
+            //         eyes[0] = this.getEyePos().leftEye;
+            //         eyes[1] = this.getEyePos().rightEye;
+
+            //         if (params.PREY_BOTH_RAYS) { // same num rays for both prey eyes
+            //             if (params.PREY_BOTH_ANGLE) { // same angle for both prey eyes
+            //                 this.coneVision(input, eyes[0], 3, 3);
+            //                 this.coneVision(input, eyes[1], 3, 3);
+            //             } else { // diff angle for each prey eye
+            //                 this.coneVision(input, eyes[0], 3, 1);
+            //                 this.coneVision(input, eyes[1], 3, 2);
+            //             }
+            //         } else { // diff num rays for each prey eye
+            //             if (params.PREY_BOTH_ANGLE) { // same angle for both prey eyes
+            //                 this.coneVision(input, eyes[0], 1, 3);
+            //                 this.coneVision(input, eyes[1], 2, 3);
+            //             } else { // diff angle for each prey eye
+            //                 this.coneVision(input, eyes[0], 1, 1);
+            //                 this.coneVision(input, eyes[1], 2, 2);
+            //             }
+            //         }
+            //     } else {
+            //         eyes[0] = this.getEyePos();
+            //         this.coneVision(input, eyes[0], 3, 3);
+            //     }
+            // }
+
+            // need to add num eyes > 2 stuff
             if (this.foodHierarchyIndex > 0) {
-                if (params.PREDATOR_BINOCULAR_VISION) {
+                if (params.PREDATOR_NUM_EYES == 2) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
 
@@ -587,12 +690,12 @@ class Agent {
                             this.coneVision(input, eyes[1], 2, 2);
                         }
                     }
-                } else {
+                } else if (params.PREDATOR_NUM_EYES == 1) {
                     eyes[0] = this.getEyePos();
                     this.coneVision(input, eyes[0], 3, 3);
                 }
             } else {
-                if (params.PREY_BINOCULAR_VISION) {
+                if (params.PREY_NUM_EYES == 2) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
 
@@ -613,7 +716,7 @@ class Agent {
                             this.coneVision(input, eyes[1], 2, 2);
                         }
                     }
-                } else {
+                } else if (params.PREY_NUM_EYES == 1) {
                     eyes[0] = this.getEyePos();
                     this.coneVision(input, eyes[0], 3, 3);
                 }
@@ -888,13 +991,14 @@ class Agent {
 
         let rays;
         if (rayDiff == 1) {
-            rays = predatorVision ? params.PREDATOR_LEFT_RAYS - 1 : params.PREY_LEFT_RAYS - 1;          
+            rays = predatorVision ? params.PREDATOR_LEFT_RAYS : params.PREY_LEFT_RAYS;          
             //console.log("left eye rays: " + rays);
         } else if (rayDiff == 2) {
-            rays = predatorVision ? params.PREDATOR_RIGHT_RAYS - 1 : params.PREY_RIGHT_RAYS - 1;
+            rays = predatorVision ? params.PREDATOR_RIGHT_RAYS : params.PREY_RIGHT_RAYS;
             //console.log("right eye rays: " + rays);
         } else if (rayDiff == 3) {
-            rays = predatorVision ? params.PREDATOR_VISION_RAYS - 1 : params.PREY_VISION_RAYS - 1;
+            rays = predatorVision ? params.PREDATOR_VISION_RAYS : params.PREY_VISION_RAYS;
+            //console.log("mono eye: " + rays);
         }
 
         // angleDiff == 1 left eye
@@ -929,7 +1033,7 @@ class Agent {
         else
             walls = this.game.population.worlds.get(0).walls;
 
-        for (let i = 0; i <= rays; i++) {
+        for (let i = 0; i < rays; i++) {
 
             while (currAngle < 0) {
                 currAngle += Math.PI * 2;
@@ -1060,8 +1164,37 @@ class Agent {
         const distanceBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
         const eyeAngle = Math.atan(distanceBtEyes / (this.diameter + 1));
 
+        // if (this.foodHierarchyIndex > 0) {
+        //     if (params.PREDATOR_BINOCULAR_VISION) {
+        //         // left eye
+        //         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - eyeAngle));
+        //         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading - eyeAngle));
+    
+        //         // right eye
+        //         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
+        //         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
+        //     } else {
+        //         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
+        //         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
+        //     }
+        // } else {
+        //     if (params.PREY_BINOCULAR_VISION) {
+        //         // left eye
+        //         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - eyeAngle));
+        //         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading - eyeAngle));
+    
+        //         // right eye
+        //         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
+        //         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
+        //     } else {
+        //         ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
+        //         ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
+        //     }
+        // }
+
+        // need to add eyes > 2 stuff
         if (this.foodHierarchyIndex > 0) {
-            if (params.PREDATOR_BINOCULAR_VISION) {
+            if (params.PREDATOR_NUM_EYES == 2) {
                 // left eye
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - eyeAngle));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading - eyeAngle));
@@ -1069,12 +1202,12 @@ class Agent {
                 // right eye
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
-            } else {
+            } else if (params.PREDATOR_NUM_EYES == 1) {
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
             }
         } else {
-            if (params.PREY_BINOCULAR_VISION) {
+            if (params.PREY_NUM_EYES == 2) {
                 // left eye
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - eyeAngle));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading - eyeAngle));
@@ -1082,11 +1215,12 @@ class Agent {
                 // right eye
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
-            } else {
+            } else if (params.PREY_NUM_EYES == 1) {
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
             }
         }
+
         ctx.stroke();
         ctx.closePath();
         
@@ -1111,18 +1245,35 @@ class Agent {
         //Draw cone vision
         if (params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && Array.isArray(this.spotted)) {
             const eyes = [];
+            
+            // if (this.foodHierarchyIndex > 0) {
+            //     if (params.PREDATOR_BINOCULAR_VISION) {
+            //         eyes[0] = this.getEyePos().leftEye;
+            //         eyes[1] = this.getEyePos().rightEye;
+            //     } else {
+            //         eyes[0] = this.getEyePos();
+            //     }
+            // } else {
+            //     if (params.PREY_BINOCULAR_VISION) {
+            //         eyes[0] = this.getEyePos().leftEye;
+            //         eyes[1] = this.getEyePos().rightEye;
+            //     } else {
+            //         eyes[0] = this.getEyePos();
+            //     }
+            // }
+
             if (this.foodHierarchyIndex > 0) {
-                if (params.PREDATOR_BINOCULAR_VISION) {
+                if (params.PREDATOR_NUM_EYES == 2) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-                } else {
+                } else if (params.PREDATOR_NUM_EYES == 1) {
                     eyes[0] = this.getEyePos();
                 }
             } else {
-                if (params.PREY_BINOCULAR_VISION) {
+                if (params.PREY_NUM_EYES == 2) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-                } else {
+                } else if (params.PREY_NUM_EYES == 1) {
                     eyes[0] = this.getEyePos();
                 }
             }

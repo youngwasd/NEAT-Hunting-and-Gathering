@@ -1,8 +1,12 @@
 class Genome {
    
-    //static DEFAULT_INPUTS = 2 * params.PREY_VISION_RAYS + 2; //+2 is for bias and hunger (changed to prey_vision_rays) predator rays has to be >= prey rays
-
     static DEFAULT_HIDDENS = 0;
+
+    // static PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS :
+    //                          params.PREY_BINOCULAR_VISION ? params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS : params.PREY_VISION_RAYS;
+
+    // static PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? 2 * params.PREDATOR_VISION_RAYS :
+    //                              params.PREDATOR_BINOCULAR_VISION ? params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS : params.PREDATOR_VISION_RAYS;
 
     static PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS : params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS;
 
@@ -12,17 +16,21 @@ class Genome {
 
     static PREDATOR_INPUTS_PER_RAY = params.PREDATOR_DISTANCE_SENSORS ? 1 : 0.5;
 
-    static DEFAULT_PREY_INPUTS = params.PREY_BINOCULAR_VISION ? 2 * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2
+    // static DEFAULT_PREY_INPUTS = params.PREY_BINOCULAR_VISION ? 2 * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2
+    //                              : Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2;
+
+    // static DEFAULT_PREDATOR_INPUTS = params.PREDATOR_BINOCULAR_VISION ? 2 * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2
+    //                                  : Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2;
+
+    static DEFAULT_PREY_INPUTS = params.PREY_NUM_EYES > 1 ? params.PREY_NUM_EYES * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2
                                  : Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2;
 
-    static DEFAULT_PREDATOR_INPUTS = params.PREDATOR_BINOCULAR_VISION ? 2 * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2
+    static DEFAULT_PREDATOR_INPUTS = params.PREDATOR_NUM_EYES > 1 ? params.PREDATOR_NUM_EYES * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2
                                      : Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2;
 
     static DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
 
     static INNOV_NUM = 0;
-
-    //static NODE_ID = Genome.DEFAULT_INPUTS + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
 
     static NODE_ID = Math.max(Genome.DEFAULT_PREY_INPUTS, Genome.DEFAULT_PREDATOR_INPUTS) + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
 
@@ -55,20 +63,40 @@ class Genome {
         Genome.INNOV_MAP = new ConnectionMap();
         Genome.NODE_ID_MAP = new Map();
         Genome.INNOV_NUM = 0;
+
         Genome.PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS : params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS;
         Genome.PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? 2 * params.PREDATOR_VISION_RAYS : params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS;
+
+        // Genome.PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS :
+        //                          params.PREY_BINOCULAR_VISION ? params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS : params.PREY_VISION_RAYS;
+
+        // Genome.PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? 2 * params.PREDATOR_VISION_RAYS :
+        //                              params.PREDATOR_BINOCULAR_VISION ? params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS : params.PREDATOR_VISION_RAYS;
+
         Genome.DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
         Genome.PREY_INPUTS_PER_RAY = params.PREY_DISTANCE_SENSORS ? 1 : 0.5;
         Genome.PREDATOR_INPUTS_PER_RAY = params.PREDATOR_DISTANCE_SENSORS ? 1 : 0.5;
 
-        if (params.PREY_BINOCULAR_VISION) {
-            Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // if (params.PREY_BINOCULAR_VISION) {
+        //     Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // } else {
+        //     Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // }
+        
+        // if (params.PREDATOR_BINOCULAR_VISION) {
+        //     Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // } else {
+        //     Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // }
+
+        if (params.PREY_NUM_EYES > 1) {
+            Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? params.PREY_NUM_EYES * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
         } else {
             Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
         }
         
-        if (params.PREDATOR_BINOCULAR_VISION) {
-            Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        if (params.PREDATOR_NUM_EYES > 1) {
+            Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? params.PREDATOR_NUM_EYES * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
         } else {
             Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
         }

@@ -38,7 +38,7 @@ class NeuralNet {
         }); 
 
         if (input.length != inputIndex) {
-            console.error("input length: " + input.length + "\ninputIndex: " + inputIndex);
+            console.error("input length: " + input.length + "\n# used: " + inputIndex);
         }
 
         return output;
