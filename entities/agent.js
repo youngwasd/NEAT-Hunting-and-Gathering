@@ -352,50 +352,140 @@ class Agent {
         // }
 
         if (this.foodHierarchyIndex > 0) {
-            if (params.PREDATOR_NUM_EYES == 2) {
-                const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
-                                 y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
+            if (params.PREDATOR_NUM_EYES === 2) {
+                const leftEye = {
+                    x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
+                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)
+                };
     
-                const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
-                                  y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
+                const rightEye = {
+                    x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
+                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)
+                };
     
                 return {leftEye, rightEye};
             } else if (params.PREDATOR_NUM_EYES > 2) {
-
-                // need to fix this
                 const eyes = [];
-                for (let i = 0; i < params.PREDATOR_NUM_EYES; i++) {
-                    eyes[i] = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
-                               y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+
+                // if odd number of eyes
+                if (params.PREDATOR_NUM_EYES % 2 !== 0) {
+                    // place first eye in the center of head
+                    eyes[0] = {
+                        x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                        y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)
+                    };
+                    
+                    // place half the eyes on left side of head
+                    for (let i = 1; i < Math.ceil(params.PREDATOR_NUM_EYES / 2); i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - (eyeAngle * i)),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - (eyeAngle * i))
+                        };
+                    }
+                    
+                    // place other half of eyes on right side of head
+                    let j = 1;
+                    for (let i = Math.ceil(params.PREDATOR_NUM_EYES / 2); i < params.PREDATOR_NUM_EYES; i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + (eyeAngle * j)),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + (eyeAngle * j))
+                        };
+                        j++;
+                    }
+                } else { // if even number of eyes
+                    // place half the eyes on left side of head
+                    for (let i = 0; i < params.PREDATOR_NUM_EYES / 2; i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - (eyeAngle * (i + 1))),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - (eyeAngle * (i + 1)))
+                        };
+                    }
+
+                    // place other half of eyes on right side of head
+                    let j = 1;
+                    for (let i = params.PREDATOR_NUM_EYES / 2; i < params.PREDATOR_NUM_EYES; i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + (eyeAngle * j)),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + (eyeAngle * j))
+                        };
+                        j++;
+                    }
                 }
 
-                return eyes;
+                return {eyes};
             } else { // if num eyes = 1
-                return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
-                        y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+                return {
+                    x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)
+                };
             }
         } else {
-            if (params.PREY_NUM_EYES == 2) {    
-                const leftEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
-                                 y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)};
+            if (params.PREY_NUM_EYES === 2) {    
+                const leftEye = {
+                    x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - eyeAngle),
+                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - eyeAngle)
+                };
     
-                const rightEye = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
-                                  y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)};
+                const rightEye = {
+                    x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + eyeAngle),
+                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + eyeAngle)
+                };
     
                 return {leftEye, rightEye};
             } else if (params.PREY_NUM_EYES > 2) {
-
-                // need to fix this
                 const eyes = [];
-                for (let i = 0; i < params.PREY_NUM_EYES; i++) {
-                    eyes[i] = {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
-                               y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+
+                // if odd number of eyes
+                if (params.PREY_NUM_EYES % 2 !== 0) {
+                    // place first eye in the center of head
+                    eyes[0] = {
+                        x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                        y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)
+                    };
+                    
+                    // place half the eyes on left side of head
+                    for (let i = 1; i < Math.ceil(params.PREY_NUM_EYES / 2); i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - (eyeAngle * i)),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - (eyeAngle * i))
+                        };
+                    }
+                    
+                    // place other half of eyes on right side of head
+                    let j = 1;
+                    for (let i = Math.ceil(params.PREY_NUM_EYES / 2); i < params.PREY_NUM_EYES; i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + (eyeAngle * j)),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + (eyeAngle * j))
+                        };
+                        j++;
+                    }
+                } else { // if even number of eyes
+                    // place half the eyes on left side of head
+                    for (let i = 0; i < params.PREY_NUM_EYES / 2; i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading - (eyeAngle * (i + 1))),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading - (eyeAngle * (i + 1)))
+                        };
+                    }
+
+                    // place other half of eyes on right side of head
+                    let j = 1;
+                    for (let i = params.PREY_NUM_EYES / 2; i < params.PREY_NUM_EYES; i++) {
+                        eyes[i] = {
+                            x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading + (eyeAngle * j)),
+                            y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading + (eyeAngle * j))
+                        };
+                        j++;
+                    }
                 }
-                
-                return eyes;
+
+                return {eyes};
             } else { // if eyes = 1
-                return {x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
-                        y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)};
+                return {
+                    x: this.BC.center.x + (this.diameter + 1) / 2 * Math.cos(this.heading),
+                    y: this.BC.center.y + (this.diameter + 1) / 2 * Math.sin(this.heading)
+                };
             }
         }
     }
@@ -600,7 +690,7 @@ class Agent {
         this.closestFood = this.getShortestDistToFood(spottedNeighbors);
 
         if (params.AGENT_VISION_IS_CONE) {
-            const eyes = [];
+            let eyes = [];
 
         // rayDiff == 1 left eye
         // rayDiff == 2 right eye
@@ -690,7 +780,12 @@ class Agent {
                             this.coneVision(input, eyes[1], 2, 2);
                         }
                     }
-                } else if (params.PREDATOR_NUM_EYES == 1) {
+                } else if (params.PREDATOR_NUM_EYES > 2) { // more than 2 eyes they get same rays and angle
+                    eyes = this.getEyePos().eyes;
+                    for (let i = 0; i < params.PREDATOR_NUM_EYES; i++) {
+                        this.coneVision(input, eyes[i], 3, 3);
+                    }
+                } else { // 1 eye so same angle and ray
                     eyes[0] = this.getEyePos();
                     this.coneVision(input, eyes[0], 3, 3);
                 }
@@ -716,7 +811,12 @@ class Agent {
                             this.coneVision(input, eyes[1], 2, 2);
                         }
                     }
-                } else if (params.PREY_NUM_EYES == 1) {
+                } else if (params.PREY_NUM_EYES > 2) { // more than 2 eyes they get same rays and angle
+                    eyes = this.getEyePos().eyes;
+                    for (let i = 0; i < params.PREY_NUM_EYES; i++) {
+                        this.coneVision(input, eyes[i], 3, 3);
+                    }
+                } else { // 1 eye so same angle and ray
                     eyes[0] = this.getEyePos();
                     this.coneVision(input, eyes[0], 3, 3);
                 }
@@ -1020,9 +1120,6 @@ class Agent {
         
         let currAngle = this.heading - angle / 2;
 
-        // this.spotted = [];
-        // this.visCol = [];
-
         let entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         let walls = [];
         if (params.AGENT_PER_WORLD === 0) {
@@ -1192,7 +1289,7 @@ class Agent {
         //     }
         // }
 
-        // need to add eyes > 2 stuff
+        // need to add eyes > 2 stuff (Doesnt work properly)
         if (this.foodHierarchyIndex > 0) {
             if (params.PREDATOR_NUM_EYES == 2) {
                 // left eye
@@ -1202,7 +1299,34 @@ class Agent {
                 // right eye
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
-            } else if (params.PREDATOR_NUM_EYES == 1) {
+            } else if (params.PREDATOR_NUM_EYES > 2) {
+                if (params.PREDATOR_NUM_EYES % 2 !== 0) { // odd number of eyes
+                    ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
+                    ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
+
+                    for (let i = 1; i < Math.ceil(params.PREDATOR_NUM_EYES / 2); i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * i)), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * i)));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * i)), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * i)));
+                    }
+
+                    let j = 1;
+                    for (let i = Math.ceil(params.PREDATOR_NUM_EYES / 2); i < params.PREDATOR_NUM_EYES; i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * j)));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * j)));
+                    }
+                } else { // even number of eyes
+                    for (let i = 0; i < params.PREDATOR_NUM_EYES / 2; i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * (i + 1))), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * (i + 1))));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * (i + 1))), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * (i + 1))));
+                    }
+
+                    let j = 1;
+                    for (let i = params.PREDATOR_NUM_EYES / 2; i < params.PREDATOR_NUM_EYES; i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * j)));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * j)));
+                    }
+                }
+            } else {
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
             }
@@ -1215,7 +1339,34 @@ class Agent {
                 // right eye
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading + eyeAngle));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading + eyeAngle), this.BC.center.y + this.diameter * Math.sin(this.heading + eyeAngle));
-            } else if (params.PREY_NUM_EYES == 1) {
+            } else if (params.PREY_NUM_EYES > 2) {
+                if (params.PREY_NUM_EYES % 2 !== 0) { // odd number of eyes
+                    ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
+                    ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
+
+                    for (let i = 1; i < Math.ceil(params.PREY_NUM_EYES / 2); i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * i)), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * i)));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * i)), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * i)));
+                    }
+
+                    let j = 1;
+                    for (let i = Math.ceil(params.PREY_NUM_EYES / 2); i < params.PREY_NUM_EYES; i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * j)));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * j)));
+                    }
+                } else { // even number of eyes
+                    for (let i = 0; i < params.PREY_NUM_EYES / 2; i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * (i + 1))), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * (i + 1))));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * (i + 1))), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * (i + 1))));
+                    }
+
+                    let j = 1;
+                    for (let i = params.PREY_NUM_EYES / 2; i < params.PREY_NUM_EYES; i++) {
+                        ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading - (eyeAngle * j)));
+                        ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading - (eyeAngle * j)), this.BC.center.y + this.diameter * Math.sin(this.heading - (eyeAngle * j)));
+                    }
+                }
+            } else {
                 ctx.moveTo(this.BC.center.x + this.diameter / 2 * Math.cos(this.heading), this.BC.center.y + this.diameter / 2 * Math.sin(this.heading));
                 ctx.lineTo(this.BC.center.x + this.diameter * Math.cos(this.heading), this.BC.center.y + this.diameter * Math.sin(this.heading));
             }
@@ -1244,7 +1395,7 @@ class Agent {
         ctx.lineWidth = 2;
         //Draw cone vision
         if (params.AGENT_VISION_IS_CONE && params.AGENT_VISION_DRAW_CONE && Array.isArray(this.spotted)) {
-            const eyes = [];
+            let eyes = [];
             
             // if (this.foodHierarchyIndex > 0) {
             //     if (params.PREDATOR_BINOCULAR_VISION) {
@@ -1266,14 +1417,18 @@ class Agent {
                 if (params.PREDATOR_NUM_EYES == 2) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-                } else if (params.PREDATOR_NUM_EYES == 1) {
+                } else if (params.PREDATOR_NUM_EYES > 2) {
+                    eyes = this.getEyePos().eyes;
+                } else {
                     eyes[0] = this.getEyePos();
                 }
             } else {
                 if (params.PREY_NUM_EYES == 2) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-                } else if (params.PREY_NUM_EYES == 1) {
+                } else if (params.PREY_NUM_EYES > 2) {
+                    eyes = this.getEyePos().eyes;
+                } else {
                     eyes[0] = this.getEyePos();
                 }
             }

@@ -469,6 +469,8 @@ class PopulationManager {
             } else if (params.PREY_NUM_EYES > 2) {
                 document.getElementById("prey_vision_rays").disabled = false;
                 document.getElementById("prey_vision_angle").disabled = false;
+                document.getElementById("prey_left_rays").disabled = true;
+                document.getElementById("prey_right_rays").disabled = true;
                 document.getElementById("prey_left_angle").disabled = true;
                 document.getElementById("prey_right_angle").disabled = true;
                 document.getElementById("prey_both_angle").disabled = true;
@@ -533,6 +535,8 @@ class PopulationManager {
                 document.getElementById("predator_right_angle").disabled = true;
                 document.getElementById("predator_left_rays").disabled = true;
                 document.getElementById("predator_right_rays").disabled = true;
+                document.getElementById("predator_both_rays").disabled = true;
+                document.getElementById("predator_both_angle").disabled = true;
             }
         } else {
             document.getElementById("predator_eye_distance").disabled = true;
