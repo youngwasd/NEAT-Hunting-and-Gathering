@@ -563,6 +563,14 @@ class PopulationManager {
             params.SIM_TRIAL_NUM = parseInt(document.getElementById("sim_trial_num").value);
         }
 
+        if (document.activeElement.id !== "REPLACEMENT_ADJUSTMENT_VALUE") {
+            params.FITNESS_ADJUSTMENT = parseInt(document.getElementById("REPLACEMENT_ADJUSTMENT_VALUE").value);
+        }
+
+        if (document.activeElement.id !== "REPLACEMENT_RATE") {
+            params.AGENT_REPLACEMENT = parseInt(document.getElementById("REPLACEMENT_RATE").value);
+        }
+
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         params.AUTO_SAVE_GENOME = document.getElementById("auto_save_genome").checked;
         params.coevolution = document.getElementById("coevolution").checked;
@@ -968,12 +976,12 @@ class PopulationManager {
             agentPool = shuffleArray(agentPool);
             preySpeciesAllocationList.push(agentPool);
             if (params.coevolution) {
-                agentPool = [];
+                let predatorPool = [];
                 PopulationManager.PREDATOR_SPECIES_MEMBERS.forEach((species, speciesId) => {
-                    agentPool.push(...species);
+                    predatorPool.push(...species);
                 });
-                agentPool = shuffleArray(agentPool);
-                predatorSpeciesAllocationList.push(agentPool);
+                predatorPool = shuffleArray(predatorPool);
+                predatorSpeciesAllocationList.push(predatorPool);
             }
         }
         if (!params.coevolution) {
@@ -1017,7 +1025,7 @@ class PopulationManager {
                     let agent = agentContainer[i];
     
                     // No world like it has been created or it's full
-                    if (!this.worlds.get(worldId) || this.worlds.get(worldId).agents.length >= params.predator_ratio) {
+                    if (!this.worlds.get(worldId) || this.worlds.get(worldId).agents.length >= params.predator_ratio + 1) {
                         ++worldId;
                         let world = this.initNewWorld(worldId);
                         let predator = predatorSpeciesAllocationList[0][worldId]
@@ -1254,10 +1262,10 @@ class PopulationManager {
 
         //Log the data into agent Tracker
         specieOOBData.forEach((data, speciesId) => {
-            console.log(specieOOBData)
+            // console.log(specieOOBData)
             let entry = {};
             entry['speciesId'] = speciesId;
-            console.log("prey species members: " + PopulationManager.PREY_SPECIES_MEMBERS)
+            // console.log("prey species members: " + PopulationManager.PREY_SPECIES_MEMBERS)
             entry['speciesTotalTickOutOfBound'] = data / PopulationManager.PREY_SPECIES_MEMBERS.get(speciesId).length * 100;
             this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
 
@@ -1448,9 +1456,7 @@ class PopulationManager {
             let sumRaws = 0;
 
             speciesList.forEach(member => {
-                if (!isNaN(member.genome.rawFitness)) {
                 sumRaws += member.genome.rawFitness;
-                }
             });
             minShared = Math.min(minShared, sumRaws / speciesList.length);
             predReprodFitMap.set(speciesId, sumRaws / speciesList.length);
@@ -1642,7 +1648,7 @@ class PopulationManager {
         let rouletteWheel = [];
         let speciesCount = 0;
         speciesMap.forEach((speciesList, speciesId) => {
-            let speciesFitness;
+            let speciesFitness = 0;
             // Sum raw fitness for all members of this species
             speciesList.forEach(member => {
                 speciesFitness += member.genome.rawFitness;
@@ -1650,6 +1656,7 @@ class PopulationManager {
                     rouletteWheel.push(speciesId);
                     speciesCount++;
                 }
+                // console.log(speciesFitness)
 
             });
             // Maps speciesId to the species average fitness
@@ -1658,9 +1665,15 @@ class PopulationManager {
         });
 
         // sorts the list from lowest fitness to greatest fitness
+        // console.log(speciesFitnessMap)
         rouletteWheel.sort((s1, s2) => speciesFitnessMap.get(s1) - speciesFitnessMap.get(s2))
+        rouletteWheel.forEach(species => {
+            console.log("This species is: " + species)
+            console.log("This species' fitness is " + speciesFitnessMap.get(species))
+
+        });
         console.log(rouletteWheel)
-        let adjustment = 10; // TODO: add a html parameter
+        let adjustment = params.FITNESS_ADJUSTMENT;
         let rouletteSum = 0;
 
         // Adds a total sum based on the number of species that we can use to weigh the fitnesses
@@ -1668,7 +1681,7 @@ class PopulationManager {
         for(let i = 0; i < rouletteWheel.length; i++) {
             rouletteSum += (i+1) + adjustment;
         }
-        let count = 1; // TODO: change this to a param on html
+        let count = params.AGENT_REPLACEMENT;
         let children = [];
         let parent1, parent2;
         let rouletteResult;
@@ -1680,15 +1693,13 @@ class PopulationManager {
             for(let i = 0; i < rouletteWheel.length; i++) {
                 rouletteResult -= (i+1) + adjustment;
                 if(rouletteResult < 0) {
-                    console.log(i + " is the index of the one to reproduce")
+                    // console.log(i + " is the index of the one to reproduce")
                     let possibleParents = speciesMap.get(rouletteWheel[i]);
                     parent1 = possibleParents[randomInt(possibleParents.length)];
                     parent2 = possibleParents[randomInt(possibleParents.length)];
                     break;
                 }
             }
-            console.log(rouletteResult + " is the roulette result")
-            console.log(rouletteWheel + " is the roulette wheel")
             let childGenome = Genome.crossover(parent1.genome, parent2.genome);
             childGenome.mutate();
             let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
@@ -1719,8 +1730,8 @@ class PopulationManager {
         }
 
         for (const element of deathSet) {
-            console.log(rouletteWheel[element])
-            console.log(speciesMap)
+            // console.log(rouletteWheel[element])
+            // console.log(speciesMap)
                 for (const member of speciesMap.get(rouletteWheel[element])) {
                     if (!member.removeFromWorld) {
                         member.removeFromWorld = true;
