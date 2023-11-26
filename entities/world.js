@@ -122,6 +122,26 @@ class World {
         return count;
     };
 
+    countPreyDead() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (agent.removeFromWorld && agent.foodHierarchyIndex == 0) {
+                count++;
+            }
+        });
+        return count;
+    };
+
+    countPredatorsDead() {
+        let count = 0;
+        this.agents.forEach(agent => {
+            if (agent.removeFromWorld && agent.foodHierarchyIndex > 0) {
+                count++;
+            }
+        });
+        return count;
+    };
+
     countAlives() {
         let count = 0;
         this.agents.forEach(agent => {
@@ -322,13 +342,13 @@ class World {
         // let i = randomInt(4);
         // let spawnRadius = 100;
 
-        let numberOfAgent = params.AGENT_PER_WORLD;
+        let numberOfAgent = params.predator_ratio + 1;
         if (params.AGENT_PER_WORLD === 0) {
             numberOfAgent = params.NUM_AGENTS;
         }
 
         let agentAssigned = 0;
-        if (params.HUNTING_MODE === "hierarchy_spectrum") {
+        if (params.HUNTING_MODE === "hierarchy_spectrum" && !coevolution) {
             foodHierarchy = {
                 index: 0,
                 step: (100 - 0) / params.AGENT_PER_WORLD,
@@ -339,14 +359,14 @@ class World {
         let prevX = halfSize, prevY = halfSize;
 
         shuffleArray(this.agents).forEach(agent => {
-            //Assign their food hiercarchy index based on how many agents per world
+            //Assign their food hierarchy index based on how many agents per world
             //Spread the food hierarchy index accress the whole agent population
-            if (params.HUNTING_MODE === "hierarchy_spectrum") {
+            if (params.HUNTING_MODE === "hierarchy_spectrum" && !coevolution) {
                 agent.foodHierarchyIndex = foodHierarchy.index;
 
                 foodHierarchy.index += foodHierarchy.step;
             }
-            else if (params.HUNTING_MODE === "hierarchy") {
+            else if (params.HUNTING_MODE === "hierarchy" && !coevolution) {
                 //Assign either predator or prey
                 if (agentAssigned >= this.agents.length / 2) {
                     agent.foodHierarchyIndex = 50;
