@@ -282,11 +282,49 @@
             </div>
 
             <div>
-                <input type="checkbox" id="prey_binocular_vision"> Enable Binocular Vision for Prey
+                <input type="checkbox" id="prey_distance_sensors" checked="true"> Enable Prey Distance Sensors (Requires Restart)
             </div>
 
             <div>
-                <input type="checkbox" id="predator_binocular_vision"> Enable Binocular Vision for Predators
+                <input type="checkbox" id="predator_distance_sensors" checked="true"> Enable Predator Distance Sensors (Requires Restart)
+            </div>
+
+            <div>
+                <label for="prey_num_eyes"> Select Number Eyes for Prey (Requires Restart):</label>
+                <select name="prey_num_eyes" id="prey_num_eyes">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="predator_num_eyes"> Select Number Eyes for Predator (Requires Restart):</label>
+                <select name="predator_num_eyes" id="predator_num_eyes">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                </select>
             </div>
 
             <div>
@@ -355,11 +393,43 @@
             </div>
 
             <div>
+                <input type="checkbox" id="prey_both_rays"> Use Same Number of Rays for Both Left and Right Eye (Prey, requires restart)
+            </div>
+
+            <div>
+                <input type="checkbox" id="predator_both_rays"> Use Same Number of Rays for Both Left and Right Eye (Predator, requires restart)
+            </div>
+
+            <div>
                 Prey Vision Rays (Requires Restart): <input type="text" id="prey_vision_rays" value="13">
             </div>
 
             <div>
                 Predator Vision Rays (Requires Restart): <input type="text" id="predator_vision_rays" value="13">
+            </div>
+
+            <div>
+                Prey Left Eye Rays (Requires Restart): <input type="text" id="prey_left_rays" value="13">
+            </div>
+
+            <div>
+                Prey Right Eye Rays (Requires Restart): <input type="text" id="prey_right_rays" value="13">
+            </div>
+
+            <div>
+                Predator Left Eye Rays (Requires Restart): <input type="text" id="predator_left_rays" value="13">
+            </div>
+
+            <div>
+                Predator Right Eye Rays (Requires Restart): <input type="text" id="predator_right_rays" value="13">
+            </div>
+
+            <div>
+                <input type="checkbox" id="prey_both_angle"> Use Same Angle for Both Left and Right Eye (Prey)
+            </div>
+
+            <div>
+                <input type="checkbox" id="predator_both_angle"> Use Same Angle for Both Left and Right Eye (Predator)
             </div>
 
             <div>
@@ -369,6 +439,23 @@
             <div>
                 Predator Vision Cone Angle (degrees): <input type="text" id="predator_vision_angle" value="180">
             </div>
+
+            <div>
+                Prey Left Eye Angle (degrees): <input type="text" id="prey_left_angle" value="180">
+            </div>
+
+            <div>
+                Prey Right Eye Angle (degrees): <input type="text" id="prey_right_angle" value="180">
+            </div>
+
+            <div>
+                Predator Left Eye Angle (degrees): <input type="text" id="predator_left_angle" value="180">
+            </div>
+
+            <div>
+                Predator Right Eye Angle (degrees): <input type="text" id="predator_right_angle" value="180">
+            </div>
+            
             <br>
         </div>
 

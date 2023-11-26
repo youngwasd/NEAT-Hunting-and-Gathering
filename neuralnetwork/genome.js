@@ -1,14 +1,38 @@
 class Genome {
-
-    static DEFAULT_INPUTS = 2 * params.PREY_VISION_RAYS + 2; //+2 is for bias and hunger (changed to prey_vision_rays) predator rays has to be >= prey rays
-
+   
     static DEFAULT_HIDDENS = 0;
+
+    static PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? params.PREY_VISION_RAYS :
+                             params.PREY_BINOCULAR_VISION ? (params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS) / 2 : params.PREY_VISION_RAYS;
+
+    static PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? params.PREDATOR_VISION_RAYS :
+                                 params.PREDATOR_BINOCULAR_VISION ? (params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS) / 2 : params.PREDATOR_VISION_RAYS;
+
+    // static PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS : params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS;
+
+    // static PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? 2 * params.PREDATOR_VISION_RAYS : params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS;
+
+    static PREY_INPUTS_PER_RAY = params.PREY_DISTANCE_SENSORS ? 2 : 1;
+
+    static PREDATOR_INPUTS_PER_RAY = params.PREDATOR_DISTANCE_SENSORS ? 2 : 1;
+
+    // static DEFAULT_PREY_INPUTS = params.PREY_BINOCULAR_VISION ? 2 * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2
+    //                              : Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2;
+
+    // static DEFAULT_PREDATOR_INPUTS = params.PREDATOR_BINOCULAR_VISION ? 2 * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2
+    //                                  : Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2;
+
+    static DEFAULT_PREY_INPUTS = params.PREY_NUM_EYES > 1 ? params.PREY_NUM_EYES * (Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY) + 2
+                                 : Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2;
+
+    static DEFAULT_PREDATOR_INPUTS = params.PREDATOR_NUM_EYES > 1 ? params.PREDATOR_NUM_EYES * (Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY) + 2
+                                     : Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2;
 
     static DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
 
     static INNOV_NUM = 0;
 
-    static NODE_ID = Genome.DEFAULT_INPUTS + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
+    static NODE_ID = Math.max(Genome.DEFAULT_PREY_INPUTS, Genome.DEFAULT_PREDATOR_INPUTS) + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
 
     static NODE_TYPES = {
         input: 0,
@@ -20,6 +44,17 @@ class Genome {
 
     static NODE_ID_MAP = new Map();
 
+    constructor(genome = undefined, foodHierarchyIndex = 0) {
+        if (genome === undefined) {
+            let defaultGenome = Genome.getDefault(params.RAND_DEFAULT_WEIGHTS, foodHierarchyIndex);
+            this.nodeGenes = defaultGenome.nodeGenes;
+            this.connectionGenes = defaultGenome.connectionGenes;
+        } else {
+            this.nodeGenes = genome.nodeGenes;
+            this.connectionGenes = genome.connectionGenes;
+        }
+    };
+
     static resetInnovations = () => { // this function must be called whenever a new set of agents is created
         Genome.INNOV_MAP = new ConnectionMap();
     };
@@ -28,14 +63,50 @@ class Genome {
         Genome.INNOV_MAP = new ConnectionMap();
         Genome.NODE_ID_MAP = new Map();
         Genome.INNOV_NUM = 0;
+
+        // Genome.PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS : params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS;
+        // Genome.PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? 2 * params.PREDATOR_VISION_RAYS : params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS;
+
+        Genome.PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? params.PREY_VISION_RAYS :
+                                 params.PREY_BINOCULAR_VISION ? (params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS) / 2 : params.PREY_VISION_RAYS;
+
+        Genome.PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? params.PREDATOR_VISION_RAYS :
+                                     params.PREDATOR_BINOCULAR_VISION ? (params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS) / 2 : params.PREDATOR_VISION_RAYS;
+
         Genome.DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
-        Genome.DEFAULT_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * params.PREY_VISION_RAYS + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2; // changed agent_vision_rays to prey_vision_rays
+        Genome.PREY_INPUTS_PER_RAY = params.PREY_DISTANCE_SENSORS ? 2 : 1;
+        Genome.PREDATOR_INPUTS_PER_RAY = params.PREDATOR_DISTANCE_SENSORS ? 2 : 1;
+
+        // if (params.PREY_BINOCULAR_VISION) {
+        //     Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // } else {
+        //     Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // }
         
-        if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") && params.PUSH_FHI_TO_ANN) {
-            Genome.DEFAULT_INPUTS++; //Increase 1 more in neural inputs for food hierarchy index
+        // if (params.PREDATOR_BINOCULAR_VISION) {
+        //     Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? 2 * Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // } else {
+        //     Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        // }
+
+        if (params.PREY_NUM_EYES > 1) {
+            Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? params.PREY_NUM_EYES * (Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY) + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        } else {
+            Genome.DEFAULT_PREY_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREY_TOTAL_RAYS * Genome.PREY_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        }
+        
+        if (params.PREDATOR_NUM_EYES > 1) {
+            Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? params.PREDATOR_NUM_EYES * (Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY) + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
+        } else {
+            Genome.DEFAULT_PREDATOR_INPUTS = params.AGENT_VISION_IS_CONE ? Genome.PREDATOR_TOTAL_RAYS * Genome.PREDATOR_INPUTS_PER_RAY + 2 : 3 * params.AGENT_NEIGHBOR_COUNT + 2;
         }
 
-        Genome.NODE_ID = Genome.DEFAULT_INPUTS + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
+        if ((params.HUNTING_MODE === "hierarchy" || params.HUNTING_MODE === "hierarchy_spectrum") && params.PUSH_FHI_TO_ANN) {
+            Genome.DEFAULT_PREY_INPUTS++;
+            Genome.DEFAULT_PREDATOR_INPUTS++; //Increase 1 more in neural inputs for food hierarchy index
+        }
+
+        Genome.NODE_ID = Math.max(Genome.DEFAULT_PREY_INPUTS, Genome.DEFAULT_PREDATOR_INPUTS) + Genome.DEFAULT_HIDDENS + Genome.DEFAULT_OUTPUTS;
     };
 
     static assignInnovNum = (inId, outId) => {
@@ -60,9 +131,14 @@ class Genome {
         return id;
     };
 
-    static getDefault = (randomWeights = params.RAND_DEFAULT_WEIGHTS) => {
+    static getDefault = (randomWeights = params.RAND_DEFAULT_WEIGHTS, foodHierarchyIndex = 0) => {
+        let numInputs = foodHierarchyIndex > 0 ? Genome.DEFAULT_PREDATOR_INPUTS : Genome.DEFAULT_PREY_INPUTS;
 
-        let numInputs = Genome.DEFAULT_INPUTS;
+        // console logs to check inputs to neural net
+        // console.log("PD " + Genome.DEFAULT_PREDATOR_INPUTS);
+        // console.log("PY " + Genome.DEFAULT_PREY_INPUTS);
+        // console.log("NI " + numInputs);
+
         let numHiddens = Genome.DEFAULT_HIDDENS;
         let numOutputs = Genome.DEFAULT_OUTPUTS;
         let numNeurons = numInputs + numHiddens + numOutputs;
@@ -309,17 +385,6 @@ class Genome {
         }
         
         return res;
-    };
-
-    constructor(genome = undefined) {
-        if (genome === undefined) {
-            let defaultGenome = Genome.getDefault();
-            this.nodeGenes = defaultGenome.nodeGenes;
-            this.connectionGenes = defaultGenome.connectionGenes;
-        } else {
-            this.nodeGenes = genome.nodeGenes;
-            this.connectionGenes = genome.connectionGenes;
-        }
     };
 
     mutate() {
