@@ -553,11 +553,12 @@ class Agent {
             spawnPointY += halfMapSize;
         }
 
-        //let spawnRadius = 100;
+        let spawnRadius = 100;
 
-        // //Respawn at the opposite quadrant
-        // this.x = randomInt(spawnRadius * 2) - spawnRadius + spawnPointX;
-        // this.y = randomInt(spawnRadius * 2) - spawnRadius + spawnPointY;
+        //TODO: confirm this is the approach we want to take
+        //Respawn at the opposite quadrant
+        this.x = randomInt(spawnRadius * 2) - spawnRadius + spawnPointX;
+        this.y = randomInt(spawnRadius * 2) - spawnRadius + spawnPointY;
 
         //Respawn predator
         if (params.HUNTING_MODE === "hierarchy_spectrum") {
@@ -565,10 +566,10 @@ class Agent {
         }
 
         //Deactivate world in 1 prey 1 predator mode
-        if (params.HUNTING_MODE === "hierarchy") {
-            this.game.population.deactivateWorld(this.worldId);
-            //console.log(this.x, this.y, this.worldId, predator.x, predator.y, this.game.population.tickCounter);
-        }
+        // if (params.HUNTING_MODE === "hierarchy") {
+        //     this.game.population.deactivateWorld(this.worldId);
+        //     //console.log(this.x, this.y, this.worldId, predator.x, predator.y, this.game.population.tickCounter);
+        // }
 
         //this.game.population.preyConsumedData.currentGenData++;//Increment the number of time prey got consumed
 
