@@ -25,6 +25,8 @@ const loadProfile = (profile) => {
             continue;
         }
         let HTMLElement = document.getElementById(attr.HTMLElementID);
+        console.log(HTMLElement)
+        console.log(attr.HTMLElementID)
         if (HTMLElement.value != undefined) {
             if (attr.value != undefined) {
                 HTMLElement.value = attr.value;
@@ -61,59 +63,59 @@ const loadProfile = (profile) => {
 
 };
 
-//Example of profile
-const simulationProfile_numberOfAgents_25 = {
-    DB: {
-        HTMLElementID: 'db',
-        value: "NEATWi23"
-    },
+// //Example of profile
+// const simulationProfile_numberOfAgents_25 = {
+//     DB: {
+//         HTMLElementID: 'db',
+//         value: "NEATWi23"
+//     },
 
-    DB_COLLECTION: {
-        HTMLElementID: 'db_collection',
-        value: "TotalNumberOfAgents_100"
-    },
+//     DB_COLLECTION: {
+//         HTMLElementID: 'db_collection',
+//         value: "TotalNumberOfAgents_100"
+//     },
 
-    GEN_TO_SAVE: {
-        HTMLElementID: 'gen_to_save',
-        value: 200,
-    },
+//     GEN_TO_SAVE: {
+//         HTMLElementID: 'gen_to_save',
+//         value: 200,
+//     },
 
-    SIM_TRIAL_NUM: {
-        HTMLElementID: 'sim_trial_num',
-        value: 5,
-    },
+//     SIM_TRIAL_NUM: {
+//         HTMLElementID: 'sim_trial_num',
+//         value: 5,
+//     },
 
-    GENOME_DB: {
-        HTMLElementID: 'genome_db',
-        value: "NEATWi23"
-    },
+//     GENOME_DB: {
+//         HTMLElementID: 'genome_db',
+//         value: "NEATWi23"
+//     },
 
-    GENOME_DB_COLLECTION: {
-        HTMLElementID: 'genome_db_collection',
-        value: "TotalNumberOfAgents_100_Genome"
-    },
+//     GENOME_DB_COLLECTION: {
+//         HTMLElementID: 'genome_db_collection',
+//         value: "TotalNumberOfAgents_100_Genome"
+//     },
 
-    GEN_TO_SAVE_GENOME: {
-        HTMLElementID: 'gen_to_save_genome',
-        value: 200,
-    },
+//     GEN_TO_SAVE_GENOME: {
+//         HTMLElementID: 'gen_to_save_genome',
+//         value: 200,
+//     },
 
-    NUM_AGENTS: {
-        HTMLElementID: 'num_agents',
-        value: 25,
-    },
+//     NUM_AGENTS: {
+//         HTMLElementID: 'num_agents',
+//         value: 25,
+//     },
 
-    //Has a custom additional function to run before adding to the profile
-    AGENT_PER_WORLD: {
-        HTMLElementID: 'agent_per_world',
-        value: 1,
-        additionalFunction:
-            () => {
-                document.getElementById("restart_sim").click();
-            },
+//     //Has a custom additional function to run before adding to the profile
+//     AGENT_PER_WORLD: {
+//         HTMLElementID: 'agent_per_world',
+//         value: 1,
+//         additionalFunction:
+//             () => {
+//                 document.getElementById("restart_sim").click();
+//             },
 
-    }
-};
+//     }
+// };
 
 const ControlProfile_GradualConsumption_Off_FHI_Off = {
     DB: {
@@ -151,95 +153,95 @@ const ControlProfile_GradualConsumption_Off_FHI_Off = {
         value: 5,
     },
 
-    NUM_AGENTS: {
-        HTMLElementID: 'num_agents',
-        value: 50,
-    },
+    // NUM_AGENTS: {
+    //     HTMLElementID: 'num_agents',
+    //     value: 50,
+    // },
 
-    //Has a custom additional function to run before adding to the profile
-    AGENT_PER_WORLD: {
-        HTMLElementID: 'agent_per_world',
-        value: 2,
-        additionalFunction:
-            () => {
-                document.getElementById("restart_sim").click();
-            },
-    },
+    // //Has a custom additional function to run before adding to the profile
+    // AGENT_PER_WORLD: {
+    //     HTMLElementID: 'agent_per_world',
+    //     value: 2,
+    //     additionalFunction:
+    //         () => {
+    //             document.getElementById("restart_sim").click();
+    //         },
+    // },
 
-    FITNESS_HUNTING_PREY: {
-        HTMLElementID: 'FITNESS_HUNTING_PREY',
-        value: 50,
-    },
+    // FITNESS_HUNTING_PREY: {
+    //     HTMLElementID: 'FITNESS_HUNTING_PREY',
+    //     value: 50,
+    // },
 
-    FITNESS_OUT_OF_BOUND: {
-        HTMLElementID: 'FITNESS_OUT_OF_BOUND',
-        value: -2,
-    },
+    // FITNESS_OUT_OF_BOUND: {
+    //     HTMLElementID: 'FITNESS_OUT_OF_BOUND',
+    //     value: -2,
+    // },
 
-    FITNESS_CALORIES: {
-        HTMLElementID: 'fitness_calories',
-        value: 10,
-    },
+    // FITNESS_CALORIES: {
+    //     HTMLElementID: 'fitness_calories',
+    //     value: 10,
+    // },
 
-    SPLIT_SPECIES: {
-        HTMLElementID: 'split_species',
-        checked: false,
-    },
+    // SPLIT_SPECIES: {
+    //     HTMLElementID: 'split_species',
+    //     checked: false,
+    // },
 
-    AGENT_NEIGHBORS: {
-        HTMLElementID: 'agent_neighbors',
-        checked: true,
-    },
+    // AGENT_NEIGHBORS: {
+    //     HTMLElementID: 'agent_neighbors',
+    //     checked: true,
+    // },
 
-    FITNESS_ENERGY_EFFICIENCY: {
-        HTMLElementID: 'FITNESS_ENERGY_EFFICIENCY',
-        value: 0,
-    },
+    // FITNESS_ENERGY_EFFICIENCY: {
+    //     HTMLElementID: 'FITNESS_ENERGY_EFFICIENCY',
+    //     value: 0,
+    // },
 
-    FITNESS_PERCENT_DEAD: {
-        HTMLElementID: 'FITNESS_PERCENT_DEAD',
-        value: 0,
-    },
+    // FITNESS_PERCENT_DEAD: {
+    //     HTMLElementID: 'FITNESS_PERCENT_DEAD',
+    //     value: 0,
+    // },
 
-    FITNESS_WINNER_BONUS: {
-        HTMLElementID: 'FITNESS_WINNER_BONUS',
-        value: 50,
-    },
+    // FITNESS_WINNER_BONUS: {
+    //     HTMLElementID: 'FITNESS_WINNER_BONUS',
+    //     value: 50,
+    // },
 
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: true,
-    },
+    // GRADUAL_CONSUMPTION: {
+    //     HTMLElementID: 'GRADUAL_CONSUMPTION',
+    //     checked: true,
+    // },
 
-    MIRROR_ROLES: {
-        HTMLElementID: 'mirror_roles',
-        checked: true,
-    },
+    // MIRROR_ROLES: {
+    //     HTMLElementID: 'mirror_roles',
+    //     checked: true,
+    // },
 
-    INACTIVE_PREY_TARGETABLE: {
-        HTMLElementID: 'inactive_prey_targetable',
-        checked: true,
-    },
+    // INACTIVE_PREY_TARGETABLE: {
+    //     HTMLElementID: 'inactive_prey_targetable',
+    //     checked: true,
+    // },
 
-    COOLDOWN_TO_REGEN: {
-        HTMLElementID: 'cooldown_to_regen',
-        value: 1,
-    },
+    // COOLDOWN_TO_REGEN: {
+    //     HTMLElementID: 'cooldown_to_regen',
+    //     value: 1,
+    // },
 
-    MAX_TICKS_TO_CONSUME: {
-        HTMLElementID: 'max_ticks_to_consume',
-        value: 1,
-    },
+    // MAX_TICKS_TO_CONSUME: {
+    //     HTMLElementID: 'max_ticks_to_consume',
+    //     value: 1,
+    // },
 
-    GRADUAL_CONSUMPTION: {
-        HTMLElementID: 'GRADUAL_CONSUMPTION',
-        checked: false,
-    },
+    // GRADUAL_CONSUMPTION: {
+    //     HTMLElementID: 'GRADUAL_CONSUMPTION',
+    //     checked: false,
+    // },
 
-    PUSH_FHI_TO_ANN: {
-        HTMLElementID: 'push_fhi_to_ann',
-        checked: false,
-    },
+    // PUSH_FHI_TO_ANN: {
+    //     HTMLElementID: 'push_fhi_to_ann',
+    //     checked: false,
+    // },
 };
 
 const RoleAwareness_GradualConsumption_Off_FHI_On = {

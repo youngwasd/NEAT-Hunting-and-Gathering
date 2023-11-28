@@ -6,6 +6,7 @@ if (window.io) {
 }
 
 socket.on("find", (data) => {
+    console.log(data)
     console.log("processing query...");
     if(data.length == 0) {
         console.warn("Warning: data collection queried is empty");
