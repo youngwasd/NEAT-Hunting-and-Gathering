@@ -1388,9 +1388,6 @@ class PopulationManager {
     
                 //Collecting out of bound info
                 this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
-    
-                this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
             } else {
                 let OOBData = predatorOOBData.get(agent.speciesId);
                 predatorOOBData.set(agent.speciesId,
@@ -1403,6 +1400,10 @@ class PopulationManager {
                     (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
                 );
                 sumPredWinnerBonus += agent.getWinnerBonus("predator");
+
+                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
+    
+                this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
             }
                 sumPercDead += agent.getPercentDead();
                 sumEnergySpent += agent.caloriesSpent;
