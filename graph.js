@@ -6,6 +6,7 @@ if (window.io) {
 }
 
 socket.on("find", (data) => {
+    console.log(data)
     console.log("processing query...");
     if(data.length == 0) {
         console.warn("Warning: data collection queried is empty");
@@ -58,15 +59,15 @@ const saveGenomes = () => {
 }
 
 const parseData = (data) => {
-    // agentTrackerAttributesToCollect.forEach(attr =>{
-    //     download(attr + '_' + db + "_" + db_collection + ".csv", serializeData(data, attr, true));
-    // });
+    agentTrackerAttributesToCollect.forEach(attr =>{
+        download(attr + '_' + db + "_" + db_collection + ".csv", serializeData(data, attr, true));
+    });
 
     //Only download these for conveniency
-    download("totalCaloriesConsumedAsPrey_" + db + "_" + db_collection + ".csv", serializeData(data, "totalCaloriesConsumedAsPrey", true));
-    download("totalFoodConsumptionCount_" + db + "-" + db_collection + ".csv", serializeData(data, "totalFoodConsumptionCount", true));
-    download("totalPreyHuntedCount_" + db + "-" + db_collection + ".csv", serializeData(data, "totalPreyHuntedCount", true));
-    download("totalTicksOutOfBounds_" + db + "-" + db_collection + ".csv", serializeData(data, "totalTicksOutOfBounds", true));
+    // download("totalCaloriesConsumedAsPrey_" + db + "_" + db_collection + ".csv", serializeData(data, "totalCaloriesConsumedAsPrey", true));
+    // download("totalFoodConsumptionCount_" + db + "-" + db_collection + ".csv", serializeData(data, "totalFoodConsumptionCount", true));
+    // download("totalPreyHuntedCount_" + db + "-" + db_collection + ".csv", serializeData(data, "totalPreyHuntedCount", true));
+    // download("totalTicksOutOfBounds_" + db + "-" + db_collection + ".csv", serializeData(data, "totalTicksOutOfBounds", true));
     
 
     // download("AvgRawFitness-" + db + "-" + db_collection + ".csv", serializeData(data, "avgFitness", true));
