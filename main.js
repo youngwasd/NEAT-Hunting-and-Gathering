@@ -12,4 +12,6 @@ ASSET_MANAGER.downloadAll(() => {
     gameEngine.init();
 
     gameEngine.start();
+
+    population.resetSim();
 });

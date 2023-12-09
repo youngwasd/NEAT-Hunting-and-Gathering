@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>NEAT Hunting and Fogaring Simulation</title>
+    <title>NEAT Hunting and Foraging Simulation</title>
     <script type="text/javascript" src="http://73.225.31.4:8888/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript" src="./util.js"></script>
@@ -99,7 +99,7 @@
             </div>
 
             <div>
-                <input type="checkbox" id="coevolution"> Coevolution
+                <input type="checkbox" id="coevolution" checked="true"> Coevolution
             </div>
 
             <div>
@@ -155,17 +155,17 @@
             <input type="checkbox" id="save_to_db">
             <br>
             <label for="db"> Database Name: </label>
-            <input type="text" id="db" value="testDB">
+            <input type="text" id="db" value="CoevolutionTestDB">
             <br>
             <label for="db_collection"> Collection Name: </label>
-            <input type="text" id="db_collection" value="NEATtests">
+            <input type="text" id="db_collection" value="">
 
             <br>
             <label for="gen_to_save"> Generation to Save to DB: </label>
-            <input type="text" id="gen_to_save" value="40">
+            <input type="text" id="gen_to_save" value="500">
             <br>
             <label for="sim_trial_num"> Simulation Trials </label>
-            <input type="text" id="sim_trial_num" value=3>
+            <input type="text" id="sim_trial_num" value=10>
             <br>
             <button type="button" id="db_download_data" style="background-color: red; color:white;"> Download Data
             </button>
@@ -251,14 +251,14 @@
             <div>
                 &emsp;
                 <div>
-                    <input type="checkbox" id="GRADUAL_CONSUMPTION" checked="true"> Gradual Consumption
+                    <input type="checkbox" id="GRADUAL_CONSUMPTION"> Gradual Consumption
 
-                    <input type="checkbox" id="GRADUAL_CONSUMPTION_RESPAWN" checked="true"> Food respawn when fully
+                    <input type="checkbox" id="GRADUAL_CONSUMPTION_RESPAWN"> Food respawn when fully
                     consumed
                 </div>
 
                 <div>
-                    Number of Ticks to Fully Consume: <input type="text" id="max_ticks_to_consume" value="50"> <br>
+                    Number of Ticks to Fully Consume: <input type="text" id="max_ticks_to_consume" value="1"> <br>
                 </div>
                 <div>
                     Number of Ticks for Food to reset overlapping counters: <input type="text" id="cooldown_to_regen"
@@ -279,6 +279,64 @@
 
             <div>
                 <input type="checkbox" id="agent_neighbors" checked="true"> Agent Neighbors
+            </div>
+
+            <div>
+                <input type="checkbox" id="prey_distance_sensors" checked="true"> Enable Prey Distance Sensors (Requires
+                Restart)
+            </div>
+
+            <div>
+                <input type="checkbox" id="predator_distance_sensors" checked="true"> Enable Predator Distance Sensors
+                (Requires Restart)
+            </div>
+
+            <div>
+                <label for="prey_num_eyes"> Select Number Eyes for Prey (Requires Restart):</label>
+                <select name="prey_num_eyes" id="prey_num_eyes">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="predator_num_eyes"> Select Number Eyes for Predator (Requires Restart):</label>
+                <select name="predator_num_eyes" id="predator_num_eyes">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                </select>
+            </div>
+
+            <div>
+                Distance Between Prey Eyes (in pixels, maximum is about 100 or it will not go any further): <input
+                    type="text" id="prey_eye_distance" value="10">
+            </div>
+
+            <div>
+                Distance Between Predator Eyes (in pixels, maximum is about 100 or it will not go any further): <input
+                    type="text" id="predator_eye_distance" value="10">
             </div>
 
             <div>
@@ -329,16 +387,79 @@
             </div>
 
             <div>
-                Agent Visual Radius (pixels): <input type="text" id="agent_vision_radius" value="400">
+                Prey Visual Radius (pixels): <input type="text" id="prey_vision_radius" value="400">
             </div>
 
             <div>
-                Vision Rays: <input type="text" id="agent_vision_rays" value="13">
+                Predator Visual Radius (pixels): <input type="text" id="predator_vision_radius" value="400">
             </div>
 
             <div>
-                Vision Cone Angle (degrees): <input type="text" id="agent_vision_angle" value="180">
+                <input type="checkbox" id="prey_both_rays"> Use Same Number of Rays for Both Left and Right Eye (Prey,
+                requires restart)
             </div>
+
+            <div>
+                <input type="checkbox" id="predator_both_rays"> Use Same Number of Rays for Both Left and Right Eye
+                (Predator, requires restart)
+            </div>
+
+            <div>
+                Prey Vision Rays (Requires Restart): <input type="text" id="prey_vision_rays" value="13">
+            </div>
+
+            <div>
+                Predator Vision Rays (Requires Restart): <input type="text" id="predator_vision_rays" value="13">
+            </div>
+
+            <div>
+                Prey Left Eye Rays (Requires Restart): <input type="text" id="prey_left_rays" value="13">
+            </div>
+
+            <div>
+                Prey Right Eye Rays (Requires Restart): <input type="text" id="prey_right_rays" value="13">
+            </div>
+
+            <div>
+                Predator Left Eye Rays (Requires Restart): <input type="text" id="predator_left_rays" value="13">
+            </div>
+
+            <div>
+                Predator Right Eye Rays (Requires Restart): <input type="text" id="predator_right_rays" value="13">
+            </div>
+
+            <div>
+                <input type="checkbox" id="prey_both_angle"> Use Same Angle for Both Left and Right Eye (Prey)
+            </div>
+
+            <div>
+                <input type="checkbox" id="predator_both_angle"> Use Same Angle for Both Left and Right Eye (Predator)
+            </div>
+
+            <div>
+                Prey Vision Cone Angle (degrees): <input type="text" id="prey_vision_angle" value="180">
+            </div>
+
+            <div>
+                Predator Vision Cone Angle (degrees): <input type="text" id="predator_vision_angle" value="180">
+            </div>
+
+            <div>
+                Prey Left Eye Angle (degrees): <input type="text" id="prey_left_angle" value="180">
+            </div>
+
+            <div>
+                Prey Right Eye Angle (degrees): <input type="text" id="prey_right_angle" value="180">
+            </div>
+
+            <div>
+                Predator Left Eye Angle (degrees): <input type="text" id="predator_left_angle" value="180">
+            </div>
+
+            <div>
+                Predator Right Eye Angle (degrees): <input type="text" id="predator_right_angle" value="180">
+            </div>
+
             <br>
         </div>
 
@@ -373,7 +494,7 @@
             </div>
 
             <div>
-                <input type="checkbox" id="mirror_roles" checked="true"> Mirrored Prey-Predator Roles Runs (restart
+                <input type="checkbox" id="mirror_roles"> Mirrored Prey-Predator Roles Runs (restart
                 to
                 take
                 effect)
@@ -385,14 +506,13 @@
             <div>
                 <!-- Old fitness function -->
                 <h5><strong>Specific Agent Fitness Function = </strong></h5>
-                <input type="text" id="FITNESS_HUNTING_PREY" value="50"> (Prey hunted) +
+                <input type="text" id="FITNESS_HUNTING_PREY" value="500"> (Prey hunted) +
                 <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
-                <input type="text" id="FITNESS_OUT_OF_BOUND" value="-2"> (Out of bound) +
-                <input type="text" id="fitness_calories" value="10"> (Calories Eaten) +
+                <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) +
+                <input type="text" id="fitness_calories" value="25"> (Calories Eaten) +
                 <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
                 <br> </br>
             </div>
-
 
             <div>
                 <h5><strong>Generalized Agent Fitness Function = </strong></h5>
@@ -403,6 +523,12 @@
                 <input type="text" id="FITNESS_PERCENT_DEAD" value="0"> Percentage of Ticks Dead +
                 <input type="text" id="FITNESS_WINNER_BONUS" value="50"> Winner Bonus
                 <br> </br>
+            </div>
+
+            <div>
+                <h5><strong>Agent Replacement Modifiers</strong></h5>
+                <input type="text" id="REPLACEMENT_ADJUSTMENT_VALUE" value="10"> Adjustment Weight For Replacement
+                <input type="text" id="REPLACEMENT_RATE" value="1"> Number of Agents to Replace per Generation
             </div>
         </div>
     </div>
