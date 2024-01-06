@@ -1198,12 +1198,14 @@ class Agent {
 
             //Hard coded k value was hand tweaked, and not analytically determined
             //let distInput = 2 / (1 + Math.E ** (minDist/150)); This is the old dist function
-            let distInput = AgentInputUtil.normalizeVisionDist(minDist);
+
+
+            let distInput = params.DEAD_INPUTS ? 0 : AgentInputUtil.normalizeVisionDist(minDist);
             
-            // if is predator and has distance enabled
+            // push distance inputs if enabled
             if (predatorVision && params.PREDATOR_DISTANCE_SENSORS) {
                 input.push(distInput);
-            } else if (!predatorVision && params.PREY_DISTANCE_SENSORS) { // if is prey and has distance enabled
+            } else if (!predatorVision && params.PREY_DISTANCE_SENSORS) { 
                 input.push(distInput);
             }
 
