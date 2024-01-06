@@ -249,6 +249,7 @@ class PopulationManager {
         params.PREDATOR_VISION_RAYS = parseFloat(document.getElementById("predator_vision_rays").value);
         params.PREY_DISTANCE_SENSORS = document.getElementById("prey_distance_sensors").checked;
         params.PREDATOR_DISTANCE_SENSORS = document.getElementById("predator_distance_sensors").checked;
+        params.DEAD_INPUTS = document.getElementById("dead_inputs").checked;
         PopulationManager.PREY_SPECIES_ID = 0;
         PopulationManager.PREDATOR_SPECIES_ID = 0;
         PopulationManager.GEN_NUM = 0;
