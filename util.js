@@ -3,6 +3,7 @@ const params = {
     CANVAS_SIZE: 1000,
     DB: "testDB",
     DB_COLLECTION: "NEATtests",
+    RUN_NAME: "test",
     GEN_TO_SAVE: 40,
     GENOME_DB: "test",
     GENOME_DB_COLLECTION: "NEATGenomeTests1",
@@ -301,6 +302,7 @@ const logData = (data, dataBase, dbCollection, extraElements = false) => {
             ...extraElements
         }
     }
+    data['params'] = params;
     let payload = {
         db: dataBase,
         collection: dbCollection,

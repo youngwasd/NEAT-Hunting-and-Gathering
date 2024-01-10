@@ -655,6 +655,9 @@ class PopulationManager {
         if (document.activeElement.id !== "db_collection") {
             params.DB_COLLECTION = document.getElementById("db_collection").value;
         }
+        if (document.activeElement.id !== "run_name"){
+            params.RUN_NAME = document.getElementById("run_name").value;
+        }
 
         if (document.activeElement.id !== "genome_db") {
             params.GENOME_DB = document.getElementById("genome_db").value;
