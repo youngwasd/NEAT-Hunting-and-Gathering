@@ -1103,6 +1103,10 @@ class Agent {
             //console.log("mono eye: " + rays);
         }
 
+        if(!predatorVision && !params.PREY_BOTH_RAYS) {
+            console.log("for eye " + rayDiff + ", ray number:" + rays);
+        }
+
         // angleDiff == 1 left eye
         // angleDiff == 2 right eye
         // angleDiff == 3 both eyes / monocular
