@@ -320,8 +320,9 @@ class Agent {
     };
 
     getEyePos() {
-        const distanceBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
-        const eyeAngle = Math.atan(distanceBtEyes / (this.diameter + 1));
+        const angleBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
+        const numEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_NUM_EYES : params.PREY_NUM_EYES;
+        const eyeAngle = Math.PI * (angleBtEyes/numEyes) / 180;
 
         // if (this.foodHierarchyIndex > 0) {
         //     if (params.PREDATOR_BINOCULAR_VISION) {
@@ -764,62 +765,41 @@ class Agent {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
 
-                    if (params.PREDATOR_BOTH_RAYS) { // same num rays for both pred eyes
-                        if (params.PREDATOR_BOTH_ANGLE) { // same angle for both pred eyes
-                            this.coneVision(input, eyes[0], 3, 3);
-                            this.coneVision(input, eyes[1], 3, 3);
-                        } else { // diff angle for each pred eye
-                            this.coneVision(input, eyes[0], 3, 1);
-                            this.coneVision(input, eyes[1], 3, 2);
-                        }
-                    } else { // diff num rays for each pred eye
-                        if (params.PREDATOR_BOTH_ANGLE) { // same angle for both pred eyes
-                            this.coneVision(input, eyes[0], 1, 3);
-                            this.coneVision(input, eyes[1], 2, 3);
-                        } else { // diff angle for each pred eye
-                            this.coneVision(input, eyes[0], 1, 1);
-                            this.coneVision(input, eyes[1], 2, 2);
-                        }
+                    if (params.PREDATOR_BOTH_ANGLE) { // same angle for both pred eyes
+                        this.coneVision(input, eyes[0], 0, 3);
+                        this.coneVision(input, eyes[1], 1, 3);
+                    } else { // diff angle for each pred eye
+                        this.coneVision(input, eyes[0], 0, 1);
+                        this.coneVision(input, eyes[1], 1, 2);
                     }
                 } else if (params.PREDATOR_NUM_EYES > 2) { // more than 2 eyes they get same rays and angle
                     eyes = this.getEyePos().eyes;
                     for (let i = 0; i < params.PREDATOR_NUM_EYES; i++) {
-                        this.coneVision(input, eyes[i], 3, 3);
+                        this.coneVision(input, eyes[i], i, 3);
                     }
                 } else { // 1 eye so same angle and ray
                     eyes[0] = this.getEyePos();
-                    this.coneVision(input, eyes[0], 3, 3);
+                    this.coneVision(input, eyes[0], 0, 3);
                 }
             } else {
                 if (params.PREY_NUM_EYES == 2) {
                     eyes[0] = this.getEyePos().leftEye;
                     eyes[1] = this.getEyePos().rightEye;
-
-                    if (params.PREY_BOTH_RAYS) { // same num rays for both prey eyes
-                        if (params.PREY_BOTH_ANGLE) { // same angle for both prey eyes
-                            this.coneVision(input, eyes[0], 3, 3);
-                            this.coneVision(input, eyes[1], 3, 3);
-                        } else { // diff angle for each prey eye
-                            this.coneVision(input, eyes[0], 3, 1);
-                            this.coneVision(input, eyes[1], 3, 2);
-                        }
-                    } else { // diff num rays for each prey eye
-                        if (params.PREY_BOTH_ANGLE) { // same angle for both prey eyes
-                            this.coneVision(input, eyes[0], 1, 3);
-                            this.coneVision(input, eyes[1], 2, 3);
-                        } else { // diff angle for each prey eye
-                            this.coneVision(input, eyes[0], 1, 1);
-                            this.coneVision(input, eyes[1], 2, 2);
-                        }
+                    if (params.PREY_BOTH_ANGLE) { // same angle for both prey eyes
+                        this.coneVision(input, eyes[0], 0, 3);
+                        this.coneVision(input, eyes[1], 1, 3);
+                    } else { // diff angle for each prey eye
+                        this.coneVision(input, eyes[0], 0, 1);
+                        this.coneVision(input, eyes[1], 1, 2);
                     }
                 } else if (params.PREY_NUM_EYES > 2) { // more than 2 eyes they get same rays and angle
                     eyes = this.getEyePos().eyes;
                     for (let i = 0; i < params.PREY_NUM_EYES; i++) {
-                        this.coneVision(input, eyes[i], 3, 3);
+                        this.coneVision(input, eyes[i], i, 3);
                     }
                 } else { // 1 eye so same angle and ray
                     eyes[0] = this.getEyePos();
-                    this.coneVision(input, eyes[0], 3, 3);
+                    this.coneVision(input, eyes[0], 0, 3);
                 }
             }
         } else {
@@ -1084,27 +1064,24 @@ class Agent {
         return intersect;
     }
 
-    coneVision(input, eyes, rayDiff, angleDiff) {
+    coneVision(input, eyes, eyeIndex, angleDiff) {
         const predatorVision = this.foodHierarchyIndex > 0;
 
-        // rayDiff == 1 left eye
-        // rayDiff == 2 right eye
-        // rayDiff == 3 both eyes / monocular
+        // eyeIndex == 0 left eye
+        // eyeIndex == 1 right eye
 
         let rays;
-        if (rayDiff == 1) {
-            rays = predatorVision ? params.PREDATOR_LEFT_RAYS : params.PREY_LEFT_RAYS;          
-            //console.log("left eye rays: " + rays);
-        } else if (rayDiff == 2) {
-            rays = predatorVision ? params.PREDATOR_RIGHT_RAYS : params.PREY_RIGHT_RAYS;
-            //console.log("right eye rays: " + rays);
-        } else if (rayDiff == 3) {
+        if ((predatorVision && (params.PREDATOR_BOTH_RAYS || params.PREDATOR_NUM_EYES != 2)) || 
+            (!predatorVision && (params.PREY_BOTH_RAYS || params.PREY_NUM_EYES != 2))){
             rays = predatorVision ? params.PREDATOR_VISION_RAYS : params.PREY_VISION_RAYS;
-            //console.log("mono eye: " + rays);
-        }
-
-        if(!predatorVision && !params.PREY_BOTH_RAYS) {
-            console.log("for eye " + rayDiff + ", ray number:" + rays);
+        } else {
+            if (eyeIndex == 0) {
+                rays = predatorVision ? params.PREDATOR_LEFT_RAYS : params.PREY_LEFT_RAYS;          
+                //console.log("left eye rays: " + rays);
+            } else if (eyeIndex == 1) {
+                rays = predatorVision ? params.PREDATOR_RIGHT_RAYS : params.PREY_RIGHT_RAYS;
+                //console.log("right eye rays: " + rays);
+            }
         }
 
         // angleDiff == 1 left eye
@@ -1123,8 +1100,16 @@ class Agent {
         }
 
         const angleBetw = angle / (rays - 1);
+
         
-        let currAngle = rays === 1 ? this.heading : this.heading - angle / 2;
+        const eyeAngle = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
+        const numEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_NUM_EYES : params.PREY_NUM_EYES;
+        const angleBtEyes = numEyes == 1 ? 0 : Math.PI * (eyeAngle/(numEyes-1)) / 180;
+        const eyeOffset =  numEyes == 1 ? 0 : angleBtEyes * eyeIndex - (Math.PI * (eyeAngle/2) / 180);
+        
+        
+        
+        let currAngle = rays === 1 ? this.heading + eyeOffset : this.heading + eyeOffset - angle / 2;
 
         let entities = this.game.population.getEntitiesInWorld(this.worldId, !params.AGENT_NEIGHBORS);
         let walls = [];
@@ -1266,8 +1251,11 @@ class Agent {
 
         ctx.beginPath();
         ctx.lineWidth = this.biting ? 10 : 2;//width for pointer line is thicker if biting
-        const distanceBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
-        const eyeAngle = Math.atan(distanceBtEyes / (this.diameter + 1));
+        
+        const angleBtEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_EYE_DISTANCE : params.PREY_EYE_DISTANCE;
+        const numEyes = this.foodHierarchyIndex > 0 ? params.PREDATOR_NUM_EYES : params.PREY_NUM_EYES;
+        const eyeAngle = Math.PI * (angleBtEyes/numEyes) / 180;
+        
 
         // if (this.foodHierarchyIndex > 0) {
         //     if (params.PREDATOR_BINOCULAR_VISION) {
