@@ -10,6 +10,7 @@ class NeuralNet {
     processInput(input, output = []) {
         //console.log(input);
         let inputIndex = 0;
+        
 
         this.sortedNodes.forEach(nodeId => {
             let currNode = this.nodes.get(nodeId);
@@ -38,8 +39,11 @@ class NeuralNet {
         }); 
 
         if (input.length != inputIndex) {
-            console.error("input length: " + input.length + "\n# used: " + inputIndex);
+            console.error("input length: " + input.length + "\nDesired Length: " + inputIndex + "\nInputs recieved: " + input);
+            output.fill(0);
         }
+
+        
 
         return output;
     };
