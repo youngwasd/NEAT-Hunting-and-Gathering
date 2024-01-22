@@ -158,8 +158,10 @@
             <input type="text" id="db" value="CoevolutionTestDB">
             <br>
             <label for="db_collection"> Collection Name: </label>
-            <input type="text" id="db_collection" value="">
-
+            <input type="text" id="db_collection" value="NEATtests">
+            <br>
+            <label for="run_name"> Run Name: </label>
+            <input type="text" id="run_name" value="test">
             <br>
             <label for="gen_to_save"> Generation to Save to DB: </label>
             <input type="text" id="gen_to_save" value="500">
@@ -330,12 +332,12 @@
             </div>
 
             <div>
-                Distance Between Prey Eyes (in pixels, maximum is about 100 or it will not go any further): <input
+                Angle Between Left and Right Most Prey Eyes (in degrees): <input
                     type="text" id="prey_eye_distance" value="10">
             </div>
 
             <div>
-                Distance Between Predator Eyes (in pixels, maximum is about 100 or it will not go any further): <input
+                Angle Between Left and Right Most Predator Eyes (in degrees): <input
                     type="text" id="predator_eye_distance" value="10">
             </div>
 
@@ -360,9 +362,22 @@
                 </select>
             </div>
             <div>
-                <label for="predator_ratio">Ratio of prey to predator (Requires Restart):</label>
-                <select name="predator_ratio" id="predator_ratio">
+                <label for="predators_per_world">Predators per world:</label>
+                <select name="predators_per_world" id="predators_per_world">
+                    <option value="0" selected>0</option>
                     <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+            <div>
+                <label for="predator_ratio">Prey per world:</label>
+                <select name="predator_ratio" id="predator_ratio">
+                    <option value="1" selected>1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
@@ -458,6 +473,10 @@
 
             <div>
                 Predator Right Eye Angle (degrees): <input type="text" id="predator_right_angle" value="180">
+            </div>
+            <div>
+                <input type="checkbox" id="dead_inputs"> Enable Dead Inputs (turns distance off but still sends inputs
+                to NN, Requires Restart)
             </div>
 
             <br>

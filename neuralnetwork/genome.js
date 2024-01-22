@@ -3,10 +3,10 @@ class Genome {
     static DEFAULT_HIDDENS = 0;
 
     static PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? params.PREY_VISION_RAYS :
-                             params.PREY_BINOCULAR_VISION ? (params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS) / 2 : params.PREY_VISION_RAYS;
+                             params.PREY_NUM_EYES == 2 ? (params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS) / 2 : params.PREY_VISION_RAYS;
 
     static PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? params.PREDATOR_VISION_RAYS :
-                                 params.PREDATOR_BINOCULAR_VISION ? (params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS) / 2 : params.PREDATOR_VISION_RAYS;
+                                 params.PREY_NUM_EYES == 2 ? (params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS) / 2 : params.PREDATOR_VISION_RAYS;
 
     // static PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? 2 * params.PREY_VISION_RAYS : params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS;
 
@@ -68,10 +68,10 @@ class Genome {
         // Genome.PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? 2 * params.PREDATOR_VISION_RAYS : params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS;
 
         Genome.PREY_TOTAL_RAYS = params.PREY_BOTH_RAYS ? params.PREY_VISION_RAYS :
-                                 params.PREY_BINOCULAR_VISION ? (params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS) / 2 : params.PREY_VISION_RAYS;
+                                 params.PREY_NUM_EYES == 2 ? (params.PREY_LEFT_RAYS + params.PREY_RIGHT_RAYS) / 2 : params.PREY_VISION_RAYS;
 
         Genome.PREDATOR_TOTAL_RAYS = params.PREDATOR_BOTH_RAYS ? params.PREDATOR_VISION_RAYS :
-                                     params.PREDATOR_BINOCULAR_VISION ? (params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS) / 2 : params.PREDATOR_VISION_RAYS;
+                                     params.PREDATOR_NUM_EYES == 2 ? (params.PREDATOR_LEFT_RAYS + params.PREDATOR_RIGHT_RAYS) / 2 : params.PREDATOR_VISION_RAYS;
 
         Genome.DEFAULT_OUTPUTS = params.AGENT_BITING ? 3 : 2;
         Genome.PREY_INPUTS_PER_RAY = params.PREY_DISTANCE_SENSORS ? 2 : 1;

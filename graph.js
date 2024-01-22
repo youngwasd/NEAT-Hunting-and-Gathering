@@ -32,7 +32,10 @@ const downloadData = (e) => {
     socket.emit("find", 
     {
         db: db, 
-        collection: db_collection
+        collection: db_collection,
+        query: {
+            'params.RUN_NAME': params.RUN_NAME
+        }
     });
     console.log("Download successfully");
 }
