@@ -628,6 +628,10 @@ class PopulationManager {
             params.AGENT_REPLACEMENT = parseInt(document.getElementById("REPLACEMENT_RATE").value);
         }
 
+        if (document.activeElement.id !== "MUTATION_RATE") {
+            params.MUTATION_RATE = parseInt(document.getElementById("MUTATION_RATE").value);
+        }
+
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
         params.AUTO_SAVE_GENOME = document.getElementById("auto_save_genome").checked;
         params.coevolution = document.getElementById("coevolution").checked;
@@ -1785,6 +1789,10 @@ class PopulationManager {
         // Percentage of population we intend to replace per generation
         let replacementPercent = params.AGENT_REPLACEMENT;
 
+        // Mutation rate
+        let mutationRate = params.MUTATION_RATE;
+        console.log(mutationRate);
+
         //TODO: fix this magic number
         let reproductiveAgentGoal = Math.floor(PopulationManager.NUM_PREY) * 0.5;
 
@@ -1927,7 +1935,9 @@ class PopulationManager {
                     let speciesMembers = speciesMap.get(agent.speciesId);
                     parent2 =  speciesMembers[randomInt(speciesMembers.length)];
                     let childGenome = Genome.crossover(parent1.genome, parent2.genome);
-                    childGenome.mutate();
+                    if (randomInt(100) < mutationRate) {
+                        childGenome.mutate();
+                    }
                     let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
                     child.foodHierarchyIndex = hierarchy;
                     children.push(child);
