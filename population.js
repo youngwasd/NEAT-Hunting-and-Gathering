@@ -624,12 +624,12 @@ class PopulationManager {
             params.SIM_TRIAL_NUM = parseInt(document.getElementById("sim_trial_num").value);
         }
 
-        if (document.activeElement.id !== "REPLACEMENT_ADJUSTMENT_VALUE") {
-            params.FITNESS_ADJUSTMENT = parseInt(document.getElementById("REPLACEMENT_ADJUSTMENT_VALUE").value);
-        }
-
         if (document.activeElement.id !== "REPLACEMENT_RATE") {
             params.AGENT_REPLACEMENT = parseInt(document.getElementById("REPLACEMENT_RATE").value);
+        }
+
+        if (document.activeElement.id !== "MUTATION_RATE") {
+            params.MUTATION_RATE = parseInt(document.getElementById("MUTATION_RATE").value);
         }
 
         params.SAVE_TO_DB = document.getElementById("save_to_db").checked;
@@ -850,7 +850,10 @@ class PopulationManager {
         let repMap = new Map();
         speciesMap.forEach((speciesList, speciesId) => {
             // choose a rep for each species
-            repMap.set(speciesId, speciesList[0]);
+            if (speciesList[0] !== undefined) {
+                repMap.set(speciesId, speciesList[0]);
+            }
+            
         });
 
         let compatOrder = [...repMap.keys()].sort(); // sort by speciesId such that compatibility is always considered in the same order
@@ -877,9 +880,9 @@ class PopulationManager {
 
                 
                 let newColor = randomInt(361);
-                while (PopulationManager.COLORS_USED.has(newColor)) {
-                    newColor = randomInt(361);
-                }
+                // while (PopulationManager.COLORS_USED.has(newColor)) {
+                //     newColor = randomInt(361);
+                // }
                 PopulationManager.COLORS_USED.add(newColor);
                 PopulationManager.SPECIES_COLORS.set(child.speciesId, newColor);
                 let newSensorColor = AgentInputUtil.randomBlueHue();
@@ -927,7 +930,6 @@ class PopulationManager {
     };
 
     // Return a tuple of
-    // TODO: check if this breaks old behavior at some point
     countDeads(worldId = undefined) {
         if (worldId != undefined) {
             return this.worlds.get(worldId).countDeads();
@@ -1079,7 +1081,6 @@ class PopulationManager {
     
                     // No world like it has been created or it's full
                     if (!this.worlds.get(worldId) || this.worlds.get(worldId).agents.length >= params.predator_ratio + params.predators_per_world) {
-                        console.log(params.predators_per_world);
                         ++worldId;
                         let world = this.initNewWorld(worldId);
                         let predator;
@@ -1617,10 +1618,10 @@ class PopulationManager {
         //Selection process for killing off agents
         if (!params.FREE_RANGE) {
             // this.deathRoulette(reprodFitMap, sumShared, PopulationManager.PREY_SPECIES_MEMBERS, 0);
-            this.deathRoulette(PopulationManager.PREY_SPECIES_MEMBERS);
+            this.generationReplacement(PopulationManager.PREY_SPECIES_MEMBERS);
             if(params.coevolution) {
                 // this.deathRoulette(predReprodFitMap, predSumShared, PopulationManager.PREDATOR_SPECIES_MEMBERS, 1);
-                this.deathRoulette(PopulationManager.PREDATOR_SPECIES_MEMBERS, 1);
+                this.generationReplacement(PopulationManager.PREDATOR_SPECIES_MEMBERS, 1);
             }
             // this.crossover(reprodFitMap, sumShared, predReprodFitMap, predSumShared);
         }
@@ -1779,198 +1780,174 @@ class PopulationManager {
     }
 
 
+    // Previously deathroulette, this function replaces some percentage of the population in each generation
+    generationReplacement(speciesMap, hierarchy = 0) {
 
-    // Not currently using total fitness
-    deathRoulette(speciesMap, hierarchy = 0) {
+        // Ignore empty predator set if only testing prey
         if (speciesMap.size == 0) {return;}
-        let totalFitness;
+
+        // Percentage of population we intend to replace per generation
+        let replacementPercent = params.AGENT_REPLACEMENT;
+
+        // Mutation rate
+        let mutationRate = params.MUTATION_RATE;
+        console.log(mutationRate);
+
+        //TODO: fix this magic number
+        let reproductiveAgentGoal = Math.floor(PopulationManager.NUM_PREY) * 0.5;
+
+
+
+        // Initialize temp variables
         let speciesFitnessMap = new Map();
-        let rouletteWheel = [];
-        let speciesCount = 0;
+        let speciesSet = new Set();
+
+        // TODO: hacky, fix plz
+        let agents = [];
+
+        // Calculate each species' respective fitness
         speciesMap.forEach((speciesList, speciesId) => {
             let speciesFitness = 0;
             // Sum raw fitness for all members of this species
             speciesList.forEach(member => {
                 speciesFitness += member.genome.rawFitness;
-                if(!rouletteWheel.includes(speciesId)) {
-                    rouletteWheel.push(speciesId);
-                    speciesCount++;
-                }
-                // console.log(speciesFitness)
-
+                speciesSet.add(speciesId);
+                agents.push(member);
             });
             // Maps speciesId to the species average fitness
-            speciesFitnessMap.set(speciesId, Math.floor(speciesFitness / speciesList.length))
-            totalFitness += speciesFitness;
+            speciesFitnessMap.set(speciesId, Math.floor(speciesFitness / speciesList.length));
         });
 
-        // sorts the list from lowest fitness to greatest fitness
-        // console.log(speciesFitnessMap)
-        rouletteWheel.sort((s1, s2) => speciesFitnessMap.get(s1) - speciesFitnessMap.get(s2))
-        // rouletteWheel.forEach(species => {
-        //     console.log("This species is: " + species)
-        //     console.log("This species' fitness is " + speciesFitnessMap.get(species))
-
-        // });
-        // console.log(rouletteWheel)
-        let adjustment = params.FITNESS_ADJUSTMENT;
-        let rouletteSum = 0;
-
-        // Adds a total sum based on the number of species that we can use to weigh the fitnesses
-        console.log(speciesMap)
-        for(let i = 0; i < rouletteWheel.length; i++) {
-            rouletteSum += (i+1) + adjustment;
+        // Build a list from the species set and sort it by with best species first
+        // Limit species to number that we want to reproduce
+        let orderedSpecies = Array.from(speciesSet);
+        orderedSpecies.sort((s1, s2) => speciesFitnessMap.get(s2) - speciesFitnessMap.get(s1));
+        if (orderedSpecies.length > reproductiveAgentGoal) {
+            orderedSpecies = orderedSpecies.slice(0, orderedSpecies.length - reproductiveAgentGoal)
         }
-        let count = params.AGENT_REPLACEMENT;
-        let children = [];
-        let parent1, parent2;
-        let rouletteResult;
 
-        for(let i = 0; i < count; i++) {
-            rouletteResult = randomFloat(rouletteSum);
+ 
+        //TODO: hacky, fix plz
 
-    
-            for(let j = 0; j < rouletteWheel.length; j++) {
-                rouletteResult -= (j+1) + adjustment;
-                if(rouletteResult < 0) {
-                    // console.log(j + " is the index of the one to reproduce")
-                    let possibleParents = speciesMap.get(rouletteWheel[j]);
-                    parent1 = possibleParents[randomInt(possibleParents.length)];
-                    parent2 = possibleParents[randomInt(possibleParents.length)];
-                    break;
-                }
-            }
-            let childGenome = Genome.crossover(parent1.genome, parent2.genome);
-            childGenome.mutate();
-            let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
-            if(params.coevolution) {
-                child.foodHierarchyIndex = hierarchy;
-            }
-            children.push(child);
-        }
-        let deathSet = new Set();
+        agents.sort((s1, s2) => s2.genome.rawFitness - s1.genome.rawFitness);
+        agents.length = reproductiveAgentGoal;
 
-        // reverses the list so best fitness have lowest weight on the wheel
-        rouletteWheel.reverse()
+        let totalFitness = 0;
+        agents.forEach(element => {
+            totalFitness += element.genome.rawFitness
+        });
+        console.log(totalFitness / reproductiveAgentGoal);
 
-        // TODO: refactor this for species tracking rather than agent tracking
-        while(count != 0) {
-            rouletteResult = randomFloat(rouletteSum)
-            for(let i = 0; i < rouletteWheel.length; i++) {
-                rouletteResult -= (i+1) + adjustment
-                // console.log(rouletteResult + " roulette result after adjustment")
-                if (rouletteResult < 0) {
-                    if (!deathSet.has(i)) {
-                        deathSet.add(i);
-                        count--;
+
+
+
+        // Choose whether we will floor or ceiling the result in case of an odd number of species members
+        // Species extinction can only occur on a floor, so this adds some resiliency to species persisting
+        // Rather than always going extinct when down to a single member
+        // let floor = Math.floor(Math.random() * 2) === 1;
+        // let cap;
+
+
+        // let reproductionList = new Map();
+        // let reproductionCap = new Map();
+
+
+        // Set limits for number of agents allowed per species, as long as we don't need to overfill
+        // Values are between 1/3rd and 2/3rds of the species size depending on fitness
+        // for (let i = 0; i < orderedSpecies.length; i++) {
+        //     let speciesSize = speciesMap.get(orderedSpecies[i]).length;
+        //     if (speciesSize === 1) {
+        //         reproductionCap.set(orderedSpecies[i], floor ? 0 : 1);
+        //     } else if (speciesSize === 2) {
+        //         reproductionCap.set(orderedSpecies[i], 1);
+        //     } else {
+        //         // Determines a cap for each species to be allowed to reproduce, which will only be bypassed if we don't hit our agent threshold
+        //         cap = floor ? Math.floor((1 + (i/orderedSpecies.length-1)/3) * speciesSize) : Math.ceil((1 + (i/orderedSpecies.length-1)/3) * speciesSize);
+        //         reproductionCap.set(orderedSpecies[i], cap - 1);
+        //     }
+        // }
+
+        let agentsBySpecies = new Map();
+
+        // Build a map of ordered agents by species
+
+        // let count = 0;
+
+        //     for (const spec of orderedSpecies) {
+        //         if (count >= reproductiveAgentGoal) {
+        //             break;
+        //         }
+        //         let orderedAgents = speciesMap.get(spec);
+        //         // Sort the list from worst to best
+        //         orderedAgents.sort((a1, a2) => a1.genome.rawFitness - a2.genome.rawFitness);
+        //         agentsBySpecies.set(spec, orderedAgents);
+        //         // Add 1 of each species to the reproduction list
+        //         let initlist = [];
+        //         initlist.push(orderedAgents.pop());
+        //         if (orderedAgents.length == 0) {
+        //             orderedSpecies.splice(orderedSpecies.indexOf(spec), 1);
+        //         }
+        //         reproductionList.set(spec, initlist);
+        //         count++;
+        // }
+
+        // while(count < reproductiveAgentGoal) {
+        //     for (const spec of orderedSpecies) {
+        //         // let cap = reproductionCap.get(spec);
+        //         let agentList = agentsBySpecies.get(spec);
+        //         // if (cap > 0) {
+        //             let list = reproductionList.get(spec);
+        //             list.push(agentList.pop());
+        //             reproductionList.set(spec, list);
+        //             count++;
+        //             // if (count >= cap) {break;}
+        //             // reproductionCap.set(spec, cap - 1);
+        //             if (agentList.length == 0) {
+        //                 orderedSpecies.splice(orderedSpecies.indexOf(spec), 1);
+        //             }
+        //         // }
+        //     }
+        // }
+
+
+        for (const species of speciesMap) {
+            for (const agent of speciesMap.get(species[0])) {
+                    if (agent !== undefined) {
+                        agent.removeFromWorld = true;
                     }
-                    break;
-                }
+                    
             }
-        }
-
-        for (const element of deathSet) {
-            // console.log(rouletteWheel[element])
-            // console.log(speciesMap)
-                for (const member of speciesMap.get(rouletteWheel[element])) {
-                    if (!member.removeFromWorld) {
-                        member.removeFromWorld = true;
-                        break;
-                    }
-                }
-        }
-        
-        
-        this.registerChildAgents(children, speciesMap, hierarchy);
     }
         
 
+        let children = [];
+        let parent1, parent2;
 
+
+
+
+        // TODO: hacky but does full replacement
+        for (let i = 0; i < 2; i++) {
+            // for (const species of reproductionList) {
+                // let agents = reproductionList.get(species[0]);
+                for (const agent of agents) {
+                    parent1 = agent;
+                    let speciesMembers = speciesMap.get(agent.speciesId);
+                    parent2 =  speciesMembers[randomInt(speciesMembers.length)];
+                    let childGenome = Genome.crossover(parent1.genome, parent2.genome);
+                    if (randomInt(100) < mutationRate) {
+                        childGenome.mutate();
+                    }
+                    let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
+                    child.foodHierarchyIndex = hierarchy;
+                    children.push(child);
+                    
+                };
+            // }
+        }
+
+
+        this.registerChildAgents(children, speciesMap, hierarchy);
         
-    
-
-//     // Deprecated
-//     deathRoulette(reprodFitMap, sumShared, speciesMap, hierarchy) {
-//         let rouletteOrder = [...reprodFitMap.keys()].sort();
-//         let ascendingFitSpecies = [...reprodFitMap.keys()].sort((s1, s2) => reprodFitMap.get(s1) - reprodFitMap.get(s2));
-//         let deathFitMap = new Map();
-//         for (let i = 0; i < ascendingFitSpecies.length; i++) {
-//             deathFitMap.set(ascendingFitSpecies[i], reprodFitMap.get(ascendingFitSpecies[ascendingFitSpecies.length - i - 1]));
-//         }
-//         // console.log("sumshared in deathroulette for " + hierarchy + " is " + sumShared)
-
-//         let dead = hierarchy == 0 ? PopulationManager.NUM_PREY - this.countAlives()[0] : PopulationManager.NUM_PREDATOR - this.countAlives()[1]
-//         let numAgents = this.agentsAsList().length;
-//         for (let i = 0; i < Math.ceil(numAgents / 2) - dead; i++) { // death roulette -> kill the ceiling to ensure agent list is always even
-
-//             let killed = false;
-//             while (!killed) { // keep rolling the roulette wheel until someone dies
-//                 // console.log(sumShared)
-//                 let rouletteResult = randomFloat(sumShared);
-//                 let rouletteIndex = 0;
-//                 let accumulator = 0;
-//                 let flag = false;
-//                 // console.log(rouletteOrder)
-//                 while (!flag) {
-//                     let nextSpecies = rouletteOrder[rouletteIndex];
-//                     accumulator += deathFitMap.get(nextSpecies);
-//                     if (accumulator >= rouletteResult) { // we try to kill a parent... might not be successful
-//                         flag = true;
-//                         let killOptions = shuffleArray(speciesMap.get(nextSpecies));
-//                         let j = 0;
-//                         while (j < killOptions.length && !killed) {
-//                             let toKill = killOptions[j];
-//                             if (!toKill.removeFromWorld) {
-//                                 killed = true;
-//                                 toKill.removeFromWorld = true;
-//                             }
-//                             j++;
-//                         }
-//                     }
-//                     rouletteIndex++;
-//                 }
-//             }
-//         }
-//     }
-
-//     crossover(reprodFitMap, sumShared, predReprodFitMap, predSumShared) {
-//         // CROSSOVER: randomly produce offspring between n pairs of remaining agents, reproduction roulette
-//         let alives = this.countAlives(); // if free range mode kills off everybody, we produce at least 1 new agent
-//         let preyDead = PopulationManager.NUM_PREY - alives[0];
-//         this.replacement(reprodFitMap, sumShared, preyDead, PopulationManager.PREY_SPECIES_MEMBERS, 0);
-//         if(params.coevolution) {
-//             this.replacement(predReprodFitMap, predSumShared, PopulationManager.NUM_PREDATOR - alives[1], PopulationManager.PREDATOR_SPECIES_MEMBERS, 1);
-//         }
-//     }
-
-//     replacement(reprodFitMap, sumShared, count, speciesMap, hierarchy) {
-//         let children = [];
-//         let rouletteOrder = [...reprodFitMap.keys()].sort();
-//         for (let i = 0; i < count; i++) {
-//             let rouletteResult = randomFloat(sumShared);
-//             let rouletteIndex = 0;
-//             let accumulator = 0;
-//             let flag = false;
-//             let parent1, parent2;
-//             while (!flag) {
-//                 let nextSpecies = rouletteOrder[rouletteIndex];
-//                 accumulator += reprodFitMap.get(nextSpecies);
-//                 if (accumulator >= rouletteResult) {
-//                     flag = true;
-//                     let possibleParents = speciesMap.get(nextSpecies);
-//                     parent1 = possibleParents[randomInt(possibleParents.length)];
-//                     parent2 = possibleParents[randomInt(possibleParents.length)];
-//                 }
-//                 rouletteIndex++;
-//             }
-//             let childGenome = Genome.crossover(parent1.genome, parent2.genome);
-//             childGenome.mutate();
-//             let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome, hierarchy);
-//             // if(params.coevolution) {
-//             //     child.foodHierarchyIndex = hierarchy;
-//             // }
-//             children.push(child);
-//         }
-//         this.registerChildAgents(children, speciesMap, hierarchy);
-//     }
-};
+    }
+}
