@@ -63,7 +63,7 @@ const saveGenomes = () => {
 
 const parseData = (data) => {
     agentTrackerAttributesToCollect.forEach(attr =>{
-        download(attr + '_' + db + "_" + db_collection + ".csv", serializeData(data, attr, true));
+        download(attr + '_' + db + "_" + db_collection + '_' + params.RUN_NAME + ".csv", serializeData(data, attr, true));
     });
 
     //Only download these for conveniency
