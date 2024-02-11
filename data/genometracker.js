@@ -110,4 +110,14 @@
             medians: medianNodes,
         };
     }
+
+    /**
+     * Retrieve information of a certain attribute as a list
+     * @param {str} attribute name of the attribute to retrieve
+     * @returns {obj} the information of the attribute stores in agent tracker
+     */
+    getGenomeTrackerAttributesAsList(attribute) {
+        let res =  this.generations.map((obj) => obj[attribute]);
+        return res;
+    }
 }

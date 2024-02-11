@@ -66,6 +66,10 @@ const parseData = (data) => {
         download(attr + '_' + db + "_" + db_collection + '_' + params.RUN_NAME + ".csv", serializeData(data, attr, true));
     });
 
+    genomeTrackerAttributesToCollect.forEach(attr => {
+        download(attr + '_' + db + '_' + db_collection + '_' + params.RUN_NAME + ".csv", serializeData(data, attr, true));
+    });
+
     //Only download these for conveniency
     // download("totalCaloriesConsumedAsPrey_" + db + "_" + db_collection + ".csv", serializeData(data, "totalCaloriesConsumedAsPrey", true));
     // download("totalFoodConsumptionCount_" + db + "-" + db_collection + ".csv", serializeData(data, "totalFoodConsumptionCount", true));

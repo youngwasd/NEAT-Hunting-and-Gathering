@@ -1754,9 +1754,17 @@ class PopulationManager {
                 data[attribute] = newCollection;
             });
 
+            let data2 = {};
+            genomeTrackerAttributesToCollect.forEach((attribute) => {
+                let newCollection = this.genomeTracker.getGenomeTrackerAttributesAsList(attribute);
+                newCollection = newCollection.slice(0, newCollection.length - 1);
+                data2[attribute] = newCollection;
+            });
+
             //Sending data to data base
             if (params.SAVE_TO_DB) {
                 logData(data, params.DB, params.DB_COLLECTION);
+                logData(data2, params.DB, params.DB_COLLECTION);
             }
 
             this.resetSim();
