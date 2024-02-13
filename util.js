@@ -87,6 +87,11 @@ const agentTrackerAttributesToCollect = [
     "totalTicksOutOfBounds_Prey", "totalTicksOutOfBounds_Predator", "totalCaloriesConsumedAsPrey"
 ];
 
+const genomeTrackerAttributesToCollect = [
+    "minNodes", "maxNodes", "medianNodes", "minConnections", "maxConnections", "medianConnections", "minCycles",
+    "maxCycles", "medianCycles"
+];
+
 const getMedian = (arr) => {
     arr.sort((a, b) => a - b);
     if (arr.length % 2 != 0) {
