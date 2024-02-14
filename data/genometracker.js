@@ -65,7 +65,7 @@ class GenomeTracker {
 
     addCycles() {
         let data = this.getCycleData();
-        console.log(data);
+        //console.log(data);
         this.generations[this.currentGeneration].minCycles = Math.min(
             data[1],
             this.generations[this.currentGeneration].minCycles
@@ -83,8 +83,13 @@ class GenomeTracker {
         //console.log(this.generations[this.currentGeneration].maxNodes);
         //console.log(this.generations[this.currentGeneration].minNodes);
         //console.log(this.generations[this.currentGeneration].nodes);
-        // console.log(this.getCycleData());
-        this.addCycles();
+        //console.log(this.getCycleData());
+        //this.addCycles();
+    }
+
+    calcMedian() {
+        this.generations[this.currentGeneration].medianConnections = getMedian(this.generations[this.currentGeneration].connections);
+        this.generations[this.currentGeneration].medianNodes = getMedian(this.generations[this.currentGeneration].nodes);
     }
 
     getConnectionData() {

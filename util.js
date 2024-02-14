@@ -88,8 +88,7 @@ const agentTrackerAttributesToCollect = [
 ];
 
 const genomeTrackerAttributesToCollect = [
-    "minNodes", "maxNodes", "medianNodes", "minConnections", "maxConnections", "medianConnections", "minCycles",
-    "maxCycles", "medianCycles"
+    "minNodes", "maxNodes", "medianNodes", "minConnections", "maxConnections", "medianConnections"
 ];
 
 const getMedian = (arr) => {
