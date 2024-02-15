@@ -195,6 +195,4 @@ class AgentTracker {
         let res =  this.generations.map((obj) => obj[attribute]);
         return res;
     }
-
-   
 }

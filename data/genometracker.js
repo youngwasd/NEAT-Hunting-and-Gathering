@@ -1,7 +1,7 @@
 /**
  * A class for tracking genome structural data for each generation
  */
- class GenomeTracker {
+class GenomeTracker {
     constructor() {
         this.currentGeneration = -1;
         this.generations = [];
@@ -17,7 +17,12 @@
             maxConnections: 0,
             minConnections: Number.MAX_VALUE,
             connections: [],
-            cycles: [], // count how many cycles each agent has
+            cycles: [], // count how many cycles each agent has\
+            medianConnections: 0,
+            medianNodes: 0,
+            minCycles: Number.MAX_VALUE,
+            maxCycles: 0,
+            medianCycles: 0
         };
     }
 
@@ -58,9 +63,33 @@
         this.generations[this.currentGeneration].cycles.push(numCycles);
     }
 
+    addCycles() {
+        let data = this.getCycleData();
+        //console.log(data);
+        this.generations[this.currentGeneration].minCycles = Math.min(
+            data[1],
+            this.generations[this.currentGeneration].minCycles
+        );
+        this.generations[this.currentGeneration].maxCycles = Math.max(
+            data[0],
+            this.generations[this.currentGeneration].maxCycles
+        );
+        this.generations[this.currentGeneration].medianCycles = data[2];
+    }
+
     processGenome(genome) {
         this.addConnections(genome);
         this.addNodes(genome);
+        //console.log(this.generations[this.currentGeneration].maxNodes);
+        //console.log(this.generations[this.currentGeneration].minNodes);
+        //console.log(this.generations[this.currentGeneration].nodes);
+        //console.log(this.getCycleData());
+        //this.addCycles();
+    }
+
+    calcMedian() {
+        this.generations[this.currentGeneration].medianConnections = getMedian(this.generations[this.currentGeneration].connections);
+        this.generations[this.currentGeneration].medianNodes = getMedian(this.generations[this.currentGeneration].nodes);
     }
 
     getConnectionData() {
@@ -109,5 +138,24 @@
             mins: minNodes,
             medians: medianNodes,
         };
+    }
+
+    /**
+     * A general helper method to add data to
+     * @param {str} attribute name of the field or attribute we want to add data to
+     * @param {obj} data the data we want to add to existing data
+     */
+    addToAttribute(attribute, data) {
+        this.generations[this.currentGeneration][attribute] += data;
+    }
+
+    /**
+     * Retrieve information of a certain attribute as a list
+     * @param {str} attribute name of the attribute to retrieve
+     * @returns {obj} the information of the attribute stores in agent tracker
+     */
+    getGenomeTrackerAttributesAsList(attribute) {
+        let res =  this.generations.map((obj) => obj[attribute]);
+        return res;
     }
 }

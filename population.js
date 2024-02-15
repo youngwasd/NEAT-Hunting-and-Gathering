@@ -1291,75 +1291,76 @@ class PopulationManager {
         if(!params.coevolution) {
             this.agentsAsList().forEach((agent) => {
                 if (!params.coevolution || agent.foodHierarchyIndex==0) {
-                let OOBData = specieOOBData.get(agent.speciesId);
-                specieOOBData.set(agent.speciesId,
-                    (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
-                );
-                
-    
-                let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
-                specieFoodEatenData.set(agent.speciesId,
-                    (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
-                );
-    
-                let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
-                speciePreyHuntedData.set(agent.speciesId,
-                    (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
-                );
-                sumPercDead += agent.getPercentDead();
-                sumEnergySpent += agent.caloriesSpent;
-                sumPredWinnerBonus += agent.getWinnerBonus("predator");
-    
-                //Collecting calories consume info
-                if (huntingMode && agent.foodHierarchyIndex === 0){
-                    this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    let OOBData = specieOOBData.get(agent.speciesId);
+                    specieOOBData.set(agent.speciesId,
+                        (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
+                    );
+                    
+        
+                    let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
+                    specieFoodEatenData.set(agent.speciesId,
+                        (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
+                    );
+        
+                    let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
+                    speciePreyHuntedData.set(agent.speciesId,
+                        (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
+                    );
+
+                    sumPercDead += agent.getPercentDead();
+                    sumEnergySpent += agent.caloriesSpent;
+                    sumPredWinnerBonus += agent.getWinnerBonus("predator");
+        
+                    //Collecting calories consume info
+                    if (huntingMode && agent.foodHierarchyIndex === 0){
+                        this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    }
+        
+                    //Collecting out of bound info
+                    this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
+                    //this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
+        
+                    //this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
                 }
-    
-                //Collecting out of bound info
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
-    
-                this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
-            }
             });
         } else {
             this.agentsAsList().forEach((agent) => {
                 if (agent.foodHierarchyIndex == 0) {
-                let OOBData = preyOOBData.get(agent.speciesId);
-                preyOOBData.set(agent.speciesId,
-                    (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
-                );
-                
-                let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
-                specieFoodEatenData.set(agent.speciesId,
-                    (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
-                );
-                
-    
-                //Collecting calories consume info
-                if (huntingMode && agent.foodHierarchyIndex === 0){
-                    this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    let OOBData = preyOOBData.get(agent.speciesId);
+                    preyOOBData.set(agent.speciesId,
+                        (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
+                    );
+                    
+                    let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
+                    specieFoodEatenData.set(agent.speciesId,
+                        (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
+                    );
+                    
+        
+                    //Collecting calories consume info
+                    // if (huntingMode && agent.foodHierarchyIndex === 0){
+                    //     this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    // }
+        
+                    //Collecting out of bound info
+                    this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
+                } else {
+                    let OOBData = predatorOOBData.get(agent.speciesId);
+                    predatorOOBData.set(agent.speciesId,
+                        (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
+                    );
+
+
+                    let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
+                    speciePreyHuntedData.set(agent.speciesId,
+                        (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
+                    );
+                    sumPredWinnerBonus += agent.getWinnerBonus("predator");
+
+                    //this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
+        
+                    //this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
                 }
-    
-                //Collecting out of bound info
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
-            } else {
-                let OOBData = predatorOOBData.get(agent.speciesId);
-                predatorOOBData.set(agent.speciesId,
-                    (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
-                );
-
-
-                let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
-                speciePreyHuntedData.set(agent.speciesId,
-                    (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
-                );
-                sumPredWinnerBonus += agent.getWinnerBonus("predator");
-
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
-    
-                this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
-            }
                 sumPercDead += agent.getPercentDead();
                 sumEnergySpent += agent.caloriesSpent;
             });
@@ -1401,9 +1402,9 @@ class PopulationManager {
                 entry['speciesId'] = speciesId;
                 // console.log("prey species members: " + PopulationManager.PREY_SPECIES_MEMBERS)
                 entry['speciesTotalTickOutOfBound'] = data / PopulationManager.PREDATOR_SPECIES_MEMBERS.get(speciesId).length * 100;
-                this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
+                //this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
     
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
+                //this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
     
             });
         }
@@ -1426,9 +1427,7 @@ class PopulationManager {
                 entry['speciesSuccessfulHuntCount'] = data / PopulationManager.PREDATOR_SPECIES_MEMBERS.get(speciesId).length;
             }
 
-            this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry);
-
-     
+            //this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry);
         });
 
         //Add averages to agent tracker
@@ -1561,6 +1560,8 @@ class PopulationManager {
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / totalGenTicks, -1, 1)]++;
             if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / totalGenTicks, -1, 1)]++;
         });
+        this.genomeTracker.calcMedian();
+        
         this.agentTracker.addAvgFitness(totalRawFitness / (PopulationManager.NUM_PREY + PopulationManager.NUM_PREDATOR)); // TODO: correct fitness function calcs
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
         let reprodFitMap = new Map();
@@ -1753,6 +1754,16 @@ class PopulationManager {
                 newCollection = newCollection.slice(0, newCollection.length - 1);
                 data[attribute] = newCollection;
             });
+
+            console.log("before: " + JSON.stringify(data));
+
+            genomeTrackerAttributesToCollect.forEach((attribute) => {
+                let newCollection = this.genomeTracker.getGenomeTrackerAttributesAsList(attribute);
+                newCollection = newCollection.slice(0, newCollection.length - 1);
+                data[attribute] = newCollection;
+            });
+
+            console.log("after: " + JSON.stringify(data));
 
             //Sending data to data base
             if (params.SAVE_TO_DB) {

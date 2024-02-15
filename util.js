@@ -81,10 +81,19 @@ const params = {
 
 };
 
+// const agentTrackerAttributesToCollect = [
+//     "avgFitness", "avgEnergySpent", "avgPercDead", "avgPredWinnerBonus",
+//     "totalPreyHuntedCount", "totalFoodConsumptionCount", "totalTicksOutOfBounds",
+//     "totalTicksOutOfBounds_Prey", "totalTicksOutOfBounds_Predator", "totalCaloriesConsumedAsPrey"
+// ];
+
 const agentTrackerAttributesToCollect = [
-    "avgFitness", "avgEnergySpent", "avgPercDead", "avgPredWinnerBonus",
-    "totalPreyHuntedCount", "totalFoodConsumptionCount", "totalTicksOutOfBounds",
-    "totalTicksOutOfBounds_Prey", "totalTicksOutOfBounds_Predator", "totalCaloriesConsumedAsPrey"
+    "avgFitness", "avgEnergySpent", "avgPercDead",
+    "totalFoodConsumptionCount", "totalTicksOutOfBounds_Prey"
+];
+
+const genomeTrackerAttributesToCollect = [
+    "minNodes", "maxNodes", "medianNodes", "minConnections", "maxConnections", "medianConnections"
 ];
 
 const getMedian = (arr) => {
