@@ -1291,75 +1291,76 @@ class PopulationManager {
         if(!params.coevolution) {
             this.agentsAsList().forEach((agent) => {
                 if (!params.coevolution || agent.foodHierarchyIndex==0) {
-                let OOBData = specieOOBData.get(agent.speciesId);
-                specieOOBData.set(agent.speciesId,
-                    (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
-                );
-                
-    
-                let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
-                specieFoodEatenData.set(agent.speciesId,
-                    (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
-                );
-    
-                let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
-                speciePreyHuntedData.set(agent.speciesId,
-                    (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
-                );
-                sumPercDead += agent.getPercentDead();
-                sumEnergySpent += agent.caloriesSpent;
-                sumPredWinnerBonus += agent.getWinnerBonus("predator");
-    
-                //Collecting calories consume info
-                if (huntingMode && agent.foodHierarchyIndex === 0){
-                    this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    let OOBData = specieOOBData.get(agent.speciesId);
+                    specieOOBData.set(agent.speciesId,
+                        (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
+                    );
+                    
+        
+                    let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
+                    specieFoodEatenData.set(agent.speciesId,
+                        (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
+                    );
+        
+                    let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
+                    speciePreyHuntedData.set(agent.speciesId,
+                        (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
+                    );
+
+                    sumPercDead += agent.getPercentDead();
+                    sumEnergySpent += agent.caloriesSpent;
+                    sumPredWinnerBonus += agent.getWinnerBonus("predator");
+        
+                    //Collecting calories consume info
+                    if (huntingMode && agent.foodHierarchyIndex === 0){
+                        this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    }
+        
+                    //Collecting out of bound info
+                    this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
+                    //this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
+        
+                    //this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
                 }
-    
-                //Collecting out of bound info
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
-    
-                this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
-            }
             });
         } else {
             this.agentsAsList().forEach((agent) => {
                 if (agent.foodHierarchyIndex == 0) {
-                let OOBData = preyOOBData.get(agent.speciesId);
-                preyOOBData.set(agent.speciesId,
-                    (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
-                );
-                
-                let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
-                specieFoodEatenData.set(agent.speciesId,
-                    (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
-                );
-                
-    
-                //Collecting calories consume info
-                if (huntingMode && agent.foodHierarchyIndex === 0){
-                    this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    let OOBData = preyOOBData.get(agent.speciesId);
+                    preyOOBData.set(agent.speciesId,
+                        (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
+                    );
+                    
+                    let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
+                    specieFoodEatenData.set(agent.speciesId,
+                        (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
+                    );
+                    
+        
+                    //Collecting calories consume info
+                    // if (huntingMode && agent.foodHierarchyIndex === 0){
+                    //     this.agentTracker.addToAttribute('totalCaloriesConsumedAsPrey', agent.caloriesEaten);
+                    // }
+        
+                    //Collecting out of bound info
+                    this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
+                } else {
+                    let OOBData = predatorOOBData.get(agent.speciesId);
+                    predatorOOBData.set(agent.speciesId,
+                        (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
+                    );
+
+
+                    let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
+                    speciePreyHuntedData.set(agent.speciesId,
+                        (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
+                    );
+                    sumPredWinnerBonus += agent.getWinnerBonus("predator");
+
+                    //this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
+        
+                    //this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
                 }
-    
-                //Collecting out of bound info
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Prey', agent.numberOfTickOutOfBounds_Prey);
-            } else {
-                let OOBData = predatorOOBData.get(agent.speciesId);
-                predatorOOBData.set(agent.speciesId,
-                    (OOBData ? OOBData : 0) + agent.numberOfTickOutOfBounds
-                );
-
-
-                let PreyHuntedData = speciePreyHuntedData.get(agent.speciesId);
-                speciePreyHuntedData.set(agent.speciesId,
-                    (PreyHuntedData ? PreyHuntedData : 0) + agent.numberOfPreyHunted
-                );
-                sumPredWinnerBonus += agent.getWinnerBonus("predator");
-
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds_Predator', agent.numberOfTickOutOfBounds_Predator);
-    
-                this.agentTracker.addToAttribute('totalPreyHuntedCount', agent.numberOfPreyHunted);
-            }
                 sumPercDead += agent.getPercentDead();
                 sumEnergySpent += agent.caloriesSpent;
             });
@@ -1401,9 +1402,9 @@ class PopulationManager {
                 entry['speciesId'] = speciesId;
                 // console.log("prey species members: " + PopulationManager.PREY_SPECIES_MEMBERS)
                 entry['speciesTotalTickOutOfBound'] = data / PopulationManager.PREDATOR_SPECIES_MEMBERS.get(speciesId).length * 100;
-                this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
+                //this.agentTracker.addSpeciesAttribute('speciesTotalTickOutOfBound', entry);
     
-                this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
+                //this.agentTracker.addToAttribute('totalTicksOutOfBounds', data);
     
             });
         }
@@ -1426,9 +1427,7 @@ class PopulationManager {
                 entry['speciesSuccessfulHuntCount'] = data / PopulationManager.PREDATOR_SPECIES_MEMBERS.get(speciesId).length;
             }
 
-            this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry);
-
-     
+            //this.agentTracker.addSpeciesAttribute('speciesSuccessfulHuntCount', entry);
         });
 
         //Add averages to agent tracker
@@ -1561,6 +1560,8 @@ class PopulationManager {
             avgRightWheelOut[determineBucket(agent.totalOutputs[1] / totalGenTicks, -1, 1)]++;
             if (params.AGENT_BITING) avgBiteOut[determineBucket(agent.totalOutputs[2] / totalGenTicks, -1, 1)]++;
         });
+        this.genomeTracker.calcMedian();
+        
         this.agentTracker.addAvgFitness(totalRawFitness / (PopulationManager.NUM_PREY + PopulationManager.NUM_PREDATOR)); // TODO: correct fitness function calcs
         Genome.resetInnovations(); // reset the innovation number mapping for newly created connections
         let reprodFitMap = new Map();
@@ -1754,6 +1755,16 @@ class PopulationManager {
                 data[attribute] = newCollection;
             });
 
+            console.log("before: " + JSON.stringify(data));
+
+            genomeTrackerAttributesToCollect.forEach((attribute) => {
+                let newCollection = this.genomeTracker.getGenomeTrackerAttributesAsList(attribute);
+                newCollection = newCollection.slice(0, newCollection.length - 1);
+                data[attribute] = newCollection;
+            });
+
+            console.log("after: " + JSON.stringify(data));
+
             //Sending data to data base
             if (params.SAVE_TO_DB) {
                 logData(data, params.DB, params.DB_COLLECTION);
@@ -1786,24 +1797,12 @@ class PopulationManager {
         // Ignore empty predator set if only testing prey
         if (speciesMap.size == 0) {return;}
 
-        // Percentage of population we intend to replace per generation
-        let replacementPercent = params.AGENT_REPLACEMENT;
-
         // Mutation rate
         let mutationRate = params.MUTATION_RATE;
-        console.log(mutationRate);
-
-        //TODO: fix this magic number
-        let reproductiveAgentGoal = Math.floor(PopulationManager.NUM_PREY) * 0.5;
-
-
 
         // Initialize temp variables
         let speciesFitnessMap = new Map();
-        let speciesSet = new Set();
-
-        // TODO: hacky, fix plz
-        let agents = [];
+        let totalFitness = 0;
 
         // Calculate each species' respective fitness
         speciesMap.forEach((speciesList, speciesId) => {
@@ -1811,143 +1810,45 @@ class PopulationManager {
             // Sum raw fitness for all members of this species
             speciesList.forEach(member => {
                 speciesFitness += member.genome.rawFitness;
-                speciesSet.add(speciesId);
-                agents.push(member);
             });
+            totalFitness += Math.floor(speciesFitness / speciesList.length)
             // Maps speciesId to the species average fitness
             speciesFitnessMap.set(speciesId, Math.floor(speciesFitness / speciesList.length));
         });
 
-        // Build a list from the species set and sort it by with best species first
-        // Limit species to number that we want to reproduce
-        let orderedSpecies = Array.from(speciesSet);
-        orderedSpecies.sort((s1, s2) => speciesFitnessMap.get(s2) - speciesFitnessMap.get(s1));
-        if (orderedSpecies.length > reproductiveAgentGoal) {
-            orderedSpecies = orderedSpecies.slice(0, orderedSpecies.length - reproductiveAgentGoal)
-        }
 
- 
-        //TODO: hacky, fix plz
-
-        agents.sort((s1, s2) => s2.genome.rawFitness - s1.genome.rawFitness);
-        agents.length = reproductiveAgentGoal;
-
-        let totalFitness = 0;
-        agents.forEach(element => {
-            totalFitness += element.genome.rawFitness
-        });
-        console.log(totalFitness / reproductiveAgentGoal);
-
-
-
-
-        // Choose whether we will floor or ceiling the result in case of an odd number of species members
-        // Species extinction can only occur on a floor, so this adds some resiliency to species persisting
-        // Rather than always going extinct when down to a single member
-        // let floor = Math.floor(Math.random() * 2) === 1;
-        // let cap;
-
-
-        // let reproductionList = new Map();
-        // let reproductionCap = new Map();
-
-
-        // Set limits for number of agents allowed per species, as long as we don't need to overfill
-        // Values are between 1/3rd and 2/3rds of the species size depending on fitness
-        // for (let i = 0; i < orderedSpecies.length; i++) {
-        //     let speciesSize = speciesMap.get(orderedSpecies[i]).length;
-        //     if (speciesSize === 1) {
-        //         reproductionCap.set(orderedSpecies[i], floor ? 0 : 1);
-        //     } else if (speciesSize === 2) {
-        //         reproductionCap.set(orderedSpecies[i], 1);
-        //     } else {
-        //         // Determines a cap for each species to be allowed to reproduce, which will only be bypassed if we don't hit our agent threshold
-        //         cap = floor ? Math.floor((1 + (i/orderedSpecies.length-1)/3) * speciesSize) : Math.ceil((1 + (i/orderedSpecies.length-1)/3) * speciesSize);
-        //         reproductionCap.set(orderedSpecies[i], cap - 1);
-        //     }
-        // }
-
-        let agentsBySpecies = new Map();
-
-        // Build a map of ordered agents by species
-
-        // let count = 0;
-
-        //     for (const spec of orderedSpecies) {
-        //         if (count >= reproductiveAgentGoal) {
-        //             break;
-        //         }
-        //         let orderedAgents = speciesMap.get(spec);
-        //         // Sort the list from worst to best
-        //         orderedAgents.sort((a1, a2) => a1.genome.rawFitness - a2.genome.rawFitness);
-        //         agentsBySpecies.set(spec, orderedAgents);
-        //         // Add 1 of each species to the reproduction list
-        //         let initlist = [];
-        //         initlist.push(orderedAgents.pop());
-        //         if (orderedAgents.length == 0) {
-        //             orderedSpecies.splice(orderedSpecies.indexOf(spec), 1);
-        //         }
-        //         reproductionList.set(spec, initlist);
-        //         count++;
-        // }
-
-        // while(count < reproductiveAgentGoal) {
-        //     for (const spec of orderedSpecies) {
-        //         // let cap = reproductionCap.get(spec);
-        //         let agentList = agentsBySpecies.get(spec);
-        //         // if (cap > 0) {
-        //             let list = reproductionList.get(spec);
-        //             list.push(agentList.pop());
-        //             reproductionList.set(spec, list);
-        //             count++;
-        //             // if (count >= cap) {break;}
-        //             // reproductionCap.set(spec, cap - 1);
-        //             if (agentList.length == 0) {
-        //                 orderedSpecies.splice(orderedSpecies.indexOf(spec), 1);
-        //             }
-        //         // }
-        //     }
-        // }
-
-
-        for (const species of speciesMap) {
-            for (const agent of speciesMap.get(species[0])) {
-                    if (agent !== undefined) {
-                        agent.removeFromWorld = true;
-                    }
-                    
-            }
-    }
-        
-
+        let remainder = 0
         let children = [];
         let parent1, parent2;
 
+        speciesMap.forEach((speciesList, speciesId) => {
+            let speciesFitnessSlice = (speciesFitnessMap.get(speciesId)/totalFitness)*PopulationManager.NUM_PREY;
+            remainder = remainder + speciesFitnessSlice % 1
+            speciesFitnessSlice = Math.floor(speciesFitnessSlice)
+            if (remainder > 0.99995) {
+                speciesFitnessSlice += 1;
+                remainder -= 1;
+            }
+            speciesList.sort((s1, s2) => s2.genome.rawFitness - s1.genome.rawFitness);
+            speciesList.length = Math.ceil(speciesList.length/2);
 
-
-
-        // TODO: hacky but does full replacement
-        for (let i = 0; i < 2; i++) {
-            // for (const species of reproductionList) {
-                // let agents = reproductionList.get(species[0]);
-                for (const agent of agents) {
-                    parent1 = agent;
-                    let speciesMembers = speciesMap.get(agent.speciesId);
-                    parent2 =  speciesMembers[randomInt(speciesMembers.length)];
-                    let childGenome = Genome.crossover(parent1.genome, parent2.genome);
-                    if (randomInt(100) < mutationRate) {
-                        childGenome.mutate();
-                    }
-                    let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
-                    child.foodHierarchyIndex = hierarchy;
-                    children.push(child);
-                    
-                };
-            // }
-        }
-
+            for (let i = 0; i < speciesFitnessSlice; i++) {
+                parent1 = speciesList[randomInt(speciesList.length)];
+                parent2 =  speciesList[randomInt(speciesList.length)];
+                let childGenome = Genome.crossover(parent1.genome, parent2.genome);
+                if (randomInt(100) < mutationRate) {
+                    childGenome.mutate();
+                }
+                let child = new Agent(this.game, params.CANVAS_SIZE / 2, params.CANVAS_SIZE / 2, childGenome);
+                child.foodHierarchyIndex = hierarchy;
+                children.push(child);
+                
+            };
+            speciesList.length = 0
+        });
 
         this.registerChildAgents(children, speciesMap, hierarchy);
-        
+
     }
+
 }

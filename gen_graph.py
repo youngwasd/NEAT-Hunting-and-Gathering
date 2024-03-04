@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sys, os
+from itertools import cycle
 
 #Default folders to generate charts
 src = os.getcwd() + "/Charts/RawData_Input"
@@ -28,7 +29,14 @@ bounds = {
     'totalFoodConsumptionCount': [0, 0],
     'avgPredWinnerBonus': [0, 0],
     'totalCaloriesConsumedAsPrey': [0, 0],
+    'minNodes': [0, 0],
+    'maxNodes': [0, 0],
+    'medianNodes': [0, 0],
+    'minConnections': [0, 0],
+    'maxConnections': [0, 0],
 }
+
+averages = {}
 
 def determineMax(curr):
     folders = os.listdir(src + curr)
@@ -123,7 +131,8 @@ def getTitle(fparts):
     elif titleId == 'totalCaloriesConsumedAsPrey':
         return 'Total Calories Prey Consumed Per Generation'
     else:
-        print('A title ID does not exist yet! Add ' + titleId + ' to the getTitle(titleId) method.', file=sys.stderr)
+        print('A title ID does not exist yet! Add ' + titleId + ' to the getTitle(titleId) method.')
+        return titleId 
     return 'error :('
 
 def getYLabel(fparts):
@@ -149,6 +158,8 @@ def getYLabel(fparts):
     return 'error :('
 
 def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName = ''):
+    if (title not in averages):
+        averages[title] = {}
     df = pd.read_csv(csv_path)
     df.drop('Average', axis = 'columns', inplace = True)
     df.dropna(axis=1, inplace = True)
@@ -169,7 +180,7 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
             plt.scatter(df.index.array, df[c],  4, label = c, alpha = 0.1)
     df['Average'] = df.mean(numeric_only=True, axis=1)
     plt.plot(df['Average'], linewidth = 1.8, label = 'Average', color = 'black')
-    
+    averages[title][profileName] = df['Average']
     SDAbove = []
     SDBelow = []
     df['StandardDeviation'] = df.std(axis = 1, ddof = 0)
@@ -193,9 +204,29 @@ def createPlot(csv_path, plotDest, title, x_label, y_label, bounds, profileName 
     plt.clf()
 
     print(profileName.replace('_',' ') + " : " + title + " with " + str(len(df.columns) - 2) + " columns")# to show progress
+
+def plotAverages(avgmap):
+    #print(avgmap)
+    cycol = cycle('bgrcmk')
+
+    cmap = {}
+    for title, values in avgmap.items():
+        
+        print("title " + title)
+        plt.title(title)
+        for profilename, avg in values.items():
+            if profilename not in cmap:
+                cmap[profilename] = next(cycol)
+            print("profilename " + profilename)
+            plt.plot(avg, linewidth = 0.9, label = str(profilename.replace('_',' ')), color = cmap[profilename])
+        plt.legend()
+        plt.savefig(dest + '/' + title + '_averages.png')
+        plt.clf()
+        
     
 if len(os.listdir(dest)) != 0:
     print('Please clear your destination directory and try again...', file = sys.stderr)
     exit(1)
 determineMax('')
 recurseFolders('')
+plotAverages(averages)
