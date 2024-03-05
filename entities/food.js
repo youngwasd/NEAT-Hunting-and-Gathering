@@ -122,6 +122,10 @@ class Food {
 
 
     getDisplayHue() {
+        if(this.isPoison){
+            return this.ticksToConsume/params.MAX_TICKS_TO_CONSUME * 90 + 180;
+        }
+
         return this.ticksToConsume / params.MAX_TICKS_TO_CONSUME * 110;
     };
 

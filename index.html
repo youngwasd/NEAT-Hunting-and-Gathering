@@ -212,8 +212,13 @@
                 pattern
                 <br>
 
+
+                <label for="agentStartEnergy"> Starting Energy of Agents: </label>
+                <input type="text" id="agentStartEnergy" value="100">
+
                 <label for="caloriesPerFood"> Calories reward per food: </label>
                 <input type="text" id="caloriesPerFood" value="50">
+
                 <br>
                 <br>
                 <div>
@@ -250,6 +255,10 @@
             <div>
                 Food to Agent Ratio:<input type="text" id="food_agent_ratio" value="1"> <br>
             </div>
+            <div>
+                Poison to Agent Ratio:<input type="text" id="poison_agent_ratio" value="1"> <br>
+            </div>
+
             <div>
                 &emsp;
                 <div>
@@ -530,7 +539,8 @@
                 <input type="text" id="FITNESS_HUNTING_PREY" value="500"> (Prey hunted) +
                 <input type="text" id="FITNESS_BUMPING_INTO_WALL" value="0"> (Bumping Into Wall) +
                 <input type="text" id="FITNESS_OUT_OF_BOUND" value="-1"> (Out of bound) +
-                <input type="text" id="fitness_calories" value="25"> (Calories Eaten) +
+                <input type="text" id="fitness_calories" value="25"> (Calories Eaten) -
+                <input type="text" id="fitness_bad_calories" value="25"> (Bad Calories Eaten) +
                 <input type="text" id="fitness_potential_cal" value="0"> (Potential Calories Reward)
                 <br> </br>
             </div>

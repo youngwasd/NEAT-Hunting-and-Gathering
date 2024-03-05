@@ -275,7 +275,7 @@ class PopulationManager {
         //params.FREE_RANGE = document.getElementById("free_range").checked;
         params.AGENT_NEIGHBORS = document.getElementById("agent_neighbors").checked;
         params.ENFORCE_MIN_FOOD = document.getElementById("enforce_min_food").checked;
-        //params.ENFORCE_MIN_POISON = document.getElementById("enforce_min_poison").checked;
+        // params.ENFORCE_MIN_POISON = document.getElementById("enforce_min_poison").checked;
         //params.RAND_FOOD_PHASES = document.getElementById("rand_food_phases").checked;
         //params.RAND_FOOD_LIFETIME = document.getElementById("rand_food_lifetime").checked;
         params.RAND_DEFAULT_WEIGHTS = document.getElementById("rand_default_weights").checked;
@@ -331,6 +331,10 @@ class PopulationManager {
             document.getElementById("caloriesPerFood").disabled = true;
         }
 
+        if (document.activeElement.id != "agentStartEnergy"){
+            params.AGENT_START_ENERGY = document.getElementById("agentStartEnergy").value;
+        }
+
         if (params.MOVING_FOOD) {
             document.getElementById("movingFoodPattern").disabled = false;
             document.getElementById("food_velocityX").disabled = false;
@@ -368,6 +372,9 @@ class PopulationManager {
 
         if (document.activeElement.id !== "food_agent_ratio") {
             params.FOOD_AGENT_RATIO = parseInt(document.getElementById("food_agent_ratio").value);
+        }
+        if (document.activeElement.id !== "poison_agent_ratio") {
+            params.POISON_AGENT_RATIO = parseInt(document.getElementById("poison_agent_ratio").value);
         }
 
         
@@ -525,8 +532,13 @@ class PopulationManager {
 
 
         if (document.activeElement.id !== "fitness_calories") {
-            if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value)
+            if (document.getElementById("fitness_calories") && document.getElementById("fitness_calories").value != undefined)
                 params.FITNESS_CALORIES = parseFloat(document.getElementById("fitness_calories").value);
+        }
+
+        if (document.activeElement.id !== "fitness_bad_calories") {
+            if (document.getElementById("fitness_bad_calories") && document.getElementById("fitness_bad_calories").value != undefined)
+                params.FITNESS_BAD_CALORIES = parseFloat(document.getElementById("fitness_bad_calories").value);
         }
 
         if (document.activeElement.id !== "FITNESS_HUNTING_PREY") {
@@ -1280,6 +1292,7 @@ class PopulationManager {
         let preyOOBData = new Map();
         let predatorOOBData = new Map();
         let specieFoodEatenData = new Map();
+        let speciePoisonEatenData = new Map();
         let speciePreyHuntedData = new Map();
         let sumPercDead = 0;
         let sumEnergySpent = 0;
@@ -1334,6 +1347,11 @@ class PopulationManager {
                     let FoodEatenData = specieFoodEatenData.get(agent.speciesId);
                     specieFoodEatenData.set(agent.speciesId,
                         (FoodEatenData ? FoodEatenData : 0) + agent.numberOfFoodEaten
+                    );
+
+                    let poisonEatenData = speciePoisonEatenData.get(agent.speciesId);
+                    speciePoisonEatenData.set(agent.speciesId,
+                        (poisonEatenData ? poisonEatenData : 0) + agent.numberOfPoisonEaten
                     );
                     
         
@@ -1418,6 +1436,15 @@ class PopulationManager {
             this.agentTracker.addToAttribute('totalFoodConsumptionCount', data);
         });
 
+        speciePoisonEatenData.forEach((data, speciesId) => {
+            let entry = {};
+            entry['speciesId'] = speciesId;
+            entry['speciesPoisonConsumptionCount'] = data / PopulationManager.PREY_SPECIES_MEMBERS.get(speciesId).length;
+            this.agentTracker.addSpeciesAttribute('speciesPoisonConsumptionCount', entry);
+
+            this.agentTracker.addToAttribute('totalPoisonConsumptionCount', data);
+        });
+
         speciePreyHuntedData.forEach((data, speciesId) => {
             let entry = {};
             entry['speciesId'] = speciesId;
@@ -1478,6 +1505,13 @@ class PopulationManager {
                 title: 'Total Food Consumption Per Generation'
             },
             "foodConsumptionLineChart", "lineChartOutputContainters",
+        );
+        generateLineChart(
+            {
+                data: this.agentTracker.getAgentTrackerAttributesAsList('totalPoisonConsumptionCount'),
+                title: 'Total Poison Consumption Per Generation'
+            },
+            "poisonConsumptionLineChart", "lineChartOutputContainters",
         );
         generateLineChart(
             {
@@ -1636,6 +1670,7 @@ class PopulationManager {
 
         //Replenish food or poison
         this.checkFoodLevels();
+
         let remainingColors = new Set(); // we need to filter out the colors of species that have died out for reuse
         let remainingSensorColors = new Set(); // same thing with sensor colors
         PopulationManager.PREY_SPECIES_MEMBERS = new Map();

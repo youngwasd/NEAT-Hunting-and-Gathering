@@ -9,7 +9,7 @@ class Agent {
     static DEATH_ENERGY_THRESH = 0;
 
     /** The amount of energy an Agent is given upon spawn */
-    static START_ENERGY = 100;
+    // static START_ENERGY = params.AGENT_START_ENERGY;
 
     static distForBiteReward = [
         {
@@ -68,6 +68,8 @@ class Agent {
         this.biting = false;
         this.biteTicks = 0;
         this.ticksAlive = 0;
+        this.spinningTicks = 0;
+        this.standingTicks = 0;
         this.totalTicks = 0;
         this.concludingTickPredator = params.GEN_TICKS;
         this.concludingTickPrey = params.GEN_TICKS;
@@ -81,20 +83,9 @@ class Agent {
         this.caloriesReward = 50;
         this.numberOfPreyHunted = 0;
         this.numberOfFoodEaten = 0;
+        this.numberOfPoisonEaten = 0;
         this.numberOfGoingOutOfBound = 0;
         this.updateMaxSpeed(); // Update speed to a UNITLESS value which controls the movement speed of Agents in the sim
-
-        //Increase base energy for prey
-
-        if (params.INACTIVE_PREY_TARGETABLE) {
-            Agent.START_ENERGY = 250;
-            if (this.foodHierarchyIndex == 0) {
-                this.energy = Agent.START_ENERGY;
-            }
-        }
-        else {
-            Agent.START_ENERGY = 100;
-        }
     };
 
     /** Assigns this Agent's fitness */
@@ -115,7 +106,8 @@ class Agent {
          */
         const fitnessFunct = () => {
             // TODO: temp added a large fitness to account for negative outside bounds
-            let totalRawFitness = this.caloriesEaten * params.FITNESS_CALORIES + 700;
+            let totalRawFitness = this.caloriesEaten * params.FITNESS_CALORIES - this.badCaloriesEaten * params.FITNESS_BAD_CALORIES  + 700;
+            totalRawFitness += -this.spinningTicks - this.standingTicks;
 
             /** Rewards the agent based on how close they were to getting calories 
              * It rewards a fraction of what they would've gotten from eating the food depending on how close they were to consumption
@@ -289,6 +281,7 @@ class Agent {
         this.concludingTickPrey = params.GEN_TICKS;
         this.concludingTickPredator = params.GEN_TICKS;
         this.ticksAlive = 0;
+        this.spinningTicks = 0;
         this.numberOfPreyHunted = 0;
         this.numberOfTimesConsumed = 0;
         this.totalOutputs = [0, 0, 0];
@@ -307,7 +300,7 @@ class Agent {
     /**  Resets this Agent's energy to the predefined starting energy for Agents */
     activateAgent() {
         this.isActive = true;
-        this.energy = Agent.START_ENERGY;
+        this.energy = params.AGENT_START_ENERGY;
     }
 
     /**
@@ -844,7 +837,7 @@ class Agent {
             }
         }
 
-        let normEnergy = this.energy / Agent.START_ENERGY;
+        let normEnergy = this.energy / params.AGENT_START_ENERGY;
         //input.push(2 / (1 + Math.E ** (4 * normEnergy)));
         input.push(normEnergy);
 
@@ -893,6 +886,13 @@ class Agent {
 
         this.speed = Math.sqrt(dx ** 2 + dy ** 2);
 
+        if(Math.abs(this.rightWheel - this.leftWheel) > 1){
+            this.spinningTicks += 1;
+        }
+        if(Math.abs(this.rightWheel + this.leftWheel) < 0.25){
+            this.standingTicks += 1;
+        }
+
         // if (Math.abs(this.leftWheel) > 1 || Math.abs(this.rightWheel) > 1) {
         //     console.log(this.leftWheel, this.rightWheel);
         // }
@@ -939,7 +939,11 @@ class Agent {
                             this.eatingCompletion = completion;
                             this.maxEatingCompletion = this.maxEatingCompletion < this.eatingCompletion ? this.eatingCompletion : this.maxEatingCompletion;
                             if (this.eatingCompletion === 1) {
-                                this.numberOfFoodEaten++;
+                                if(cals < 0){
+                                    this.numberOfPoisonEaten++;
+                                }else {
+                                    this.numberOfFoodEaten++;
+                                }
                             }
                         }
                     }

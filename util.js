@@ -12,10 +12,10 @@ const params = {
     GEN_TICKS: 700,
     AGENT_NEIGHBORS: true,
     FOOD_AGENT_RATIO: 1,
-    POISON_AGENT_RATIO: 0,
+    POISON_AGENT_RATIO: 1,
     COMPAT_THRESH: 0.07,
     ENFORCE_MIN_FOOD: true,
-    ENFORCE_MIN_POISON: false,
+    ENFORCE_MIN_POISON: true,
     AGENT_VISION_RADIUS : 500,
     // PREY_VISION_RADIUS: 500, // original was AGENT_VISION_RADIUS : 500,
     // PREDATOR_VISION_RADIUS: 500, // was not here originally (this stuff breaks the code)
@@ -25,7 +25,8 @@ const params = {
     SPLIT_SPECIES: true,
     RAND_DEFAULT_WEIGHTS: true,
     AGENT_NEIGHBOR_COUNT: 5,
-    FITNESS_CALORIES: 10,
+    FITNESS_CALORIES: 25,
+    FITNESS_BAD_CALORIES: -25,
     FITNESS_BUMPING_INTO_WALL: 0,
     FITNESS_OUT_OF_BOUND: -2,
     FITNESS_POTENTIAL_CALORIES: 0,
@@ -34,6 +35,7 @@ const params = {
     FITNESS_ENERGY_EFFICIENCY: 0,
     FITNESS_WINNER_BONUS: 50,
 
+    AGENT_START_ENERGY: 100,
     NO_DECAYING_FOOD: true,
     CALORIES_PER_FOOD: 50,
     INNER_WALL: false,
@@ -89,7 +91,7 @@ const params = {
 
 const agentTrackerAttributesToCollect = [
     "avgFitness", "avgEnergySpent", "avgPercDead",
-    "totalFoodConsumptionCount", "totalTicksOutOfBounds_Prey"
+    "totalFoodConsumptionCount", "totalTicksOutOfBounds_Prey", "totalPoisonConsumptionCount"
 ];
 
 const genomeTrackerAttributesToCollect = [
