@@ -33,6 +33,7 @@ const downloadData = (e) => {
     {
         db: db, 
         collection: db_collection,
+        limit: 100,
         query: {
             'params.RUN_NAME': params.RUN_NAME
         }
